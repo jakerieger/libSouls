@@ -42,11 +42,31 @@ add_library(Souls SHARED
         Util.hpp
         SoulsFile.cpp
         SoulsFile.hpp
+        Crypto.cpp
+        Crypto.hpp
         Formats/DCX.cpp
         Formats/DCX.hpp
+        Binders/Binder.cpp
+        Binders/Binder.hpp
+        Binders/BinderFile.hpp
+        Binders/BinderFileHeader.cpp
+        Binders/BinderFileHeader.hpp
+        Binders/BinderHashTable.cpp
+        Binders/BinderHashTable.hpp
+        Binders/IBinder.hpp
+        Binders/BND3.cpp
+        Binders/BND3.hpp
+        Binders/BND4.cpp
+        Binders/BND4.hpp
+        Binders/BXF3.cpp
+        Binders/BXF3.hpp
+        Binders/BXF4.cpp
+        Binders/BXF4.hpp
+        Binders/Regulation.cpp
+        Binders/Regulation.hpp
 )
 
-target_link_libraries(Souls PRIVATE zlibstatic libzstd_static)
+target_link_libraries(Souls PRIVATE zlibstatic libzstd_static bcrypt)
 # zconf.h is generated into zlib's build dir, zlib.h lives in its source dir.
 target_include_directories(Souls PRIVATE ${CMAKE_SOURCE_DIR}/Source ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} ${zstd_SOURCE_DIR}/lib)
 

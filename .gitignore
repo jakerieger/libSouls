@@ -1,5 +1,5 @@
 .idea
-build
+build*
 *.dll
 *.bin
 *.exe

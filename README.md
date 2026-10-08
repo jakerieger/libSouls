@@ -9,7 +9,8 @@ the wonderful Souls modding community.
 
 ## Why C++?
 
-SoulsFormats is the foundation of the Souls modding scene, and its quality is the reason so many tools exist. But because
+SoulsFormats is the foundation of the Souls modding scene, and its quality is the reason so many tools exist. But
+because
 it is a .NET library, the tools built on it (Smithbox, DSMapStudio, DarkScript3, etc.) are tied to the .NET ecosystem,
 and anyone working in another language has to rewrite years of format knowledge from scratch. libSouls is a native
 implementation of the same formats, meant to **complement** the existing tools rather than replace them.
@@ -23,13 +24,12 @@ A native library with a stable C interface (planned) offers things a managed lib
 - **It's easy to ship.** There is no runtime to install, and it is a small dependency for native tools, including ones
   that use C++ libraries like ImGui, DirectX, or Vulkan directly instead of through bindings.
 
-Why not compile SoulsFormats with .NET NativeAOT and export a C interface instead? That is a reasonable route, but it
+*Why not compile SoulsFormats with .NET NativeAOT and export a C interface instead?* That is a reasonable route, but it
 keeps a managed codebase (with its own runtime, garbage collector, and debugging story) behind a native facade. A native
 codebase is simpler to reason about, profile, and debug for the in-process and cross-language cases above. Performance
 is a side benefit rather than the goal, and any claims about it will be backed by benchmarks as they become available.
 
-The format knowledge in SoulsFormats took years of community work to build. libSouls aims to make that work available in
-more places.
+#### The format knowledge in SoulsFormats took years of community work to build. libSouls aims to make that work available in more places.
 
 ## Current State
 
@@ -38,6 +38,8 @@ library in its
 entirety to C++ and move on to supporting other functionality from there.
 
 ### SoulsFormats Port Progress
+
+> *Verified via end-to-end testing (see [Testsuite](Source/Testsuite)).*
 
 - [x] Oodle26 DLL bindings (see [Oodle26.hpp](Source/libSouls/Oodle26.hpp))
 - [x] **DCX** Format (see [DCX.hpp](Source/libSouls/Formats/DCX.hpp))
@@ -50,16 +52,16 @@ entirety to C++ and move on to supporting other functionality from there.
 - [ ] **PARAM** Format
 - [ ] **TAE3** Format
 - [ ] **TPF** Format
-- [ ] **BND3** Binder
-- [ ] **BND4** Binder
-- [ ] **BXF3** Binder
-- [ ] **BXF4** Binder
+- [x] **BND3** Binder
+- [x] **BND4** Binder
+- [x] **BXF3** Binder
+- [x] **BXF4** Binder
 
 ## Building
 
 Before building libSouls, ensure your local development environment meets the following requirements:
 
-- MSVC with Windows 11 SDK (*Linux not supported currently. This may change in the future*)
+- MSVC with Windows 11 SDK (*Linux not supported*)
 - CMake (*>= v3.26*)
 - Internet connection (*required to fetch zlib dependency on first configure*)
 - Ninja Build (*not required but HIGHLY recommended*)
@@ -93,6 +95,10 @@ cmake --build build/<CONFIG>
 
 ### 4. Run tests
 
+Some tests use real game files in order to validate file format implementations. If you want to run the full testsuite,
+you'll need a valid Steam install of both Dark Souls Remastered and ELDEN RING with ELDEN RING's content unpacked via
+UXM or Nuxe. A select number of random game files are pulled and tested against.
+
 ```shell
 ctest --test-dir build/<CONFIG> --output-on-failure
 ```
@@ -122,9 +128,8 @@ library. It can be copied from whichever From game you are modding (DS1/2/3, ELD
 Contributions are more than welcome. I'm one guy with limited free time and any help is greatly appreciated.
 
 > [!IMPORTANT]
-> If you'd
-like to contribute, **please submit an issue prior to submitting a pull request so we can discuss an implementation
-plan.**
+> If you'd like to contribute, **please submit an issue prior to submitting a pull request so we can discuss an
+implementation plan.**
 
 ## License
 

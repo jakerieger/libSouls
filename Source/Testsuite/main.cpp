@@ -13,6 +13,9 @@
 #include <initializer_list>
 
 int RunBinaryTests();
+int RunBinderTests();
+int RunBinderFileTests(size_t MaxFiles);
+int RunRegulationTests();
 int RunOodleTests();
 int RunSoulsFileTests();
 int RunRealFileTests(size_t MaxFiles);
@@ -20,13 +23,22 @@ int RunRealFileTests(size_t MaxFiles);
 namespace {
     int Run(const char* Name, int Argc, char** Argv) {
         if (std::strcmp(Name, "binary") == 0) return RunBinaryTests();
+        if (std::strcmp(Name, "binder") == 0) return RunBinderTests();
+        if (std::strcmp(Name, "binderfiles") == 0) {
+            const size_t MaxFiles = Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40;
+            return RunBinderFileTests(MaxFiles > 0 ? MaxFiles : 40);
+        }
+        if (std::strcmp(Name, "regulation") == 0) return RunRegulationTests();
         if (std::strcmp(Name, "oodle") == 0) return RunOodleTests();
         if (std::strcmp(Name, "soulsfile") == 0) return RunSoulsFileTests();
         if (std::strcmp(Name, "realfiles") == 0) {
             const size_t MaxFiles = Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 150;
             return RunRealFileTests(MaxFiles > 0 ? MaxFiles : 150);
         }
-        std::fprintf(stderr, "Unknown test suite \"%s\" (binary, oodle, soulsfile, realfiles [max files])\n", Name);
+        std::fprintf(
+          stderr,
+          "Unknown test suite \"%s\" (binary, binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
+          Name);
         return 1;
     }
 }  // namespace
@@ -44,11 +56,9 @@ int main(int Argc, char** Argv) {
         }
 
         int Failed = 0;
-        for (const char* Name : {"binary", "oodle", "soulsfile", "realfiles"}) {
+        for (const char* Name : {"binary", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
             const int Result = Run(Name, Argc, Argv);
-            if (Result != 0 && Result != TestSkipped) {
-                ++Failed;
-            }
+            if (Result != 0 && Result != TestSkipped) { ++Failed; }
         }
         return Failed == 0 ? 0 : 1;
     } catch (const std::exception& E) {
