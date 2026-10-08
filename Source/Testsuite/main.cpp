@@ -13,6 +13,7 @@
 #include <initializer_list>
 
 int RunBinaryTests();
+int RunBHD5Tests();
 int RunBinderTests();
 int RunBinderFileTests(size_t MaxFiles);
 int RunRegulationTests();
@@ -23,6 +24,7 @@ int RunRealFileTests(size_t MaxFiles);
 namespace {
     int Run(const char* Name, int Argc, char** Argv) {
         if (std::strcmp(Name, "binary") == 0) return RunBinaryTests();
+        if (std::strcmp(Name, "bhd5") == 0) return RunBHD5Tests();
         if (std::strcmp(Name, "binder") == 0) return RunBinderTests();
         if (std::strcmp(Name, "binderfiles") == 0) {
             const size_t MaxFiles = Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40;
@@ -37,7 +39,7 @@ namespace {
         }
         std::fprintf(
           stderr,
-          "Unknown test suite \"%s\" (binary, binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
+          "Unknown test suite \"%s\" (binary, bhd5, binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
           Name);
         return 1;
     }
@@ -56,7 +58,7 @@ int main(int Argc, char** Argv) {
         }
 
         int Failed = 0;
-        for (const char* Name : {"binary", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
+        for (const char* Name : {"binary", "bhd5", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
             const int Result = Run(Name, Argc, Argv);
             if (Result != 0 && Result != TestSkipped) { ++Failed; }
         }

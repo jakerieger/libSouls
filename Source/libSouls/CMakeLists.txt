@@ -44,6 +44,8 @@ add_library(Souls SHARED
         SoulsFile.hpp
         Crypto.cpp
         Crypto.hpp
+        Formats/BHD5.cpp
+        Formats/BHD5.hpp
         Formats/DCX.cpp
         Formats/DCX.hpp
         Binders/Binder.cpp

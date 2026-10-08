@@ -52,6 +52,7 @@ entirety to C++ and move on to supporting other functionality from there.
 - [ ] **PARAM** Format
 - [ ] **TAE3** Format
 - [ ] **TPF** Format
+- [x] **BHD5** Format
 - [x] **BND3** Binder
 - [x] **BND4** Binder
 - [x] **BXF3** Binder
