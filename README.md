@@ -49,14 +49,14 @@ entirety to C++ and move on to supporting other functionality from there.
 - [ ] **FLVER** Format
 - [ ] **MQB** Format
 - [ ] **MSB** Format
-- [ ] **PARAM** Format
+- [x] **PARAM** Format (see [PARAM.hpp](Source/libSouls/Formats/PARAM.hpp))
 - [ ] **TAE3** Format
-- [ ] **TPF** Format
-- [x] **BHD5** Format
-- [x] **BND3** Binder
-- [x] **BND4** Binder
-- [x] **BXF3** Binder
-- [x] **BXF4** Binder
+- [x] **TPF** Format (see [TPF.hpp](Source/libSouls/Formats/TPF.hpp))
+- [x] **BHD5** Format (see [BHD5.hpp](Source/libSouls/Formats/BHD5.hpp))
+- [x] **BND3** Binder (see [BND3.hpp](Source/libSouls/Binders/BND3.hpp))
+- [x] **BND4** Binder (see [BND4.hpp](Source/libSouls/Binders/BND4.hpp))
+- [x] **BXF3** Binder (see [BXF3.hpp](Source/libSouls/Binders/BXF3.hpp))
+- [x] **BXF4** Binder (see [BXF4.hpp](Source/libSouls/Binders/BXF4.hpp))
 
 ## Building
 

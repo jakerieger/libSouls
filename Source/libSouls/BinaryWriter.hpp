@@ -119,10 +119,12 @@ namespace Souls {
         void WriteFixedString(std::string_view Value, size_t Length);
         // UTF-8 text encoded as Shift-JIS, optionally null-terminated.
         void WriteShiftJIS(std::string_view Utf8Value, bool NullTerminate = true);
-        // Fixed-size field of Size bytes: UTF-8 text as Shift-JIS, truncated or zero-padded.
-        void WriteFixStr(std::string_view Utf8Value, size_t Size);
-        // Fixed-size field of Size bytes: UTF-16, truncated (to whole units) or zero-padded.
-        void WriteFixStrW(std::u16string_view Value, size_t Size);
+        // Fixed-size field of Size bytes: UTF-8 text as Shift-JIS, then a null terminator if it fits, then PadByte
+        // for the rest. Truncated if too long.
+        void WriteFixStr(std::string_view Utf8Value, size_t Size, uint8_t PadByte = 0);
+        // Fixed-size field of Size bytes: UTF-16 text, then a null terminator if it fits, then PadByte for the rest.
+        // Truncated (to whole units) if too long.
+        void WriteFixStrW(std::u16string_view Value, size_t Size, uint8_t PadByte = 0);
         // Writes the bytes of Magic with no terminator (build a string_view with explicit size to include a \0).
         void WriteMagic(std::string_view Magic) { WriteString(Magic, false); }
 #pragma endregion

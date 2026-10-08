@@ -26,6 +26,13 @@ FetchContent_Declare(zstd
 )
 FetchContent_MakeAvailable(zstd)
 
+FetchContent_Declare(pugixml
+        URL https://github.com/zeux/pugixml/releases/download/v1.14/pugixml-1.14.tar.gz
+        URL_HASH SHA256=2f10e276870c64b1db6809050a75e11a897a8d7456c4be5c6b2e35a11168a015
+        EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(pugixml)
+
 add_library(Souls SHARED
         Souls.hpp
         Endian.hpp
@@ -48,6 +55,21 @@ add_library(Souls SHARED
         Formats/BHD5.hpp
         Formats/DCX.cpp
         Formats/DCX.hpp
+        Formats/FMG.cpp
+        Formats/FMG.hpp
+        Formats/PARAM.cpp
+        Formats/PARAM.hpp
+        Formats/PARAMDEF.cpp
+        Formats/PARAMDEF.hpp
+        Formats/PARAMDEFXml.cpp
+        Formats/ParamLayout.cpp
+        Formats/ParamLayout.hpp
+        Formats/ParamDefRepository.cpp
+        Formats/ParamDefRepository.hpp
+        Formats/DDS.cpp
+        Formats/DDS.hpp
+        Formats/TPF.cpp
+        Formats/TPF.hpp
         Binders/Binder.cpp
         Binders/Binder.hpp
         Binders/BinderFile.hpp
@@ -68,7 +90,7 @@ add_library(Souls SHARED
         Binders/Regulation.hpp
 )
 
-target_link_libraries(Souls PRIVATE zlibstatic libzstd_static bcrypt)
+target_link_libraries(Souls PRIVATE zlibstatic libzstd_static pugixml bcrypt)
 # zconf.h is generated into zlib's build dir, zlib.h lives in its source dir.
 target_include_directories(Souls PRIVATE ${CMAKE_SOURCE_DIR}/Source ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} ${zstd_SOURCE_DIR}/lib)
 

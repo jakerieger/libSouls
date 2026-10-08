@@ -146,14 +146,26 @@ namespace Souls {
         WriteString(Text::UTF8ToShiftJIS(Utf8Value), NullTerminate);
     }
 
-    void BinaryWriter::WriteFixStr(std::string_view Utf8Value, size_t Size) {
-        WriteFixedString(Text::UTF8ToShiftJIS(Utf8Value), Size);
+    void BinaryWriter::WriteFixStr(std::string_view Utf8Value, size_t Size, uint8_t PadByte) {
+        const std::string Encoded = Text::UTF8ToShiftJIS(Utf8Value);
+        const size_t Used         = std::min(Encoded.size(), Size);
+        WriteRaw(Encoded.data(), Used);
+        if (Used < Size) {
+            WriteByte(0);  // terminator
+            Pad(Size - Used - 1, PadByte);
+        }
     }
 
-    void BinaryWriter::WriteFixStrW(std::u16string_view Value, size_t Size) {
-        const size_t Units = std::min(Value.size(), Size / 2);
+    void BinaryWriter::WriteFixStrW(std::u16string_view Value, size_t Size, uint8_t PadByte) {
+        const size_t Capacity = Size / 2;
+        const size_t Units    = std::min(Value.size(), Capacity);
         WriteArray(std::span<const char16_t>(Value.data(), Units));
-        Pad(Size - Units * 2);
+        size_t Written = Units * 2;
+        if (Units < Capacity) {
+            Write<char16_t>(0);  // terminator
+            Written += 2;
+        }
+        Pad(Size - Written, PadByte);
     }
 #pragma endregion
 
