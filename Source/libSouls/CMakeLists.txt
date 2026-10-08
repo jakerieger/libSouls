@@ -66,6 +66,11 @@ add_library(Souls SHARED
         Formats/ParamLayout.hpp
         Formats/ParamDefRepository.cpp
         Formats/ParamDefRepository.hpp
+        Formats/FLVER/FlverCommon.cpp
+        Formats/FLVER/FlverCommon.hpp
+        Formats/FLVER/FLVER2.cpp
+        Formats/FLVER/FLVER2.hpp
+        Matrix.hpp
         Formats/DDS.cpp
         Formats/DDS.hpp
         Formats/TPF.cpp

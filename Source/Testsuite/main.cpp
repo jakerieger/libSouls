@@ -22,6 +22,7 @@ int RunParamDefRepositoryTests();
 int RunParamdexTests();
 int RunTPFTests(size_t MaxFiles);
 int RunBXFReaderTests();
+int RunFLVERTests(size_t MaxFiles);
 int RunPARAMDEFXmlTests();
 int RunBinderTests();
 int RunBinderFileTests(size_t MaxFiles);
@@ -40,6 +41,7 @@ namespace {
         if (std::strcmp(Name, "paramdefrepo") == 0) return RunParamDefRepositoryTests();
         if (std::strcmp(Name, "paramdex") == 0) return RunParamdexTests();
         if (std::strcmp(Name, "bxfreader") == 0) return RunBXFReaderTests();
+        if (std::strcmp(Name, "flver") == 0) return RunFLVERTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
         if (std::strcmp(Name, "tpf") == 0) return RunTPFTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 100);
         if (std::strcmp(Name, "paramdefxml") == 0) return RunPARAMDEFXmlTests();
         if (std::strcmp(Name, "fmg") == 0) return RunFMGTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 30);
@@ -57,7 +59,7 @@ namespace {
         }
         std::fprintf(
           stderr,
-          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, tpf [max files], bxfreader, fmg [max files], binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
+          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, tpf [max files], bxfreader, flver [max files], fmg [max files], binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
           Name);
         return 1;
     }
@@ -76,7 +78,7 @@ int main(int Argc, char** Argv) {
         }
 
         int Failed = 0;
-        for (const char* Name : {"binary", "bhd5", "fmg", "param", "paramdef", "paramdefxml", "paramlayout", "paramdefrepo", "paramdex", "tpf", "bxfreader", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
+        for (const char* Name : {"binary", "bhd5", "fmg", "param", "paramdef", "paramdefxml", "paramlayout", "paramdefrepo", "paramdex", "tpf", "bxfreader", "flver", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
             const int Result = Run(Name, Argc, Argv);
             if (Result != 0 && Result != TestSkipped) { ++Failed; }
         }

@@ -13,6 +13,7 @@ add_executable(Testsuite
         ParamdexTests.cpp
         TPFTests.cpp
         BXFReaderTests.cpp
+        FLVERTests.cpp
         BinderFileTests.cpp
         OodleTests.cpp
         RealFileTests.cpp
@@ -40,6 +41,7 @@ souls_add_test(ParamDefRepository paramdefrepo)
 souls_add_test(Paramdex paramdex)
 souls_add_test(TPF tpf 100)
 souls_add_test(BXFReader bxfreader)
+souls_add_test(FLVER flver 40)
 souls_add_test(Oodle oodle)
 souls_add_test(SoulsFile soulsfile)
 souls_add_test(Regulation regulation)
@@ -47,5 +49,5 @@ souls_add_test(BinderFiles binderfiles 40)
 souls_add_test(RealFiles realfiles 25)
 
 # These need the Oodle DLL and/or an unpacked game install.
-set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader Oodle SoulsFile Regulation BinderFiles RealFiles PROPERTIES LABELS "integration")
+set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader FLVER Oodle SoulsFile Regulation BinderFiles RealFiles PROPERTIES LABELS "integration")
 set_tests_properties(RealFiles PROPERTIES TIMEOUT 1200)
