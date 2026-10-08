@@ -239,3 +239,15 @@ namespace Souls {
         DataWriter.Finish();
     }
 }  // namespace Souls
+
+#include "BXFHeaders.hpp"
+
+namespace Souls::BXFHeaders {
+    void ReadBDF4(BinaryReader& Reader) {
+        ReadBDFHeader(Reader);
+    }
+
+    std::vector<BinderFileHeader> ReadBHF4(BXF4& Bxf, BinaryReader& Reader) {
+        return ReadBHFHeader(Bxf, Reader);
+    }
+}  // namespace Souls::BXFHeaders

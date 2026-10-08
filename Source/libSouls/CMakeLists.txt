@@ -86,6 +86,9 @@ add_library(Souls SHARED
         Binders/BXF3.hpp
         Binders/BXF4.cpp
         Binders/BXF4.hpp
+        Binders/BXFHeaders.hpp
+        Binders/BXFReader.cpp
+        Binders/BXFReader.hpp
         Binders/Regulation.cpp
         Binders/Regulation.hpp
 )

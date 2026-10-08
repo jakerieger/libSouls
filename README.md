@@ -1,4 +1,10 @@
-# libSouls
+<p align="center">
+  <img src="Docs/res/banner.png"/>
+</p>
+
+<p align="center">
+<a href="#examples">Examples</a> | <a href="#building">Building</a> | <a href="#license">License</a> 
+</p>
 
 **libSouls** is a C++ library for working with and modifying FromSoftware's Souls games (Dark Souls, ELDEN RING, Sekiro,
 etc.). It is partially a port of the renowned [SoulsFormats](https://github.com/JKAnderson/SoulsFormats) C# library with
@@ -57,6 +63,10 @@ entirety to C++ and move on to supporting other functionality from there.
 - [x] **BND4** Binder (see [BND4.hpp](Source/libSouls/Binders/BND4.hpp))
 - [x] **BXF3** Binder (see [BXF3.hpp](Source/libSouls/Binders/BXF3.hpp))
 - [x] **BXF4** Binder (see [BXF4.hpp](Source/libSouls/Binders/BXF4.hpp))
+
+## Examples
+
+todo
 
 ## Building
 
