@@ -176,10 +176,10 @@ namespace Souls {
     out.append("    }\n")
     out.append("    // The type number of the event data's struct.")
     out.append("    inline TAE3EventType TAE3EventTypeOf(const TAE3EventData& Data) {")
-    out.append("        return std::visit([](const auto& Value) { return std::decay_t<decltype(Value)>::Type; }, Data);")
+    out.append("        return std::visit<TAE3EventType>([](const auto& Value) { return std::decay_t<decltype(Value)>::Type; }, Data);")
     out.append("    }\n")
     out.append("    inline void WriteTAE3EventData(const TAE3EventData& Data, BinaryWriter& Writer) {")
-    out.append("        std::visit([&](const auto& Value) { Value.Write(Writer); }, Data);")
+    out.append("        std::visit<void>([&](const auto& Value) { Value.Write(Writer); }, Data);")
     out.append("    }\n")
     out.append("}  // namespace Souls")
 

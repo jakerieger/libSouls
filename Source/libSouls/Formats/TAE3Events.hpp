@@ -2766,11 +2766,11 @@ namespace Souls {
 
     // The type number of the event data's struct.
     inline TAE3EventType TAE3EventTypeOf(const TAE3EventData& Data) {
-        return std::visit([](const auto& Value) { return std::decay_t<decltype(Value)>::Type; }, Data);
+        return std::visit<TAE3EventType>([](const auto& Value) { return std::decay_t<decltype(Value)>::Type; }, Data);
     }
 
     inline void WriteTAE3EventData(const TAE3EventData& Data, BinaryWriter& Writer) {
-        std::visit([&](const auto& Value) { Value.Write(Writer); }, Data);
+        std::visit<void>([&](const auto& Value) { Value.Write(Writer); }, Data);
     }
 
 }  // namespace Souls
