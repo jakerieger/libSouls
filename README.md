@@ -68,9 +68,17 @@ what gets implemented will largely be determined by community demand and my own 
 The final stage is continuing to improve API stability, fix bugs, and support more features. libSouls version 1.0 will
 be the point at which this stage is entered, and where it will remain for the rest of its development lifecycle.
 
-## Examples
+### Missing / Not Planned
 
-todo
+Everything listed here is open for contributions but is not something I plan on adding to libSouls myself.
+
+- GCC or Clang support
+- Static linking
+
+## Documentation
+
+- [Quickstart](Docs/Quickstart.md): link the library, learn the API shape, and write a first program.
+- [Examples](Docs/Examples.md): recipes for archives, text, params, textures, maps, models and compression.
 
 ## Building
 

@@ -64,7 +64,9 @@ add_library(Souls SHARED
 
 target_link_libraries(Souls PRIVATE zlibstatic libzstd_static pugixml bcrypt)
 # zconf.h is generated into zlib's build dir, zlib.h lives in its source dir.
-target_include_directories(Souls PRIVATE ${CMAKE_SOURCE_DIR}/Source ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} ${zstd_SOURCE_DIR}/lib)
+# Headers are included as <libSouls/...>, relative to the Source folder; consumers get that path too.
+target_include_directories(Souls PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(Souls PRIVATE ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} ${zstd_SOURCE_DIR}/lib)
 
 # TAE3 instantiates a template per event type, which needs more object sections than MSVC's default allows.
 if (MSVC)

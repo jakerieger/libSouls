@@ -27,7 +27,6 @@ if(MSVC)
     # TAE3Events.hpp holds a huge variant of event types.
     target_compile_options(Testsuite PRIVATE /bigobj)
 endif()
-target_include_directories(Testsuite PRIVATE ${CMAKE_SOURCE_DIR}/Source)
 
 # One CTest entry per suite. Exit code 77 means "skipped" (no Oodle DLL / no game install).
 function(souls_add_test Name Suite)
