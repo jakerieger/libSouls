@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-<a href="#examples">Examples</a> | <a href="#building">Building</a> | <a href="#license">License</a> 
+<a href="#documentation">Documentation</a> | <a href="#building">Building</a> | <a href="#contributing">Contributing</a> 
 </p>
 
 **libSouls** is a C++ library for working with and modifying FromSoftware's Souls games (Dark Souls, ELDEN RING, Sekiro,
