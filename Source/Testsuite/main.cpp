@@ -33,6 +33,7 @@ int RunOodleTests();
 int RunSoulsFileTests();
 int RunRealFileTests(size_t MaxFiles);
 int RunSyntheticFormatTests();
+int RunCApiTests();
 
 namespace {
     int Run(const char* Name, int Argc, char** Argv) {
@@ -59,6 +60,7 @@ namespace {
         }
         if (std::strcmp(Name, "regulation") == 0) return RunRegulationTests();
         if (std::strcmp(Name, "synthetic") == 0) return RunSyntheticFormatTests();
+        if (std::strcmp(Name, "capi") == 0) return RunCApiTests();
         if (std::strcmp(Name, "oodle") == 0) return RunOodleTests();
         if (std::strcmp(Name, "soulsfile") == 0) return RunSoulsFileTests();
         if (std::strcmp(Name, "realfiles") == 0) {

@@ -36,7 +36,8 @@ FetchContent_MakeAvailable(pugixml)
 # Formats and binders are picked up automatically; re-run CMake after adding a file.
 file(GLOB_RECURSE SOULS_FORMAT_SOURCES CONFIGURE_DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/Formats/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Formats/*.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/CApi/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/CApi/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/CApi/*.h)
 
 add_library(Souls SHARED
         Souls.hpp

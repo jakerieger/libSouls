@@ -79,6 +79,7 @@ Everything listed here is open for contributions but is not something I plan on 
 
 - [Quickstart](Docs/Quickstart.md): link the library, learn the API shape, and write a first program.
 - [Examples](Docs/Examples.md): recipes for archives, text, params, textures, maps, models and compression.
+- [C API](Docs/CApi.md): the flat C interface for other languages, with C and Python examples.
 
 ## Building
 

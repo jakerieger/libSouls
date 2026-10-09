@@ -342,7 +342,7 @@ namespace {
         }
         std::printf("\n");
         Failures += Failed;
-        CHECK(Files > 0);
+        if (Files == 0) std::printf("  (no unpacked files for %s; skipped)\n", Label);
     }
 }  // namespace
 

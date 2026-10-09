@@ -212,11 +212,11 @@ namespace {
         Mqb.BigEndian         = BigEndian;
         Mqb.Name              = "TestCutscene";
         Mqb.Framerate         = 30.f;
-        Mqb.ResourceDirectory = "N:\Resources\\";
+        Mqb.ResourceDirectory = "N:\\Resources\\";
 
         MQB::Resource Res;
         Res.Name = "Camera";
-        Res.Path = "cut0010\camera.sibcam";
+        Res.Path = "cut0010\\camera.sibcam";
         MQB::CustomData Flag;
         Flag.Name  = "Enabled";
         Flag.Type  = MQB::CustomData::DataType::Bool;
@@ -283,7 +283,7 @@ namespace {
         CHECK(Read.Version == Version);
         CHECK(Read.Name == "TestCutscene");
         CHECK(Read.Resources.size() == 2 && Read.Resources[0].CustomData.size() == 3);
-        CHECK(Read.Resources[0].Path == "cut0010\camera.sibcam" && !Read.Resources[1].Path);
+        CHECK(Read.Resources[0].Path == "cut0010\\camera.sibcam" && !Read.Resources[1].Path);
         CHECK(Read.Cuts.size() == 1 && Read.Cuts[0].Timelines.size() == 1 && Read.Cuts[0].Timelines[0].Dispositions.size() == 1);
         CHECK(Read.Cuts[0].Timelines[0].Dispositions[0].CustomData[0].Sequences.size() == 1);
         CHECK(Read.Write() == Bytes);

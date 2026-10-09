@@ -16,6 +16,8 @@ add_executable(Testsuite
         FLVERTests.cpp
         FormatScanTests.cpp
         SyntheticFormatTests.cpp
+        CApiTests.cpp
+        CApiSmoke.c
         BinderFileTests.cpp
         OodleTests.cpp
         RealFileTests.cpp
@@ -49,6 +51,7 @@ souls_add_test(BXFReader bxfreader)
 souls_add_test(FLVER flver 40)
 souls_add_test(Formats formats all 30)
 souls_add_test(Synthetic synthetic)
+souls_add_test(CApi capi)
 souls_add_test(Oodle oodle)
 souls_add_test(SoulsFile soulsfile)
 souls_add_test(Regulation regulation)

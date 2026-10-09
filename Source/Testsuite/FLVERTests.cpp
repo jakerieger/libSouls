@@ -543,7 +543,8 @@ int RunFLVERTests(size_t MaxFiles) {
         ScanBinders<BND4>(Root / "parts", {".partsbnd.dcx"}, MaxFiles, Totals);
         ScanBinders<BND4>(Root / "asset", {".geombnd.dcx"}, MaxFiles, Totals);
         Report("Elden Ring", Totals);
-        CHECK(Totals.Models > 0);
+        // Only unpacked installs (UXM/Nuxe) have loose model files; a vanilla install has none to scan.
+        if (Totals.Models == 0) std::printf("  (no unpacked Elden Ring models; skipped)\n");
     }
 
     std::printf(Failures == 0 ? "FLVER tests passed\n" : "FLVER tests: %d failure(s)\n", Failures);
