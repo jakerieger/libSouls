@@ -117,6 +117,8 @@ namespace Souls {
         void WriteUTF16(std::u16string_view Value, bool NullTerminate = true);
         // Exactly Length bytes: Value truncated or zero-padded as needed. No terminator is guaranteed.
         void WriteFixedString(std::string_view Value, size_t Length);
+        // UTF-8 text written as UTF-16 in the current byte order, optionally null-terminated.
+        void WriteUTF16Text(std::string_view Utf8Value, bool NullTerminate = true);
         // UTF-8 text encoded as Shift-JIS, optionally null-terminated.
         void WriteShiftJIS(std::string_view Utf8Value, bool NullTerminate = true);
         // Fixed-size field of Size bytes: UTF-8 text as Shift-JIS, then a null terminator if it fits, then PadByte
@@ -147,6 +149,9 @@ namespace Souls {
         void ReserveVarint(const std::string& Name);
         void FillVarint(const std::string& Name, int64_t Value);
 #pragma endregion
+
+        // In-memory mode only: a copy of bytes already written (including filled reservations).
+        std::vector<uint8_t> ReadBack(int64_t Position, size_t Count);
 
         // Flushes the stream and verifies every reservation was filled. Throws otherwise.
         void Finish();

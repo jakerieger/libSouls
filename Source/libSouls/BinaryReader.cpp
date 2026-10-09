@@ -307,3 +307,37 @@ namespace Souls {
                               ", got " + Actual);
     }
 }  // namespace Souls
+
+namespace Souls {
+    std::string BinaryReader::ReadUTF16Text() {
+        return Text::UTF16ToUTF8(ReadUTF16());
+    }
+
+    std::string BinaryReader::GetUTF16Text(int64_t Offset) {
+        StepIn(Offset);
+        std::string Value = ReadUTF16Text();
+        StepOut();
+        return Value;
+    }
+
+    std::string BinaryReader::GetShiftJIS(int64_t Offset) {
+        StepIn(Offset);
+        std::string Value = ReadShiftJIS();
+        StepOut();
+        return Value;
+    }
+
+    std::string BinaryReader::GetCString(int64_t Offset) {
+        StepIn(Offset);
+        std::string Value = ReadCString();
+        StepOut();
+        return Value;
+    }
+
+    std::string BinaryReader::GetASCII(int64_t Offset, size_t Count) {
+        StepIn(Offset);
+        std::string Value = ReadString(Count);
+        StepOut();
+        return Value;
+    }
+}  // namespace Souls

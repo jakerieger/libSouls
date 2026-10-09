@@ -7,6 +7,7 @@
 #include <libSouls/Souls.hpp>
 #include <libSouls/BinaryReader.hpp>
 #include <libSouls/BinaryWriter.hpp>
+#include <libSouls/Color.hpp>
 #include <libSouls/Matrix.hpp>
 #include <libSouls/Vector.hpp>
 
@@ -20,12 +21,6 @@
 
 // The pieces shared by the FLVER (model) versions: bones, dummy points, and the vertex data and its layouts.
 namespace Souls::FLVER {
-
-    // An 8-bit-per-channel color.
-    struct Color {
-        uint8_t A = 0, R = 0, G = 0, B = 0;
-        bool operator==(const Color&) const = default;
-    };
 
     // A vertex color, with each channel as 0 to 1.
     struct SOULS_API VertexColor {

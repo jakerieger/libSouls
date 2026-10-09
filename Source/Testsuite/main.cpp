@@ -11,6 +11,7 @@
 #include <cstring>
 #include <exception>
 #include <initializer_list>
+#include <string>
 
 int RunBinaryTests();
 int RunBHD5Tests();
@@ -23,6 +24,7 @@ int RunParamdexTests();
 int RunTPFTests(size_t MaxFiles);
 int RunBXFReaderTests();
 int RunFLVERTests(size_t MaxFiles);
+int RunFormatScanTests(const std::string& Filter, size_t Max);
 int RunPARAMDEFXmlTests();
 int RunBinderTests();
 int RunBinderFileTests(size_t MaxFiles);
@@ -30,6 +32,7 @@ int RunRegulationTests();
 int RunOodleTests();
 int RunSoulsFileTests();
 int RunRealFileTests(size_t MaxFiles);
+int RunSyntheticFormatTests();
 
 namespace {
     int Run(const char* Name, int Argc, char** Argv) {
@@ -42,6 +45,10 @@ namespace {
         if (std::strcmp(Name, "paramdex") == 0) return RunParamdexTests();
         if (std::strcmp(Name, "bxfreader") == 0) return RunBXFReaderTests();
         if (std::strcmp(Name, "flver") == 0) return RunFLVERTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
+        if (std::strcmp(Name, "formats") == 0) {
+            // formats [FormatName] [max files per source]
+            return RunFormatScanTests(Argc > 2 ? Argv[2] : "", Argc > 3 ? static_cast<size_t>(std::strtoull(Argv[3], nullptr, 10)) : 30);
+        }
         if (std::strcmp(Name, "tpf") == 0) return RunTPFTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 100);
         if (std::strcmp(Name, "paramdefxml") == 0) return RunPARAMDEFXmlTests();
         if (std::strcmp(Name, "fmg") == 0) return RunFMGTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 30);
@@ -51,6 +58,7 @@ namespace {
             return RunBinderFileTests(MaxFiles > 0 ? MaxFiles : 40);
         }
         if (std::strcmp(Name, "regulation") == 0) return RunRegulationTests();
+        if (std::strcmp(Name, "synthetic") == 0) return RunSyntheticFormatTests();
         if (std::strcmp(Name, "oodle") == 0) return RunOodleTests();
         if (std::strcmp(Name, "soulsfile") == 0) return RunSoulsFileTests();
         if (std::strcmp(Name, "realfiles") == 0) {
@@ -59,7 +67,7 @@ namespace {
         }
         std::fprintf(
           stderr,
-          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, tpf [max files], bxfreader, flver [max files], fmg [max files], binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
+          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, tpf [max files], bxfreader, flver [max files], formats [format] [max files], fmg [max files], binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
           Name);
         return 1;
     }
@@ -78,7 +86,7 @@ int main(int Argc, char** Argv) {
         }
 
         int Failed = 0;
-        for (const char* Name : {"binary", "bhd5", "fmg", "param", "paramdef", "paramdefxml", "paramlayout", "paramdefrepo", "paramdex", "tpf", "bxfreader", "flver", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
+        for (const char* Name : {"binary", "bhd5", "fmg", "param", "paramdef", "paramdefxml", "paramlayout", "paramdefrepo", "paramdex", "tpf", "bxfreader", "flver", "formats", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
             const int Result = Run(Name, Argc, Argv);
             if (Result != 0 && Result != TestSkipped) { ++Failed; }
         }

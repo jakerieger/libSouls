@@ -226,6 +226,18 @@ namespace Souls {
         }
     }
 
+    std::vector<uint8_t> BinaryWriter::ReadBack(int64_t Position, size_t Count) {
+        if (!IsMemory) {
+            throw BinaryException("ReadBack is only available on in-memory writers");
+        }
+        Stream->flush();
+        const std::string Data = static_cast<std::ostringstream*>(Owned.get())->str();
+        if (Position < 0 || static_cast<size_t>(Position) + Count > Data.size()) {
+            throw BinaryException("ReadBack range is outside the written data");
+        }
+        return {Data.begin() + Position, Data.begin() + Position + static_cast<int64_t>(Count)};
+    }
+
     std::vector<uint8_t> BinaryWriter::ToBytes() {
         if (!IsMemory) {
             throw BinaryException("ToBytes is only available on in-memory writers");
@@ -244,5 +256,11 @@ namespace Souls {
             Stream->clear();
             throw BinaryException("Failed to write " + std::to_string(Size) + " bytes");
         }
+    }
+}  // namespace Souls
+
+namespace Souls {
+    void BinaryWriter::WriteUTF16Text(std::string_view Utf8Value, bool NullTerminate) {
+        WriteUTF16(Text::UTF8ToUTF16(Utf8Value), NullTerminate);
     }
 }  // namespace Souls

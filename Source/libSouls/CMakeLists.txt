@@ -33,6 +33,11 @@ FetchContent_Declare(pugixml
 )
 FetchContent_MakeAvailable(pugixml)
 
+# Formats and binders are picked up automatically; re-run CMake after adding a file.
+file(GLOB_RECURSE SOULS_FORMAT_SOURCES CONFIGURE_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/Formats/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Formats/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Binders/*.hpp)
+
 add_library(Souls SHARED
         Souls.hpp
         Endian.hpp
@@ -51,56 +56,20 @@ add_library(Souls SHARED
         SoulsFile.hpp
         Crypto.cpp
         Crypto.hpp
-        Formats/BHD5.cpp
-        Formats/BHD5.hpp
-        Formats/DCX.cpp
-        Formats/DCX.hpp
-        Formats/FMG.cpp
-        Formats/FMG.hpp
-        Formats/PARAM.cpp
-        Formats/PARAM.hpp
-        Formats/PARAMDEF.cpp
-        Formats/PARAMDEF.hpp
-        Formats/PARAMDEFXml.cpp
-        Formats/ParamLayout.cpp
-        Formats/ParamLayout.hpp
-        Formats/ParamDefRepository.cpp
-        Formats/ParamDefRepository.hpp
-        Formats/FLVER/FlverCommon.cpp
-        Formats/FLVER/FlverCommon.hpp
-        Formats/FLVER/FLVER2.cpp
-        Formats/FLVER/FLVER2.hpp
         Matrix.hpp
-        Formats/DDS.cpp
-        Formats/DDS.hpp
-        Formats/TPF.cpp
-        Formats/TPF.hpp
-        Binders/Binder.cpp
-        Binders/Binder.hpp
-        Binders/BinderFile.hpp
-        Binders/BinderFileHeader.cpp
-        Binders/BinderFileHeader.hpp
-        Binders/BinderHashTable.cpp
-        Binders/BinderHashTable.hpp
-        Binders/IBinder.hpp
-        Binders/BND3.cpp
-        Binders/BND3.hpp
-        Binders/BND4.cpp
-        Binders/BND4.hpp
-        Binders/BXF3.cpp
-        Binders/BXF3.hpp
-        Binders/BXF4.cpp
-        Binders/BXF4.hpp
-        Binders/BXFHeaders.hpp
-        Binders/BXFReader.cpp
-        Binders/BXFReader.hpp
-        Binders/Regulation.cpp
-        Binders/Regulation.hpp
+        Color.hpp
+        ValuePtr.hpp
+        ${SOULS_FORMAT_SOURCES}
 )
 
 target_link_libraries(Souls PRIVATE zlibstatic libzstd_static pugixml bcrypt)
 # zconf.h is generated into zlib's build dir, zlib.h lives in its source dir.
 target_include_directories(Souls PRIVATE ${CMAKE_SOURCE_DIR}/Source ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} ${zstd_SOURCE_DIR}/lib)
+
+# TAE3 instantiates a template per event type, which needs more object sections than MSVC's default allows.
+if (MSVC)
+    target_compile_options(Souls PRIVATE /bigobj)
+endif ()
 
 target_compile_definitions(Souls PRIVATE
         LIBSOULS_EXPORTS

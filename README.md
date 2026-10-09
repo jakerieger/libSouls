@@ -37,32 +37,36 @@ is a side benefit rather than the goal, and any claims about it will be backed b
 
 #### The format knowledge in SoulsFormats took years of community work to build. libSouls aims to make that work available in more places.
 
-## Current State
+## Roadmap
 
-**libSouls** is in **VERY** early development (read: unusable). The current trajectory is porting the SoulsFormat
-library in its
-entirety to C++ and move on to supporting other functionality from there.
+This is the planned development roadmap for libSouls:
 
-### SoulsFormats Port Progress
+### ✔️ Porting SoulsFormats
 
-> *Verified via end-to-end testing (see [Testsuite](Source/Testsuite)).*
+libSouls isn't aiming for 100% coverage of SoulsFormats out of the box, but instead to port the most relevant and
+commonly used
+portions first before eventually circling back and filling in the gaps (console-only and legacy formats, ELDEN RING and
+Sekiro variants). This stage is largely complete and most actions
+mod developers desire are possible with libSouls right now.
 
-- [x] Oodle26 DLL bindings (see [Oodle26.hpp](Source/libSouls/Oodle26.hpp))
-- [x] **DCX** Format (see [DCX.hpp](Source/libSouls/Formats/DCX.hpp))
-- [ ] **DRB** Format
-- [ ] **EMEVD** Format
-- [ ] **FFXDLSE** Format
-- [ ] **FLVER** Format
-- [ ] **MQB** Format
-- [ ] **MSB** Format
-- [x] **PARAM** Format (see [PARAM.hpp](Source/libSouls/Formats/PARAM.hpp))
-- [ ] **TAE3** Format
-- [x] **TPF** Format (see [TPF.hpp](Source/libSouls/Formats/TPF.hpp))
-- [x] **BHD5** Format (see [BHD5.hpp](Source/libSouls/Formats/BHD5.hpp))
-- [x] **BND3** Binder (see [BND3.hpp](Source/libSouls/Binders/BND3.hpp))
-- [x] **BND4** Binder (see [BND4.hpp](Source/libSouls/Binders/BND4.hpp))
-- [x] **BXF3** Binder (see [BXF3.hpp](Source/libSouls/Binders/BXF3.hpp))
-- [x] **BXF4** Binder (see [BXF4.hpp](Source/libSouls/Binders/BXF4.hpp))
+### 🚧 C API
+
+This is the stage that brings a stable C API for creating other language bindings. Work on this has begun, but libSouls
+today is a C++-only library.
+
+### 🚧 Gap-filling SoulsFormats
+
+Fill in missing functionality and formats from SoulsFormats for complete coverage of the original library.
+
+### 🚧 Additional Features
+
+Once the C API is in place, work on additional features can begin. Nothing concrete is planned for this stage yet and
+what gets implemented will largely be determined by community demand and my own personal vision for the project.
+
+### 🚧 Maintainence and Stability Improvements
+
+The final stage is continuing to improve API stability, fix bugs, and support more features. libSouls version 1.0 will
+be the point at which this stage is entered, and where it will remain for the rest of its development lifecycle.
 
 ## Examples
 

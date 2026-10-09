@@ -14,6 +14,8 @@ add_executable(Testsuite
         TPFTests.cpp
         BXFReaderTests.cpp
         FLVERTests.cpp
+        FormatScanTests.cpp
+        SyntheticFormatTests.cpp
         BinderFileTests.cpp
         OodleTests.cpp
         RealFileTests.cpp
@@ -21,6 +23,10 @@ add_executable(Testsuite
 )
 
 target_link_libraries(Testsuite PRIVATE Souls)
+if(MSVC)
+    # TAE3Events.hpp holds a huge variant of event types.
+    target_compile_options(Testsuite PRIVATE /bigobj)
+endif()
 target_include_directories(Testsuite PRIVATE ${CMAKE_SOURCE_DIR}/Source)
 
 # One CTest entry per suite. Exit code 77 means "skipped" (no Oodle DLL / no game install).
@@ -42,6 +48,8 @@ souls_add_test(Paramdex paramdex)
 souls_add_test(TPF tpf 100)
 souls_add_test(BXFReader bxfreader)
 souls_add_test(FLVER flver 40)
+souls_add_test(Formats formats all 30)
+souls_add_test(Synthetic synthetic)
 souls_add_test(Oodle oodle)
 souls_add_test(SoulsFile soulsfile)
 souls_add_test(Regulation regulation)
@@ -49,5 +57,5 @@ souls_add_test(BinderFiles binderfiles 40)
 souls_add_test(RealFiles realfiles 25)
 
 # These need the Oodle DLL and/or an unpacked game install.
-set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader FLVER Oodle SoulsFile Regulation BinderFiles RealFiles PROPERTIES LABELS "integration")
+set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader FLVER Formats Oodle SoulsFile Regulation BinderFiles RealFiles PROPERTIES LABELS "integration")
 set_tests_properties(RealFiles PROPERTIES TIMEOUT 1200)

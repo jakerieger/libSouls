@@ -154,6 +154,15 @@ namespace Souls {
 #pragma endregion
 
 #pragma region Vectors
+        // Convenience readers for text at an absolute position (position is unchanged afterwards). UTF-16 text and
+        // Shift-JIS text are returned as UTF-8.
+        std::string GetUTF16Text(int64_t Offset);
+        std::string GetShiftJIS(int64_t Offset);
+        std::string GetASCII(int64_t Offset, size_t Count);
+        // Null-terminated raw bytes (ASCII) at an absolute position.
+        std::string GetCString(int64_t Offset);
+        // Null-terminated UTF-16 at the current position, returned as UTF-8.
+        std::string ReadUTF16Text();
         Vector2 ReadVector2();
         Vector3 ReadVector3();
         Vector4 ReadVector4();
