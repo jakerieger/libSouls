@@ -84,9 +84,9 @@ Everything listed here is open for contributions but is not something I plan on 
 
 Before building libSouls, ensure your local development environment meets the following requirements:
 
-- MSVC with Windows 11 SDK (*Linux not supported*)
+- MSVC with Windows 11 SDK (*Linux not supported, C++20 required*)
 - CMake (*>= v3.26*)
-- Internet connection (*required to fetch zlib dependency on first configure*)
+- Internet connection (*required for FetchContent on first configure*)
 - Ninja Build (*not required but HIGHLY recommended*)
 
 > [!IMPORTANT]
