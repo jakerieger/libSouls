@@ -41,6 +41,9 @@ namespace Souls {
             return Items;
         }
 
+        // The marker of a section 3 block that has no value.
+        constexpr int32_t kAbsentBlock = 0x100FFFF;
+
         Section3 ReadSection3(BinaryReader& R) {
             Section3 S;
             R.Assert<int16_t>(11);
@@ -49,20 +52,25 @@ namespace Souls {
             R.Assert<int32_t>(0);
             S.Unk08 = R.ReadInt32();
             R.Assert<int32_t>(0);
-            S.Unk10 = R.Assert<int32_t>(0x100FFFC, 0x100FFFD);
-            R.Assert<int32_t>(0);
-            R.Assert<int32_t>(1);
-            R.Assert<int32_t>(0);
-            const int32_t Offset1 = R.ReadInt32();
-            R.AssertPattern(20, 0);
-            S.Unk38 = R.Assert<int32_t>(0x100FFFC, 0x100FFFD);
-            R.Assert<int32_t>(0);
-            R.Assert<int32_t>(1);
-            R.Assert<int32_t>(0);
-            const int32_t Offset2 = R.ReadInt32();
-            R.AssertPattern(20, 0);
-            S.Section11Data1 = R.ReadAt<int32_t>(Offset1);
-            S.Section11Data2 = R.ReadAt<int32_t>(Offset2);
+            // Each of the two blocks either points at a value in section 11, or is marked absent (0x100FFFF) with
+            // zeros in its place.
+            const auto ReadBlock = [&R](int32_t& Marker, int32_t& Data) {
+                Marker = R.Assert<int32_t>(0x100FFFC, 0x100FFFD, 0x100FFFE, 0x100FFFF);
+                R.Assert<int32_t>(0);
+                const bool Absent = Marker == kAbsentBlock;
+                R.Assert<int32_t>(Absent ? 0 : 1);
+                R.Assert<int32_t>(0);
+                const int32_t Offset = R.ReadInt32();
+                R.AssertPattern(20, 0);
+                Data = 0;
+                if (!Absent) {
+                    Data = R.ReadAt<int32_t>(Offset);
+                } else if (Offset != 0) {
+                    throw BinaryException("An absent FXR3 section 3 block must not point anywhere.");
+                }
+            };
+            ReadBlock(S.Unk10, S.Section11Data1);
+            ReadBlock(S.Unk38, S.Section11Data2);
             return S;
         }
 
@@ -223,13 +231,13 @@ namespace Souls {
             W.WriteInt32(0);
             W.WriteInt32(S.Unk10);
             W.WriteInt32(0);
-            W.WriteInt32(1);
+            W.WriteInt32(S.Unk10 == kAbsentBlock ? 0 : 1);
             W.WriteInt32(0);
             W.Reserve<int32_t>(Idx("Section3Section11Offset1", Index));
             W.Pad(20);
             W.WriteInt32(S.Unk38);
             W.WriteInt32(0);
-            W.WriteInt32(1);
+            W.WriteInt32(S.Unk38 == kAbsentBlock ? 0 : 1);
             W.WriteInt32(0);
             W.Reserve<int32_t>(Idx("Section3Section11Offset2", Index));
             W.Pad(20);
@@ -561,11 +569,20 @@ namespace Souls {
         W.Fill<int32_t>("Section11Offset", Here());
         int32_t Section11Count = 0;
         for (size_t I = 0; I < Section3s.size(); ++I) {
-            W.Fill<int32_t>(Idx("Section3Section11Offset1", static_cast<int64_t>(I)), Here());
-            W.WriteInt32(Section3s[I]->Section11Data1);
-            W.Fill<int32_t>(Idx("Section3Section11Offset2", static_cast<int64_t>(I)), Here());
-            W.WriteInt32(Section3s[I]->Section11Data2);
-            Section11Count += 2;
+            if (Section3s[I]->Unk10 == kAbsentBlock) {
+                W.Fill<int32_t>(Idx("Section3Section11Offset1", static_cast<int64_t>(I)), 0);
+            } else {
+                W.Fill<int32_t>(Idx("Section3Section11Offset1", static_cast<int64_t>(I)), Here());
+                W.WriteInt32(Section3s[I]->Section11Data1);
+                ++Section11Count;
+            }
+            if (Section3s[I]->Unk38 == kAbsentBlock) {
+                W.Fill<int32_t>(Idx("Section3Section11Offset2", static_cast<int64_t>(I)), 0);
+            } else {
+                W.Fill<int32_t>(Idx("Section3Section11Offset2", static_cast<int64_t>(I)), Here());
+                W.WriteInt32(Section3s[I]->Section11Data2);
+                ++Section11Count;
+            }
         }
         for (size_t I = 0; I < Section6s.size(); ++I) {
             const FFXDrawEntityHost& H = *Section6s[I];

@@ -12,6 +12,8 @@
 #include <libSouls/Binders/BND3.hpp>
 #include <libSouls/Crypto.hpp>
 #include <libSouls/Formats/BHD5.hpp>
+#include <libSouls/Oodle26.hpp>
+#include "ScanCanonical.hpp"
 #include <libSouls/Binders/BND4.hpp>
 #include <libSouls/Formats/ACB.hpp>
 #include <libSouls/Formats/BTAB.hpp>
@@ -178,6 +180,9 @@ namespace {
         bool HasIs    = true;
         // Recognizes the format among unnamed files from the archives; defaults to Is().
         std::function<bool(const std::vector<uint8_t>&)> Sniff;
+        // For formats whose files can be laid out differently without changing meaning (shared strings, leftover
+        // bytes): a text form of what the file says. Two files with equal text are equivalent even if the bytes differ.
+        std::function<std::string(const std::vector<uint8_t>&)> Canonical;
     };
 
     // Returns the number of failures.
@@ -188,7 +193,8 @@ namespace {
             return 0;
         }
 
-        int Read = 0, Identical = 0, Failed = 0;
+        int Read = 0, Identical = 0, Failed = 0, Equivalent = 0;
+        int Dumped = 0;
         std::vector<std::string> Notes;
         for (const Sample& S : Samples) {
             const std::string Short = fs::path(S.Origin.substr(0, S.Origin.find('|'))).filename().string() +
@@ -211,15 +217,24 @@ namespace {
                     ++Identical;
                     continue;
                 }
+                if (const char* Dump = std::getenv("SOULS_DUMP"); Dump && Dumped < (std::getenv("SOULS_DUMP_COUNT") ? std::atoi(std::getenv("SOULS_DUMP_COUNT")) : 1)) {
+                    const std::string Tag = Dumped == 0 ? "" : std::to_string(Dumped);
+                    ++Dumped;
+                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_orig" + Tag + ".bin"), std::ios::binary).write(reinterpret_cast<const char*>(S.Bytes.data()), static_cast<std::streamsize>(S.Bytes.size()));
+                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_new" + Tag + ".bin"), std::ios::binary).write(reinterpret_cast<const char*>(Written.data()), static_cast<std::streamsize>(Written.size()));
+                }
+                if (Opt.Canonical) {
+                    if (Opt.Canonical(S.Bytes) != Opt.Canonical(Written)) {
+                        throw std::runtime_error("rewrite changes the meaning of the file");
+                    }
+                    ++Equivalent;
+                    continue;
+                }
                 T Again            = T::Read(Written);
                 Again.Compression  = DCX::Type::None;
                 const auto Written2 = Again.Write();
                 if (Written2 != Written) {
                     throw std::runtime_error("rewrite is not stable");
-                }
-                if (const char* Dump = std::getenv("SOULS_DUMP"); Dump && Notes.size() < 1) {
-                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_orig.bin"), std::ios::binary).write(reinterpret_cast<const char*>(S.Bytes.data()), static_cast<std::streamsize>(S.Bytes.size()));
-                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_new.bin"), std::ios::binary).write(reinterpret_cast<const char*>(Written.data()), static_cast<std::streamsize>(Written.size()));
                 }
                 if (Notes.size() < 3) {
                     size_t At = 0;
@@ -236,7 +251,7 @@ namespace {
                 if (Notes.size() < 20) Notes.push_back(Short + " FAILED: " + E.what());
             }
         }
-        std::printf("[%s] %zu samples: %d read, %d byte-identical, %d failed\n", Label, Samples.size(), Read, Identical, Failed);
+        std::printf("[%s] %zu samples: %d read, %d byte-identical, %d same meaning with another layout, %d failed\n", Label, Samples.size(), Read, Identical, Equivalent, Failed);
         for (const std::string& Note : Notes) std::printf("    %s\n", Note.c_str());
         return Failed;
     }
@@ -273,16 +288,29 @@ namespace {
         struct ArchiveGame {
             const char* Dir;
             const char* Exe;
+            BHD5::Game Format;
         };
+        // SOULS_SCAN_ER=1 also tests every registered format against the packed Elden Ring archives, and
+        // SOULS_SCAN_ER=only does that instead of Dark Souls III and Sekiro. (Off by default: it reads a lot of data.)
+        const char* ScanEr = std::getenv("SOULS_SCAN_ER");
+        const bool ErOnly  = ScanEr && std::string(ScanEr) == "only";
+        std::vector<ArchiveGame> Games;
+        if (!ErOnly) {
+            Games.push_back({"DARK SOULS III/Game", "DarkSoulsIII.exe", BHD5::Game::DarkSouls3});
+            Games.push_back({"Sekiro", "sekiro.exe", BHD5::Game::DarkSouls3});
+        }
+        if (ScanEr) Games.push_back({"ELDEN RING/Game", "eldenring.exe", BHD5::Game::EldenRing});
         std::map<std::string, int> ExtCounts;
         const char* EnvFiles        = std::getenv("SOULS_ARCHIVE_FILES");
         const size_t FilesPerHeader = EnvFiles ? static_cast<size_t>(std::strtoull(EnvFiles, nullptr, 10)) : 3000;
-        for (const ArchiveGame& Game : {ArchiveGame{"DARK SOULS III/Game", "DarkSoulsIII.exe"}, ArchiveGame{"Sekiro", "sekiro.exe"}}) {
+        for (const ArchiveGame& Game : Games) {
             const fs::path Root = Steam / Game.Dir;
             if (!fs::exists(Root / Game.Exe)) continue;
+            const bool IsEr = Game.Format == BHD5::Game::EldenRing;
+            if (IsEr && fs::exists(Root / "oo2core_6_win64.dll")) Oodle26::SetDLLPath(Root / "oo2core_6_win64.dll");
             std::vector<Registration*> Here;
             for (Registration* R : Wanted) {
-                if (WantsGame(R->Where, Game.Dir)) Here.push_back(R);
+                if (IsEr || WantsGame(R->Where, Game.Dir)) Here.push_back(R);
             }
             if (Here.empty()) continue;
 
@@ -325,7 +353,7 @@ namespace {
                 }
 
                 try {
-                    const BHD5 Bhd = BHD5::Read(Header, BHD5::Game::DarkSouls3);
+                    const BHD5 Bhd = BHD5::Read(Header, Game.Format);
                     BinaryReader Bdt(BdtPath);
                     size_t Read = 0, Binders = 0;
                     for (const auto& Bucket : Bhd.Buckets) {
@@ -395,6 +423,9 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
     std::vector<Registration> All;
     const Options Plain;
     const Options NoIs{true, false};
+    const Options MatbinOptions{true, true, nullptr, ScanCanonical::Matbin};
+    const Options EsdOptions{true, true, nullptr, ScanCanonical::Esd};
+    const Options FxrOptions{true, true, nullptr, ScanCanonical::Fxr3};
 
     Register<LUAGNL>(All, "LUAGNL", Scan{{".luagnl"}, {".luabnd"}, {".luagnl"}}, NoIs);
     Register<LUAINFO>(All, "LUAINFO", Scan{{".luainfo"}, {".luabnd"}, {".luainfo"}}, Plain);
@@ -414,9 +445,9 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
     Register<RMB>(All, "RMB", Scan{{".rmb"}, {".rumblebnd"}, {".rmb"}}, NoIs);
     Register<GRASS>(All, "GRASS", Scan{{".grass"}, {}, {".grass"}}, Plain);
     Register<EDGE>(All, "EDGE", Scan{{".edge"}, {}, {".edge"}}, NoIs);
-    Register<MATBIN>(All, "MATBIN", Scan{{".matbin"}, {".matbinbnd"}, {".matbin"}}, Plain);
+    Register<MATBIN>(All, "MATBIN", Scan{{".matbin"}, {".matbinbnd"}, {".matbin"}}, MatbinOptions);
     Register<MTD>(All, "MTD", Scan{{".mtd"}, {".mtdbnd"}, {".mtd"}}, Plain);
-    Register<ESD>(All, "ESD", Scan{{".esd"}, {".talkesdbnd", ".menuesdbnd", ".chresdbnd"}, {".esd"}}, Plain);
+    Register<ESD>(All, "ESD", Scan{{".esd"}, {".talkesdbnd", ".menuesdbnd", ".chresdbnd"}, {".esd"}}, EsdOptions);
     Register<EDD>(All, "EDD", Scan{{".edd"}, {}, {".edd"}}, Options{false, true});
     // Elden Ring changed the GPARAM and NVA layouts; the Elden Ring variants aren't supported yet.
     Register<GPARAM>(All, "GPARAM", Scan{{".gparam", ".fltparam"}, {".gparambnd"}, {".gparam", ".fltparam"}, {"DARK SOULS REMASTERED", "DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
@@ -430,9 +461,9 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
     // Packed games: files come out of the archives (their names aren't known, so unnamed files are sniffed).
     Register<MSBS>(All, "MSBS", Scan{{}, {}, {}, {"Sekiro"}, {}, true}, Plain);
     Register<MSB3>(All, "MSB3", Scan{{}, {}, {}, {"DARK SOULS III/Game"}, {}, true}, Plain);
-    // Sekiro and Elden Ring use newer TAE versions than upstream handles.
-    Register<TAE3>(All, "TAE3", Scan{{}, {}, {".tae"}, {"DARK SOULS III/Game"}, {}, true}, Plain);
-    Register<FXR3>(All, "FXR3", Scan{{}, {}, {".fxr"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
+    // Sekiro and Elden Ring use TAE version 0x1000D, whose events are kept as raw bytes.
+    Register<TAE3>(All, "TAE3", Scan{{}, {}, {".tae"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
+    Register<FXR3>(All, "FXR3", Scan{{}, {}, {".fxr"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, FxrOptions);
 
     std::vector<Registration*> Selected;
     for (Registration& R : All) {
@@ -445,13 +476,14 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
 
     std::vector<Registration*> NeedArchives;
     for (Registration* R : Selected) {
-        if (R->Where.Archives) NeedArchives.push_back(R);
+        if (R->Where.Archives || std::getenv("SOULS_SCAN_ER")) NeedArchives.push_back(R);
     }
     if (!NeedArchives.empty()) CollectFromArchives(NeedArchives, Max);
 
     int Failures = 0;
     for (Registration* R : Selected) {
-        const bool ArchiveOnly = R->Where.Archives && R->Where.Loose.empty() && R->Where.BinderExts.empty();
+        const bool ArchiveOnly = (R->Where.Archives && R->Where.Loose.empty() && R->Where.BinderExts.empty()) ||
+                                 (std::getenv("SOULS_SCAN_ER") && std::string(std::getenv("SOULS_SCAN_ER")) == "only");
         std::vector<Sample> Samples = ArchiveOnly ? std::vector<Sample>() : Collect(R->Where, Max);
         Samples.insert(Samples.end(), std::make_move_iterator(R->ArchiveSamples.begin()), std::make_move_iterator(R->ArchiveSamples.end()));
         Failures += R->Run(Samples);

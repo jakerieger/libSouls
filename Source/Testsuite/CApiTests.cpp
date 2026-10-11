@@ -15,6 +15,16 @@
 #include <vector>
 
 extern "C" int RunCApiSmoke(void);
+int TestCApiMsbSynthetic();
+int TestCApiMsbReal();
+int TestCApiFlverReal();
+int TestCApiArchivesSynthetic();
+int TestCApiArchivesElden();
+int TestCApiEmevdSynthetic();
+int TestCApiEmevdReal();
+int TestCApiTae3();
+int TestCApiTae3Raw();
+int TestCApiParamMetadata();
 
 namespace {
     int Failures = 0;
@@ -198,7 +208,22 @@ int RunCApiTests() {
     TestParamRows();
     const int Er  = TestEldenRing();
     const int Tpf = TestTpf();
+    Failures += TestCApiMsbSynthetic();
+    const int RealMsb = TestCApiMsbReal();
+    if (RealMsb != TestSkipped) Failures += RealMsb;
+    const int RealFlver = TestCApiFlverReal();
+    if (RealFlver != TestSkipped) Failures += RealFlver;
+    Failures += TestCApiArchivesSynthetic();
+    const int RealArchives = TestCApiArchivesElden();
+    if (RealArchives != TestSkipped) Failures += RealArchives;
+    Failures += TestCApiEmevdSynthetic();
+    const int RealEmevd = TestCApiEmevdReal();
+    if (RealEmevd != TestSkipped) Failures += RealEmevd;
+    Failures += TestCApiTae3();
+    Failures += TestCApiTae3Raw();
+    const int Metadata = TestCApiParamMetadata();
+    if (Metadata != TestSkipped) Failures += Metadata;
     std::printf("C API tests: %s\n", Failures ? "FAILED" : "ok");
     if (Failures) return 1;
-    return Er == TestSkipped && Tpf == TestSkipped ? TestSkipped : 0;
+    return Er == TestSkipped && Tpf == TestSkipped && RealMsb == TestSkipped && RealFlver == TestSkipped && RealArchives == TestSkipped && RealEmevd == TestSkipped ? TestSkipped : 0;
 }

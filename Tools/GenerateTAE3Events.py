@@ -158,6 +158,16 @@ namespace Souls {
         for l in write_lines:
             out.append(f"            {l}")
         out.append("        }")
+        out.append("")
+        # Names every field to a visitor, so generic code (such as the C API) can read and write fields by name.
+        out.append("        template<typename V>")
+        out.append("        void Fields(V& F) {")
+        if not fields:
+            out.append("            (void)F;")
+        for cs_type, field in fields:
+            if CPP_TYPES.get(cs_type) is not None:
+                out.append(f'            F("{field}", {field});')
+        out.append("        }")
         out.append("    };\n")
         class_infos.append((name, event_type))
 
@@ -180,6 +190,29 @@ namespace Souls {
     out.append("    }\n")
     out.append("    inline void WriteTAE3EventData(const TAE3EventData& Data, BinaryWriter& Writer) {")
     out.append("        std::visit<void>([&](const auto& Value) { Value.Write(Writer); }, Data);")
+    out.append("    }\n")
+    out.append("    // Every event type with a struct, in the order of the variant.")
+    out.append("    inline const std::vector<TAE3EventType>& AllTAE3EventTypes() {")
+    out.append("        static const std::vector<TAE3EventType> Types = {")
+    out.append(",\n".join(f"            TAE3EventType::{t}" for _, t in class_infos))
+    out.append("        };")
+    out.append("        return Types;")
+    out.append("    }\n")
+    out.append("    // The name of an event type as written in the enum, or nullptr if it has no struct.")
+    out.append("    inline const char* TAE3EventTypeName(TAE3EventType Type) {")
+    out.append("        switch (Type) {")
+    for n, t in class_infos:
+        out.append(f'            case TAE3EventType::{t}: return "{t}";')
+    out.append("            default: return nullptr;")
+    out.append("        }")
+    out.append("    }\n")
+    out.append("    // Event data of the given type with every field at its default; throws for an unsupported type.")
+    out.append("    inline TAE3EventData CreateTAE3EventData(TAE3EventType Type) {")
+    out.append("        switch (Type) {")
+    for n, t in class_infos:
+        out.append(f"            case TAE3EventType::{t}: return TAE3Events::{n}{{}};")
+    out.append("            default: throw BinaryException(\"Unsupported TAE event type \" + std::to_string(static_cast<uint64_t>(Type)));")
+    out.append("        }")
     out.append("    }\n")
     out.append("}  // namespace Souls")
 

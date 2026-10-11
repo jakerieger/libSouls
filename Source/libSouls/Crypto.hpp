@@ -6,6 +6,7 @@
 
 #include "Souls.hpp"
 
+#include <array>
 #include <cstdint>
 #include <span>
 #include <string>
@@ -15,18 +16,27 @@
 // All functions throw BinaryException on bad input or CNG failure.
 namespace Souls::Crypto {
 #pragma region AES
-    // Key must be 32 bytes (AES-256). Data is a 16-byte IV followed by the ciphertext, whose length must be a
+    // Key must be 16, 24 or 32 bytes. Data is a 16-byte IV followed by the ciphertext, whose length must be a
     // multiple of 16. Padding is NOT removed: the result is the same length as the ciphertext, so trailing padding
     // bytes are included (the binder formats ignore them).
     SOULS_API std::vector<uint8_t> DecryptAesCbc(std::span<const uint8_t> Key, std::span<const uint8_t> Data);
 
-    // Key must be 32 bytes. Encrypts with a random IV and PKCS7 padding; the result is the IV followed by the
+    // Key must be 16, 24 or 32 bytes. Encrypts with a random IV and PKCS7 padding; the result is the IV followed by the
     // ciphertext.
     SOULS_API std::vector<uint8_t> EncryptAesCbc(std::span<const uint8_t> Key, std::span<const uint8_t> Data);
+
+    // Encrypts with AES-CBC using the given 16-byte IV and no padding: Data must be a whole number of 16-byte blocks. The
+    // result is just the ciphertext (the IV is not prepended). This is the form save files use.
+    SOULS_API std::vector<uint8_t> EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data);
 
     // Decrypts in place with AES-ECB and no padding, as used for the encrypted ranges of files in game archives
     // (BHD5). Key must be 16, 24 or 32 bytes; the data's length must be a multiple of 16.
     SOULS_API void DecryptAesEcb(std::span<const uint8_t> Key, std::span<uint8_t> Data);
+#pragma endregion
+
+#pragma region Hashing
+    // The MD5 hash of the data.
+    SOULS_API std::array<uint8_t, 16> Md5(std::span<const uint8_t> Data);
 #pragma endregion
 
 #pragma region RSA

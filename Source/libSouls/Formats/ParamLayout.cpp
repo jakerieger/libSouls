@@ -112,6 +112,7 @@ namespace Souls {
             Info.ArrayLength = Source.ArrayLength;
             Info.BitSize     = -1;
             Info.Default     = Source.Default;
+            Info.Definition  = Source;
             const DefType Type = Source.DisplayType;
 
             bool Bitfield = false;
@@ -189,6 +190,10 @@ namespace Souls {
 
     PARAMDEF::DefType ParamLayout::Type(size_t FieldIndex) const {
         return Field(FieldIndex).Type;
+    }
+
+    const PARAMDEF::Field& ParamLayout::Definition(size_t FieldIndex) const {
+        return Field(FieldIndex).Definition;
     }
 
     const ParamLayout::FieldInfo& ParamLayout::Field(size_t FieldIndex) const {

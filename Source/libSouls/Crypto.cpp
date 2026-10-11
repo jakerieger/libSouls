@@ -38,9 +38,6 @@ namespace Souls::Crypto {
                 if (Key.size() != 16 && Key.size() != 24 && Key.size() != KeySize) {
                     throw BinaryException("AES key must be 16, 24 or 32 bytes");
                 }
-                if (ChainingMode == Mode::CBC && Key.size() != KeySize) {
-                    throw BinaryException("AES-CBC key must be 32 bytes");
-                }
                 Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_AES_ALGORITHM, nullptr, 0),
                       "BCryptOpenAlgorithmProvider");
                 try {
@@ -140,6 +137,48 @@ namespace Souls::Crypto {
               "BCryptEncrypt");
         Output.resize(BlockSize + Written);
         return Output;
+    }
+
+    std::vector<uint8_t> EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data) {
+        if (IV.size() != BlockSize) {
+            throw BinaryException("The AES-CBC IV must be 16 bytes");
+        }
+        if (Data.size() % BlockSize != 0) {
+            throw BinaryException("AES-CBC data without padding must be a whole number of 16-byte blocks");
+        }
+        const AesKey Aes(Key);
+        uint8_t IVForCipher[BlockSize];  // CNG updates the IV it's given
+        std::copy(IV.begin(), IV.end(), IVForCipher);
+
+        std::vector<uint8_t> Output(Data.size());
+        if (Data.empty()) {
+            return Output;
+        }
+        ULONG Written = 0;
+        Check(BCryptEncrypt(Aes.Get(),
+                            const_cast<PUCHAR>(Data.data()),
+                            static_cast<ULONG>(Data.size()),
+                            nullptr,
+                            IVForCipher,
+                            static_cast<ULONG>(BlockSize),
+                            Output.data(),
+                            static_cast<ULONG>(Output.size()),
+                            &Written,
+                            0),
+              "BCryptEncrypt");
+        Output.resize(Written);
+        return Output;
+    }
+
+    std::array<uint8_t, 16> Md5(std::span<const uint8_t> Data) {
+        BCRYPT_ALG_HANDLE Algorithm = nullptr;
+        Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_MD5_ALGORITHM, nullptr, 0), "BCryptOpenAlgorithmProvider");
+        std::array<uint8_t, 16> Hash{};
+        const NTSTATUS Status = BCryptHash(Algorithm, nullptr, 0, const_cast<PUCHAR>(Data.data()), static_cast<ULONG>(Data.size()), Hash.data(),
+                                           static_cast<ULONG>(Hash.size()));
+        BCryptCloseAlgorithmProvider(Algorithm, 0);
+        Check(Status, "BCryptHash");
+        return Hash;
     }
 
     void DecryptAesEcb(std::span<const uint8_t> Key, std::span<uint8_t> Data) {

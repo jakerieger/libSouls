@@ -4,19 +4,23 @@ libSouls has a flat C interface so it can be used from languages other than C++:
 (P/Invoke), Rust, Lua, and so on. It lives in [`Source/libSouls/CApi/souls.h`](../Source/libSouls/CApi/souls.h), is plain
 C99, and ships in the same `Souls.dll` as the C++ API. Include it as `<libSouls/CApi/souls.h>`.
 
-This first pass covers the pieces most tools need:
+What it covers:
 
 | Area | What it gives you |
 |---|---|
 | Core | errors, byte buffers, Oodle setup, reading a file |
 | DCX | compress, decompress, detect |
-| Binders | BND3/BND4 read, write, edit files; `regulation.bin` decrypt and encrypt (Dark Souls III, Elden Ring) |
+| Binders | BND3/BND4 and the split BXF3/BXF4 read, write, edit files; `regulation.bin` decrypt and encrypt (Dark Souls III, Elden Ring); a streaming reader for huge BXF pairs |
+| Game archives | BHD5 headers (`Data0.bhd`, ...) with RSA decryption from the game exe, lookup by path or hash, file extraction |
 | FMG | read, write, get/set text by ID |
 | PARAM | rows; paramdef sets; layouts for reading and writing fields by name |
 | TPF | read, write, get/replace/add textures |
+| MSB | maps for Dark Souls 1/2/3 and Sekiro: list, add, remove and edit parts, models, events and regions |
+| FLVER | models: bones, dummies, materials, textures, and bulk vertex and face arrays |
+| EMEVD | event scripts: events, instructions, argument packing, parameters |
+| TAE3 | animation events by field name (Dark Souls III layout) |
 
-The remaining formats (maps, models, animation events, ...) are still C++-only for now and will follow the same
-conventions.
+The remaining small formats are still C++-only for now and will follow the same conventions.
 
 ## Conventions
 
@@ -215,8 +219,118 @@ souls_regulation_encrypt(SOULS_GAME_ELDEN_RING, "regulation.bin", bnd);
 
 `SOULS_GAME_DARK_SOULS_3` works the same way. Older games keep their params in ordinary binders and need no decryption.
 
+## Maps (MSB)
+
+One `SoulsMsb` handle covers every game; you say which when you read, since the files don't identify themselves
+(`SOULS_MSB_DARK_SOULS_1`, `_2`, `_3`, `_SEKIRO`). A map has four categories of entries: models, parts, events and
+regions. Entries are addressed by category and index, they have a name and a type, and everything else is a
+*property* read and written by name.
+
+```c
+SoulsMsb* map = souls_msb_read_file(SOULS_MSB_DARK_SOULS_1, "map/MapStudio/m10_00_00_00.msb");
+
+for (size_t i = 0; i < souls_msb_entry_count(map, SOULS_MSB_PARTS); ++i) {
+    if (strcmp(souls_msb_entry_type(map, SOULS_MSB_PARTS, i), "Enemy") != 0) continue;
+
+    float position[3];
+    souls_msb_get_vec3(map, SOULS_MSB_PARTS, i, "Position", position);
+    position[1] += 5.0f;                                          /* lift every enemy five meters */
+    souls_msb_set_vec3(map, SOULS_MSB_PARTS, i, "Position", position);
+
+    int64_t entity_id;
+    if (souls_msb_get_int(map, SOULS_MSB_PARTS, i, "EntityID", &entity_id) == SOULS_OK) {
+        printf("%s (entity %lld)\n", souls_msb_entry_name(map, SOULS_MSB_PARTS, i), (long long)entity_id);
+    }
+}
+souls_msb_write_file(map, "m10_00_00_00.msb");
+souls_msb_free(map);
+```
+
+The properties each entry has depend on the category, the type and the game; `souls_msb_property_count`, `_name` and
+`_kind` list them, and asking for one an entry doesn't have fails with `SOULS_ERR_UNSUPPORTED`. The common ones are
+`ModelName`, `Position`, `Rotation`, `Scale`, `EntityID`, `DrawGroups` and `DispGroups` on parts, and `Position`,
+`Rotation` and the region shape (`souls_msb_region_shape`, `_dims`, `souls_msb_set_region_shape`) on regions. See the
+header for the full list. Properties specific to one type (an enemy's AI IDs, for example) are not exposed yet.
+
+`souls_msb_type_name` lists what can be created in each category, and `souls_msb_add_entry` creates one with default
+values. Entries refer to each other by name (a part's `ModelName`), so renaming and reordering are safe, but a
+reference to a name that doesn't exist makes the write fail. Indices follow the written order and change when you add
+or remove entries.
+
+## Models (FLVER)
+
+Vertex data is read and written one attribute at a time as flat arrays, so it maps directly onto numpy arrays or GPU
+buffers:
+
+```python
+mesh = 0
+count = flver_vertex_count(model, mesh)
+positions = (C.c_float * (count * 3))()
+flver_read_vertex_floats(model, mesh, SOULS_VERTEX_POSITION, 0, positions, count * 3)
+
+for i in range(count):
+    positions[i * 3 + 1] += 1.0                       # move the mesh up
+flver_write_vertex_floats(model, mesh, SOULS_VERTEX_POSITION, 0, positions, count * 3)
+```
+
+`souls_flver_read_face_set` gives triangle indices (strips are expanded), and bones, dummy points, materials and their
+textures all have getters and setters. A mesh's *layout* (which attributes it stores) can't be changed through the C
+interface yet, so you can edit what a mesh has but not build one from nothing; `souls_flver_duplicate_mesh` copies an
+existing mesh as a starting point.
+
+## Game archives (BHD5 and BXF)
+
+Elden Ring's `Data0.bhd` ... `DLC.bhd` store files under hashes of their paths. Open a header with the game's exe
+(which carries the RSA keys that decrypt it), look a path up, and extract it from the matching `.bdt`:
+
+```python
+header = bhd5_open(SOULS_BHD5_ELDEN_RING, game + r"\Data2.bhd", game + r"\eldenring.exe", None)
+index = bhd5_find_path(header, b"/map/mapstudio/m10_00_00_00.msb.dcx")
+if index >= 0:
+    bdt = bdt_open(game + r"\Data2.bdt")
+    packed = bhd5_extract(header, bdt, index)          # decrypted; still DCX-compressed
+    plain = dcx_decompress(packed.data, packed.size, None)
+```
+
+(`plain.data` now holds an MSB, which the map functions above can read.) The archives don't store names, only hashes,
+so you can only find paths you already know; community-maintained path dictionaries exist for building a complete
+unpacker. `souls_path_hash64` and `souls_path_hash32` expose the hashes directly.
+
+Split binders (`.bhd`/`.bdt` pairs holding named files, such as texture archives) are `SoulsBinder`s too:
+`souls_bxf_read_files` loads one, and for the very large ones `souls_bxf_reader_open` reads single files without loading
+the data file.
+
+## Event scripts (EMEVD)
+
+```c
+SoulsEmevd* script = souls_emevd_read_file("event/m10_00_00_00.emevd.dcx");
+for (size_t e = 0; e < souls_emevd_event_count(script); ++e) {
+    printf("event %lld: %zu instructions\n", (long long)souls_emevd_event_id(script, e),
+           souls_emevd_instruction_count(script, e));
+}
+```
+
+Instructions are `(bank, id)` plus raw argument bytes. What each one means is documented in the community's EMEDF
+files, which libSouls doesn't bundle; once you know an instruction's argument layout, `souls_emevd_unpack_args` and
+`souls_emevd_pack_args` convert the bytes to and from numbers.
+
+## Animation events (TAE3)
+
+Each event has a type (`souls_tae3_event_type_name`) and fields read and written by name:
+
+```c
+SoulsTae3* tae = souls_tae3_read_file("c2240.tae");
+double sound_id;
+if (souls_tae3_get_number(tae, animation, event, "SoundID", &sound_id) == SOULS_OK) {
+    souls_tae3_set_number(tae, animation, event, "SoundID", sound_id + 1);
+}
+```
+
+`souls_tae3_field_count`, `_name` and `_kind` list an event's fields. This is the Dark Souls III layout of the format;
+Sekiro and Elden Ring use a newer one that isn't supported yet.
+
 ## Not yet covered
 
-MSB (maps), FLVER (models), TAE (animation events), MQB, FXR, GPARAM and the smaller formats remain C++-only. They will
-get C interfaces following the conventions above; for tools that need them today, use the C++ API
-([Quickstart](Quickstart.md)).
+MQB, FXR, GPARAM, BTL, ESD and the other smaller formats remain C++-only, as do the Elden Ring layouts of maps,
+animation events and effects. They will get C interfaces following the conventions above; for tools that need them
+today, use the C++ API ([Quickstart](Quickstart.md)).

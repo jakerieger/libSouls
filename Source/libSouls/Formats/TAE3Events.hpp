@@ -156,6 +156,15 @@ namespace Souls {
             Writer.WriteInt16(Unk0C);
             Writer.WriteInt16(Unk0E);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("JumpTableID", JumpTableID);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk0E", Unk0E);
+        }
     };
 
     struct Unk001 {
@@ -183,6 +192,16 @@ namespace Souls {
             Writer.WriteByte(Unk0C);
             Writer.WriteByte(Unk0D);
             Writer.WriteInt16(StateInfo);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Condition", Condition);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("StateInfo", StateInfo);
         }
     };
 
@@ -219,6 +238,17 @@ namespace Souls {
             Writer.WriteInt16(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("ChrAsmStyle", ChrAsmStyle);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("Unk0E", Unk0E);
+            F("Unk10", Unk10);
+        }
     };
 
     struct Unk005 {
@@ -235,6 +265,12 @@ namespace Souls {
             Writer.WriteInt32(Unk00);
             Writer.WriteInt32(Unk04);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+        }
     };
 
     struct Unk016 {
@@ -246,6 +282,11 @@ namespace Souls {
 
         void Write(BinaryWriter& Writer) const {
             (void)Writer;
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -264,6 +305,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -287,6 +333,14 @@ namespace Souls {
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(Unk0C);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+        }
     };
 
     struct SwitchWeapon1 {
@@ -301,6 +355,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(SwitchState);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SwitchState", SwitchState);
         }
     };
 
@@ -321,6 +380,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SwitchState", SwitchState);
+        }
     };
 
     struct Unk034 {
@@ -340,6 +404,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("State", State);
+        }
     };
 
     struct Unk035 {
@@ -358,6 +427,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("State", State);
         }
     };
 
@@ -392,6 +466,17 @@ namespace Souls {
             Writer.WriteByte(Unk0B);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+            F("Unk09", Unk09);
+            F("Unk0A", Unk0A);
+            F("Unk0B", Unk0B);
+        }
     };
 
     struct Unk065 {
@@ -419,6 +504,15 @@ namespace Souls {
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk05", Unk05);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+        }
     };
 
     struct CreateSpEffect1 {
@@ -434,6 +528,11 @@ namespace Souls {
             Writer.WriteInt32(SpEffectID);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SpEffectID", SpEffectID);
+        }
     };
 
     struct CreateSpEffect2 {
@@ -448,6 +547,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(SpEffectID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SpEffectID", SpEffectID);
         }
     };
 
@@ -480,6 +584,17 @@ namespace Souls {
             Writer.WriteSByte(GhostFFXCondition);
             Writer.WriteByte(Unk0F);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("FFXID", FFXID);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("State0", State0);
+            F("State1", State1);
+            F("GhostFFXCondition", GhostFFXCondition);
+            F("Unk0F", Unk0F);
+        }
     };
 
     struct Unk110 {
@@ -494,6 +609,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(ID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("ID", ID);
         }
     };
 
@@ -516,6 +636,13 @@ namespace Souls {
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Size", Size);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+        }
     };
 
     struct Unk113 {
@@ -529,6 +656,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -574,6 +706,21 @@ namespace Souls {
             Writer.WriteByte(Unk11);
             Writer.WriteInt16(Unk12);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("Unk0E", Unk0E);
+            F("Unk0F", Unk0F);
+            F("Unk10", Unk10);
+            F("Unk11", Unk11);
+            F("Unk12", Unk12);
         }
     };
 
@@ -624,6 +771,21 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("Unk0E", Unk0E);
+            F("Unk0F", Unk0F);
+            F("Unk10", Unk10);
+            F("Unk11", Unk11);
+            F("Unk12", Unk12);
+        }
     };
 
     struct Unk116 {
@@ -645,6 +807,14 @@ namespace Souls {
             Writer.WriteInt32(Unk04);
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(Unk0C);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
         }
     };
 
@@ -677,6 +847,17 @@ namespace Souls {
             Writer.WriteByte(Unk0E);
             Writer.WriteByte(Unk0F);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("Unk0E", Unk0E);
+            F("Unk0F", Unk0F);
+        }
     };
 
     struct Unk118 {
@@ -703,6 +884,15 @@ namespace Souls {
             Writer.WriteUInt16(Unk08);
             Writer.WriteUInt16(Unk0A);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+            F("Unk0A", Unk0A);
         }
     };
 
@@ -731,6 +921,14 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteByte(0);
             Writer.WriteByte(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
         }
     };
 
@@ -765,6 +963,15 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("ChrType", ChrType);
+            F("FFXIDs", FFXIDs);
+            F("Unk30", Unk30);
+            F("Unk34", Unk34);
+            F("Unk38", Unk38);
+        }
     };
 
     struct Unk121 {
@@ -791,6 +998,14 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk07", Unk07);
+        }
     };
 
     struct PlaySound1 {
@@ -806,6 +1021,12 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(SoundType);
             Writer.WriteInt32(SoundID);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SoundType", SoundType);
+            F("SoundID", SoundID);
         }
     };
 
@@ -834,6 +1055,15 @@ namespace Souls {
             Writer.WriteInt32(Unk10);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SoundType", SoundType);
+            F("SoundID", SoundID);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk10", Unk10);
+        }
     };
 
     struct PlaySound3 {
@@ -860,6 +1090,14 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SoundType", SoundType);
+            F("SoundID", SoundID);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+        }
     };
 
     struct PlaySound4 {
@@ -881,6 +1119,13 @@ namespace Souls {
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SoundType", SoundType);
+            F("SoundID", SoundID);
+            F("Unk08", Unk08);
+        }
     };
 
     struct PlaySound5 {
@@ -901,6 +1146,12 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SoundType", SoundType);
+            F("SoundID", SoundID);
+        }
     };
 
     struct Unk137 {
@@ -915,6 +1166,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(Unk00);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
         }
     };
 
@@ -935,6 +1191,12 @@ namespace Souls {
             Writer.WriteInt32(Unk04);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("DecalParamID", DecalParamID);
+            F("Unk04", Unk04);
         }
     };
 
@@ -960,6 +1222,14 @@ namespace Souls {
             Writer.WriteFloat(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk02", Unk02);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+        }
     };
 
     struct Unk145 {
@@ -977,6 +1247,12 @@ namespace Souls {
             Writer.WriteInt16(Unk00);
             Writer.WriteInt16(Condition);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Condition", Condition);
         }
     };
 
@@ -997,6 +1273,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct Unk151 {
@@ -1016,6 +1297,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("DummyPointID", DummyPointID);
+        }
     };
 
     struct Unk161 {
@@ -1034,6 +1320,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
+        }
     };
 
     struct FadeOut {
@@ -1049,6 +1340,12 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteFloat(GhostVal1);
             Writer.WriteFloat(GhostVal2);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("GhostVal1", GhostVal1);
+            F("GhostVal2", GhostVal2);
         }
     };
 
@@ -1077,6 +1374,15 @@ namespace Souls {
             Writer.WriteFloat(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk02", Unk02);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
+            F("Unk08", Unk08);
+        }
     };
 
     struct Unk224 {
@@ -1092,6 +1398,12 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteFloat(Unk00);
             Writer.WriteInt32(Unk04);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
         }
     };
 
@@ -1114,6 +1426,11 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("State", State);
+        }
     };
 
     struct Unk226 {
@@ -1135,6 +1452,11 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("State", State);
+        }
     };
 
     struct Unk227 {
@@ -1149,6 +1471,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(Mask);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Mask", Mask);
         }
     };
 
@@ -1170,6 +1497,12 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("ReviveTimer", ReviveTimer);
+        }
     };
 
     struct Unk229 {
@@ -1185,6 +1518,11 @@ namespace Souls {
             Writer.WriteInt32(Unk00);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct SetEventMessageID {
@@ -1199,6 +1537,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(EventMessageID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("EventMessageID", EventMessageID);
         }
     };
 
@@ -1224,6 +1567,14 @@ namespace Souls {
             Writer.WriteByte(Unk03);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+        }
     };
 
     struct ChangeDrawMask {
@@ -1236,6 +1587,11 @@ namespace Souls {
 
         void Write(BinaryWriter& Writer) const {
             Writer.WriteBytes(DrawMask);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("DrawMask", DrawMask);
         }
     };
 
@@ -1264,6 +1620,13 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("RollType", RollType);
+        }
     };
 
     struct CreateAISound {
@@ -1278,6 +1641,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(AISoundID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("AISoundID", AISoundID);
         }
     };
 
@@ -1304,6 +1672,15 @@ namespace Souls {
             Writer.WriteFloat(Unk08);
             Writer.WriteInt32(Unk0C);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("JumpTableID1", JumpTableID1);
+            F("JumpTableID2", JumpTableID2);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+        }
     };
 
     struct Unk301 {
@@ -1319,6 +1696,11 @@ namespace Souls {
             Writer.WriteInt32(Unk00);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct AddSpEffectDragonForm {
@@ -1333,6 +1715,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(SpEffectID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SpEffectID", SpEffectID);
         }
     };
 
@@ -1353,6 +1740,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("AnimationID", AnimationID);
+        }
     };
 
     struct BehaviorThing {
@@ -1371,6 +1763,13 @@ namespace Souls {
             Writer.WriteUInt16(Unk00);
             Writer.WriteInt16(Unk02);
             Writer.WriteInt32(BehaviorListID);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk02", Unk02);
+            F("BehaviorListID", BehaviorListID);
         }
     };
 
@@ -1396,6 +1795,14 @@ namespace Souls {
             Writer.WriteInt32(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk02", Unk02);
+            F("Condition", Condition);
+            F("Unk08", Unk08);
+        }
     };
 
     struct Unk308 {
@@ -1414,6 +1821,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
         }
     };
 
@@ -1436,6 +1848,12 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
         }
     };
 
@@ -1464,6 +1882,13 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+        }
     };
 
     struct Unk312 {
@@ -1476,6 +1901,11 @@ namespace Souls {
 
         void Write(BinaryWriter& Writer) const {
             Writer.WriteBytes(BehaviorMask);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("BehaviorMask", BehaviorMask);
         }
     };
 
@@ -1514,6 +1944,17 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+            F("Unk04", Unk04);
+            F("Unk05", Unk05);
+            F("Unk06", Unk06);
+        }
     };
 
     struct Unk330 {
@@ -1531,6 +1972,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -1552,6 +1998,12 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SpEffectID1", SpEffectID1);
+            F("SpEffectID2", SpEffectID2);
+        }
     };
 
     struct Unk332 {
@@ -1569,6 +2021,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -1588,6 +2045,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SpEffectID", SpEffectID);
         }
     };
 
@@ -1611,6 +2073,12 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+        }
     };
 
     struct Unk510 {
@@ -1629,6 +2097,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
+        }
     };
 
     struct Unk520 {
@@ -1646,6 +2119,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -1666,6 +2144,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct Unk600 {
@@ -1680,6 +2163,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(Mask);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Mask", Mask);
         }
     };
 
@@ -1702,6 +2190,13 @@ namespace Souls {
             Writer.WriteFloat(Unk08);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("StayAnimType", StayAnimType);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+        }
     };
 
     struct DebugAnimSpeed {
@@ -1720,6 +2215,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("AnimSpeed", AnimSpeed);
         }
     };
 
@@ -1760,6 +2260,17 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+        }
     };
 
     struct Unk606 {
@@ -1792,6 +2303,13 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk06", Unk06);
         }
     };
 
@@ -1839,6 +2357,20 @@ namespace Souls {
             Writer.WriteFloat(Unk20);
             Writer.WriteFloat(Unk24);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk10", Unk10);
+            F("Unk14", Unk14);
+            F("Unk18", Unk18);
+            F("Unk1C", Unk1C);
+            F("Unk20", Unk20);
+            F("Unk24", Unk24);
+        }
     };
 
     struct EnableTurningDirection {
@@ -1864,6 +2396,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("State", State);
+        }
     };
 
     struct FacingAngleCorrection {
@@ -1883,6 +2420,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("CorrectionRate", CorrectionRate);
+        }
     };
 
     struct Unk707 {
@@ -1900,6 +2442,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -1929,6 +2476,14 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+        }
     };
 
     struct HideModelMask {
@@ -1941,6 +2496,11 @@ namespace Souls {
 
         void Write(BinaryWriter& Writer) const {
             Writer.WriteBytes(Mask);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Mask", Mask);
         }
     };
 
@@ -1972,6 +2532,14 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Mask", Mask);
+            F("Unk10", Unk10);
+            F("Unk11", Unk11);
+            F("Unk12", Unk12);
+        }
     };
 
     struct ModelMask {
@@ -1984,6 +2552,11 @@ namespace Souls {
 
         void Write(BinaryWriter& Writer) const {
             Writer.WriteBytes(Mask);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Mask", Mask);
         }
     };
 
@@ -2005,6 +2578,11 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
         }
     };
 
@@ -2052,6 +2630,18 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+            F("Unk04", Unk04);
+            F("Unk05", Unk05);
+            F("Unk06", Unk06);
+            F("Unk07", Unk07);
+        }
     };
 
     struct CultStart {
@@ -2077,6 +2667,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("CultType", CultType);
+        }
     };
 
     struct Unk730 {
@@ -2097,6 +2692,12 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+        }
     };
 
     struct Unk740 {
@@ -2114,6 +2715,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -2152,6 +2758,19 @@ namespace Souls {
             Writer.WriteFloat(Unk10);
             Writer.WriteFloat(Unk14);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk01", Unk01);
+            F("Unk02", Unk02);
+            F("Unk03", Unk03);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk10", Unk10);
+            F("Unk14", Unk14);
+        }
     };
 
     struct BonePos {
@@ -2179,6 +2798,13 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+        }
     };
 
     struct BoneFixOn1 {
@@ -2203,6 +2829,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("BoneID", BoneID);
         }
     };
 
@@ -2231,6 +2862,13 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+        }
     };
 
     struct TurnLowerBody {
@@ -2256,6 +2894,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("TurnState", TurnState);
+        }
     };
 
     struct Unk782 {
@@ -2273,6 +2916,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -2303,6 +2951,15 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteByte(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("DummyPointID", DummyPointID);
+            F("BulletID", BulletID);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+        }
     };
 
     struct Unk786 {
@@ -2318,6 +2975,11 @@ namespace Souls {
             Writer.WriteFloat(Unk00);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct Unk790 {
@@ -2332,6 +2994,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
+        }
     };
 
     struct Unk791 {
@@ -2345,6 +3012,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -2379,6 +3051,17 @@ namespace Souls {
             Writer.WriteByte(Unk0E);
             Writer.WriteByte(Unk0F);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+            F("Unk04", Unk04);
+            F("Unk08", Unk08);
+            F("Unk0C", Unk0C);
+            F("Unk0D", Unk0D);
+            F("Unk0E", Unk0E);
+            F("Unk0F", Unk0F);
+        }
     };
 
     struct CultSacrifice1 {
@@ -2393,6 +3076,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(SacrificeValue);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("SacrificeValue", SacrificeValue);
         }
     };
 
@@ -2411,6 +3099,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -2434,6 +3127,13 @@ namespace Souls {
             Writer.WriteByte(0);
             Writer.WriteByte(0);
             Writer.WriteFloat(ToughnessRate);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("ToughnessParamID", ToughnessParamID);
+            F("IsToughnessEffective", IsToughnessEffective);
+            F("ToughnessRate", ToughnessRate);
         }
     };
 
@@ -2460,6 +3160,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("MenuType", MenuType);
+        }
     };
 
     struct CeremonyParamID {
@@ -2474,6 +3179,11 @@ namespace Souls {
         void Write(BinaryWriter& Writer) const {
             Writer.WriteInt32(ParamID);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("ParamID", ParamID);
         }
     };
 
@@ -2494,6 +3204,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
         }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("Unk00", Unk00);
+        }
     };
 
     struct CultEmpty2 {
@@ -2511,6 +3226,11 @@ namespace Souls {
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            (void)F;
         }
     };
 
@@ -2532,6 +3252,13 @@ namespace Souls {
             Writer.WriteFloat(MetersOnTurn);
             Writer.WriteFloat(Unk08);
             Writer.WriteInt32(0);
+        }
+
+        template<typename V>
+        void Fields(V& F) {
+            F("MetersPerTick", MetersPerTick);
+            F("MetersOnTurn", MetersOnTurn);
+            F("Unk08", Unk08);
         }
     };
 
@@ -2771,6 +3498,351 @@ namespace Souls {
 
     inline void WriteTAE3EventData(const TAE3EventData& Data, BinaryWriter& Writer) {
         std::visit<void>([&](const auto& Value) { Value.Write(Writer); }, Data);
+    }
+
+    // Every event type with a struct, in the order of the variant.
+    inline const std::vector<TAE3EventType>& AllTAE3EventTypes() {
+        static const std::vector<TAE3EventType> Types = {
+            TAE3EventType::JumpTable,
+            TAE3EventType::Unk001,
+            TAE3EventType::Unk002,
+            TAE3EventType::Unk005,
+            TAE3EventType::Unk016,
+            TAE3EventType::Unk017,
+            TAE3EventType::Unk024,
+            TAE3EventType::SwitchWeapon1,
+            TAE3EventType::SwitchWeapon2,
+            TAE3EventType::Unk034,
+            TAE3EventType::Unk035,
+            TAE3EventType::Unk064,
+            TAE3EventType::Unk065,
+            TAE3EventType::CreateSpEffect1,
+            TAE3EventType::CreateSpEffect2,
+            TAE3EventType::PlayFFX,
+            TAE3EventType::Unk110,
+            TAE3EventType::HitEffect,
+            TAE3EventType::Unk113,
+            TAE3EventType::Unk114,
+            TAE3EventType::Unk115,
+            TAE3EventType::Unk116,
+            TAE3EventType::Unk117,
+            TAE3EventType::Unk118,
+            TAE3EventType::Unk119,
+            TAE3EventType::Unk120,
+            TAE3EventType::Unk121,
+            TAE3EventType::PlaySound1,
+            TAE3EventType::PlaySound2,
+            TAE3EventType::PlaySound3,
+            TAE3EventType::PlaySound4,
+            TAE3EventType::PlaySound5,
+            TAE3EventType::Unk137,
+            TAE3EventType::CreateDecal,
+            TAE3EventType::Unk144,
+            TAE3EventType::Unk145,
+            TAE3EventType::Unk150,
+            TAE3EventType::Unk151,
+            TAE3EventType::Unk161,
+            TAE3EventType::FadeOut,
+            TAE3EventType::Unk194,
+            TAE3EventType::Unk224,
+            TAE3EventType::DisableStaminaRegen,
+            TAE3EventType::Unk226,
+            TAE3EventType::Unk227,
+            TAE3EventType::RagdollReviveTime,
+            TAE3EventType::Unk229,
+            TAE3EventType::SetEventMessageID,
+            TAE3EventType::Unk232,
+            TAE3EventType::ChangeDrawMask,
+            TAE3EventType::RollDistanceReduction,
+            TAE3EventType::CreateAISound,
+            TAE3EventType::Unk300,
+            TAE3EventType::Unk301,
+            TAE3EventType::AddSpEffectDragonForm,
+            TAE3EventType::PlayAnimation,
+            TAE3EventType::BehaviorThing,
+            TAE3EventType::CreateBehaviorPC,
+            TAE3EventType::Unk308,
+            TAE3EventType::Unk310,
+            TAE3EventType::Unk311,
+            TAE3EventType::Unk312,
+            TAE3EventType::Unk320,
+            TAE3EventType::Unk330,
+            TAE3EventType::EffectDuringThrow,
+            TAE3EventType::Unk332,
+            TAE3EventType::CreateSpEffect,
+            TAE3EventType::Unk500,
+            TAE3EventType::Unk510,
+            TAE3EventType::Unk520,
+            TAE3EventType::KingOfTheStorm,
+            TAE3EventType::Unk600,
+            TAE3EventType::Unk601,
+            TAE3EventType::DebugAnimSpeed,
+            TAE3EventType::Unk605,
+            TAE3EventType::Unk606,
+            TAE3EventType::Unk700,
+            TAE3EventType::EnableTurningDirection,
+            TAE3EventType::FacingAngleCorrection,
+            TAE3EventType::Unk707,
+            TAE3EventType::HideWeapon,
+            TAE3EventType::HideModelMask,
+            TAE3EventType::DamageLevelModule,
+            TAE3EventType::ModelMask,
+            TAE3EventType::DamageLevelFunction,
+            TAE3EventType::Unk715,
+            TAE3EventType::CultStart,
+            TAE3EventType::Unk730,
+            TAE3EventType::Unk740,
+            TAE3EventType::IFrameState,
+            TAE3EventType::BonePos,
+            TAE3EventType::BoneFixOn1,
+            TAE3EventType::BoneFixOn2,
+            TAE3EventType::TurnLowerBody,
+            TAE3EventType::Unk782,
+            TAE3EventType::SpawnBulletByCultSacrifice1,
+            TAE3EventType::Unk786,
+            TAE3EventType::Unk790,
+            TAE3EventType::Unk791,
+            TAE3EventType::HitEffect2,
+            TAE3EventType::CultSacrifice1,
+            TAE3EventType::SacrificeEmpty,
+            TAE3EventType::Toughness,
+            TAE3EventType::BringCultMenu,
+            TAE3EventType::CeremonyParamID,
+            TAE3EventType::CultSingle,
+            TAE3EventType::CultEmpty2,
+            TAE3EventType::Unk800
+        };
+        return Types;
+    }
+
+    // The name of an event type as written in the enum, or nullptr if it has no struct.
+    inline const char* TAE3EventTypeName(TAE3EventType Type) {
+        switch (Type) {
+            case TAE3EventType::JumpTable: return "JumpTable";
+            case TAE3EventType::Unk001: return "Unk001";
+            case TAE3EventType::Unk002: return "Unk002";
+            case TAE3EventType::Unk005: return "Unk005";
+            case TAE3EventType::Unk016: return "Unk016";
+            case TAE3EventType::Unk017: return "Unk017";
+            case TAE3EventType::Unk024: return "Unk024";
+            case TAE3EventType::SwitchWeapon1: return "SwitchWeapon1";
+            case TAE3EventType::SwitchWeapon2: return "SwitchWeapon2";
+            case TAE3EventType::Unk034: return "Unk034";
+            case TAE3EventType::Unk035: return "Unk035";
+            case TAE3EventType::Unk064: return "Unk064";
+            case TAE3EventType::Unk065: return "Unk065";
+            case TAE3EventType::CreateSpEffect1: return "CreateSpEffect1";
+            case TAE3EventType::CreateSpEffect2: return "CreateSpEffect2";
+            case TAE3EventType::PlayFFX: return "PlayFFX";
+            case TAE3EventType::Unk110: return "Unk110";
+            case TAE3EventType::HitEffect: return "HitEffect";
+            case TAE3EventType::Unk113: return "Unk113";
+            case TAE3EventType::Unk114: return "Unk114";
+            case TAE3EventType::Unk115: return "Unk115";
+            case TAE3EventType::Unk116: return "Unk116";
+            case TAE3EventType::Unk117: return "Unk117";
+            case TAE3EventType::Unk118: return "Unk118";
+            case TAE3EventType::Unk119: return "Unk119";
+            case TAE3EventType::Unk120: return "Unk120";
+            case TAE3EventType::Unk121: return "Unk121";
+            case TAE3EventType::PlaySound1: return "PlaySound1";
+            case TAE3EventType::PlaySound2: return "PlaySound2";
+            case TAE3EventType::PlaySound3: return "PlaySound3";
+            case TAE3EventType::PlaySound4: return "PlaySound4";
+            case TAE3EventType::PlaySound5: return "PlaySound5";
+            case TAE3EventType::Unk137: return "Unk137";
+            case TAE3EventType::CreateDecal: return "CreateDecal";
+            case TAE3EventType::Unk144: return "Unk144";
+            case TAE3EventType::Unk145: return "Unk145";
+            case TAE3EventType::Unk150: return "Unk150";
+            case TAE3EventType::Unk151: return "Unk151";
+            case TAE3EventType::Unk161: return "Unk161";
+            case TAE3EventType::FadeOut: return "FadeOut";
+            case TAE3EventType::Unk194: return "Unk194";
+            case TAE3EventType::Unk224: return "Unk224";
+            case TAE3EventType::DisableStaminaRegen: return "DisableStaminaRegen";
+            case TAE3EventType::Unk226: return "Unk226";
+            case TAE3EventType::Unk227: return "Unk227";
+            case TAE3EventType::RagdollReviveTime: return "RagdollReviveTime";
+            case TAE3EventType::Unk229: return "Unk229";
+            case TAE3EventType::SetEventMessageID: return "SetEventMessageID";
+            case TAE3EventType::Unk232: return "Unk232";
+            case TAE3EventType::ChangeDrawMask: return "ChangeDrawMask";
+            case TAE3EventType::RollDistanceReduction: return "RollDistanceReduction";
+            case TAE3EventType::CreateAISound: return "CreateAISound";
+            case TAE3EventType::Unk300: return "Unk300";
+            case TAE3EventType::Unk301: return "Unk301";
+            case TAE3EventType::AddSpEffectDragonForm: return "AddSpEffectDragonForm";
+            case TAE3EventType::PlayAnimation: return "PlayAnimation";
+            case TAE3EventType::BehaviorThing: return "BehaviorThing";
+            case TAE3EventType::CreateBehaviorPC: return "CreateBehaviorPC";
+            case TAE3EventType::Unk308: return "Unk308";
+            case TAE3EventType::Unk310: return "Unk310";
+            case TAE3EventType::Unk311: return "Unk311";
+            case TAE3EventType::Unk312: return "Unk312";
+            case TAE3EventType::Unk320: return "Unk320";
+            case TAE3EventType::Unk330: return "Unk330";
+            case TAE3EventType::EffectDuringThrow: return "EffectDuringThrow";
+            case TAE3EventType::Unk332: return "Unk332";
+            case TAE3EventType::CreateSpEffect: return "CreateSpEffect";
+            case TAE3EventType::Unk500: return "Unk500";
+            case TAE3EventType::Unk510: return "Unk510";
+            case TAE3EventType::Unk520: return "Unk520";
+            case TAE3EventType::KingOfTheStorm: return "KingOfTheStorm";
+            case TAE3EventType::Unk600: return "Unk600";
+            case TAE3EventType::Unk601: return "Unk601";
+            case TAE3EventType::DebugAnimSpeed: return "DebugAnimSpeed";
+            case TAE3EventType::Unk605: return "Unk605";
+            case TAE3EventType::Unk606: return "Unk606";
+            case TAE3EventType::Unk700: return "Unk700";
+            case TAE3EventType::EnableTurningDirection: return "EnableTurningDirection";
+            case TAE3EventType::FacingAngleCorrection: return "FacingAngleCorrection";
+            case TAE3EventType::Unk707: return "Unk707";
+            case TAE3EventType::HideWeapon: return "HideWeapon";
+            case TAE3EventType::HideModelMask: return "HideModelMask";
+            case TAE3EventType::DamageLevelModule: return "DamageLevelModule";
+            case TAE3EventType::ModelMask: return "ModelMask";
+            case TAE3EventType::DamageLevelFunction: return "DamageLevelFunction";
+            case TAE3EventType::Unk715: return "Unk715";
+            case TAE3EventType::CultStart: return "CultStart";
+            case TAE3EventType::Unk730: return "Unk730";
+            case TAE3EventType::Unk740: return "Unk740";
+            case TAE3EventType::IFrameState: return "IFrameState";
+            case TAE3EventType::BonePos: return "BonePos";
+            case TAE3EventType::BoneFixOn1: return "BoneFixOn1";
+            case TAE3EventType::BoneFixOn2: return "BoneFixOn2";
+            case TAE3EventType::TurnLowerBody: return "TurnLowerBody";
+            case TAE3EventType::Unk782: return "Unk782";
+            case TAE3EventType::SpawnBulletByCultSacrifice1: return "SpawnBulletByCultSacrifice1";
+            case TAE3EventType::Unk786: return "Unk786";
+            case TAE3EventType::Unk790: return "Unk790";
+            case TAE3EventType::Unk791: return "Unk791";
+            case TAE3EventType::HitEffect2: return "HitEffect2";
+            case TAE3EventType::CultSacrifice1: return "CultSacrifice1";
+            case TAE3EventType::SacrificeEmpty: return "SacrificeEmpty";
+            case TAE3EventType::Toughness: return "Toughness";
+            case TAE3EventType::BringCultMenu: return "BringCultMenu";
+            case TAE3EventType::CeremonyParamID: return "CeremonyParamID";
+            case TAE3EventType::CultSingle: return "CultSingle";
+            case TAE3EventType::CultEmpty2: return "CultEmpty2";
+            case TAE3EventType::Unk800: return "Unk800";
+            default: return nullptr;
+        }
+    }
+
+    // Event data of the given type with every field at its default; throws for an unsupported type.
+    inline TAE3EventData CreateTAE3EventData(TAE3EventType Type) {
+        switch (Type) {
+            case TAE3EventType::JumpTable: return TAE3Events::JumpTable{};
+            case TAE3EventType::Unk001: return TAE3Events::Unk001{};
+            case TAE3EventType::Unk002: return TAE3Events::Unk002{};
+            case TAE3EventType::Unk005: return TAE3Events::Unk005{};
+            case TAE3EventType::Unk016: return TAE3Events::Unk016{};
+            case TAE3EventType::Unk017: return TAE3Events::Unk017{};
+            case TAE3EventType::Unk024: return TAE3Events::Unk024{};
+            case TAE3EventType::SwitchWeapon1: return TAE3Events::SwitchWeapon1{};
+            case TAE3EventType::SwitchWeapon2: return TAE3Events::SwitchWeapon2{};
+            case TAE3EventType::Unk034: return TAE3Events::Unk034{};
+            case TAE3EventType::Unk035: return TAE3Events::Unk035{};
+            case TAE3EventType::Unk064: return TAE3Events::Unk064{};
+            case TAE3EventType::Unk065: return TAE3Events::Unk065{};
+            case TAE3EventType::CreateSpEffect1: return TAE3Events::CreateSpEffect1{};
+            case TAE3EventType::CreateSpEffect2: return TAE3Events::CreateSpEffect2{};
+            case TAE3EventType::PlayFFX: return TAE3Events::PlayFFX{};
+            case TAE3EventType::Unk110: return TAE3Events::Unk110{};
+            case TAE3EventType::HitEffect: return TAE3Events::HitEffect{};
+            case TAE3EventType::Unk113: return TAE3Events::Unk113{};
+            case TAE3EventType::Unk114: return TAE3Events::Unk114{};
+            case TAE3EventType::Unk115: return TAE3Events::Unk115{};
+            case TAE3EventType::Unk116: return TAE3Events::Unk116{};
+            case TAE3EventType::Unk117: return TAE3Events::Unk117{};
+            case TAE3EventType::Unk118: return TAE3Events::Unk118{};
+            case TAE3EventType::Unk119: return TAE3Events::Unk119{};
+            case TAE3EventType::Unk120: return TAE3Events::Unk120{};
+            case TAE3EventType::Unk121: return TAE3Events::Unk121{};
+            case TAE3EventType::PlaySound1: return TAE3Events::PlaySound1{};
+            case TAE3EventType::PlaySound2: return TAE3Events::PlaySound2{};
+            case TAE3EventType::PlaySound3: return TAE3Events::PlaySound3{};
+            case TAE3EventType::PlaySound4: return TAE3Events::PlaySound4{};
+            case TAE3EventType::PlaySound5: return TAE3Events::PlaySound5{};
+            case TAE3EventType::Unk137: return TAE3Events::Unk137{};
+            case TAE3EventType::CreateDecal: return TAE3Events::CreateDecal{};
+            case TAE3EventType::Unk144: return TAE3Events::Unk144{};
+            case TAE3EventType::Unk145: return TAE3Events::Unk145{};
+            case TAE3EventType::Unk150: return TAE3Events::Unk150{};
+            case TAE3EventType::Unk151: return TAE3Events::Unk151{};
+            case TAE3EventType::Unk161: return TAE3Events::Unk161{};
+            case TAE3EventType::FadeOut: return TAE3Events::FadeOut{};
+            case TAE3EventType::Unk194: return TAE3Events::Unk194{};
+            case TAE3EventType::Unk224: return TAE3Events::Unk224{};
+            case TAE3EventType::DisableStaminaRegen: return TAE3Events::DisableStaminaRegen{};
+            case TAE3EventType::Unk226: return TAE3Events::Unk226{};
+            case TAE3EventType::Unk227: return TAE3Events::Unk227{};
+            case TAE3EventType::RagdollReviveTime: return TAE3Events::RagdollReviveTime{};
+            case TAE3EventType::Unk229: return TAE3Events::Unk229{};
+            case TAE3EventType::SetEventMessageID: return TAE3Events::SetEventMessageID{};
+            case TAE3EventType::Unk232: return TAE3Events::Unk232{};
+            case TAE3EventType::ChangeDrawMask: return TAE3Events::ChangeDrawMask{};
+            case TAE3EventType::RollDistanceReduction: return TAE3Events::RollDistanceReduction{};
+            case TAE3EventType::CreateAISound: return TAE3Events::CreateAISound{};
+            case TAE3EventType::Unk300: return TAE3Events::Unk300{};
+            case TAE3EventType::Unk301: return TAE3Events::Unk301{};
+            case TAE3EventType::AddSpEffectDragonForm: return TAE3Events::AddSpEffectDragonForm{};
+            case TAE3EventType::PlayAnimation: return TAE3Events::PlayAnimation{};
+            case TAE3EventType::BehaviorThing: return TAE3Events::BehaviorThing{};
+            case TAE3EventType::CreateBehaviorPC: return TAE3Events::CreateBehaviorPC{};
+            case TAE3EventType::Unk308: return TAE3Events::Unk308{};
+            case TAE3EventType::Unk310: return TAE3Events::Unk310{};
+            case TAE3EventType::Unk311: return TAE3Events::Unk311{};
+            case TAE3EventType::Unk312: return TAE3Events::Unk312{};
+            case TAE3EventType::Unk320: return TAE3Events::Unk320{};
+            case TAE3EventType::Unk330: return TAE3Events::Unk330{};
+            case TAE3EventType::EffectDuringThrow: return TAE3Events::EffectDuringThrow{};
+            case TAE3EventType::Unk332: return TAE3Events::Unk332{};
+            case TAE3EventType::CreateSpEffect: return TAE3Events::CreateSpEffect{};
+            case TAE3EventType::Unk500: return TAE3Events::Unk500{};
+            case TAE3EventType::Unk510: return TAE3Events::Unk510{};
+            case TAE3EventType::Unk520: return TAE3Events::Unk520{};
+            case TAE3EventType::KingOfTheStorm: return TAE3Events::KingOfTheStorm{};
+            case TAE3EventType::Unk600: return TAE3Events::Unk600{};
+            case TAE3EventType::Unk601: return TAE3Events::Unk601{};
+            case TAE3EventType::DebugAnimSpeed: return TAE3Events::DebugAnimSpeed{};
+            case TAE3EventType::Unk605: return TAE3Events::Unk605{};
+            case TAE3EventType::Unk606: return TAE3Events::Unk606{};
+            case TAE3EventType::Unk700: return TAE3Events::Unk700{};
+            case TAE3EventType::EnableTurningDirection: return TAE3Events::EnableTurningDirection{};
+            case TAE3EventType::FacingAngleCorrection: return TAE3Events::FacingAngleCorrection{};
+            case TAE3EventType::Unk707: return TAE3Events::Unk707{};
+            case TAE3EventType::HideWeapon: return TAE3Events::HideWeapon{};
+            case TAE3EventType::HideModelMask: return TAE3Events::HideModelMask{};
+            case TAE3EventType::DamageLevelModule: return TAE3Events::DamageLevelModule{};
+            case TAE3EventType::ModelMask: return TAE3Events::ModelMask{};
+            case TAE3EventType::DamageLevelFunction: return TAE3Events::DamageLevelFunction{};
+            case TAE3EventType::Unk715: return TAE3Events::Unk715{};
+            case TAE3EventType::CultStart: return TAE3Events::CultStart{};
+            case TAE3EventType::Unk730: return TAE3Events::Unk730{};
+            case TAE3EventType::Unk740: return TAE3Events::Unk740{};
+            case TAE3EventType::IFrameState: return TAE3Events::IFrameState{};
+            case TAE3EventType::BonePos: return TAE3Events::BonePos{};
+            case TAE3EventType::BoneFixOn1: return TAE3Events::BoneFixOn1{};
+            case TAE3EventType::BoneFixOn2: return TAE3Events::BoneFixOn2{};
+            case TAE3EventType::TurnLowerBody: return TAE3Events::TurnLowerBody{};
+            case TAE3EventType::Unk782: return TAE3Events::Unk782{};
+            case TAE3EventType::SpawnBulletByCultSacrifice1: return TAE3Events::SpawnBulletByCultSacrifice1{};
+            case TAE3EventType::Unk786: return TAE3Events::Unk786{};
+            case TAE3EventType::Unk790: return TAE3Events::Unk790{};
+            case TAE3EventType::Unk791: return TAE3Events::Unk791{};
+            case TAE3EventType::HitEffect2: return TAE3Events::HitEffect2{};
+            case TAE3EventType::CultSacrifice1: return TAE3Events::CultSacrifice1{};
+            case TAE3EventType::SacrificeEmpty: return TAE3Events::SacrificeEmpty{};
+            case TAE3EventType::Toughness: return TAE3Events::Toughness{};
+            case TAE3EventType::BringCultMenu: return TAE3Events::BringCultMenu{};
+            case TAE3EventType::CeremonyParamID: return TAE3Events::CeremonyParamID{};
+            case TAE3EventType::CultSingle: return TAE3Events::CultSingle{};
+            case TAE3EventType::CultEmpty2: return TAE3Events::CultEmpty2{};
+            case TAE3EventType::Unk800: return TAE3Events::Unk800{};
+            default: throw BinaryException("Unsupported TAE event type " + std::to_string(static_cast<uint64_t>(Type)));
+        }
     }
 
 }  // namespace Souls

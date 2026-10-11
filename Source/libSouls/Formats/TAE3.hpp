@@ -28,10 +28,20 @@ namespace Souls {
             // When the event begins and ends, in seconds.
             float StartTime = 0;
             float EndTime   = 0;
-            // The type and the type's fields.
+            // The type and the type's fields. Used for Dark Souls III (version 0x1000C) files.
             TAE3EventData Data;
 
-            EventType Type() const { return TAE3EventTypeOf(Data); }
+            // Files of version 0x1000D (Sekiro and Elden Ring) keep each event's fields as raw bytes instead, because
+            // the layouts of their event types aren't known to the library. RawData holds everything after the event's
+            // type, up to the start of the next thing in the file (so it includes any alignment padding), and Data is
+            // not used. Changing an event's type or length changes the layout of the file after it.
+            bool IsRaw = false;
+            uint64_t RawType = 0;
+            std::vector<uint8_t> RawData;
+
+            EventType Type() const { return IsRaw ? static_cast<EventType>(RawType) : TAE3EventTypeOf(Data); }
+            // The type number as stored in the file, even for types the library has no struct for.
+            uint64_t TypeNumber() const { return static_cast<uint64_t>(Type()); }
         };
 
         // A group of events in an animation with an associated EventType that does not necessarily match theirs.
@@ -54,6 +64,8 @@ namespace Souls {
         };
 
         // ID number of this TAE.
+        // 0x1000C for Dark Souls III, 0x1000D for Sekiro and Elden Ring.
+        int32_t Version = 0x1000C;
         int32_t ID = 0;
         // Unknown flags.
         std::array<uint8_t, 8> Flags{};

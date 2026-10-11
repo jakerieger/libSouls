@@ -55,6 +55,9 @@ namespace Souls {
         std::optional<size_t> IndexOf(std::string_view InternalName) const;
         const std::string& InternalName(size_t FieldIndex) const;
         PARAMDEF::DefType Type(size_t FieldIndex) const;
+        // Everything the paramdef says about the field (display name, description, minimum/maximum/increment, the
+        // internal type, which may name an enum for a ParamEnumRepository, ...).
+        const PARAMDEF::Field& Definition(size_t FieldIndex) const;
 
         // A new row with every field at its default value.
         PARAM::Row MakeRow(int32_t ID, std::optional<std::string> Name = std::nullopt) const;
@@ -97,6 +100,8 @@ namespace Souls {
             int32_t BitOffset = 0;
             int32_t BitSize   = -1;
             PARAMDEF::EditorValue Default;
+            // The def's whole description of the field: display name, description, ranges, enum type, and so on.
+            PARAMDEF::Field Definition;
         };
 
         const FieldInfo& Field(size_t FieldIndex) const;

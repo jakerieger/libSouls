@@ -42,6 +42,10 @@ namespace Souls::CApi {
                               Message.rfind("Failed to create", 0) == 0;
             SetError(IsIo ? SOULS_ERR_IO : SOULS_ERR_PARSE, Message);
             return State().Status;
+        } catch (const NotFound& E) {
+            SetError(SOULS_ERR_NOT_FOUND, E.what());
+        } catch (const Unsupported& E) {
+            SetError(SOULS_ERR_UNSUPPORTED, E.what());
         } catch (const std::invalid_argument& E) {
             SetError(SOULS_ERR_INVALID_ARGUMENT, E.what());
         } catch (const std::out_of_range& E) {
@@ -74,6 +78,20 @@ namespace Souls::CApi {
             ThrowInvalid("data is NULL");
         }
         return {Data, Size};
+    }
+
+    std::vector<uint8_t> ReadAllBytes(const std::filesystem::path& Path) {
+        std::ifstream File(Path, std::ios::binary | std::ios::ate);
+        if (!File) {
+            throw BinaryException("Failed to open file for reading: " + Path.string());
+        }
+        const std::streamsize Size = File.tellg();
+        File.seekg(0);
+        std::vector<uint8_t> Data(static_cast<size_t>(Size));
+        if (Size > 0 && !File.read(reinterpret_cast<char*>(Data.data()), Size)) {
+            throw BinaryException("Failed to read file: " + Path.string());
+        }
+        return Data;
     }
 
     SoulsBuffer MakeBuffer(const uint8_t* Data, size_t Size) {
@@ -127,20 +145,7 @@ SOULS_C_API void souls_buffer_free(SoulsBuffer buffer) {
 }
 
 SOULS_C_API SoulsBuffer souls_read_file(const char* path) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
-        const std::filesystem::path P = PathFrom(path);
-        std::ifstream File(P, std::ios::binary | std::ios::ate);
-        if (!File) {
-            throw BinaryException("Failed to open file for reading: " + P.string());
-        }
-        const std::streamsize Size = File.tellg();
-        File.seekg(0);
-        std::vector<uint8_t> Data(static_cast<size_t>(Size));
-        if (Size > 0 && !File.read(reinterpret_cast<char*>(Data.data()), Size)) {
-            throw BinaryException("Failed to read file: " + P.string());
-        }
-        return MakeBuffer(Data);
-    });
+    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(ReadAllBytes(PathFrom(path))); });
 }
 
 SOULS_C_API int souls_oodle_set_dll_path(const char* path) {

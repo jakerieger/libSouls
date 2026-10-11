@@ -11,18 +11,33 @@
 
 namespace Souls {
     namespace {
-        TAE3::Event ReadEvent(BinaryReader& Reader) {
-            TAE3::Event E;
-            const int64_t StartTimeOffset = Reader.ReadInt64();
-            const int64_t EndTimeOffset   = Reader.ReadInt64();
-            const int64_t EventDataOffset = Reader.ReadInt64();
-            E.StartTime                   = Reader.ReadAt<float>(StartTimeOffset);
-            E.EndTime                     = Reader.ReadAt<float>(EndTimeOffset);
+        // An event's header: where its times and data are.
+        struct EventHeader {
+            int64_t StartTimeOffset = 0;
+            int64_t EndTimeOffset   = 0;
+            int64_t DataOffset      = 0;
+        };
 
-            Reader.StepIn(EventDataOffset);
-            const auto Type = static_cast<TAE3EventType>(Reader.ReadUInt64());
+        // Reads an event whose data layout is known. RawEnd is where the event's data ends, which only matters
+        // for the raw form used by version 0x1000D.
+        TAE3::Event ReadEvent(BinaryReader& Reader, const EventHeader& Header, bool Raw, int64_t RawEnd) {
+            TAE3::Event E;
+            E.StartTime = Reader.ReadAt<float>(Header.StartTimeOffset);
+            E.EndTime   = Reader.ReadAt<float>(Header.EndTimeOffset);
+
+            Reader.StepIn(Header.DataOffset);
+            const uint64_t Type = Reader.ReadUInt64();
             Reader.Assert<int64_t>(Reader.Position() + 8);
-            E.Data = ReadTAE3EventData(Type, Reader);
+            if (Raw) {
+                E.IsRaw   = true;
+                E.RawType = Type;
+                if (RawEnd < Reader.Position()) {
+                    throw BinaryException("TAE event data ends before it begins.");
+                }
+                E.RawData = Reader.ReadBytes(static_cast<size_t>(RawEnd - Reader.Position()));
+            } else {
+                E.Data = ReadTAE3EventData(static_cast<TAE3EventType>(Type), Reader);
+            }
             Reader.StepOut();
             return E;
         }
@@ -44,7 +59,7 @@ namespace Souls {
         Reader.AssertMagic("TAE ");
         Reader.AssertPattern(3, 0);
         Reader.Assert<uint8_t>(0xFF);
-        Reader.Assert<int32_t>(0x1000C);
+        Version = Reader.Assert<int32_t>(0x1000C, 0x1000D);
         Reader.ReadInt32();  // file size
         Reader.Assert<int64_t>(0x40);
         Reader.Assert<int64_t>(1);
@@ -75,6 +90,23 @@ namespace Souls {
         SkeletonName = Reader.GetUTF16Text(SkeletonNameOffset);
         SibName      = Reader.GetUTF16Text(SibNameOffset);
 
+        // Where each structure in the animations begins, so the raw event data of version 0x1000D can be given an end.
+        const bool Raw = Version == 0x1000D;
+        std::set<int64_t> Starts{Reader.Length()};
+        if (Raw) {
+            Reader.StepIn(AnimsOffset);
+            for (int32_t I = 0; I < AnimCount; ++I) {
+                Reader.ReadInt64();  // animation ID
+                const int64_t AnimOffset = Reader.ReadInt64();
+                Reader.StepIn(AnimOffset);
+                for (int J = 0; J < 4; ++J) {
+                    Starts.insert(Reader.ReadInt64());
+                }
+                Reader.StepOut();
+            }
+            Reader.StepOut();
+        }
+
         Animations.clear();
         Reader.StepIn(AnimsOffset);
         for (int32_t I = 0; I < AnimCount; ++I) {
@@ -92,12 +124,25 @@ namespace Souls {
             Reader.Assert<int32_t>(0);
 
             std::vector<int64_t> EventHeaderOffsets;
+            std::vector<EventHeader> Headers;
             Reader.StepIn(EventHeadersOffset);
             for (int32_t E = 0; E < EventCount; ++E) {
                 EventHeaderOffsets.push_back(Reader.Position());
-                A.Events.push_back(ReadEvent(Reader));
+                EventHeader H;
+                H.StartTimeOffset = Reader.ReadInt64();
+                H.EndTimeOffset   = Reader.ReadInt64();
+                H.DataOffset      = Reader.ReadInt64();
+                Headers.push_back(H);
             }
             Reader.StepOut();
+            std::set<int64_t> DataStarts = Starts;
+            for (const EventHeader& H : Headers) {
+                DataStarts.insert(H.DataOffset);
+            }
+            for (const EventHeader& H : Headers) {
+                const auto Next = DataStarts.upper_bound(H.DataOffset);
+                A.Events.push_back(ReadEvent(Reader, H, Raw, Next == DataStarts.end() ? Reader.Length() : *Next));
+            }
 
             Reader.StepIn(EventGroupsOffset);
             for (int32_t G = 0; G < EventGroupCount; ++G) {
@@ -152,7 +197,7 @@ namespace Souls {
         Writer.WriteByte(0);
         Writer.WriteByte(0);
         Writer.WriteByte(0xFF);
-        Writer.WriteInt32(0x1000C);
+        Writer.WriteInt32(Version);
         Writer.Reserve<int32_t>("FileSize");
         Writer.WriteInt64(0x40);
         Writer.WriteInt64(1);
@@ -287,9 +332,13 @@ namespace Souls {
             // Event data.
             for (size_t E = 0; E < A.Events.size(); ++E) {
                 Writer.Fill<int64_t>("EventDataOffset" + Idx + ":" + std::to_string(E), Writer.Position());
-                Writer.WriteUInt64(static_cast<uint64_t>(A.Events[E].Type()));
+                Writer.WriteUInt64(A.Events[E].TypeNumber());
                 Writer.WriteInt64(Writer.Position() + 8);
-                WriteTAE3EventData(A.Events[E].Data, Writer);
+                if (A.Events[E].IsRaw) {
+                    Writer.WriteArray(A.Events[E].RawData);
+                } else {
+                    WriteTAE3EventData(A.Events[E].Data, Writer);
+                }
                 Writer.Align(0x10);
             }
 

@@ -17,6 +17,11 @@ add_executable(Testsuite
         FormatScanTests.cpp
         SyntheticFormatTests.cpp
         CApiTests.cpp
+        CApiMsbTests.cpp
+        CApiFlverTests.cpp
+        CApiArchiveTests.cpp
+        CApiEventTests.cpp
+        CApiParamMetadataTests.cpp
         CApiSmoke.c
         BinderFileTests.cpp
         OodleTests.cpp

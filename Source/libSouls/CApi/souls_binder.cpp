@@ -27,8 +27,12 @@ namespace {
         auto Result = std::make_unique<SoulsBinder>();
         if constexpr (std::is_same_v<T, BND3>) {
             Result->Bnd3 = std::make_unique<BND3>(std::move(Value));
-        } else {
+        } else if constexpr (std::is_same_v<T, BND4>) {
             Result->Bnd4 = std::make_unique<BND4>(std::move(Value));
+        } else if constexpr (std::is_same_v<T, BXF3>) {
+            Result->Bxf3 = std::make_unique<BXF3>(std::move(Value));
+        } else {
+            Result->Bxf4 = std::make_unique<BXF4>(std::move(Value));
         }
         return Result.release();
     }
@@ -56,6 +60,8 @@ SOULS_C_API SoulsBinder* souls_binder_new(SoulsBinderKind kind) {
     return GuardValue<SoulsBinder*>(nullptr, [&] {
         if (kind == SOULS_BINDER_BND3) return Wrap(BND3());
         if (kind == SOULS_BINDER_BND4) return Wrap(BND4());
+        if (kind == SOULS_BINDER_BXF3) return Wrap(BXF3());
+        if (kind == SOULS_BINDER_BXF4) return Wrap(BXF4());
         ThrowInvalid("invalid binder kind");
     });
 }
@@ -78,12 +84,19 @@ SOULS_C_API void souls_binder_free(SoulsBinder* binder) {
 }
 
 SOULS_C_API SoulsBinderKind souls_binder_kind(const SoulsBinder* binder) {
-    return GuardValue(SOULS_BINDER_BND4, [&] { return Require(binder, "binder is NULL").Bnd3 ? SOULS_BINDER_BND3 : SOULS_BINDER_BND4; });
+    return GuardValue(SOULS_BINDER_BND4, [&] {
+        const SoulsBinder& B = Require(binder, "binder is NULL");
+        if (B.Bnd3) return SOULS_BINDER_BND3;
+        if (B.Bxf3) return SOULS_BINDER_BXF3;
+        if (B.Bxf4) return SOULS_BINDER_BXF4;
+        return SOULS_BINDER_BND4;
+    });
 }
 
 SOULS_C_API SoulsStatus souls_binder_write_file(SoulsBinder* binder, const char* path) {
     return Guard([&] {
         SoulsBinder& B = Require(binder, "binder is NULL");
+        if (B.IsBxf()) throw Unsupported("Split binders are written with souls_bxf_write_files.");
         if (B.Bnd3) B.Bnd3->Write(PathFrom(path));
         else B.Bnd4->Write(PathFrom(path));
     });
@@ -92,6 +105,7 @@ SOULS_C_API SoulsStatus souls_binder_write_file(SoulsBinder* binder, const char*
 SOULS_C_API SoulsBuffer souls_binder_write_memory(SoulsBinder* binder) {
     return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
         SoulsBinder& B = Require(binder, "binder is NULL");
+        if (B.IsBxf()) throw Unsupported("Split binders are written with souls_bxf_write_memory.");
         return MakeBuffer(B.Bnd3 ? B.Bnd3->Write() : B.Bnd4->Write());
     });
 }
@@ -103,7 +117,11 @@ SOULS_C_API SoulsDcxType souls_binder_compression(const SoulsBinder* binder) {
 }
 
 SOULS_C_API SoulsStatus souls_binder_set_compression(SoulsBinder* binder, SoulsDcxType type) {
-    return Guard([&] { Require(binder, "binder is NULL").Compression() = DcxFrom(type); });
+    return Guard([&] {
+        SoulsBinder& B = Require(binder, "binder is NULL");
+        if (B.IsBxf()) throw Unsupported("Split binders have no compression of their own.");
+        B.Compression() = DcxFrom(type);
+    });
 }
 
 SOULS_C_API size_t souls_binder_file_count(const SoulsBinder* binder) {

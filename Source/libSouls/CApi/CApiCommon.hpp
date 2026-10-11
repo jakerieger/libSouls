@@ -10,12 +10,15 @@
 
 #include <libSouls/Binders/BND3.hpp>
 #include <libSouls/Binders/BND4.hpp>
+#include <libSouls/Binders/BXF3.hpp>
+#include <libSouls/Binders/BXF4.hpp>
 #include <libSouls/Endian.hpp>
 #include <libSouls/Formats/DCX.hpp>
 #include <libSouls/Formats/FMG.hpp>
 #include <libSouls/Formats/PARAM.hpp>
 #include <libSouls/Formats/ParamDefRepository.hpp>
 #include <libSouls/Formats/ParamLayout.hpp>
+#include <libSouls/Formats/ParamMetadata.hpp>
 #include <libSouls/Formats/TPF.hpp>
 
 #include <cstdlib>
@@ -34,11 +37,25 @@
 struct SoulsBinder {
     std::unique_ptr<Souls::BND3> Bnd3;
     std::unique_ptr<Souls::BND4> Bnd4;
+    std::unique_ptr<Souls::BXF3> Bxf3;
+    std::unique_ptr<Souls::BXF4> Bxf4;
+    // BXF binders have no compression of their own.
+    Souls::DCX::Type NoCompression = Souls::DCX::Type::None;
 
-    Souls::IBinder& Base() { return Bnd3 ? static_cast<Souls::IBinder&>(*Bnd3) : static_cast<Souls::IBinder&>(*Bnd4); }
-    const Souls::IBinder& Base() const { return Bnd3 ? static_cast<const Souls::IBinder&>(*Bnd3) : static_cast<const Souls::IBinder&>(*Bnd4); }
-    Souls::DCX::Type& Compression() { return Bnd3 ? Bnd3->Compression : Bnd4->Compression; }
-    const Souls::DCX::Type& Compression() const { return Bnd3 ? Bnd3->Compression : Bnd4->Compression; }
+    Souls::IBinder& Base() {
+        if (Bnd3) return *Bnd3;
+        if (Bnd4) return *Bnd4;
+        if (Bxf3) return *Bxf3;
+        return *Bxf4;
+    }
+    const Souls::IBinder& Base() const { return const_cast<SoulsBinder*>(this)->Base(); }
+    bool IsBxf() const { return Bxf3 || Bxf4; }
+    Souls::DCX::Type& Compression() {
+        if (Bnd3) return Bnd3->Compression;
+        if (Bnd4) return Bnd4->Compression;
+        return NoCompression;
+    }
+    const Souls::DCX::Type& Compression() const { return const_cast<SoulsBinder*>(this)->Compression(); }
 };
 
 struct SoulsFMG {
@@ -59,6 +76,16 @@ struct SoulsParamLayout {
     Souls::ParamLayout Value;
     // Backs the text returned by souls_param_get_string.
     std::string Scratch;
+};
+
+struct SoulsParamNames {
+    Souls::ParamNameRepository Repository;
+    std::vector<std::string> LoadErrors;
+};
+
+struct SoulsParamEnums {
+    Souls::ParamEnumRepository Repository;
+    std::vector<std::string> LoadErrors;
 };
 
 struct SoulsTPF {
@@ -99,6 +126,16 @@ namespace Souls::CApi {
         }
     }
 
+    // A request that is valid but not supported for this object; reported as SOULS_ERR_UNSUPPORTED.
+    struct Unsupported : std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
+
+    // A lookup that found nothing; reported as SOULS_ERR_NOT_FOUND.
+    struct NotFound : std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
+
     [[noreturn]] void ThrowInvalid(const char* Message);
 
     template<typename T>
@@ -127,6 +164,9 @@ namespace Souls::CApi {
     }
 
     SoulsStatus Fail(SoulsStatus Status, const char* Message);
+
+    // The whole contents of a file.
+    std::vector<uint8_t> ReadAllBytes(const std::filesystem::path& Path);
 
     // The C and C++ compression type lists have the same order (checked in souls_core.cpp).
     inline DCX::Type DcxFrom(SoulsDcxType Type) {

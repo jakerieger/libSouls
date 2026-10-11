@@ -59,6 +59,22 @@ namespace Souls::Util {
         return Hash;
     }
 
+    uint64_t FromPathHash64(std::string_view Text, uint64_t Prime) {
+        std::string Hashable(Text);
+        for (char& C : Hashable) {
+            C = C == '\\' ? '/' : static_cast<char>(std::tolower(static_cast<unsigned char>(C)));
+        }
+        if (Hashable.empty() || Hashable.front() != '/') {
+            Hashable.insert(Hashable.begin(), '/');
+        }
+
+        uint64_t Hash = 0;
+        for (const char C : Hashable) {
+            Hash = Hash * Prime + static_cast<uint64_t>(static_cast<unsigned char>(C));
+        }
+        return Hash;
+    }
+
     bool IsPrime(uint32_t Candidate) {
         if (Candidate < 2) {
             return false;

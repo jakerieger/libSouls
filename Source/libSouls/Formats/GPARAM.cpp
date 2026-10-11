@@ -168,7 +168,7 @@ namespace Souls {
         const int32_t Unk3Count = Reader.ReadInt32();
         Offs.Unk3               = Reader.ReadInt32();
         Offs.Unk3ValueIDs       = Reader.ReadInt32();
-        Reader.Assert<int32_t>(0);
+        Unk40                   = Reader.ReadFloat();
         if (Game == GPGame::DarkSouls3 || Game == GPGame::Sekiro) {
             Offs.CommentOffsetsOffsets = Reader.ReadInt32();
             Offs.CommentOffsets        = Reader.ReadInt32();
@@ -265,7 +265,7 @@ namespace Souls {
         Writer.WriteInt32(static_cast<int32_t>(Unk3s.size()));
         Writer.Reserve<int32_t>("UnkOffset3");
         Writer.Reserve<int32_t>("Unk3ValuesOffset");
-        Writer.WriteInt32(0);
+        Writer.WriteFloat(Unk40);
         if (Game == GPGame::DarkSouls3 || Game == GPGame::Sekiro) {
             Writer.Reserve<int32_t>("CommentOffsetsOffsetsOffset");
             Writer.Reserve<int32_t>("CommentOffsetsOffset");

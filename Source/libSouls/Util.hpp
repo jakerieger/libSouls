@@ -33,6 +33,10 @@ namespace Souls::Util {
 
     // FromSoftware's path hash used by BND/BXF hash tables.
     SOULS_API uint32_t FromPathHash(std::string_view Text);
+    // The 64-bit form used to name files in the packed archives (BHD5) of Elden Ring: the path is lowercased, uses
+    // forward slashes and starts with "/", then each character is folded in as hash = hash * Prime + character.
+    // Dark Souls III and Sekiro store the 32-bit form (FromPathHash) in the same field.
+    SOULS_API uint64_t FromPathHash64(std::string_view Text, uint64_t Prime = 0x85);
     SOULS_API bool IsPrime(uint32_t Candidate);
 
     // Parses/produces binder timestamps like "07B26C10". Throws BinaryException on bad input.

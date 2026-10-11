@@ -86,6 +86,8 @@ namespace Souls {
         bool Unk0D  = false;
         // Unknown; in Dark Souls II, number of entries in UnkBlock2.
         int32_t Unk14 = 0;
+        // Unknown; zero before Elden Ring.
+        float Unk40 = 0;
         // Unknown; only present in Sekiro.
         float Unk50 = 0;
         std::vector<Group> Groups;

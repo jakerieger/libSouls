@@ -41,7 +41,7 @@ is a side benefit rather than the goal, and any claims about it will be backed b
 
 This is the planned development roadmap for libSouls:
 
-### ✔️ Porting SoulsFormats
+### Porting SoulsFormats (Done)
 
 libSouls isn't aiming for 100% coverage of SoulsFormats out of the box, but instead to port the most relevant and
 commonly used
@@ -49,21 +49,20 @@ portions first before eventually circling back and filling in the gaps (console-
 Sekiro variants). This stage is largely complete and most actions
 mod developers desire are possible with libSouls right now.
 
-### 🚧 C API
+### C API (In Progress)
 
-This is the stage that brings a stable C API for creating other language bindings. Work on this has begun, but libSouls
-today is a C++-only library.
+This is the stage that brings a stable C API for creating other language bindings.
 
-### 🚧 Gap-filling SoulsFormats
+### Gap-filling SoulsFormats (In Progress)
 
 Fill in missing functionality and formats from SoulsFormats for complete coverage of the original library.
 
-### 🚧 Additional Features
+### Additional Features (In Progress)
 
 Once the C API is in place, work on additional features can begin. Nothing concrete is planned for this stage yet and
 what gets implemented will largely be determined by community demand and my own personal vision for the project.
 
-### 🚧 Maintainence and Stability Improvements
+### Maintainence and Stability Improvements
 
 The final stage is continuing to improve API stability, fix bugs, and support more features. libSouls version 1.0 will
 be the point at which this stage is entered, and where it will remain for the rest of its development lifecycle.
@@ -131,10 +130,9 @@ The final `Souls.dll` library can be found in `build/<CONFIG>/bin`. libSouls cur
 
 > [!NOTE]
 > `oo2core_6_win64.dll` needs to exist in the same path as `Souls.dll` and whatever executable is utilizing this
-library. It can be copied from whichever From game you are modding (DS1/2/3, ELDEN RING, Sekiro, etc.).
->
-> It contains the proprietary [Oodle](https://www.radgametools.com/oodle.htm) codec used by the game engine and without
-> it, none of the game file formats can be read, modified, or written to.
+library. It contains the proprietary [Oodle](https://www.radgametools.com/oodle.htm) codec used by the game engine and
+without it, none of the game file formats can be read, modified, or written to. It can be copied from whichever From
+game you are modding.
 >
 > **Optionally**, your project can tell libSouls where to find the DLL instead, by calling `Oodle26::SetDLLPath` once
 > before any Oodle-compressed file is read or written (the first use loads the DLL):
@@ -154,6 +152,25 @@ Contributions are more than welcome. I'm one guy with limited free time and any 
 > [!IMPORTANT]
 > If you'd like to contribute, **please submit an issue prior to submitting a pull request so we can discuss an
 implementation plan.**
+
+## Acknowledgements
+
+libSouls stands on a lot of community work. Thank you to everyone behind:
+
+- [**SoulsFormats**](https://github.com/JKAnderson/SoulsFormats) by JKAnderson and its contributors, whose format
+  research libSouls ports to C++. Nearly every format here follows its structure and naming.
+- [**Paramdex**](https://github.com/soulsmods/Paramdex) from the soulsmods community: the paramdefs, row names and enum
+  definitions that the tests and examples use to make PARAM data readable. libSouls does not bundle them.
+- [**UXM**](https://github.com/Nordgaren/UXM-Selective-Unpack) and **Nuxe**, used to unpack the games' archives for real
+  file testing. The community's work on the archive formats (BHD5 headers, path hashing) also informed libSouls'
+  archive support.
+- [**Oodle**](https://www.radgametools.com/oodle.htm) by RAD Game Tools (Epic Games), the compression codec the newer
+  games use. libSouls loads the DLL from your game install and **does not redistribute it**.
+- [**zlib**](https://github.com/madler/zlib), [**Zstandard**](https://github.com/facebook/zstd) and
+  [**pugixml**](https://github.com/zeux/pugixml), fetched at configure time.
+
+Format details beyond the original SoulsFormats (Sekiro and Elden Ring variants) were worked out by comparing against
+real game files, so any mistakes there are my own.
 
 ## License
 
