@@ -202,6 +202,7 @@ SOULS_C_API SoulsStatus souls_tae3_set_names(SoulsTae3* tae, const char* skeleto
         TAE3& T         = File(tae);
         T.SkeletonName  = NameArg(skeleton_name);
         T.SibName       = NameArg(sib_name);
+        T.HasNames      = true;
     });
 }
 

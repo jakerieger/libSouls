@@ -2,6 +2,7 @@
 // Created by Jake Rieger on 10/9/2026.
 //
 
+#include "TestPaths.hpp"
 #include "TestResult.hpp"
 
 #include <libSouls/CApi/souls.h>
@@ -85,16 +86,11 @@ namespace {
         souls_param_free(P);
     }
 
-    fs::path FindParamdex() {
-        if (const char* Env = std::getenv("PARAMDEX_PATH")) return Env;
-        if (const char* Home = std::getenv("USERPROFILE")) return fs::path(Home) / "Code/GitHub/Paramdex";
-        return {};
-    }
 
     // Elden Ring: decrypt regulation.bin, edit a weapon through a layout, write it back through the binder.
     int TestEldenRing() {
         const fs::path Game = "C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game";
-        const fs::path Defs = FindParamdex() / "ER" / "Defs";
+        const fs::path Defs = TestPaths::Paramdex() / "ER" / "Defs";
         if (!fs::exists(Game / "regulation.bin") || !fs::exists(Defs)) {
             std::printf("Elden Ring C API checks skipped (needs the game and Paramdex)\n");
             return TestSkipped;

@@ -2,6 +2,7 @@
 // Created by Jake Rieger on 10/7/2026.
 //
 
+#include "TestPaths.hpp"
 #include "TestResult.hpp"
 
 #include <libSouls/Binders/BND3.hpp>
@@ -18,8 +19,8 @@
 #include <map>
 #include <string>
 
-// Checks the library against the community's Paramdex repository, which isn't part of libSouls (and isn't shipped
-// with it). Set PARAMDEX_PATH to its folder, or clone it to ~/Code/GitHub/Paramdex.
+// Checks the library against the community's Paramdex repository, the Vendor/Paramdex submodule (not shipped with
+// the library). PARAMDEX_PATH points the tests at another copy.
 
 namespace {
     int Failures = 0;
@@ -39,11 +40,6 @@ namespace {
         return Text.size() >= Suffix.size() && Text.compare(Text.size() - Suffix.size(), Suffix.size(), Suffix) == 0;
     }
 
-    fs::path FindParamdex() {
-        if (const char* Env = std::getenv("PARAMDEX_PATH")) return Env;
-        if (const char* Home = std::getenv("USERPROFILE")) return fs::path(Home) / "Code/GitHub/Paramdex";
-        return {};
-    }
 
     bool SameFieldLists(const PARAMDEF& A, const PARAMDEF& B) {
         if (A.Fields.size() != B.Fields.size()) return false;
@@ -223,9 +219,9 @@ namespace {
 int RunParamdexTests() {
     Failures = 0;
 
-    const fs::path Paramdex = FindParamdex();
+    const fs::path Paramdex = TestPaths::Paramdex();
     if (Paramdex.empty() || !fs::exists(Paramdex / "ER" / "Defs")) {
-        std::printf("Paramdex checks skipped (set PARAMDEX_PATH, or clone Paramdex to ~/Code/GitHub/Paramdex)\n");
+        std::printf("Paramdex checks skipped (run git submodule update --init, or set PARAMDEX_PATH)\n");
         return TestSkipped;
     }
 

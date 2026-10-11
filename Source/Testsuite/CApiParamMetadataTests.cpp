@@ -2,6 +2,7 @@
 // Created by Jake Rieger on 10/11/2026.
 //
 
+#include "TestPaths.hpp"
 #include "TestResult.hpp"
 
 #include <libSouls/CApi/souls.h>
@@ -25,17 +26,12 @@ namespace {
 
     namespace fs = std::filesystem;
 
-    fs::path FindParamdex() {
-        if (const char* Env = std::getenv("PARAMDEX_PATH")) return Env;
-        if (const char* Home = std::getenv("USERPROFILE")) return fs::path(Home) / "Code/GitHub/Paramdex";
-        return {};
-    }
 }  // namespace
 
 // Row names and enum names from Paramdex, and field descriptions from its paramdefs.
 int TestCApiParamMetadata() {
     Failures                   = 0;
-    const fs::path Paramdex    = FindParamdex() / "ER";
+    const fs::path Paramdex    = TestPaths::Paramdex() / "ER";
     const fs::path Game        = "C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game";
     if (!fs::exists(Paramdex / "Names") || !fs::exists(Paramdex / "Tdfs") || !fs::exists(Paramdex / "Defs")) {
         std::printf("Param metadata C API checks skipped (needs Paramdex)\n");

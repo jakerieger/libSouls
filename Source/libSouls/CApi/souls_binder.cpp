@@ -5,6 +5,7 @@
 #include "CApiCommon.hpp"
 
 #include <libSouls/Binders/Regulation.hpp>
+#include <libSouls/Binders/SL2.hpp>
 
 using namespace Souls;
 using namespace Souls::CApi;
@@ -238,3 +239,39 @@ SOULS_C_API SoulsStatus souls_regulation_encrypt(SoulsGame game, const char* pat
         }
     });
 }
+
+#pragma region Saves
+namespace {
+    SL2::Game SaveGame(SoulsSaveKind Kind) {
+        switch (Kind) {
+            case SOULS_SAVE_DARK_SOULS_2: return SL2::Game::DarkSouls2;
+            case SOULS_SAVE_DARK_SOULS_2_SCHOLAR: return SL2::Game::DarkSouls2Scholar;
+            case SOULS_SAVE_DARK_SOULS_3: return SL2::Game::DarkSouls3;
+            case SOULS_SAVE_ELDEN_RING: return SL2::Game::EldenRing;
+        }
+        ThrowInvalid("invalid save kind");
+    }
+
+    const BND4& SaveBinder(const SoulsBinder* Binder) {
+        const SoulsBinder& B = Require(Binder, "binder is NULL");
+        if (!B.Bnd4) ThrowInvalid("save files are BND4 binders");
+        return *B.Bnd4;
+    }
+}  // namespace
+
+SOULS_C_API SoulsBinder* souls_save_read_file(SoulsSaveKind kind, const char* path) {
+    return GuardValue<SoulsBinder*>(nullptr, [&] { return Wrap(SL2::Read(PathFrom(path), SaveGame(kind))); });
+}
+
+SOULS_C_API SoulsBinder* souls_save_read_memory(SoulsSaveKind kind, const uint8_t* data, size_t size) {
+    return GuardValue<SoulsBinder*>(nullptr, [&] { return Wrap(SL2::Read(Bytes(data, size), SaveGame(kind))); });
+}
+
+SOULS_C_API SoulsStatus souls_save_write_file(SoulsSaveKind kind, const char* path, const SoulsBinder* binder) {
+    return Guard([&] { SL2::Write(PathFrom(path), SaveBinder(binder), SaveGame(kind)); });
+}
+
+SOULS_C_API SoulsBuffer souls_save_write_memory(SoulsSaveKind kind, const SoulsBinder* binder) {
+    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(SL2::Write(SaveBinder(binder), SaveGame(kind))); });
+}
+#pragma endregion

@@ -109,6 +109,14 @@ namespace Souls::Crypto {
         return Plain;
     }
 
+    std::vector<uint8_t> RandomBytes(size_t Count) {
+        std::vector<uint8_t> Bytes(Count);
+        if (Count > 0) {
+            Check(BCryptGenRandom(nullptr, Bytes.data(), static_cast<ULONG>(Count), BCRYPT_USE_SYSTEM_PREFERRED_RNG), "BCryptGenRandom");
+        }
+        return Bytes;
+    }
+
     std::vector<uint8_t> EncryptAesCbc(std::span<const uint8_t> Key, std::span<const uint8_t> Data) {
         const AesKey Aes(Key);
 

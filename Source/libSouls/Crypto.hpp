@@ -37,6 +37,9 @@ namespace Souls::Crypto {
 #pragma region Hashing
     // The MD5 hash of the data.
     SOULS_API std::array<uint8_t, 16> Md5(std::span<const uint8_t> Data);
+
+    // Count bytes from the system's cryptographic random number generator (for IVs).
+    SOULS_API std::vector<uint8_t> RandomBytes(size_t Count);
 #pragma endregion
 
 #pragma region RSA

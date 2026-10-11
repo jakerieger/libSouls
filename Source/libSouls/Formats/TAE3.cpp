@@ -26,11 +26,15 @@ namespace Souls {
             E.EndTime   = Reader.ReadAt<float>(Header.EndTimeOffset);
 
             Reader.StepIn(Header.DataOffset);
-            const uint64_t Type = Reader.ReadUInt64();
-            Reader.Assert<int64_t>(Reader.Position() + 8);
+            const uint64_t Type         = Reader.ReadUInt64();
+            const int64_t FieldsOffset  = Reader.ReadInt64();
+            if (FieldsOffset != Reader.Position() && !(Raw && FieldsOffset == 0)) {
+                throw BinaryException("Unexpected TAE event fields offset " + std::to_string(FieldsOffset));
+            }
             if (Raw) {
-                E.IsRaw   = true;
-                E.RawType = Type;
+                E.IsRaw             = true;
+                E.RawType           = Type;
+                E.RawNoFieldsOffset = FieldsOffset == 0;
                 if (RawEnd < Reader.Position()) {
                     throw BinaryException("TAE event data ends before it begins.");
                 }
@@ -85,10 +89,15 @@ namespace Souls {
         Reader.Assert<int64_t>(0xB0);
         const int64_t SkeletonNameOffset = Reader.ReadInt64();
         const int64_t SibNameOffset      = Reader.ReadInt64();
-        Reader.Assert<int64_t>(0);
-        Reader.Assert<int64_t>(0);
-        SkeletonName = Reader.GetUTF16Text(SkeletonNameOffset);
-        SibName      = Reader.GetUTF16Text(SibNameOffset);
+        HasNames                         = SkeletonNameOffset != 0 || SibNameOffset != 0;
+        SkeletonName.clear();
+        SibName.clear();
+        if (HasNames) {
+            Reader.Assert<int64_t>(0);
+            Reader.Assert<int64_t>(0);
+            SkeletonName = Reader.GetUTF16Text(SkeletonNameOffset);
+            SibName      = Reader.GetUTF16Text(SibNameOffset);
+        }
 
         // Where each structure in the animations begins, so the raw event data of version 0x1000D can be given an end.
         const bool Raw = Version == 0x1000D;
@@ -178,7 +187,8 @@ namespace Souls {
             }
             // When Reference is false, there is always a filename. When true, there usually is not, but sometimes
             // there is, for unknown reasons; dropping it here is a hack to achieve byte-perfection.
-            if (!(EndsWith(A.AnimFileName, ".hkt") || EndsWith(A.AnimFileName, ".hkx"))) {
+            // (Only for references: Sekiro has non-reference names without the dot, such as "a000_003011hkt".)
+            if (A.AnimFileReference && !(EndsWith(A.AnimFileName, ".hkt") || EndsWith(A.AnimFileName, ".hkx"))) {
                 A.AnimFileName.clear();
             }
             Reader.StepOut();
@@ -221,16 +231,21 @@ namespace Souls {
         Writer.WriteInt64(0x50);
         Writer.WriteInt64(0);
         Writer.WriteInt64(0xB0);
-        Writer.Reserve<int64_t>("SkeletonName");
-        Writer.Reserve<int64_t>("SibName");
-        Writer.WriteInt64(0);
-        Writer.WriteInt64(0);
-        Writer.Fill<int64_t>("SkeletonName", Writer.Position());
-        Writer.WriteUTF16Text(SkeletonName, true);
-        Writer.Align(0x10);
-        Writer.Fill<int64_t>("SibName", Writer.Position());
-        Writer.WriteUTF16Text(SibName, true);
-        Writer.Align(0x10);
+        if (HasNames) {
+            Writer.Reserve<int64_t>("SkeletonName");
+            Writer.Reserve<int64_t>("SibName");
+            Writer.WriteInt64(0);
+            Writer.WriteInt64(0);
+            Writer.Fill<int64_t>("SkeletonName", Writer.Position());
+            Writer.WriteUTF16Text(SkeletonName, true);
+            Writer.Align(0x10);
+            Writer.Fill<int64_t>("SibName", Writer.Position());
+            Writer.WriteUTF16Text(SibName, true);
+            Writer.Align(0x10);
+        } else {
+            Writer.WriteInt64(0);
+            Writer.WriteInt64(0);
+        }
 
         std::stable_sort(Animations.begin(), Animations.end(), [](const Animation& A, const Animation& B) { return A.ID < B.ID; });
         std::vector<int64_t> AnimOffsets;
@@ -333,7 +348,7 @@ namespace Souls {
             for (size_t E = 0; E < A.Events.size(); ++E) {
                 Writer.Fill<int64_t>("EventDataOffset" + Idx + ":" + std::to_string(E), Writer.Position());
                 Writer.WriteUInt64(A.Events[E].TypeNumber());
-                Writer.WriteInt64(Writer.Position() + 8);
+                Writer.WriteInt64(A.Events[E].IsRaw && A.Events[E].RawNoFieldsOffset ? 0 : Writer.Position() + 8);
                 if (A.Events[E].IsRaw) {
                     Writer.WriteArray(A.Events[E].RawData);
                 } else {

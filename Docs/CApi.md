@@ -15,7 +15,7 @@ What it covers:
 | FMG | read, write, get/set text by ID |
 | PARAM | rows; paramdef sets; layouts for reading and writing fields by name |
 | TPF | read, write, get/replace/add textures |
-| MSB | maps for Dark Souls 1/2/3 and Sekiro: list, add, remove and edit parts, models, events and regions |
+| MSB | maps for Dark Souls 1/2/3, Sekiro and Elden Ring: list, add, remove and edit parts, models, events and regions |
 | FLVER | models: bones, dummies, materials, textures, and bulk vertex and face arrays |
 | EMEVD | event scripts: events, instructions, argument packing, parameters |
 | TAE3 | animation events by field name (Dark Souls III layout) |
@@ -156,7 +156,7 @@ get_number = sig("souls_param_get_number", C.c_int, C.c_void_p, C.c_void_p, C.c_
 SOULS_GAME_ELDEN_RING = 6
 
 game = r"C:\Games\ELDEN RING\Game"
-paramdex = os.path.expanduser(r"~\Code\GitHub\Paramdex\ER\Defs")
+paramdex = r"libSouls\Vendor\Paramdex\ER\Defs"  # or any Paramdex checkout
 
 binder = regulation_decrypt(SOULS_GAME_ELDEN_RING, (game + r"\regulation.bin").encode())
 if not binder:
@@ -209,6 +209,30 @@ the file would. Use `souls_param_get_string`/`set_string` for fixed-width text f
 `souls_param_get_bytes`/`set_bytes` for `dummy8` padding arrays; `souls_param_layout_field_type` tells you which a
 field is. Remember to write the param back (`souls_param_write_memory`) and store the bytes in its binder.
 
+## Row names, enums and field descriptions
+
+The game's files don't name param rows or explain fields. Community projects such as
+[Paramdex](https://github.com/soulsmods/Paramdex) do, and libSouls can load their files (it doesn't bundle them):
+
+```c
+SoulsParamNames* names = souls_param_names_new();
+souls_param_names_add_folder(names, "Paramdex/ER/Names");          /* one <Param>.txt per param */
+souls_param_names_apply(names, weapons, "EquipParamWeapon", 0);    /* fills in rows that have no name */
+const char* unarmed = souls_param_names_find(names, "EquipParamWeapon", 110000);
+
+SoulsParamEnums* enums = souls_param_enums_new();
+souls_param_enums_add_folder(enums, "Paramdex/ER/Tdfs");
+int64_t goods;
+souls_param_enums_find_value(enums, "GAITEM_CATEGORY", "Good", &goods);
+
+SoulsFieldInfo info = {sizeof info};
+souls_param_layout_field_info(layout, field, &info);   /* display name, description, limits, enum type... */
+```
+
+A file that fails to load doesn't stop the rest: `souls_param_names_load_error_count`/`_load_error` (and the `enums`
+equivalents) list what was skipped and why. Param names are matched ignoring case. `SoulsFieldInfo` starts with its own
+size so it can grow; set `struct_size` before the call.
+
 ## Elden Ring regulation
 
 ```c
@@ -219,10 +243,24 @@ souls_regulation_encrypt(SOULS_GAME_ELDEN_RING, "regulation.bin", bnd);
 
 `SOULS_GAME_DARK_SOULS_3` works the same way. Older games keep their params in ordinary binders and need no decryption.
 
+## Save files
+
+A save (`ER0000.sl2`, `DS30000.sl2`, ...) is a binder of `USER_DATA` files, each guarded by an MD5 hash and, in the
+Dark Souls games, AES-encrypted. Reading checks the hashes and gives the decoded files; writing redoes both:
+
+```c
+SoulsBinder* save = souls_save_read_file(SOULS_SAVE_ELDEN_RING, "copy/ER0000.sl2");
+/* souls_binder_file_bytes / souls_binder_set_file_bytes on USER_DATA000..011 */
+souls_save_write_file(SOULS_SAVE_ELDEN_RING, "copy/ER0000.sl2", save);
+```
+
+Work on a copy: the game refuses a save whose hashes don't match, and a broken save can cost a character. libSouls
+reads and writes the container only; what's inside each slot is up to you.
+
 ## Maps (MSB)
 
 One `SoulsMsb` handle covers every game; you say which when you read, since the files don't identify themselves
-(`SOULS_MSB_DARK_SOULS_1`, `_2`, `_3`, `_SEKIRO`). A map has four categories of entries: models, parts, events and
+(`SOULS_MSB_DARK_SOULS_1`, `_2`, `_3`, `_SEKIRO`, `_ELDEN_RING`). A map has four categories of entries: models, parts, events and
 regions. Entries are addressed by category and index, they have a name and a type, and everything else is a
 *property* read and written by name.
 
@@ -326,11 +364,15 @@ if (souls_tae3_get_number(tae, animation, event, "SoundID", &sound_id) == SOULS_
 }
 ```
 
-`souls_tae3_field_count`, `_name` and `_kind` list an event's fields. This is the Dark Souls III layout of the format;
-Sekiro and Elden Ring use a newer one that isn't supported yet.
+`souls_tae3_field_count`, `_name` and `_kind` list an event's fields.
+
+Sekiro and Elden Ring files are version `0x1000D` (`souls_tae3_version`). Their event types mean different things per
+game and aren't described yet, so libSouls keeps each event's data as bytes and writes it back unchanged:
+`souls_tae3_event_is_raw` says when that's the case, `souls_tae3_event_raw_data`/`_set_event_raw_data` read and replace
+the bytes, and `souls_tae3_add_raw_event` adds one. Animations, timings and event types can be edited as usual.
 
 ## Not yet covered
 
-MQB, FXR, GPARAM, BTL, ESD and the other smaller formats remain C++-only, as do the Elden Ring layouts of maps,
-animation events and effects. They will get C interfaces following the conventions above; for tools that need them
+MQB, FXR, GPARAM, BTL, ESD and the other smaller formats remain C++-only. They will get C interfaces following the
+conventions above; for tools that need them
 today, use the C++ API ([Quickstart](Quickstart.md)).

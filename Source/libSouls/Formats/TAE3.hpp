@@ -38,6 +38,9 @@ namespace Souls {
             bool IsRaw = false;
             uint64_t RawType = 0;
             std::vector<uint8_t> RawData;
+            // The file stores 0 instead of the offset of the fields (Sekiro does for some event types); kept so the
+            // file writes back unchanged.
+            bool RawNoFieldsOffset = false;
 
             EventType Type() const { return IsRaw ? static_cast<EventType>(RawType) : TAE3EventTypeOf(Data); }
             // The type number as stored in the file, even for types the library has no struct for.
@@ -73,6 +76,9 @@ namespace Souls {
         std::string SkeletonName;
         // Unknown .sib file.
         std::string SibName;
+        // False for files that store neither name (some Sekiro ones do), which also leaves out the space after the
+        // header; SkeletonName and SibName are then ignored when writing.
+        bool HasNames = true;
         std::vector<Animation> Animations;
         // Unknown; chr tae: 0x15; obj tae: 0x4, 0x8, 0xE, 0xF, 0x10, 0x12, 0x13, 0x14, 0x15; mov tae: 0x4.
         int64_t Unk30 = 0;

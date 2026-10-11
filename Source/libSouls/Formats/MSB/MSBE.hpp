@@ -1396,6 +1396,8 @@ namespace Souls {
             // Allows multiple parts to be identified by the same entity ID.
             std::array<uint32_t, 8> EntityGroupIDs{};
             int16_t UnkE3C = 0, UnkE3E = 0;
+            // Display and draw groups and collision masks; every part type has this block.
+            UnkStruct1 Unk1;
 
             virtual uint32_t Type() const   = 0;
             virtual unsigned Blocks() const = 0;
@@ -1442,7 +1444,6 @@ namespace Souls {
 
         // Common base data for enemies and dummy enemies.
         struct EnemyBase : Part {
-            UnkStruct1 Unk1;
             GparamConfig Gparam;
             UnkStruct8 Unk8;
             TileLoadConfig TileLoad;
@@ -1510,7 +1511,6 @@ namespace Souls {
             // Fixed visual geometry; not used much in Elden Ring.
             struct MapPiece : PartImpl<MapPiece, 0> {
                 static constexpr unsigned Block = HasUnk1 | HasGparam | HasGrass | HasUnk8 | HasUnk9 | HasTileLoad | HasUnk11;
-                UnkStruct1 Unk1;
                 GparamConfig Gparam;
                 GrassConfig Grass;
                 UnkStruct8 Unk8;
@@ -1532,7 +1532,6 @@ namespace Souls {
             // A spawn point for the player, or something.
             struct Player : PartImpl<Player, 4> {
                 static constexpr unsigned Block = HasUnk1 | HasUnk8 | HasTileLoad;
-                UnkStruct1 Unk1;
                 UnkStruct8 Unk8;
                 TileLoadConfig TileLoad;
                 int32_t Unk00 = 0;
@@ -1547,7 +1546,6 @@ namespace Souls {
             // Invisible but physical geometry.
             struct Collision : PartImpl<Collision, 5> {
                 static constexpr unsigned Block = HasUnk1 | HasUnk2 | HasGparam | HasSceneGparam | HasUnk8 | HasTileLoad | HasUnk11;
-                UnkStruct1 Unk1;
                 UnkStruct2 Unk2;
                 GparamConfig Gparam;
                 SceneGparamConfig SceneGparam;
@@ -1614,7 +1612,6 @@ namespace Souls {
             // An asset that either isn't used, or is used for a cutscene.
             struct DummyAsset : PartImpl<DummyAsset, 9> {
                 static constexpr unsigned Block = HasUnk1 | HasGparam | HasUnk8 | HasTileLoad;
-                UnkStruct1 Unk1;
                 GparamConfig Gparam;
                 UnkStruct8 Unk8;
                 TileLoadConfig TileLoad;
@@ -1640,7 +1637,6 @@ namespace Souls {
             // References an actual collision and causes another map to be loaded while on it.
             struct ConnectCollision : PartImpl<ConnectCollision, 11> {
                 static constexpr unsigned Block = HasUnk1 | HasUnk2 | HasUnk8 | HasTileLoad | HasUnk11;
-                UnkStruct1 Unk1;
                 UnkStruct2 Unk2;
                 UnkStruct8 Unk8;
                 TileLoadConfig TileLoad;
@@ -1770,7 +1766,6 @@ namespace Souls {
                     }
                 };
 
-                UnkStruct1 Unk1;
                 UnkStruct2 Unk2;
                 GparamConfig Gparam;
                 GrassConfig Grass;

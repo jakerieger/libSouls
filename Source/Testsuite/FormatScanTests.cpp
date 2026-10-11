@@ -7,12 +7,13 @@
 // rewrites of the original are counted and reported but are not required (some formats have unrecoverable padding or
 // ordering choices).
 
+#include "TestPaths.hpp"
 #include "TestResult.hpp"
 
 #include <libSouls/Binders/BND3.hpp>
 #include <libSouls/Crypto.hpp>
 #include <libSouls/Formats/BHD5.hpp>
-#include <libSouls/Oodle26.hpp>
+#include <libSouls/Oodle26.hpp>
 #include "ScanCanonical.hpp"
 #include <libSouls/Binders/BND4.hpp>
 #include <libSouls/Formats/ACB.hpp>
@@ -44,6 +45,7 @@
 #include <libSouls/Formats/FXR3.hpp>
 #include <libSouls/Formats/MSB/MSB1.hpp>
 #include <libSouls/Formats/MSB/MSB3.hpp>
+#include <libSouls/Formats/MSB/MSBE.hpp>
 #include <libSouls/Formats/MSB/MSBS.hpp>
 #include <libSouls/Formats/TAE3.hpp>
 #include <libSouls/Formats/NVM.hpp>
@@ -289,6 +291,7 @@ namespace {
             const char* Dir;
             const char* Exe;
             BHD5::Game Format;
+            const char* KeysDir;  // the game's folder in BinderKeys
         };
         // SOULS_SCAN_ER=1 also tests every registered format against the packed Elden Ring archives, and
         // SOULS_SCAN_ER=only does that instead of Dark Souls III and Sekiro. (Off by default: it reads a lot of data.)
@@ -296,10 +299,10 @@ namespace {
         const bool ErOnly  = ScanEr && std::string(ScanEr) == "only";
         std::vector<ArchiveGame> Games;
         if (!ErOnly) {
-            Games.push_back({"DARK SOULS III/Game", "DarkSoulsIII.exe", BHD5::Game::DarkSouls3});
-            Games.push_back({"Sekiro", "sekiro.exe", BHD5::Game::DarkSouls3});
+            Games.push_back({"DARK SOULS III/Game", "DarkSoulsIII.exe", BHD5::Game::DarkSouls3, "DarkSouls3_PC"});
+            Games.push_back({"Sekiro", "sekiro.exe", BHD5::Game::DarkSouls3, "Sekiro_PC"});
         }
-        if (ScanEr) Games.push_back({"ELDEN RING/Game", "eldenring.exe", BHD5::Game::EldenRing});
+        if (ScanEr) Games.push_back({"ELDEN RING/Game", "eldenring.exe", BHD5::Game::EldenRing, "EldenRing_PC"});
         std::map<std::string, int> ExtCounts;
         const char* EnvFiles        = std::getenv("SOULS_ARCHIVE_FILES");
         const size_t FilesPerHeader = EnvFiles ? static_cast<size_t>(std::strtoull(EnvFiles, nullptr, 10)) : 3000;
@@ -314,15 +317,14 @@ namespace {
             }
             if (Here.empty()) continue;
 
-            std::vector<std::string> Keys;
+            // Each header's key comes from BinderKeys (<game>/Key/<header>.pem); failing that, from the keys found in
+            // the exe (which doesn't work for every game: Dark Souls III's exe is packed).
+            std::vector<std::string> ExeKeys;
             try {
-                Keys = Crypto::FindRsaPublicKeys(ReadFile(Root / Game.Exe));
+                ExeKeys = Crypto::FindRsaPublicKeys(ReadFile(Root / Game.Exe));
             } catch (const std::exception&) {
             }
-            if (Keys.empty()) {
-                std::printf("(no RSA keys found in %s; skipping its archives)\n", Game.Exe);
-                continue;
-            }
+            const fs::path KeyDir = TestPaths::BinderKeys() / Game.KeysDir / "Key";
 
             std::vector<fs::path> Headers;
             for (const auto& Entry : fs::directory_iterator(Root)) {
@@ -337,6 +339,12 @@ namespace {
 
                 const std::vector<uint8_t> Encrypted = ReadFile(HeaderPath);
                 std::vector<uint8_t> Header;
+                std::vector<std::string> Keys;
+                if (const fs::path Pem = KeyDir / (HeaderPath.stem().string() + ".pem"); fs::exists(Pem)) {
+                    const std::vector<uint8_t> Text = ReadFile(Pem);
+                    Keys.emplace_back(Text.begin(), Text.end());
+                }
+                Keys.insert(Keys.end(), ExeKeys.begin(), ExeKeys.end());
                 for (const std::string& Key : Keys) {
                     try {
                         auto Candidate = Crypto::DecryptRsaBlocks(Key, Encrypted);
@@ -396,7 +404,8 @@ namespace {
                                         } catch (const std::exception&) {
                                         }
                                         if (Match) {
-                                            R->ArchiveSamples.push_back({Origin + "|" + std::to_string(File.FileNameHash), Bytes});
+                                            const std::string Where = Origin + "|" + std::to_string(File.FileNameHash);
+                                            if (!Ignored(R->Where, Where)) R->ArchiveSamples.push_back({Where, Bytes});
                                             break;
                                         }
                                     }
@@ -459,10 +468,22 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
     Register<MQB>(All, "MQB", Scan{{".mqb"}, {".remobnd"}, {".mqb"}}, Plain);
     Register<FMB>(All, "FMB", Scan{{".expb"}, {}, {}}, Plain);
     // Packed games: files come out of the archives (their names aren't known, so unnamed files are sniffed).
-    Register<MSBS>(All, "MSBS", Scan{{}, {}, {}, {"Sekiro"}, {}, true}, Plain);
-    Register<MSB3>(All, "MSB3", Scan{{}, {}, {}, {"DARK SOULS III/Game"}, {}, true}, Plain);
+    // Every 64-bit MSB starts "MSB "; the version of its first param (at 0x10) tells the games apart.
+    const auto MsbVersion = [](int32_t Version) {
+        return Options{true, true, [Version](const std::vector<uint8_t>& Bytes) {
+            int32_t Found = 0;
+            if (Bytes.size() < 0x14 || std::memcmp(Bytes.data(), "MSB ", 4) != 0) return false;
+            std::memcpy(&Found, Bytes.data() + 0x10, 4);
+            return Found == Version;
+        }};
+    };
+    Register<MSBS>(All, "MSBS", Scan{{}, {}, {}, {"Sekiro"}, {}, true}, MsbVersion(35));
+    Register<MSB3>(All, "MSB3", Scan{{}, {}, {}, {"DARK SOULS III/Game"}, {}, true}, MsbVersion(3));
+    // Elden Ring maps are only found with SOULS_SCAN_ER; the msbe suite tests all of them by name.
+    Register<MSBE>(All, "MSBE", Scan{{}, {}, {}, {"ELDEN RING/Game"}, {}, false}, MsbVersion(73));
     // Sekiro and Elden Ring use TAE version 0x1000D, whose events are kept as raw bytes.
-    Register<TAE3>(All, "TAE3", Scan{{}, {}, {".tae"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
+    // Sekiro's 4105415867 isn't an animation TAE (it names OpeningMovie.mp4 through a layout upstream can't read either).
+    Register<TAE3>(All, "TAE3", Scan{{}, {}, {".tae"}, {"DARK SOULS III/Game", "Sekiro"}, {"|4105415867"}, true}, Plain);
     Register<FXR3>(All, "FXR3", Scan{{}, {}, {".fxr"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, FxrOptions);
 
     std::vector<Registration*> Selected;

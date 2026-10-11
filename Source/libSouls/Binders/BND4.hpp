@@ -30,6 +30,9 @@ namespace Souls {
         // 4 means the binder has a path hash table. Other seen values: 0, 1, 0x80.
         uint8_t Extended = 4;
 
+        // Whether the header's "end of headers" offset is rounded up to 16 bytes, as save files do.
+        bool AlignHeadersEnd = false;
+
         // A new, empty binder with the common modern settings and a current timestamp as its version.
         BND4();
 

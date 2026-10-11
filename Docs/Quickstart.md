@@ -149,7 +149,7 @@ int main() {
 | Parameters | `Formats/PARAM.hpp`, `PARAMDEF.hpp`, `ParamDefRepository.hpp`, `ParamLayout.hpp` |
 | Textures | `Formats/TPF.hpp`, `DDS.hpp` |
 | Models | `Formats/FLVER/FLVER2.hpp` |
-| Maps | `Formats/MSB/MSB1.hpp`, `MSB2.hpp`, `MSB3.hpp`, `MSBS.hpp` |
+| Maps | `Formats/MSB/MSB1.hpp`, `MSB2.hpp`, `MSB3.hpp`, `MSBS.hpp`, `MSBE.hpp` |
 | Animation events, cutscenes, effects | `Formats/TAE3.hpp`, `MQB.hpp`, `FFXDLSE.hpp`, `FXR3.hpp` |
 | Compression | `Formats/DCX.hpp` |
 

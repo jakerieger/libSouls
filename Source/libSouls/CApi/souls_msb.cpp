@@ -7,6 +7,7 @@
 #include <libSouls/Formats/MSB/MSB1.hpp>
 #include <libSouls/Formats/MSB/MSB2.hpp>
 #include <libSouls/Formats/MSB/MSB3.hpp>
+#include <libSouls/Formats/MSB/MSBE.hpp>
 #include <libSouls/Formats/MSB/MSBS.hpp>
 
 #include <concepts>
@@ -21,7 +22,7 @@ using namespace Souls::CApi;
 
 struct SoulsMsb {
     SoulsMsbKind Kind = SOULS_MSB_DARK_SOULS_1;
-    std::variant<MSB1, MSB2, MSB3, MSBS> Value;
+    std::variant<MSB1, MSB2, MSB3, MSBS, MSBE> Value;
 };
 
 namespace {
@@ -94,8 +95,16 @@ namespace {
             v("RegionName", e.PointName);
         }
         if constexpr (requires { e.ActivationPartName; }) v("ActivationPartName", e.ActivationPartName);
-        if constexpr (requires { e.DrawGroups; }) v("DrawGroups", e.DrawGroups);
-        if constexpr (requires { e.DispGroups; }) v("DispGroups", e.DispGroups);
+        if constexpr (requires { e.DrawGroups; }) {
+            v("DrawGroups", e.DrawGroups);
+        } else if constexpr (requires { e.Unk1.DrawGroups; }) {  // Elden Ring keeps them in a block of their own
+            v("DrawGroups", e.Unk1.DrawGroups);
+        }
+        if constexpr (requires { e.DispGroups; }) {
+            v("DispGroups", e.DispGroups);
+        } else if constexpr (requires { e.Unk1.DisplayGroups; }) {
+            v("DispGroups", e.Unk1.DisplayGroups);
+        }
         if constexpr (requires { e.BackreadGroups; }) v("BackreadGroups", e.BackreadGroups);
         if constexpr (requires { e.EntityGroups; }) {
             v("EntityGroups", e.EntityGroups);
@@ -232,6 +241,7 @@ namespace {
             case SOULS_MSB_DARK_SOULS_2: return Wrap(Kind, Make(MSB2{}));
             case SOULS_MSB_DARK_SOULS_3: return Wrap(Kind, Make(MSB3{}));
             case SOULS_MSB_SEKIRO: return Wrap(Kind, Make(MSBS{}));
+            case SOULS_MSB_ELDEN_RING: return Wrap(Kind, Make(MSBE{}));
         }
         ThrowInvalid("invalid MSB kind");
     }

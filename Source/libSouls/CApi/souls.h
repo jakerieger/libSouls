@@ -192,6 +192,23 @@ SOULS_C_API SoulsStatus souls_binder_remove_file(SoulsBinder* binder, size_t ind
 SOULS_C_API SoulsBinder* souls_regulation_decrypt(SoulsGame game, const char* path);
 SOULS_C_API SoulsStatus souls_regulation_encrypt(SoulsGame game, const char* path, SoulsBinder* binder);
 
+/*
+ * Save files (.sl2): a BND4 whose files (USER_DATA000, ...) each start with an MD5 hash of the rest, and are
+ * AES-encrypted in the Dark Souls games. Reading checks the hashes (SOULS_ERR_PARSE if one doesn't match) and gives a
+ * binder of the decoded data; writing encodes the files again. Work on copies of saves, not the originals.
+ */
+typedef enum SoulsSaveKind {
+    SOULS_SAVE_DARK_SOULS_2         = 1,
+    SOULS_SAVE_DARK_SOULS_2_SCHOLAR = 2,
+    SOULS_SAVE_DARK_SOULS_3         = 3,
+    SOULS_SAVE_ELDEN_RING           = 4
+} SoulsSaveKind;
+
+SOULS_C_API SoulsBinder* souls_save_read_file(SoulsSaveKind kind, const char* path);
+SOULS_C_API SoulsBinder* souls_save_read_memory(SoulsSaveKind kind, const uint8_t* data, size_t size);
+SOULS_C_API SoulsStatus souls_save_write_file(SoulsSaveKind kind, const char* path, const SoulsBinder* binder);
+SOULS_C_API SoulsBuffer souls_save_write_memory(SoulsSaveKind kind, const SoulsBinder* binder);
+
 /* ------------------------------------------------------------------------------------------------------------ */
 /* FMG (text)                                                                                                   */
 /* ------------------------------------------------------------------------------------------------------------ */
@@ -436,7 +453,8 @@ typedef enum SoulsMsbKind {
     SOULS_MSB_DARK_SOULS_1 = 1, /* MSB1 */
     SOULS_MSB_DARK_SOULS_2 = 2, /* MSB2, including Scholar of the First Sin */
     SOULS_MSB_DARK_SOULS_3 = 3, /* MSB3 */
-    SOULS_MSB_SEKIRO       = 4  /* MSBS */
+    SOULS_MSB_SEKIRO       = 4, /* MSBS */
+    SOULS_MSB_ELDEN_RING   = 5  /* MSBE */
 } SoulsMsbKind;
 
 typedef enum SoulsMsbCategory {

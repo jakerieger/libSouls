@@ -2,14 +2,18 @@
 // Created by Jake Rieger on 10/7/2026.
 //
 
+#include "TestPaths.hpp"
 #include "TestResult.hpp"
 
 #include <libSouls/Crypto.hpp>
 #include <libSouls/Formats/BHD5.hpp>
+#include <libSouls/Util.hpp>
 
 #include <cstdio>
 #include <filesystem>
+#include <fstream>
 #include <string>
+#include <unordered_set>
 
 namespace {
     int Failures = 0;
@@ -214,13 +218,36 @@ int RunBHD5Tests() {
 
                 BHD5 Bhd = BHD5::Read(Header, BHD5::Game::EldenRing);
                 size_t Files = 0, Encrypted_ = 0;
+                std::unordered_set<uint64_t> Hashes;
                 for (const auto& Bucket : Bhd.Buckets) {
                     Files += Bucket.size();
-                    for (const auto& File : Bucket) Encrypted_ += File.AES.has_value();
+                    for (const auto& File : Bucket) {
+                        Encrypted_ += File.AES.has_value();
+                        Hashes.insert(File.FileNameHash);
+                    }
                 }
                 std::printf("%s.bhd: %zu buckets, %zu files (%zu encrypted), salt \"%s\"\n",
                             Name, Bhd.Buckets.size(), Files, Encrypted_, Bhd.Salt.c_str());
                 CHECK(Files > 0);
+
+                // BinderKeys' copy of the key decrypts the same header, and its dictionary of known paths hashes
+                // (with FromPathHash64) to files that are in the archive.
+                const fs::path Keys_ = TestPaths::BinderKeys() / "EldenRing_PC";
+                if (const fs::path Pem = Keys_ / "Key" / (std::string(Name) + ".pem"); fs::exists(Pem)) {
+                    const auto Text = ReadAll(Pem);
+                    CHECK(Crypto::DecryptRsaBlocks(std::string(Text.begin(), Text.end()), Encrypted) == Header);
+                }
+                if (std::ifstream Dictionary(Keys_ / "Hash" / (std::string(Name) + ".txt")); Dictionary) {
+                    size_t Known = 0, Found = 0;
+                    for (std::string Line; std::getline(Dictionary, Line);) {
+                        while (!Line.empty() && (Line.back() == '\r' || Line.back() == ' ')) Line.pop_back();
+                        if (Line.empty() || Line[0] != '/') continue;
+                        ++Known;
+                        Found += Hashes.count(Util::FromPathHash64(Line));
+                    }
+                    std::printf("  BinderKeys dictionary: %zu of %zu paths found\n", Found, Known);
+                    CHECK(Known > 0 && Found * 10 >= Known * 9);
+                }
 
                 // Written back and re-parsed, every bucket and file header (including hashes, keys and ranges) comes
                 // out the same. The byte layout of the hash/key data is free to differ from the game's own.

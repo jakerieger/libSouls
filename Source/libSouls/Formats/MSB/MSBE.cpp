@@ -121,8 +121,9 @@ namespace Souls {
         } else {
             Writer.Fill<int64_t>("TypeDataOffset", 0);
         }
-        // Pseudo multiplayer events' type data ends 4 bytes off an 8-byte boundary, and the game leaves it there.
-        Writer.Align(Type() == EventParam::PseudoMultiplayer::TypeId ? 4 : 8);
+        // Only 4-byte aligned: the type data of pseudo multiplayer and area team events ends 4 bytes off an 8-byte
+        // boundary, and the game leaves it there.
+        Writer.Align(4);
         Writer.Fill<int64_t>("Unk3Offset", Writer.Position() - Start);
         Writer.WriteInt32(MapID);
         Writer.WriteInt32(UnkS04);
@@ -244,9 +245,10 @@ namespace Souls {
         Writer.WriteByte(UnkE08);
         Writer.Pad(7);
 
-        // The region types added after buddy summon points align their type data; the older ones align what follows.
+        // The region types after DisableTumbleweed align their type data; the older ones align what follows it. (Checked
+        // against every map in the game.)
         const uint32_t T        = Type();
-        const bool AlignsBefore = T > PointParam::BuddySummonPoint::TypeId && T != PointParam::Other::TypeId;
+        const bool AlignsBefore = T > PointParam::DisableTumbleweed::TypeId && T != PointParam::Other::TypeId;
         if (AlignsBefore) {
             Writer.Align(8);
         }

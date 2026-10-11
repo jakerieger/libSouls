@@ -97,8 +97,14 @@ tested nor supported.
 ### 1. Clone the repository
 
 ```shell
-git clone https://github.com/jakerieger/libSouls
+git clone https://github.com/jakerieger/libSouls --recurse-submodules
 ```
+
+> [!NOTE]
+> libSouls vendors [BinderKeys](https://github.com/JKAnderson/BinderKeys) and
+> [Paramdex](https://github.com/soulsmods/Paramdex) as git submodules. These contain data and definition files used to
+> decrypt data and retrieve plain-text values for hashed strings. These are not required to build or use libSouls, but
+> **are** necessary to access obfuscated data.
 
 ### 2. Configure CMake
 
@@ -120,7 +126,9 @@ cmake --build build/<CONFIG>
 
 Some tests use real game files in order to validate file format implementations. If you want to run the full testsuite,
 you'll need a valid Steam install of both Dark Souls Remastered and ELDEN RING with ELDEN RING's content unpacked via
-UXM or Nuxe. A select number of random game files are pulled and tested against.
+UXM or Nuxe. A select number of random game files are pulled and tested against. The tests also use the submodules
+(Paramdex's defs, names and enums, and BinderKeys' archive keys and path dictionaries), so clone with
+`--recurse-submodules` or run `git submodule update --init` first.
 
 ```shell
 ctest --test-dir build/<CONFIG> --output-on-failure
@@ -159,8 +167,13 @@ libSouls stands on a lot of community work. Thank you to everyone behind:
 
 - [**SoulsFormats**](https://github.com/JKAnderson/SoulsFormats) by JKAnderson and its contributors, whose format
   research libSouls ports to C++. Nearly every format here follows its structure and naming.
+- [**SoulsFormatsNEXT**](https://github.com/soulsmods/SoulsFormatsNEXT) from the soulsmods community, the maintained
+  continuation of SoulsFormats, which the Elden Ring map format (MSBE) is ported from.
 - [**Paramdex**](https://github.com/soulsmods/Paramdex) from the soulsmods community: the paramdefs, row names and enum
-  definitions that the tests and examples use to make PARAM data readable. libSouls does not bundle them.
+  definitions that the tests and examples use to make PARAM data readable. Included as a submodule, not built into the
+  library.
+- [**BinderKeys**](https://github.com/JKAnderson/BinderKeys) by TKGP and its contributors: the RSA keys of the games'
+  archive headers and the dictionaries of their hashed file paths. Included as a submodule for the tests.
 - [**UXM**](https://github.com/Nordgaren/UXM-Selective-Unpack) and **Nuxe**, used to unpack the games' archives for real
   file testing. The community's work on the archive formats (BHD5 headers, path hashing) also informed libSouls'
   archive support.

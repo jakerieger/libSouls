@@ -158,7 +158,7 @@ DDS header. To add one, use `Tpf.Textures.emplace_back(Name, Format, Flags1, Dds
 ## Read and edit a map (MSB)
 
 Maps list every model, part (enemies, objects, collisions), region and event in a level. Each game has its own MSB
-class: `MSB1` (Dark Souls), `MSB2` (Dark Souls II), `MSB3` (Dark Souls III) and `MSBS` (Sekiro). Entries refer to each
+class: `MSB1` (Dark Souls), `MSB2` (Dark Souls II), `MSB3` (Dark Souls III), `MSBS` (Sekiro) and `MSBE` (Elden Ring). Entries refer to each
 other by *name*, so renaming and reordering is safe: the indices the file needs are worked out on write.
 
 ```cpp

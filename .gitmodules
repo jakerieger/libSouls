@@ -1,0 +1,6 @@
+[submodule "Vendor/BinderKeys"]
+	path = Vendor/BinderKeys
+	url = https://github.com/JKAnderson/BinderKeys.git
+[submodule "Vendor/Paramdex"]
+	path = Vendor/Paramdex
+	url = https://github.com/soulsmods/Paramdex.git

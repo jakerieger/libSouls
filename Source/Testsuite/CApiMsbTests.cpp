@@ -28,7 +28,7 @@ namespace {
 // Every game's map layout, built and read back through the C API.
 int TestCApiMsbSynthetic() {
     Failures = 0;
-    for (SoulsMsbKind Kind : {SOULS_MSB_DARK_SOULS_1, SOULS_MSB_DARK_SOULS_2, SOULS_MSB_DARK_SOULS_3, SOULS_MSB_SEKIRO}) {
+    for (SoulsMsbKind Kind : {SOULS_MSB_DARK_SOULS_1, SOULS_MSB_DARK_SOULS_2, SOULS_MSB_DARK_SOULS_3, SOULS_MSB_SEKIRO, SOULS_MSB_ELDEN_RING}) {
         SoulsMsb* Msb = souls_msb_new(Kind);
         CHECK(Msb != nullptr);
         if (!Msb) continue;
@@ -57,6 +57,15 @@ int TestCApiMsbSynthetic() {
         CHECK(souls_msb_set_int(Msb, SOULS_MSB_PARTS, static_cast<size_t>(Part), "NoSuchProperty", 1) == SOULS_ERR_UNSUPPORTED);
         CHECK(souls_msb_set_int(Msb, SOULS_MSB_PARTS, static_cast<size_t>(Part), "Position", 1) == SOULS_ERR_INVALID_ARGUMENT);
         CHECK(souls_msb_set_int(Msb, SOULS_MSB_PARTS, 99, "EntityID", 1) == SOULS_ERR_INVALID_ARGUMENT);
+        if (Kind == SOULS_MSB_ELDEN_RING) {
+            // Elden Ring parts keep their draw groups in a separate block; they are still offered by name.
+            const int64_t Groups[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+            CHECK(souls_msb_set_int_array(Msb, SOULS_MSB_PARTS, static_cast<size_t>(Part), "DrawGroups", Groups, 8) == SOULS_OK);
+            int64_t Out[8] = {};
+            size_t Count   = 0;
+            CHECK(souls_msb_get_int_array(Msb, SOULS_MSB_PARTS, static_cast<size_t>(Part), "DrawGroups", Out, 8, &Count) == SOULS_OK &&
+                  Count == 8 && Out[7] == 8);
+        }
 
         SoulsBuffer Bytes = souls_msb_write_memory(Msb);
         CHECK(Bytes.data != nullptr);

@@ -46,7 +46,9 @@ namespace Souls {
         Reader.Assert<int64_t>(0x40);  // header size
         Version = Reader.ReadFixStr(8);
         const int64_t FileHeaderSize = Reader.ReadInt64();
-        Reader.ReadInt64();  // end of headers (includes the hash table)
+        // End of headers (includes the hash table). Some binders round it up to 16 bytes; the rest store it exactly,
+        // so a multiple of 16 can always be kept by rounding up (which changes nothing for the exact ones).
+        AlignHeadersEnd = Reader.ReadInt64() % 0x10 == 0;
 
         Unicode  = Reader.ReadBool();
         Format   = Binder::ReadFormat(Reader, BitBigEndian);
@@ -137,7 +139,8 @@ namespace Souls {
             Writer.Fill<int64_t>("HashTableOffset", 0);
         }
 
-        Writer.Fill<int64_t>("HeadersEnd", Writer.Position());
+        const int64_t HeadersEnd = Writer.Position();
+        Writer.Fill<int64_t>("HeadersEnd", AlignHeadersEnd ? (HeadersEnd + 0xF) & ~int64_t{0xF} : HeadersEnd);
 
         for (size_t I = 0; I < FileHeaders.size(); ++I) {
             FileHeaders[I].WriteBinder4FileData(Writer, Writer, Format, static_cast<int>(I), Files[I].Bytes);
