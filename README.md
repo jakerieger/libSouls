@@ -157,4 +157,4 @@ implementation plan.**
 
 ## License
 
-libSouls is licensed under the [ISC license](LICENSE).
+libSouls is licensed under the [GPL-3.0 license](LICENSE).
