@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/7/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/7/2026
 
 #pragma once
 
@@ -11,14 +11,16 @@
 #include <type_traits>
 
 namespace Souls {
+    /// @brief A byte order.
     enum class Endian {
-        Little,
-        Big,
+        Little,  ///< Least significant byte first (PC and most console formats).
+        Big,     ///< Most significant byte first (PS3 and Xbox 360 formats).
     };
 
+    /// @brief The byte order of the machine the library runs on.
     inline constexpr Endian HostEndian = std::endian::native == std::endian::little ? Endian::Little : Endian::Big;
 
-    // Anything that can be read/written as a raw fixed-size value: integers, floats, bool, enums.
+    /// @brief Anything that can be read/written as a raw fixed-size value: integers, floats, bool, enums.
     template<typename T>
     concept Scalar = std::is_arithmetic_v<T> || std::is_enum_v<T>;
 
@@ -43,6 +45,7 @@ namespace Souls {
         };
     }  // namespace Detail
 
+    /// @brief Reverses the bytes of a value.
     template<Scalar T>
     constexpr T ByteSwap(T Value) {
         if constexpr (sizeof(T) == 1) {
@@ -58,14 +61,18 @@ namespace Souls {
         }
     }
 
-    // Converts between the given byte order and the host's. Symmetric, so it works for both reading and writing.
+    /// @brief Converts between the given byte order and the host's.
+    ///
+    /// Symmetric, so it works for both reading and writing.
     template<Scalar T>
     constexpr T ToHost(T Value, Endian Order) {
         return Order == HostEndian ? Value : ByteSwap(Value);
     }
 
+    /// @brief Thrown when data isn't valid for the format being read, or can't be written as asked.
     class BinaryException : public std::runtime_error {
     public:
+        /// @brief An exception with the given message.
         explicit BinaryException(const std::string& Message) : std::runtime_error(Message) {}
     };
 }  // namespace Souls

@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -14,10 +14,12 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
 
-    // NVM: the navmesh format used in Demon's Souls and Dark Souls. Extension: .nvm
+    /// @brief NVM: the navmesh format used in Demon's Souls and Dark Souls.
+    ///
+    /// Extension: .nvm
     class SOULS_API NVM : public SoulsFile<NVM> {
     public:
-        // Available AI properties of a triangle.
+        /// @brief Available AI properties of a triangle.
         enum class TriangleFlags : int32_t {
             None          = 0x0000,
             InsideWall    = 0x0001,
@@ -38,38 +40,63 @@ namespace Souls {
             Disable       = 0x8000,
         };
 
-        // A surface with flags indicating how AI should behave on it.
+        /// @brief A surface with flags indicating how AI should behave on it.
         struct Triangle {
-            int32_t VertexIndex1 = 0, VertexIndex2 = 0, VertexIndex3 = 0;
-            // Indices of the triangles adjacent to the 1-2, 2-3 and 1-3 edges, if any.
-            int32_t EdgeIndex1 = 0, EdgeIndex2 = 0, EdgeIndex3 = 0;
-            // Number of breakable objects on this triangle.
+            /// @brief Index of the triangle's first vertex.
+            int32_t VertexIndex1 = 0;
+            /// @brief Index of the triangle's second vertex.
+            int32_t VertexIndex2 = 0;
+            /// @brief Index of the triangle's third vertex.
+            int32_t VertexIndex3 = 0;
+            /// @brief Indices of the triangles adjacent to the 1-2, 2-3 and 1-3 edges, if any.
+            int32_t EdgeIndex1 = 0;
+            /// @brief Index of the triangle adjacent to the vertex 2-3 edge, if any.
+            int32_t EdgeIndex2 = 0;
+            /// @brief Index of the triangle adjacent to the vertex 1-3 edge, if any.
+            int32_t EdgeIndex3 = 0;
+            /// @brief Number of breakable objects on this triangle.
             int32_t ObstacleCount = 0;
-            // Controls AI behavior on this triangle.
+            /// @brief Controls AI behavior on this triangle.
             TriangleFlags Flags = TriangleFlags::None;
         };
 
-        // A rectangular prism in a tree structure encompassing the navmesh.
+        /// @brief A rectangular prism in a tree structure encompassing the navmesh.
         struct Box {
-            // Two corners defining the extent of the box.
-            Vector3 Corner1, Corner2;
-            // Indices of triangles within this box. Only used for leaf nodes.
+            /// @brief One corner of the box.
+            Vector3 Corner1;
+            /// @brief The opposite corner of the box.
+            Vector3 Corner2;
+            /// @brief Indices of triangles within this box.
+            ///
+            /// Only used for leaf nodes.
             std::vector<int32_t> TriangleIndices;
-            // The four boxes that subdivide this one (any may be absent).
-            ValuePtr<Box> ChildBox1, ChildBox2, ChildBox3, ChildBox4;
+            /// @brief The first subdivision.
+            ValuePtr<Box> ChildBox1;
+            /// @brief The second subdivision.
+            ValuePtr<Box> ChildBox2;
+            /// @brief The third subdivision.
+            ValuePtr<Box> ChildBox3;
+            /// @brief The fourth subdivision.
+            ValuePtr<Box> ChildBox4;
         };
 
-        // A list of triangles that can be disabled via event entity ID.
+        /// @brief A list of triangles that can be disabled via event entity ID.
         struct Entity {
+            /// @brief The event entity ID used to access these triangles.
             int32_t EntityID = 0;
+            /// @brief The triangles to be disabled from an event script.
             std::vector<int32_t> TriangleIndices;
         };
 
-        // True for the Demon's Souls format, false for Dark Souls.
+        /// @brief True for the Demon's Souls format, false for Dark Souls.
         bool BigEndian = false;
+        /// @brief Positions of triangle vertices.
         std::vector<Vector3> Vertices;
+        /// @brief Triangles in this navmesh.
         std::vector<Triangle> Triangles;
+        /// @brief The topmost box in the hierarchy of boxes encompassing the navmesh.
         Box RootBox;
+        /// @brief Enables disabling of specific triangles by event entity ID.
         std::vector<Entity> Entities;
 
     protected:
@@ -77,6 +104,7 @@ namespace Souls {
         void WriteImpl(BinaryWriter& Writer) override;
     };
 
+    /// @brief Combines triangle flags.
     constexpr NVM::TriangleFlags operator|(NVM::TriangleFlags A, NVM::TriangleFlags B) {
         return static_cast<NVM::TriangleFlags>(static_cast<int32_t>(A) | static_cast<int32_t>(B));
     }

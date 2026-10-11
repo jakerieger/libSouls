@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -15,86 +15,102 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
 
-    // ACB: a rendering configuration file for various game assets, only used in Dark Souls II. Extension: .acb
+    /// @brief ACB: a rendering configuration file for various game assets, only used in Dark Souls II.
+    ///
+    /// Extension: .acb
     class SOULS_API ACB : public SoulsFile<ACB> {
     public:
-        // The specific type of an asset.
+        /// @brief The specific type of an asset.
         enum class AssetType : uint16_t {
             PWV       = 0,
-            General   = 1,  // miscellaneous assets including collisions and lighting configs
-            Model     = 2,  // rendering options for 3D models
-            Texture   = 3,  // diffuse, normal and specular maps
-            GITexture = 4,  // lightmaps and envmaps
-            Motion    = 5,  // animation files used in cutscenes
+            General   = 1,  ///< miscellaneous assets including collisions and lighting configs
+            Model     = 2,  ///< rendering options for 3D models
+            Texture   = 3,  ///< diffuse, normal and specular maps
+            GITexture = 4,  ///< lightmaps and envmaps
+            Motion    = 5,  ///< animation files used in cutscenes
         };
 
-        // Unknown item of a model's member list.
+        /// @brief Unknown item of a model's member list.
         struct Member {
+            /// @brief Unknown.
             std::string Text;
+            /// @brief Unknown.
             int32_t Unk04 = 0;
         };
 
-        // Unknown collection of unknown items.
+        /// @brief Unknown collection of unknown items.
         struct MemberList {
-            // Unknown; usually -1.
+            /// @brief Unknown; usually -1.
             int16_t Unk00 = -1;
+            /// @brief The members of the list.
             std::vector<Member> Members;
         };
 
-        // Rendering options for 3D models (only meaningful for Model assets).
+        /// @brief Rendering options for 3D models (only meaningful for Model assets).
         struct ModelOptions {
-            // 0 for objects and characters, 1 for map pieces.
+            /// @brief 0 for objects and characters, 1 for map pieces.
             int16_t Unk0A = 0;
-            // Unknown; may be absent.
+            /// @brief Unknown; may be absent.
             std::optional<MemberList> Members;
-            // Distance at which the model becomes invisible.
+            /// @brief Distance at which the model becomes invisible.
             int32_t DrawDistance = 0;
-            // Indirectly determines when LOD face sets are used; observed values 0-3.
+            /// @brief Indirectly determines when LOD face sets are used; observed values 0-3.
             int16_t MeshLodRate = 0;
-            // Whether the model appears in reflective surfaces like water.
+            /// @brief Whether the model appears in reflective surfaces like water.
             bool Reflectible = true;
-            // Enables interaction normals for water.
+            /// @brief Enables interaction normals for water.
             bool NormalInteraction = false;
+            /// @brief Unknown.
             int32_t Unk20          = 0;
-            // Unknown; alters rendering mode somehow.
+            /// @brief Unknown; alters rendering mode somehow.
             uint8_t RenderType = 0;
-            // If true, the model does not cast shadows.
+            /// @brief If true, the model does not cast shadows.
             bool DisableShadowSource = false;
-            // If true, shadows will not be cast on the model.
+            /// @brief If true, shadows will not be cast on the model.
             bool DisableShadowTarget = false;
-            // Unknown; makes things render in reverse order or reverses culling or something.
+            /// @brief Unknown; makes things render in reverse order or reverses culling or something.
             bool Unk27  = false;
+            /// @brief Unknown.
             float Unk28 = 0;
+            /// @brief Unknown.
             bool Unk2C  = false;
-            // If true, the model is always centered on the camera position. Used for skyboxes.
+            /// @brief If true, the model is always centered on the camera position.
+            ///
+            /// Used for skyboxes.
             bool FixToCamera = false;
+            /// @brief Unknown.
             bool Unk2E       = false;
-            // Distance at which low textures are used.
+            /// @brief Distance at which low textures are used.
             int16_t LowTextureDistance = 0;
-            // Distance at which the model uses simplified rendering.
+            /// @brief Distance at which the model uses simplified rendering.
             int16_t CheapRenderDistance = 0;
+            /// @brief Unknown.
             uint8_t Unk34               = 0;
-            // Disables lighting on water/transparencies.
+            /// @brief Disables lighting on water/transparencies.
             bool Unk35 = false;
+            /// @brief Unknown.
             bool Unk36 = false;
+            /// @brief Unknown.
             bool Unk37 = false;
         };
 
-        // A model, texture, or miscellaneous asset configuration.
+        /// @brief A model, texture, or miscellaneous asset configuration.
         struct Asset {
+            /// @brief The specific type of this asset.
             AssetType Type = AssetType::General;
-            // Full network path to the source file.
+            /// @brief Full network path to the source file.
             std::string AbsolutePath;
-            // Relative path to the source file.
+            /// @brief Relative path to the source file.
             std::string RelativePath;
-            // GITexture only; probably 4 bytes.
+            /// @brief GITexture only; probably 4 bytes.
             int32_t Unk10 = 0;
-            // Model only.
+            /// @brief Model only.
             ModelOptions Model;
         };
 
-        // True for PS3/X360, false otherwise.
+        /// @brief True for PS3/X360, false otherwise.
         bool BigEndian = false;
+        /// @brief Assets configured by this ACB.
         std::vector<Asset> Assets;
 
     protected:

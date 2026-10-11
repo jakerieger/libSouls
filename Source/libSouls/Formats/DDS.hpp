@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/7/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/7/2026
 
 #pragma once
 
@@ -17,11 +17,12 @@
 
 namespace Souls {
 
-    // The header of a DirectDraw Surface (.dds) file, which is how PC textures are stored in a TPF. This only handles
-    // the header (and its optional DX10 extension); the pixel data after it is left alone.
+    /// @brief The header of a DirectDraw Surface (.dds) file, which is how PC textures are stored in a TPF.
+    ///
+    /// This only handles the header (and its optional DX10 extension); the pixel data after it is left alone.
     class SOULS_API DDS {
     public:
-        // Which header fields are valid.
+        /// @brief Which header fields are valid.
         enum class DDSD : uint32_t {
             CAPS        = 0x1,
             HEIGHT      = 0x2,
@@ -33,12 +34,14 @@ namespace Souls {
             DEPTH       = 0x800000,
         };
 
+        /// @brief Complexity flags of the surface (the DDS header's dwCaps).
         enum class DDSCAPS : uint32_t {
             COMPLEX = 0x8,
             TEXTURE = 0x1000,
             MIPMAP  = 0x400000,
         };
 
+        /// @brief Cubemap and volume flags (the DDS header's dwCaps2).
         enum class DDSCAPS2 : uint32_t {
             CUBEMAP           = 0x200,
             CUBEMAP_POSITIVEX = 0x400,
@@ -50,6 +53,7 @@ namespace Souls {
             VOLUME            = 0x200000,
         };
 
+        /// @brief What the pixel format describes (DDS_PIXELFORMAT's dwFlags).
         enum class DDPF : uint32_t {
             ALPHAPIXELS = 0x1,
             ALPHA       = 0x2,
@@ -59,16 +63,19 @@ namespace Souls {
             LUMINANCE   = 0x20000,
         };
 
+        /// @brief The resource dimension of a DX10 header.
         enum class Dimension : uint32_t {
             TEXTURE1D = 2,
             TEXTURE2D = 3,
             TEXTURE3D = 4,
         };
 
+        /// @brief Miscellaneous resource flags of a DX10 header.
         enum class ResourceMisc : uint32_t {
             TEXTURECUBE = 0x4,
         };
 
+        /// @brief How alpha is stored, from a DX10 header's miscFlags2.
         enum class AlphaMode : uint32_t {
             UNKNOWN       = 0,
             STRAIGHT      = 1,
@@ -77,7 +84,7 @@ namespace Souls {
             CUSTOM        = 4,
         };
 
-        // Microsoft's DXGI_FORMAT.
+        /// @brief Microsoft's DXGI_FORMAT.
         enum class DXGIFormat : uint32_t {
             UNKNOWN,
             R32G32B32A32_TYPELESS,
@@ -185,7 +192,7 @@ namespace Souls {
             NV12,
             P010,
             P016,
-            OPAQUE_420,  // DXGI_FORMAT_420_OPAQUE
+            OPAQUE_420,  ///< DXGI_FORMAT_420_OPAQUE
             YUY2,
             Y210,
             Y216,
@@ -201,50 +208,82 @@ namespace Souls {
             FORCE_UINT,
         };
 
+        /// @brief DDS_PIXELFORMAT: how the pixels are stored.
         struct SOULS_API PixelFormat {
+            /// @brief What this pixel format describes.
             DDPF Flags = static_cast<DDPF>(0);
-            // Four characters, e.g. "DXT5" or "DX10".
+            /// @brief Four characters, e.g. "DXT5" or "DX10".
             std::string FourCC = std::string(4, '\0');
+            /// @brief Bits per pixel for uncompressed formats.
             int32_t RGBBitCount = 0;
-            uint32_t RBitMask = 0, GBitMask = 0, BBitMask = 0, ABitMask = 0;
+            /// @brief Mask of the red bits in an uncompressed pixel.
+            uint32_t RBitMask = 0;
+            /// @brief Mask of the green bits in an uncompressed pixel.
+            uint32_t GBitMask = 0;
+            /// @brief Mask of the blue bits in an uncompressed pixel.
+            uint32_t BBitMask = 0;
+            /// @brief Mask of the alpha bits in an uncompressed pixel.
+            uint32_t ABitMask = 0;
         };
 
-        // Present when the pixel format's FourCC is "DX10".
+        /// @brief Present when the pixel format's FourCC is "DX10".
         struct SOULS_API Header10 {
+            /// @brief The pixel format.
             DXGIFormat Format        = DXGIFormat::UNKNOWN;
+            /// @brief Whether the texture is 1D, 2D or 3D.
             Dimension ResourceDimension = Dimension::TEXTURE2D;
+            /// @brief Miscellaneous flags (cubemap).
             ResourceMisc MiscFlag    = static_cast<ResourceMisc>(0);
+            /// @brief The number of textures in the array (of cubemaps, for cubemaps).
             uint32_t ArraySize       = 1;
+            /// @brief How alpha is stored.
             AlphaMode MiscFlags2     = AlphaMode::UNKNOWN;
         };
 
-        DDSD Flags             = static_cast<DDSD>(0x1 | 0x2 | 0x4 | 0x1000);  // CAPS | HEIGHT | WIDTH | PIXELFORMAT
+        DDSD Flags             = static_cast<DDSD>(0x1 | 0x2 | 0x4 | 0x1000);  ///< CAPS | HEIGHT | WIDTH | PIXELFORMAT
+        /// @brief Height in pixels.
         int32_t Height         = 0;
+        /// @brief Width in pixels.
         int32_t Width          = 0;
+        /// @brief Bytes per row (uncompressed) or of the top mip level (compressed).
         int32_t PitchOrLinearSize = 0;
+        /// @brief Depth of a volume texture.
         int32_t Depth          = 0;
+        /// @brief The number of mip levels.
         int32_t MipMapCount    = 0;
+        /// @brief Unused.
         std::array<int32_t, 11> Reserved1{};
+        /// @brief How the pixels are stored.
         PixelFormat Pixels;
+        /// @brief Complexity of the surface.
         DDSCAPS Caps           = DDSCAPS::TEXTURE;
+        /// @brief Cubemap faces and volume flags.
         DDSCAPS2 Caps2         = static_cast<DDSCAPS2>(0);
+        /// @brief Unused.
         int32_t Caps3          = 0;
+        /// @brief Unused.
         int32_t Caps4          = 0;
+        /// @brief Unused.
         int32_t Reserved2      = 0;
+        /// @brief The DX10 header extension, present when the FourCC is "DX10".
         std::optional<Header10> DX10;
 
         DDS() = default;
 
-        // Parses the header of a DDS file (the data after it is ignored). Throws BinaryException if it isn't one.
+        /// @brief Parses the header of a DDS file (the data after it is ignored).
+        ///
+        /// Throws BinaryException if it isn't one.
         static DDS Read(std::span<const uint8_t> Bytes);
 
-        // Where the pixel data starts in a file with this header: 0x80, or 0x94 with the DX10 extension.
+        /// @brief Where the pixel data starts in a file with this header: 0x80, or 0x94 with the DX10 extension.
         int32_t DataOffset() const { return Pixels.FourCC == "DX10" ? 0x94 : 0x80; }
 
+        /// @brief Whether the texture is a cubemap.
         bool IsCubemap() const { return (static_cast<uint32_t>(Caps2) & static_cast<uint32_t>(DDSCAPS2::CUBEMAP)) != 0; }
+        /// @brief Whether the texture is a volume (3D) texture.
         bool IsVolume() const { return (static_cast<uint32_t>(Caps2) & static_cast<uint32_t>(DDSCAPS2::VOLUME)) != 0; }
 
-        // A complete DDS file: this header followed by the pixel data.
+        /// @brief A complete DDS file: this header followed by the pixel data.
         std::vector<uint8_t> Write(std::span<const uint8_t> PixelData) const;
     };
 

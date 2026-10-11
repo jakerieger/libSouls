@@ -1,0 +1,101 @@
+#---------------------------------------------------------------------------
+PROJECT_NAME           = libSouls
+PROJECT_NUMBER         = 0.1.0
+PROJECT_BRIEF          = "A C++ library for FromSoftware's game file formats"
+OUTPUT_DIRECTORY       = Docs
+CREATE_SUBDIRS         = NO
+STRIP_FROM_PATH        = Source
+STRIP_FROM_INC_PATH    = Source
+FULL_PATH_NAMES        = YES
+MARKDOWN_SUPPORT       = YES
+# Heading anchors as GitHub makes them, so the Markdown docs' links work in both places.
+MARKDOWN_ID_STYLE      = GITHUB
+TOC_INCLUDE_HEADINGS   = 3
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = YES
+DISTRIBUTE_GROUP_DOC   = YES
+INLINE_SIMPLE_STRUCTS  = NO
+TYPEDEF_HIDES_STRUCT   = YES
+
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_FRIEND_COMPOUNDS  = YES
+INTERNAL_DOCS          = NO
+CASE_SENSE_NAMES       = YES
+SORT_MEMBER_DOCS       = NO
+SORT_BRIEF_DOCS        = NO
+# Implementation details, not public API.
+EXCLUDE_SYMBOLS        = Souls::Msb::Detail \
+                         Souls::Detail \
+                         Souls::CApi \
+                         Detail
+
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_LOGFILE           = Docs/html/doxygen-warnings.txt
+
+#---------------------------------------------------------------------------
+INPUT                  = README.md \
+                         Docs/Quickstart.md \
+                         Docs/Examples.md \
+                         Docs/CApi.md \
+                         Source/libSouls
+FILE_PATTERNS          = *.hpp \
+                         *.h \
+                         *.md
+RECURSIVE              = YES
+# CApiCommon.hpp holds the C API's internal helpers.
+EXCLUDE                = Source/libSouls/CApi/CApiCommon.hpp
+EXCLUDE_PATTERNS       = */build/* \
+                         */_deps/*
+USE_MDFILE_AS_MAINPAGE = README.md
+IMAGE_PATH             = Docs/res
+
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = SOULS_API= \
+                         SOULS_C_API= \
+                         SOULS_EXTERN_C= \
+                         SOULS_CALL= \
+                         __cplusplus
+
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_HEADER            = Docs/res/header.html
+HTML_EXTRA_STYLESHEET  = Docs/res/doxygen-awesome.css \
+                         Docs/res/doxygen-awesome-sidebar-only.css \
+                         Docs/res/doxygen-awesome-sidebar-only-darkmode-toggle.css
+HTML_EXTRA_FILES       = Docs/res/doxygen-awesome-darkmode-toggle.js \
+                         Docs/res/doxygen-awesome-fragment-copy-button.js \
+                         Docs/res/doxygen-awesome-paragraph-link.js \
+                         Docs/res/doxygen-awesome-interactive-toc.js \
+                         Docs/res/banner.png
+HTML_COLORSTYLE        = LIGHT
+HTML_DYNAMIC_SECTIONS  = NO
+HTML_COPY_CLIPBOARD    = NO
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+TREEVIEW_WIDTH         = 300
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+
+#---------------------------------------------------------------------------
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+HAVE_DOT               = NO
+CLASS_GRAPH            = YES

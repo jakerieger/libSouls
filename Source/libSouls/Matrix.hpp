@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -9,18 +9,33 @@
 #include <cmath>
 
 namespace Souls {
-    // A 4x4 matrix using the same conventions as System.Numerics (and so as SoulsFormats): row-major, with vectors
-    // treated as rows, so transforms are applied left to right and translation lives in the fourth row.
+    /// @brief A 4x4 matrix using the same conventions as System.Numerics (and so as SoulsFormats): row-major, with
+    ///        vectors treated as rows, so transforms are applied left to right and translation lives in the fourth row.
     struct Matrix4x4 {
-        float M11 = 1, M12 = 0, M13 = 0, M14 = 0;
-        float M21 = 0, M22 = 1, M23 = 0, M24 = 0;
-        float M31 = 0, M32 = 0, M33 = 1, M34 = 0;
-        float M41 = 0, M42 = 0, M43 = 0, M44 = 1;
+        float M11 = 1;  ///< Row 1, column 1.
+        float M12 = 0;  ///< Row 1, column 2.
+        float M13 = 0;  ///< Row 1, column 3.
+        float M14 = 0;  ///< Row 1, column 4.
+        float M21 = 0;  ///< Row 2, column 1.
+        float M22 = 1;  ///< Row 2, column 2.
+        float M23 = 0;  ///< Row 2, column 3.
+        float M24 = 0;  ///< Row 2, column 4.
+        float M31 = 0;  ///< Row 3, column 1.
+        float M32 = 0;  ///< Row 3, column 2.
+        float M33 = 1;  ///< Row 3, column 3.
+        float M34 = 0;  ///< Row 3, column 4.
+        float M41 = 0;  ///< Row 4, column 1.
+        float M42 = 0;  ///< Row 4, column 2.
+        float M43 = 0;  ///< Row 4, column 3.
+        float M44 = 1;  ///< Row 4, column 4.
 
+        /// @brief Element-wise equality.
         bool operator==(const Matrix4x4&) const = default;
 
+        /// @brief The identity matrix (also what a default-constructed matrix is).
         static Matrix4x4 Identity() { return {}; }
 
+        /// @brief A scale along each axis.
         static Matrix4x4 CreateScale(const Vector3& Scale) {
             Matrix4x4 Result;
             Result.M11 = Scale.X;
@@ -29,6 +44,7 @@ namespace Souls {
             return Result;
         }
 
+        /// @brief A translation by Position.
         static Matrix4x4 CreateTranslation(const Vector3& Position) {
             Matrix4x4 Result;
             Result.M41 = Position.X;
@@ -37,6 +53,7 @@ namespace Souls {
             return Result;
         }
 
+        /// @brief A rotation about the X axis.
         static Matrix4x4 CreateRotationX(float Radians) {
             const float C = std::cos(Radians), S = std::sin(Radians);
             Matrix4x4 Result;
@@ -47,6 +64,7 @@ namespace Souls {
             return Result;
         }
 
+        /// @brief A rotation about the Y axis.
         static Matrix4x4 CreateRotationY(float Radians) {
             const float C = std::cos(Radians), S = std::sin(Radians);
             Matrix4x4 Result;
@@ -57,6 +75,7 @@ namespace Souls {
             return Result;
         }
 
+        /// @brief A rotation about the Z axis.
         static Matrix4x4 CreateRotationZ(float Radians) {
             const float C = std::cos(Radians), S = std::sin(Radians);
             Matrix4x4 Result;
@@ -67,7 +86,7 @@ namespace Souls {
             return Result;
         }
 
-        // Applies this transform first, then Other.
+        /// @brief Applies this transform first, then Other.
         Matrix4x4 operator*(const Matrix4x4& Other) const {
             Matrix4x4 R;
             R.M11 = M11 * Other.M11 + M12 * Other.M21 + M13 * Other.M31 + M14 * Other.M41;
@@ -89,7 +108,7 @@ namespace Souls {
             return R;
         }
 
-        // Transforms a point (w = 1).
+        /// @brief Transforms a point (w = 1).
         Vector3 Transform(const Vector3& V) const {
             return {V.X * M11 + V.Y * M21 + V.Z * M31 + M41,
                     V.X * M12 + V.Y * M22 + V.Z * M32 + M42,

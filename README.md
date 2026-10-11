@@ -41,7 +41,7 @@ is a side benefit rather than the goal, and any claims about it will be backed b
 
 This is the planned development roadmap for libSouls:
 
-### Porting SoulsFormats (Done)
+### Porting SoulsFormats — *Done*
 
 libSouls isn't aiming for 100% coverage of SoulsFormats out of the box, but instead to port the most relevant and
 commonly used
@@ -49,15 +49,15 @@ portions first before eventually circling back and filling in the gaps (console-
 Sekiro variants). This stage is largely complete and most actions
 mod developers desire are possible with libSouls right now.
 
-### C API (In Progress)
+### C API — *In Progress*
 
 This is the stage that brings a stable C API for creating other language bindings.
 
-### Gap-filling SoulsFormats (In Progress)
+### Gap-filling SoulsFormats — *In Progress*
 
 Fill in missing functionality and formats from SoulsFormats for complete coverage of the original library.
 
-### Additional Features (In Progress)
+### Additional Features — *In Progress*
 
 Once the C API is in place, work on additional features can begin. Nothing concrete is planned for this stage yet and
 what gets implemented will largely be determined by community demand and my own personal vision for the project.

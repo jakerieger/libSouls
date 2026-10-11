@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -19,29 +19,47 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of exported classes; only touched by this DLL's own code
 
-    // MSB1: the map layout file of Dark Souls (and its remaster). Extension: .msb
-    //
-    // An MSB has four params: models (the model files parts can use), events (dynamic and interactive systems such
-    // as item pickups and enemy spawners), regions (points and trigger volumes) and parts (the actual things in the
-    // map). Entries refer to each other by name.
+    /// @brief MSB1: the map layout file of Dark Souls (and its remaster).
+    ///
+    /// Extension: .msb
+    ///
+    /// An MSB has four params: models (the model files parts can use), events (dynamic and interactive systems such
+    /// as item pickups and enemy spawners), regions (points and trigger volumes) and parts (the actual things in the
+    /// map). Entries refer to each other by name.
     class SOULS_API MSB1 : public SoulsFile<MSB1> {
     public:
+        /// @brief Tag for references to models.
         using ModelList     = Msb::ModelList;
+        /// @brief Tag for references to events.
         using EventList     = Msb::EventList;
+        /// @brief Tag for references to regions.
         using RegionList    = Msb::RegionList;
+        /// @brief Tag for references to parts.
         using PartList      = Msb::PartList;
+        /// @brief Tag for references to collision parts only.
         using CollisionList = Msb::CollisionList;
 
-        // A generic entry in an MSB param.
+        /// @brief A generic entry in an MSB param.
         struct Entry {
+            /// @brief The name of this entry.
             std::string Name;
             virtual ~Entry() = default;
         };
 
-        // All entries of the file, in file order, for resolving references between them.
+        /// @brief All entries of the file, in file order, for resolving references between them.
         struct Entries {
-            std::vector<Entry*> Models, Events, Regions, Parts, Collisions;
+            /// @brief Every model, in file order.
+            std::vector<Entry*> Models;
+            /// @brief Every event, in file order.
+            std::vector<Entry*> Events;
+            /// @brief Every region, in file order.
+            std::vector<Entry*> Regions;
+            /// @brief Every part, in file order.
+            std::vector<Entry*> Parts;
+            /// @brief Just the collision parts, in file order.
+            std::vector<Entry*> Collisions;
 
+            /// @brief The list of entries a reference tag refers to.
             template<typename Tag>
             const std::vector<Entry*>& List() const {
                 if constexpr (std::is_same_v<Tag, ModelList>) {
@@ -59,60 +77,74 @@ namespace Souls {
         };
 
 #pragma region Models
-        // A model file available for parts to reference.
+        /// @brief A model file available for parts to reference.
         struct SOULS_API Model : Entry {
-            // A path to a .sib file, presumed to be some kind of editor placeholder.
+            /// @brief A path to a .sib file, presumed to be some kind of editor placeholder.
             std::string SibPath;
-            // How many parts use the model; recalculated when writing.
+            /// @brief How many parts use the model; recalculated when writing.
             int32_t InstanceCount = 0;
 
+            /// @brief The type number of this entry as stored in the file.
             virtual uint32_t Type() const = 0;
+            /// @brief Reads the entry from its position in the file.
             void Read(BinaryReader& Reader);
+            /// @brief Writes the entry; ID is its position among the entries of the same type.
             void Write(BinaryWriter& Writer, int32_t ID);
         };
 
+        /// @brief Implements a model type's type number (and type data, if it has any).
         template<uint32_t Id>
         struct ModelOf : Model {
+            /// @brief The type number entries of this type have in the file.
             static constexpr uint32_t TypeId = Id;
+            /// @brief The type number of this entry as stored in the file.
             uint32_t Type() const override { return Id; }
         };
 
-        // Model files that are available for parts to use.
+        /// @brief Model files that are available for parts to use.
         struct ModelParam : Msb::Detail::TypedLists<ModelParam, Model> {
+            /// @brief A model for a static piece of visual map geometry.
             struct MapPiece : ModelOf<0> {
                 MapPiece() { Name = "mXXXXBX"; }
             };
+            /// @brief A model for a dynamic or interactible part.
             struct Object : ModelOf<1> {
                 Object() { Name = "oXXXX"; }
             };
+            /// @brief A model for any non-player character.
             struct Enemy : ModelOf<2> {
                 Enemy() { Name = "cXXXX"; }
             };
+            /// @brief A model for a player spawn point.
             struct Player : ModelOf<4> {
                 Player() { Name = "c0000"; }
             };
+            /// @brief A model for a static piece of physical map geometry.
             struct Collision : ModelOf<5> {
                 Collision() { Name = "hXXXXBX"; }
             };
+            /// @brief Unknown.
             struct Navmesh : ModelOf<6> {
                 Navmesh() { Name = "nXXXXBX"; }
             };
 
-            // Models for fixed terrain and scenery.
+            /// @brief Models for fixed terrain and scenery.
             std::vector<MapPiece> MapPieces;
-            // Models for dynamic props.
+            /// @brief Models for dynamic props.
             std::vector<Object> Objects;
-            // Models for non-player entities.
+            /// @brief Models for non-player entities.
             std::vector<Enemy> Enemies;
-            // Models for player spawn points, I think.
+            /// @brief Models for player spawn points, I think.
             std::vector<Player> Players;
-            // Models for physics collision.
+            /// @brief Models for physics collision.
             std::vector<Collision> Collisions;
-            // Models for AI navigation.
+            /// @brief Models for AI navigation.
             std::vector<Navmesh> Navmeshes;
 
+            /// @brief The param's name in the file.
             static constexpr const char* ParamName = "MODEL_PARAM_ST";
 
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) {
                 Visit(MapPieces);
@@ -122,6 +154,7 @@ namespace Souls {
                 Visit(Collisions);
                 Visit(Navmeshes);
             }
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) const {
                 Visit(MapPieces);
@@ -135,36 +168,45 @@ namespace Souls {
 #pragma endregion
 
 #pragma region Regions
-        // A point or volume used by scripts or events.
+        /// @brief A point or volume used by scripts or events.
         struct SOULS_API Region : Entry {
-            // Describes the physical shape of the region. Composite shapes aren't supported in Dark Souls 1.
+            /// @brief Describes the physical shape of the region.
+            ///
+            /// Composite shapes aren't supported in Dark Souls 1.
             Msb::Shape Shape = Msb::Shapes::Point{};
-            // Location of the region.
+            /// @brief Location of the region.
             Vector3 Position;
-            // Rotation of the region, in degrees.
+            /// @brief Rotation of the region, in degrees.
             Vector3 Rotation;
-            // Identifies the region in external files.
+            /// @brief Identifies the region in external files.
             int32_t EntityID = -1;
 
+            /// @brief The type number entries of this type have in the file.
             static constexpr uint32_t TypeId = 0;
+            /// @brief The type number of this entry as stored in the file.
             uint32_t Type() const { return 0; }
 
             Region() { Name = "Region"; }
+            /// @brief Reads the entry from its position in the file.
             void Read(BinaryReader& Reader);
+            /// @brief Writes the entry; ID is its position among the entries of the same type.
             void Write(BinaryWriter& Writer, int32_t ID);
         };
 
-        // A collection of points and trigger volumes used by scripts and events.
+        /// @brief A collection of points and trigger volumes used by scripts and events.
         struct PointParam : Msb::Detail::TypedLists<PointParam, Region> {
-            // All regions in the map.
+            /// @brief All regions in the map.
             std::vector<Region> Regions;
 
+            /// @brief The param's name in the file.
             static constexpr const char* ParamName = "POINT_PARAM_ST";
 
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) {
                 Visit(Regions);
             }
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) const {
                 Visit(Regions);
@@ -173,43 +215,57 @@ namespace Souls {
 #pragma endregion
 
 #pragma region Events
-        // Common data for all dynamic events.
+        /// @brief Common data for all dynamic events.
         struct SOULS_API Event : Entry {
-            // Unknown, should be unique.
+            /// @brief Unknown, should be unique.
             int32_t EventID = -1;
-            // Part and region referenced by the event.
+            /// @brief Part and region referenced by the event.
             Msb::Ref<PartList> PartName;
+            /// @brief Region referenced by the event.
             Msb::Ref<RegionList> RegionName;
-            // Identifies the event in external files.
+            /// @brief Identifies the event in external files.
             int32_t EntityID = -1;
 
+            /// @brief The type number of this entry as stored in the file.
             virtual uint32_t Type() const = 0;
+            /// @brief Reads the entry from its position in the file.
             void Read(BinaryReader& Reader);
+            /// @brief Writes the entry; ID is its position among the entries of the same type.
             void Write(BinaryWriter& Writer, int32_t ID);
+            /// @brief Reads the type-specific data.
             virtual void ReadTypeData(BinaryReader& Reader)                = 0;
+            /// @brief Writes the type-specific data.
             virtual void WriteTypeData(BinaryWriter& Writer)               = 0;
+            /// @brief Turns the indices read from the file into the names of the entries they refer to.
             virtual void GetNames(const Entries& Lists);
+            /// @brief Turns the names of referenced entries into the indices written to the file.
             virtual void GetIndices(const Entries& Lists);
         };
 
-        // Implements the type data functions of an event from its Fields function.
+        /// @brief Implements the type data functions of an event from its Fields function.
         template<typename D, uint32_t Id>
         struct EventImpl : Event {
+            /// @brief The type number entries of this type have in the file.
             static constexpr uint32_t TypeId = Id;
+            /// @brief The type number of this entry as stored in the file.
             uint32_t Type() const override { return Id; }
+            /// @brief Reads the type-specific data.
             void ReadTypeData(BinaryReader& Reader) override {
                 Msb::Detail::ReadVisitor V{Reader};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Writes the type-specific data.
             void WriteTypeData(BinaryWriter& Writer) override {
                 Msb::Detail::WriteVisitor V{Writer};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Turns the indices read from the file into the names of the entries they refer to.
             void GetNames(const Entries& Lists) override {
                 Event::GetNames(Lists);
                 Msb::Detail::NameVisitor<Entries> V{Lists};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Turns the names of referenced entries into the indices written to the file.
             void GetIndices(const Entries& Lists) override {
                 Event::GetIndices(Lists);
                 Msb::Detail::IndexVisitor<Entries> V{Lists};
@@ -217,25 +273,28 @@ namespace Souls {
             }
         };
 
-        // Contains abstract entities that control various dynamic elements in the map.
+        /// @brief Contains abstract entities that control various dynamic elements in the map.
         struct EventParam : Msb::Detail::TypedLists<EventParam, Event> {
-            // A fixed point light.
+            /// @brief A fixed point light.
             struct Light : EventImpl<Light, 0> {
+                /// @brief Unknown.
                 int32_t PointLightID = 0;
                 Light() { Name = "Event: Light"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(PointLightID);
                 }
             };
 
-            // An area-based music or sound effect.
+            /// @brief An area-based music or sound effect.
             struct Sound : EventImpl<Sound, 1> {
-                // Category of sound.
+                /// @brief Category of sound.
                 int32_t SoundType = 0;
-                // ID of the sound file in the FSBs.
+                /// @brief ID of the sound file in the FSBs.
                 int32_t SoundID = 0;
                 Sound() { Name = "Event: Sound"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(SoundType);
@@ -243,26 +302,46 @@ namespace Souls {
                 }
             };
 
-            // A fixed particle effect.
+            /// @brief A fixed particle effect.
             struct SFX : EventImpl<SFX, 2> {
-                // ID of the effect in the ffxbnds.
+                /// @brief ID of the effect in the ffxbnds.
                 int32_t EffectID = 0;
                 SFX() { Name = "Event: SFX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EffectID);
                 }
             };
 
-            // Wind that affects particle effects.
+            /// @brief Wind that affects particle effects.
             struct Wind : EventImpl<Wind, 3> {
+                /// @brief Unknown.
                 Vector3 WindVecMin;
+                /// @brief Unknown.
                 float UnkT0C = 0;
+                /// @brief Unknown.
                 Vector3 WindVecMax;
+                /// @brief Unknown.
                 float UnkT1C = 0;
-                float WindSwingCycle0 = 0, WindSwingCycle1 = 0, WindSwingCycle2 = 0, WindSwingCycle3 = 0;
-                float WindSwingPow0 = 0, WindSwingPow1 = 0, WindSwingPow2 = 0, WindSwingPow3 = 0;
+                /// @brief Unknown.
+                float WindSwingCycle0 = 0;
+                /// @brief Unknown.
+                float WindSwingCycle1 = 0;
+                /// @brief Unknown.
+                float WindSwingCycle2 = 0;
+                /// @brief Unknown.
+                float WindSwingCycle3 = 0;
+                /// @brief Unknown.
+                float WindSwingPow0 = 0;
+                /// @brief Unknown.
+                float WindSwingPow1 = 0;
+                /// @brief Unknown.
+                float WindSwingPow2 = 0;
+                /// @brief Unknown.
+                float WindSwingPow3 = 0;
                 Wind() { Name = "Event: Wind"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(WindVecMin);
@@ -280,17 +359,19 @@ namespace Souls {
                 }
             };
 
-            // A pick-uppable item.
+            /// @brief A pick-uppable item.
             struct Treasure : EventImpl<Treasure, 4> {
-                // The part that the treasure is attached to, such as an item corpse.
+                /// @brief The part that the treasure is attached to, such as an item corpse.
                 Msb::Ref<PartList> TreasurePartName;
-                // Item lots to be granted when the treasure is picked up; only the first appears to be functional.
+                /// @brief Item lots to be granted when the treasure is picked up; only the first appears to be
+                ///        functional.
                 std::array<int32_t, 5> ItemLots{-1, -1, -1, -1, -1};
-                // Changes the text of the pickup prompt.
+                /// @brief Changes the text of the pickup prompt.
                 bool InChest = false;
-                // Whether the treasure should be hidden by default.
+                /// @brief Whether the treasure should be hidden by default.
                 bool StartDisabled = false;
                 Treasure() { Name = "Event: Treasure"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(0);
@@ -305,18 +386,30 @@ namespace Souls {
                 }
             };
 
-            // A repeating enemy spawner.
+            /// @brief A repeating enemy spawner.
             struct Generator : EventImpl<Generator, 5> {
+                /// @brief Unknown.
                 uint8_t MaxNum   = 0;
+                /// @brief Unknown.
                 int8_t GenType   = 0;
-                int16_t LimitNum = 0, MinGenNum = 0, MaxGenNum = 0;
-                float MinInterval = 0, MaxInterval = 0;
+                /// @brief Unknown.
+                int16_t LimitNum = 0;
+                /// @brief Unknown.
+                int16_t MinGenNum = 0;
+                /// @brief Unknown.
+                int16_t MaxGenNum = 0;
+                /// @brief Unknown.
+                float MinInterval = 0;
+                /// @brief Unknown.
+                float MaxInterval = 0;
+                /// @brief Unknown.
                 uint8_t InitialSpawnCount = 0;
-                // Points that enemies may be spawned at.
+                /// @brief Points that enemies may be spawned at.
                 std::array<Msb::Ref<RegionList>, 4> SpawnPointNames;
-                // Enemies to be respawned.
+                /// @brief Enemies to be respawned.
                 std::array<Msb::Ref<PartList>, 32> SpawnPartNames;
                 Generator() { Name = "Event: Generator"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(MaxNum);
@@ -334,14 +427,16 @@ namespace Souls {
                 }
             };
 
-            // A fixed orange soapstone message.
+            /// @brief A fixed orange soapstone message.
             struct Message : EventImpl<Message, 6> {
-                // FMG text ID to display.
+                /// @brief FMG text ID to display.
                 int16_t MessageID = 0;
+                /// @brief Unknown.
                 int16_t UnkT02    = 0;
-                // Whether the message requires Seek Guidance to see.
+                /// @brief Whether the message requires Seek Guidance to see.
                 bool Hidden = false;
                 Message() { Name = "Event: Message"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(MessageID);
@@ -352,24 +447,27 @@ namespace Souls {
                 }
             };
 
-            // Represents an interaction with an object.
+            /// @brief Represents an interaction with an object.
             struct ObjAct : EventImpl<ObjAct, 7> {
+                /// @brief How the object behaves when used.
                 enum class StateType : uint8_t {
                     Default = 0,
                     Door    = 1,
                     Loop    = 2,
                 };
 
-                // Unknown how this differs from the Event EntityID.
+                /// @brief Unknown how this differs from the Event EntityID.
                 int32_t ObjActEntityID = -1;
-                // The object that the ObjAct controls.
+                /// @brief The object that the ObjAct controls.
                 Msb::Ref<PartList> ObjActPartName;
-                // ID in ObjActParam that configures the ObjAct.
+                /// @brief ID in ObjActParam that configures the ObjAct.
                 int16_t ObjActParamID = -1;
+                /// @brief Unknown.
                 StateType ObjActState = StateType::Default;
-                // Unknown, probably enables or disables the ObjAct.
+                /// @brief Unknown, probably enables or disables the ObjAct.
                 int32_t EventFlagID = -1;
                 ObjAct() { Name = "Event: ObjAct"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(ObjActEntityID);
@@ -381,11 +479,12 @@ namespace Souls {
                 }
             };
 
-            // Unknown what this accomplishes beyond just having the region.
+            /// @brief Unknown what this accomplishes beyond just having the region.
             struct SpawnPoint : EventImpl<SpawnPoint, 8> {
-                // Point for the SpawnPoint to spawn at.
+                /// @brief Point for the SpawnPoint to spawn at.
                 Msb::Ref<RegionList> SpawnPointName;
                 SpawnPoint() { Name = "Event: SpawnPoint"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(SpawnPointName);
@@ -393,13 +492,14 @@ namespace Souls {
                 }
             };
 
-            // The origin of the map, already accounted for in MSB positions.
+            /// @brief The origin of the map, already accounted for in MSB positions.
             struct MapOffset : EventImpl<MapOffset, 9> {
-                // Position of the map.
+                /// @brief Position of the map.
                 Vector3 Position;
-                // Rotation of the map.
+                /// @brief Rotation of the map.
                 float Degree = 0;
                 MapOffset() { Name = "Event: MapOffset"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(Position);
@@ -407,10 +507,12 @@ namespace Souls {
                 }
             };
 
-            // Unknown.
+            /// @brief Unknown.
             struct Navmesh : EventImpl<Navmesh, 10> {
+                /// @brief Unknown.
                 Msb::Ref<RegionList> NavmeshRegionName;
                 Navmesh() { Name = "Event: Navmesh"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(NavmeshRegionName);
@@ -418,11 +520,22 @@ namespace Souls {
                 }
             };
 
-            // Unknown.
+            /// @brief Unknown.
             struct Environment : EventImpl<Environment, 11> {
+                /// @brief Unknown.
                 int32_t UnkT00 = 0;
-                float UnkT04 = 0, UnkT08 = 0, UnkT0C = 0, UnkT10 = 0, UnkT14 = 0;
+                /// @brief Unknown.
+                float UnkT04 = 0;
+                /// @brief Unknown.
+                float UnkT08 = 0;
+                /// @brief Unknown.
+                float UnkT0C = 0;
+                /// @brief Unknown.
+                float UnkT10 = 0;
+                /// @brief Unknown.
+                float UnkT14 = 0;
                 Environment() { Name = "Event: Environment"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -435,15 +548,16 @@ namespace Souls {
                 }
             };
 
-            // A fake multiplayer session where you enter an NPC's world.
+            /// @brief A fake multiplayer session where you enter an NPC's world.
             struct PseudoMultiplayer : EventImpl<PseudoMultiplayer, 12> {
-                // The NPC whose world you are entering.
+                /// @brief The NPC whose world you are entering.
                 int32_t HostEntityID = -1;
-                // Set when inside the event's region, unset when outside it.
+                /// @brief Set when inside the event's region, unset when outside it.
                 int32_t EventFlagID = -1;
-                // ID of a goods item that is used to trigger the event.
+                /// @brief ID of a goods item that is used to trigger the event.
                 int32_t ActivateGoodsID = 0;
                 PseudoMultiplayer() { Name = "Event: PseudoMultiplayer"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(HostEntityID);
@@ -453,22 +567,24 @@ namespace Souls {
                 }
             };
 
-            std::vector<Light> Lights;                        // fixed point light sources
-            std::vector<Sound> Sounds;                        // background music and area-based sounds
-            std::vector<SFX> SFXs;                            // particle effects
-            std::vector<Wind> Winds;                          // wind that affects SFX; should only be one per map, if any
-            std::vector<Treasure> Treasures;                  // item pickups in the open or in chests
-            std::vector<Generator> Generators;                // repeated enemy spawners
-            std::vector<Message> Messages;                    // static soapstone messages
-            std::vector<ObjAct> ObjActs;                      // controllers for object interactions
-            std::vector<SpawnPoint> SpawnPoints;              // unknown exactly what this is for
-            std::vector<MapOffset> MapOffsets;                // the origin of the map
-            std::vector<Navmesh> Navmeshes;                   // unknown, interacts with navmeshes somehow
-            std::vector<Environment> Environments;            // unknown
-            std::vector<PseudoMultiplayer> PseudoMultiplayers;  // controls the player being summoned to an NPC's world
+            std::vector<Light> Lights;                        ///< fixed point light sources
+            std::vector<Sound> Sounds;                        ///< background music and area-based sounds
+            std::vector<SFX> SFXs;                            ///< particle effects
+            std::vector<Wind> Winds;                          ///< wind that affects SFX; should only be one per map, if any
+            std::vector<Treasure> Treasures;                  ///< item pickups in the open or in chests
+            std::vector<Generator> Generators;                ///< repeated enemy spawners
+            std::vector<Message> Messages;                    ///< static soapstone messages
+            std::vector<ObjAct> ObjActs;                      ///< controllers for object interactions
+            std::vector<SpawnPoint> SpawnPoints;              ///< unknown exactly what this is for
+            std::vector<MapOffset> MapOffsets;                ///< the origin of the map
+            std::vector<Navmesh> Navmeshes;                   ///< unknown, interacts with navmeshes somehow
+            std::vector<Environment> Environments;            ///< unknown
+            std::vector<PseudoMultiplayer> PseudoMultiplayers;  ///< controls the player being summoned to an NPC's world
 
+            /// @brief The param's name in the file.
             static constexpr const char* ParamName = "EVENT_PARAM_ST";
 
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) {
                 Visit(Lights);
@@ -485,6 +601,7 @@ namespace Souls {
                 Visit(Environments);
                 Visit(PseudoMultiplayers);
             }
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) const {
                 Visit(Lights);
@@ -505,55 +622,99 @@ namespace Souls {
 #pragma endregion
 
 #pragma region Parts
-        // Common information for all concrete entities.
+        /// @brief Common information for all concrete entities.
         struct SOULS_API Part : Entry {
-            // The model of the part, corresponding to an entry in the ModelParam.
+            /// @brief The model of the part, corresponding to an entry in the ModelParam.
             Msb::Ref<ModelList> ModelName;
-            // A path to a .sib file, presumed to be some kind of editor placeholder.
+            /// @brief A path to a .sib file, presumed to be some kind of editor placeholder.
             std::string SibPath;
-            // Location of the part.
+            /// @brief Location of the part.
             Vector3 Position;
-            // Rotation of the part, in degrees.
+            /// @brief Rotation of the part, in degrees.
             Vector3 Rotation;
-            // Scale of the part, only meaningful for map pieces and objects.
+            /// @brief Scale of the part, only meaningful for map pieces and objects.
             Vector3 Scale{1.f, 1.f, 1.f};
-            // Control when the part is visible.
+            /// @brief Control when the part is visible.
             std::array<uint32_t, 4> DrawGroups{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+            /// @brief Controls when the part is visible.
             std::array<uint32_t, 4> DispGroups{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
-            // Identifies the part in external files.
+            /// @brief Identifies the part in external files.
             int32_t EntityID = -1;
-            // Unknown.
-            uint8_t LightID = 0, FogID = 0, ScatterID = 0, LensFlareID = 0, ShadowID = 0, DofID = 0, ToneMapID = 0,
-                    ToneCorrectID = 0, LanternID = 0, LodParamID = 0, IsShadowSrc = 0, IsShadowDest = 0, IsShadowOnly = 0,
-                    DrawByReflectCam = 0, DrawOnlyReflectCam = 0, UseDepthBiasFloat = 0, DisablePointLightEffect = 0;
+            /// @brief Unknown.
+            uint8_t LightID = 0;
+            /// @brief Unknown.
+            uint8_t FogID = 0;
+            /// @brief Unknown.
+            uint8_t ScatterID = 0;
+            /// @brief Unknown.
+            uint8_t LensFlareID = 0;
+            /// @brief Unknown.
+            uint8_t ShadowID = 0;
+            /// @brief Unknown.
+            uint8_t DofID = 0;
+            /// @brief Unknown.
+            uint8_t ToneMapID = 0;
+            /// @brief Unknown.
+            uint8_t ToneCorrectID = 0;
+            /// @brief Unknown.
+            uint8_t LanternID = 0;
+            /// @brief Unknown.
+            uint8_t LodParamID = 0;
+            /// @brief Unknown.
+            uint8_t IsShadowSrc = 0;
+            /// @brief Unknown.
+            uint8_t IsShadowDest = 0;
+            /// @brief Unknown.
+            uint8_t IsShadowOnly = 0;
+            /// @brief Unknown.
+            uint8_t DrawByReflectCam = 0;
+            /// @brief Unknown.
+            uint8_t DrawOnlyReflectCam = 0;
+            /// @brief Unknown.
+            uint8_t UseDepthBiasFloat = 0;
+            /// @brief Unknown.
+            uint8_t DisablePointLightEffect = 0;
 
+            /// @brief The type number of this entry as stored in the file.
             virtual uint32_t Type() const = 0;
+            /// @brief Reads the entry from its position in the file.
             void Read(BinaryReader& Reader);
+            /// @brief Writes the entry; ID is its position among the entries of the same type.
             void Write(BinaryWriter& Writer, int32_t ID);
+            /// @brief Reads the type-specific data.
             virtual void ReadTypeData(BinaryReader& Reader)  = 0;
+            /// @brief Writes the type-specific data.
             virtual void WriteTypeData(BinaryWriter& Writer) = 0;
+            /// @brief Turns the indices read from the file into the names of the entries they refer to.
             virtual void GetNames(const Entries& Lists);
+            /// @brief Turns the names of referenced entries into the indices written to the file.
             virtual void GetIndices(const Entries& Lists);
         };
 
-        // Implements the type data functions of a part from its Fields function.
+        /// @brief Implements the type data functions of a part from its Fields function.
         template<typename D, uint32_t Id, typename B = Part>
         struct PartImpl : B {
+            /// @brief The type number entries of this type have in the file.
             static constexpr uint32_t TypeId = Id;
+            /// @brief The type number of this entry as stored in the file.
             uint32_t Type() const override { return Id; }
+            /// @brief Reads the type-specific data.
             void ReadTypeData(BinaryReader& Reader) override {
                 Msb::Detail::ReadVisitor V{Reader};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Writes the type-specific data.
             void WriteTypeData(BinaryWriter& Writer) override {
                 Msb::Detail::WriteVisitor V{Writer};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Turns the indices read from the file into the names of the entries they refer to.
             void GetNames(const Entries& Lists) override {
                 B::GetNames(Lists);
                 Msb::Detail::NameVisitor<Entries> V{Lists};
                 static_cast<D*>(this)->Fields(V);
             }
+            /// @brief Turns the names of referenced entries into the indices written to the file.
             void GetIndices(const Entries& Lists) override {
                 B::GetIndices(Lists);
                 Msb::Detail::IndexVisitor<Entries> V{Lists};
@@ -561,17 +722,23 @@ namespace Souls {
             }
         };
 
-        // Common base data for objects and dummy objects.
+        /// @brief Common base data for objects and dummy objects.
         struct ObjectBase : Part {
-            // Collision that controls loading of the object.
+            /// @brief Collision that controls loading of the object.
             Msb::Ref<PartList> CollisionName;
+            /// @brief Unknown.
             int8_t BreakTerm   = 0;
+            /// @brief Unknown.
             int8_t NetSyncType = 0;
+            /// @brief Unknown.
             int16_t InitAnimID = 0;
+            /// @brief Unknown.
             int16_t UnkT0E     = 0;
+            /// @brief Unknown.
             int32_t UnkT10     = 0;
 
             ObjectBase() { Name = "oXXXX_XXXX"; }
+            /// @brief Visits the fields that objects and dummy objects share.
             template<typename V>
             void ObjectFields(V& F) {
                 F.template Const<int32_t>(0);
@@ -586,26 +753,31 @@ namespace Souls {
             }
         };
 
-        // Common base data for enemies and dummy enemies.
+        /// @brief Common base data for enemies and dummy enemies.
         struct EnemyBase : Part {
-            // ID in NPCThinkParam determining AI properties.
+            /// @brief ID in NPCThinkParam determining AI properties.
             int32_t ThinkParamID = -1;
-            // ID in NPCParam determining character properties.
+            /// @brief ID in NPCParam determining character properties.
             int32_t NPCParamID = -1;
-            // ID of a talk ESD used by the character.
+            /// @brief ID of a talk ESD used by the character.
             int32_t TalkID = -1;
+            /// @brief Unknown.
             uint8_t PointMoveType = 0;
+            /// @brief Unknown.
             uint16_t PlatoonID    = 0;
-            // ID in CharaInitParam determining equipment and stats for humans.
+            /// @brief ID in CharaInitParam determining equipment and stats for humans.
             int32_t CharaInitID = -1;
-            // Collision that controls loading of the enemy.
+            /// @brief Collision that controls loading of the enemy.
             Msb::Ref<PartList> CollisionName;
-            // Regions for the enemy to patrol.
+            /// @brief Regions for the enemy to patrol.
             std::array<Msb::Ref<RegionList, int16_t>, 8> MovePointNames;
+            /// @brief Unknown.
             int32_t InitAnimID   = 0;
+            /// @brief Unknown.
             int32_t DamageAnimID = 0;
 
             EnemyBase() { Name = "cXXXX_XXXX"; }
+            /// @brief Visits the fields that enemies and dummy enemies share.
             template<typename V>
             void EnemyFields(V& F) {
                 F.template Const<int32_t>(0);
@@ -626,64 +798,77 @@ namespace Souls {
             }
         };
 
-        // All instances of concrete things in the map.
+        /// @brief All instances of concrete things in the map.
         struct PartsParam : Msb::Detail::TypedLists<PartsParam, Part> {
-            // A visible but not physical model making up the map.
+            /// @brief A visible but not physical model making up the map.
             struct MapPiece : PartImpl<MapPiece, 0> {
                 MapPiece() { Name = "mXXXXBX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
                 }
             };
 
-            // A dynamic or interactible part of the map.
+            /// @brief A dynamic or interactible part of the map.
             struct Object : PartImpl<Object, 1, ObjectBase> {
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     ObjectFields(F);
                 }
             };
 
-            // Any living entity besides the player character.
+            /// @brief Any living entity besides the player character.
             struct Enemy : PartImpl<Enemy, 2, EnemyBase> {
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     EnemyFields(F);
                 }
             };
 
-            // Unknown exactly what these do.
+            /// @brief Unknown exactly what these do.
             struct Player : PartImpl<Player, 4> {
                 Player() { Name = "c0000_XXXX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(16);
                 }
             };
 
-            // Invisible but physical geometry.
+            /// @brief Invisible but physical geometry.
             struct Collision : PartImpl<Collision, 5> {
+                /// @brief Unknown.
                 uint8_t HitFilterID = 0;
-                // Causes sounds to be modulated when standing on the collision.
+                /// @brief Causes sounds to be modulated when standing on the collision.
                 uint8_t SoundSpaceType      = 0;
+                /// @brief Unknown.
                 int16_t EnvLightMapSpotIndex = 0;
+                /// @brief Unknown.
                 float ReflectPlaneHeight     = 0;
+                /// @brief Unknown.
                 std::array<uint32_t, 4> NvmGroups{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+                /// @brief Unknown.
                 std::array<int32_t, 3> VagrantEntityIDs{-1, -1, -1};
-                // Controls displays of the map name on screen or the loading menu.
+                /// @brief Controls displays of the map name on screen or the loading menu.
                 int16_t MapNameID  = -1;
+                /// @brief Unknown.
                 bool DisableStart  = false;
+                /// @brief Unknown.
                 uint8_t UnkT27     = 0;
-                // If set, disables a bonfire when any enemy is on the collision.
+                /// @brief If set, disables a bonfire when any enemy is on the collision.
                 int32_t DisableBonfireEntityID = -1;
-                // An ID used for multiplayer eligibility.
+                /// @brief An ID used for multiplayer eligibility.
                 int32_t PlayRegionID = 0;
-                // IDs in LockCamParam determining camera properties.
+                /// @brief IDs in LockCamParam determining camera properties.
                 int16_t LockCamParamID1 = -1;
+                /// @brief ID in LockCamParam determining camera properties.
                 int16_t LockCamParamID2 = -1;
 
                 Collision() { Name = "hXXXXBX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(HitFilterID);
@@ -706,10 +891,12 @@ namespace Souls {
                 }
             };
 
-            // An AI navigation mesh.
+            /// @brief An AI navigation mesh.
             struct Navmesh : PartImpl<Navmesh, 8> {
+                /// @brief Unknown.
                 std::array<uint32_t, 4> NvmGroups{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
                 Navmesh() { Name = "nXXXXBX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(NvmGroups);
@@ -717,30 +904,33 @@ namespace Souls {
                 }
             };
 
-            // A normally invisible object, either unused or for a cutscene.
+            /// @brief A normally invisible object, either unused or for a cutscene.
             struct DummyObject : PartImpl<DummyObject, 9, ObjectBase> {
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     ObjectFields(F);
                 }
             };
 
-            // A normally invisible enemy, either unused or for a cutscene.
+            /// @brief A normally invisible enemy, either unused or for a cutscene.
             struct DummyEnemy : PartImpl<DummyEnemy, 10, EnemyBase> {
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     EnemyFields(F);
                 }
             };
 
-            // Attaches to an actual collision and causes another map to be loaded when standing on it.
+            /// @brief Attaches to an actual collision and causes another map to be loaded when standing on it.
             struct ConnectCollision : PartImpl<ConnectCollision, 11> {
-                // The collision which will load another map.
+                /// @brief The collision which will load another map.
                 Msb::Ref<CollisionList> CollisionName;
-                // Four bytes specifying the map ID to load.
+                /// @brief Four bytes specifying the map ID to load.
                 std::array<uint8_t, 4> MapID{10, 2, 0, 0};
 
                 ConnectCollision() { Name = "hXXXXBX_XXXX"; }
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
                 template<typename V>
                 void Fields(V& F) {
                     F(CollisionName);
@@ -749,18 +939,20 @@ namespace Souls {
                 }
             };
 
-            std::vector<MapPiece> MapPieces;              // all of the fixed visual geometry of the map
-            std::vector<Object> Objects;                  // dynamic props and interactive things
-            std::vector<Enemy> Enemies;                   // all non-player characters
-            std::vector<Player> Players;                  // something to do with player spawn points
-            std::vector<Collision> Collisions;            // invisible physical geometry of the map
-            std::vector<Navmesh> Navmeshes;               // AI navigation meshes
-            std::vector<DummyObject> DummyObjects;        // objects that don't appear normally; unused or for cutscenes
-            std::vector<DummyEnemy> DummyEnemies;         // enemies that don't appear normally; unused or for cutscenes
-            std::vector<ConnectCollision> ConnectCollisions;  // dummy parts that make a collision load another map
+            std::vector<MapPiece> MapPieces;              ///< all of the fixed visual geometry of the map
+            std::vector<Object> Objects;                  ///< dynamic props and interactive things
+            std::vector<Enemy> Enemies;                   ///< all non-player characters
+            std::vector<Player> Players;                  ///< something to do with player spawn points
+            std::vector<Collision> Collisions;            ///< invisible physical geometry of the map
+            std::vector<Navmesh> Navmeshes;               ///< AI navigation meshes
+            std::vector<DummyObject> DummyObjects;        ///< objects that don't appear normally; unused or for cutscenes
+            std::vector<DummyEnemy> DummyEnemies;         ///< enemies that don't appear normally; unused or for cutscenes
+            std::vector<ConnectCollision> ConnectCollisions;  ///< dummy parts that make a collision load another map
 
+            /// @brief The param's name in the file.
             static constexpr const char* ParamName = "PARTS_PARAM_ST";
 
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) {
                 Visit(MapPieces);
@@ -773,6 +965,7 @@ namespace Souls {
                 Visit(DummyEnemies);
                 Visit(ConnectCollisions);
             }
+            /// @brief Calls Visit with each per-type list, in the order the entries are written.
             template<typename F>
             void ForEachList(F&& Visit) const {
                 Visit(MapPieces);
@@ -788,15 +981,15 @@ namespace Souls {
         };
 #pragma endregion
 
-        // True for PS3/X360, false for PC.
+        /// @brief True for PS3/X360, false for PC.
         bool BigEndian = false;
-        // Model files that are available for parts to use.
+        /// @brief Model files that are available for parts to use.
         ModelParam Models;
-        // Dynamic or interactive systems such as item pickups, levers, enemy spawners, etc.
+        /// @brief Dynamic or interactive systems such as item pickups, levers, enemy spawners, etc.
         EventParam Events;
-        // Points or areas of space that trigger some sort of behavior.
+        /// @brief Points or areas of space that trigger some sort of behavior.
         PointParam Regions;
-        // Instances of actual things in the map.
+        /// @brief Instances of actual things in the map.
         PartsParam Parts;
 
     protected:

@@ -18,6 +18,8 @@ add_executable(Testsuite
         FormatScanTests.cpp
         MSBETests.cpp
         SL2Tests.cpp
+        HavokTests.cpp
+        TestArchives.hpp
         SyntheticFormatTests.cpp
         CApiTests.cpp
         CApiMsbTests.cpp
@@ -64,6 +66,7 @@ souls_add_test(Synthetic synthetic)
 souls_add_test(CApi capi)
 souls_add_test(MSBE msbe 40)
 souls_add_test(SL2 sl2)
+souls_add_test(Havok havok)
 souls_add_test(Oodle oodle)
 souls_add_test(SoulsFile soulsfile)
 souls_add_test(Regulation regulation)
@@ -71,5 +74,5 @@ souls_add_test(BinderFiles binderfiles 40)
 souls_add_test(RealFiles realfiles 25)
 
 # These need the Oodle DLL and/or an unpacked game install.
-set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader FLVER Formats Oodle SoulsFile Regulation BinderFiles RealFiles MSBE PROPERTIES LABELS "integration")
+set_tests_properties(BHD5 FMG PARAM PARAMDEF PARAMDEFXml ParamLayout ParamDefRepository Paramdex TPF BXFReader FLVER Formats Oodle SoulsFile Regulation BinderFiles RealFiles MSBE Havok PROPERTIES LABELS "integration")
 set_tests_properties(RealFiles PROPERTIES TIMEOUT 1200)

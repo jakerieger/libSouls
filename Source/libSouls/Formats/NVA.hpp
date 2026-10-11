@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -13,106 +13,152 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
 
-    // NVA: a file that defines the placement and properties of navmeshes in Bloodborne, Dark Souls III, Sekiro and
-    // Elden Ring. Extension: .nva
+    /// @brief NVA: a file that defines the placement and properties of navmeshes in Bloodborne, Dark Souls III, Sekiro
+    ///        and Elden Ring.
+    ///
+    /// Extension: .nva
     class SOULS_API NVA : public SoulsFile<NVA> {
     public:
-        // Version of the overall format.
+        /// @brief Version of the overall format.
         enum class NVAVersion : uint32_t {
-            OldBloodborne = 3,  // used for a single BB test map, m29_03_10_00; has no map node section
-            DarkSouls3    = 4,  // and Bloodborne
+            OldBloodborne = 3,  ///< used for a single BB test map, m29_03_10_00; has no map node section
+            DarkSouls3    = 4,  ///< and Bloodborne
             Sekiro        = 5,
             EldenRing     = 6,
         };
 
-        // NVA is split up into lists of different types, each with its own version number.
+        /// @brief NVA is split up into lists of different types, each with its own version number.
         template<typename T>
         struct Section {
-            // A version number indicating the format of the section. Do not change this unless you know what you are doing.
+            /// @brief A version number indicating the format of the section.
+            ///
+            /// Do not change this unless you know what you are doing.
             int32_t Version = 1;
+            /// @brief The section's entries.
             std::vector<T> Items;
         };
 
-        // Adjacent nodes in an inter-navmesh graph.
+        /// @brief Adjacent nodes in an inter-navmesh graph.
         struct MapNode {
+            /// @brief Unknown.
             Vector3 Position;
-            // Index to a navmesh.
+            /// @brief Index to a navmesh.
             int16_t Section0Index = 0;
+            /// @brief Unknown.
             int16_t MainID        = 0;
-            // Unknown. -1 marks unused slots.
+            /// @brief Unknown.
+            ///
+            /// -1 marks unused slots.
             std::vector<float> SiblingDistances;
-            // Only present in Sekiro and later.
+            /// @brief Only present in Sekiro and later.
             int32_t Unk14 = 0;
         };
 
-        // An instance of a navmesh.
+        /// @brief An instance of a navmesh.
         struct Navmesh {
+            /// @brief Position of the mesh.
             Vector3 Position;
-            // Rotation of the mesh, in radians.
+            /// @brief Rotation of the mesh, in radians.
             Vector3 Rotation;
+            /// @brief Scale of the mesh.
             Vector3 Scale{1.f, 1.f, 1.f};
+            /// @brief Unknown.
             int32_t NameID      = 0;
+            /// @brief Unknown.
             int32_t ModelID     = 0;
+            /// @brief Unknown.
             int32_t Unk38       = 0;
-            // Should equal number of vertices in the model file.
+            /// @brief Should equal number of vertices in the model file.
             int32_t VertexCount = 0;
+            /// @brief Unknown.
             std::vector<int32_t> NameReferenceIDs;
+            /// @brief Adjacent nodes in an inter-navmesh graph.
             std::vector<MapNode> MapNodes;
+            /// @brief Unknown.
             bool Unk4C = false;
         };
 
+        /// @brief Unknown.
         struct Entry1 {
-            // Always 0 in Dark Souls III and Sekiro, sometimes 1 in Bloodborne.
+            /// @brief Always 0 in Dark Souls III and Sekiro, sometimes 1 in Bloodborne.
             int32_t Unk00 = 0;
         };
 
+        /// @brief Unknown.
         struct Reference {
+            /// @brief Unknown.
             int32_t UnkIndex = 0;
+            /// @brief Unknown.
             int32_t NameID   = 0;
         };
 
+        /// @brief Unknown.
         struct Entry2 {
-            // Seems to just be the index of this entry.
+            /// @brief Seems to just be the index of this entry.
             int32_t Unk00 = 0;
-            // References in this entry; maximum of 64.
+            /// @brief References in this entry; maximum of 64.
             std::vector<Reference> References;
+            /// @brief Unknown.
             int32_t Unk08 = -1;
         };
 
+        /// @brief A point used to connect two navmeshes.
         struct ConnectorPoint {
-            int32_t Unk00 = 0, Unk04 = 0, Unk08 = 0, Unk0C = 0;
+            /// @brief Unknown.
+            int32_t Unk00 = 0;
+            /// @brief Unknown.
+            int32_t Unk04 = 0;
+            /// @brief Unknown.
+            int32_t Unk08 = 0;
+            /// @brief Unknown.
+            int32_t Unk0C = 0;
         };
 
+        /// @brief An unknown condition used by a connector.
         struct ConnectorCondition {
-            int32_t Condition1 = 0, Condition2 = 0;
+            /// @brief Unknown.
+            int32_t Condition1 = 0;
+            /// @brief Unknown.
+            int32_t Condition2 = 0;
         };
 
-        // A connection between two navmeshes.
+        /// @brief A connection between two navmeshes.
         struct Connector {
+            /// @brief Unknown.
             int32_t MainNameID = 0;
-            // The navmesh to be attached.
+            /// @brief The navmesh to be attached.
             int32_t TargetNameID = 0;
+            /// @brief Points used by this connection.
             std::vector<ConnectorPoint> Points;
+            /// @brief Conditions used by this connection.
             std::vector<ConnectorCondition> Conditions;
         };
 
-        // Unknown; believed to have something to do with connecting maps.
+        /// @brief Unknown; believed to have something to do with connecting maps.
         struct Entry7 {
+            /// @brief Unknown.
             Vector3 Position;
+            /// @brief Unknown.
             int32_t NameID = 0;
-            // Zero in most files, but not all.
+            /// @brief Zero in most files, but not all.
             int32_t Unk14 = 0;
+            /// @brief Unknown.
             int32_t Unk18 = 0;
         };
 
-        // The format version of this file.
+        /// @brief The format version of this file.
         NVAVersion Version = NVAVersion::DarkSouls3;
-        // Navmesh instances in the map. Version: 2 for Dark Souls III and the BB test map, 3 for BB, 4 for Sekiro.
+        /// @brief Navmesh instances in the map.
+        ///
+        /// Version: 2 for Dark Souls III and the BB test map, 3 for BB, 4 for Sekiro.
         Section<Navmesh> Navmeshes{2, {}};
+        /// @brief Unknown.
         Section<Entry1> Entries1;
+        /// @brief Unknown.
         Section<Entry2> Entries2;
-        // Connections between different navmeshes.
+        /// @brief Connections between different navmeshes.
         Section<Connector> Connectors;
+        /// @brief Unknown.
         Section<Entry7> Entries7;
 
     protected:

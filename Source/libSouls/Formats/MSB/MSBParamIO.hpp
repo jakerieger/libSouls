@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-// Reading and writing the param containers of the 64-bit MSB formats (Dark Souls II onward): a version number, the
-// offsets of the entries, the name of the param as UTF-16, and the offset of the next param.
+/// @brief Reading and writing the param containers of the 64-bit MSB formats (Dark Souls II onward): a version number,
+///        the offsets of the entries, the name of the param as UTF-16, and the offset of the next param.
 namespace Souls::Msb::Detail {
 
     inline void RequireNonZero(int64_t Offset, const char* What) {
@@ -26,7 +26,9 @@ namespace Souls::Msb::Detail {
         int64_t NextParamOffset = 0;
     };
 
-    // Reads a param's header. Throws if ExpectedVersion is given and the version differs, or the name isn't Type.
+    /// @brief Reads a param's header.
+    ///
+    /// Throws if ExpectedVersion is given and the version differs, or the name isn't Type.
     inline ParamHeader ReadParamHeader(BinaryReader& Reader, std::optional<int32_t> ExpectedVersion, const char* Type) {
         ParamHeader Header;
         Header.Version = Reader.ReadInt32();
@@ -60,8 +62,10 @@ namespace Souls::Msb::Detail {
         Writer.Align(8);
     }
 
-    // Reads a param whose entries have a type number TypeOffset bytes into each entry (or -1 if single-typed), into
-    // the Param's per-type lists. If VersionOut is given, the param's version is stored there.
+    /// @brief Reads a param whose entries have a type number TypeOffset bytes into each entry (or -1 if single-typed),
+    ///        into the Param's per-type lists.
+    ///
+    /// If VersionOut is given, the param's version is stored there.
     template<typename ParamT>
     typename ParamT::FileOrder ReadTypedParam(BinaryReader& Reader, ParamT& Param, int TypeOffset, std::optional<int32_t> ExpectedVersion,
                                               int32_t* VersionOut = nullptr) {
@@ -81,7 +85,7 @@ namespace Souls::Msb::Detail {
         return Order;
     }
 
-    // Writes a param's header and entries; each entry's Type() decides when the per-type ID counter restarts.
+    /// @brief Writes a param's header and entries; each entry's Type() decides when the per-type ID counter restarts.
     template<typename EntryT>
     void WriteTypedParam(BinaryWriter& Writer, int32_t Version, const char* Type, const std::vector<EntryT*>& Entries) {
         WriteParamHeader(Writer, Version, Type, Entries.size());

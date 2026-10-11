@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -12,18 +12,22 @@
 
 namespace Souls::Msb::Detail {
 
-    // Mixin for a param that holds one list per entry type. Derived provides
-    //
-    //     template<typename F> void ForEachList(F&& Visit);  // calls Visit(list) for each list, in write order
-    //
-    // (const and non-const versions), and every entry type provides `static constexpr uint32_t TypeId`.
+    /// @brief Mixin for a param that holds one list per entry type.
+    ///
+    /// Derived provides
+    ///
+    /// @code
+    /// template<typename F> void ForEachList(F&& Visit);  // calls Visit(list) for each list, in write order
+    /// @endcode
+    ///
+    /// (const and non-const versions), and every entry type provides `static constexpr uint32_t TypeId`.
     template<typename Derived, typename EntryT>
     class TypedLists {
     public:
-        // Where each entry read from the file ended up: (list number, position in that list), in file order.
+        /// @brief Where each entry read from the file ended up: (list number, position in that list), in file order.
         using FileOrder = std::vector<std::pair<size_t, size_t>>;
 
-        // Every entry, in the order they are written: all of the first list, then the second and so on.
+        /// @brief Every entry, in the order they are written: all of the first list, then the second and so on.
         std::vector<EntryT*> GetEntries() {
             std::vector<EntryT*> Result;
             Self().ForEachList([&](auto& List) {
@@ -44,7 +48,7 @@ namespace Souls::Msb::Detail {
             return Result;
         }
 
-        // Adds an entry to the list for its type and returns a reference to it there.
+        /// @brief Adds an entry to the list for its type and returns a reference to it there.
         template<typename T>
         T& Add(T Item) {
             T* Result = nullptr;
@@ -62,8 +66,10 @@ namespace Souls::Msb::Detail {
             return *Result;
         }
 
-        // Reads an entry of the given type with `Item.Read(Reader)` and appends it to its list; records its place.
-        // Returns false if no list holds that type.
+        /// @brief Reads an entry of the given type with `Item.Read(Reader)` and appends it to its list; records its
+        ///        place.
+        ///
+        /// Returns false if no list holds that type.
         template<typename Reader_>
         bool ReadEntryOfType(uint32_t Type, Reader_& Reader, FileOrder& Order) {
             bool Done      = false;
@@ -82,7 +88,9 @@ namespace Souls::Msb::Detail {
             return Done;
         }
 
-        // Pointers to the entries read, in file order. Valid until the lists are modified.
+        /// @brief Pointers to the entries read, in file order.
+        ///
+        /// Valid until the lists are modified.
         std::vector<EntryT*> EntriesInFileOrder(const FileOrder& Order) {
             std::vector<EntryT*> Result;
             Result.reserve(Order.size());

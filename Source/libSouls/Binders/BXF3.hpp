@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/7/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/7/2026
 
 #pragma once
 
@@ -14,36 +14,48 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
 
-    // A BXF3 binder: a BND3-style container split across two files, a header file (BHF3, e.g. .tpfbhd) and a data
-    // file (BDF3, e.g. .tpfbdt). Used by Demon's Souls through Dark Souls II.
+    /// @brief A BXF3 binder: a BND3-style container split across two files, a header file (BHF3, e.g. .tpfbhd) and a
+    ///        data file (BDF3, e.g. .tpfbdt).
+    ///
+    /// Used by Demon's Souls through Dark Souls II.
     class SOULS_API BXF3 : public IBinder {
     public:
-        // Whether multi-byte values are big-endian (as opposed to the *bit* order of the flag bytes).
+        /// @brief Whether multi-byte values are big-endian (as opposed to the *bit* order of the flag bytes).
         bool BigEndian    = false;
+        /// @brief Controls ordering of flag bits.
         bool BitBigEndian = false;
 
-        // A new, empty binder with the common settings and a current timestamp as its version.
+        /// @brief A new, empty binder with the common settings and a current timestamp as its version.
         BXF3();
 
 #pragma region Is
-        // Whether the data (after any DCX decompression) is a header (BHF3) or data (BDF3) file.
+        /// @brief Whether the data (after any DCX decompression) is a header (BHF3) or data (BDF3) file.
         static bool IsBHD(std::span<const uint8_t> Data);
+        /// @brief Whether the file on disk is a BXF3 header file (BHF3).
         static bool IsBHD(const std::filesystem::path& Path);
+        /// @brief Whether the data is a BXF3 data file (BDF3).
         static bool IsBDT(std::span<const uint8_t> Data);
+        /// @brief Whether the file on disk is a BXF3 data file (BDF3).
         static bool IsBDT(const std::filesystem::path& Path);
 #pragma endregion
 
 #pragma region Read
-        // Reads from a header/data pair. Mix sources by constructing the BinaryReaders yourself.
+        /// @brief Reads from a header/data pair.
+        ///
+        /// Mix sources by constructing the BinaryReaders yourself.
         static BXF3 Read(BinaryReader& HeaderReader, BinaryReader& DataReader);
+        /// @brief Reads the pair from memory.
         static BXF3 Read(std::span<const uint8_t> Header, std::span<const uint8_t> Data);
+        /// @brief Reads the pair from disk.
         static BXF3 Read(const std::filesystem::path& HeaderPath, const std::filesystem::path& DataPath);
 #pragma endregion
 
 #pragma region Write
+        /// @brief Writes the header and data files to the two writers.
         void Write(BinaryWriter& HeaderWriter, BinaryWriter& DataWriter);
+        /// @brief Writes the header and data files to memory.
         BXFBytes Write();
-        // Creates missing folders.
+        /// @brief Creates missing folders.
         void Write(const std::filesystem::path& HeaderPath, const std::filesystem::path& DataPath);
 #pragma endregion
     };

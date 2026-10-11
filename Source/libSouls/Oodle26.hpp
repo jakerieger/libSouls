@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/7/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/7/2026
 
 #pragma once
 
@@ -11,8 +11,12 @@
 #include <vector>
 
 namespace Souls {
+    /// @brief Access to RAD Game Tools' Oodle compression (oo2core_6_win64.dll), which the newer games' DCX files use.
+    ///
+    /// The DLL isn't distributed with libSouls: copy it from the game you're modding, or point SetDLLPath at it.
     class SOULS_API Oodle26 {
     public:
+        /// @brief Oodle's compressors; the games use Kraken.
         enum class OodleLZCompressor : int32_t {
             Invalid   = -1,
             LZH       = 0,
@@ -33,6 +37,7 @@ namespace Souls {
             Force32   = 0x40000000,
         };
 
+        /// @brief Oodle's compression levels, from fastest to smallest output.
         enum class OodleLZCompressionLevel : int32_t {
             HyperFast4 = -4,
             HyperFast3 = -3,
@@ -56,17 +61,22 @@ namespace Souls {
             Invalid    = Force32,
         };
 
-        // Sets where the Oodle DLL (oo2core_6_win64.dll) is loaded from. The default is the bare file name, which
-        // uses the normal Windows DLL search (e.g. next to the executable). Call this before the first Compress or
-        // Decompress; returns false, changing nothing, if the DLL is already loaded. A failed earlier load attempt
-        // doesn't count, so you can correct the path and try again.
+        /// @brief Sets where the Oodle DLL (oo2core_6_win64.dll) is loaded from.
+        ///
+        /// The default is the bare file name, which uses the normal Windows DLL search (e.g. next to the executable).
+        /// Call this before the first Compress or Decompress; returns false, changing nothing, if the DLL is already
+        /// loaded. A failed earlier load attempt doesn't count, so you can correct the path and try again.
         static bool SetDLLPath(const std::filesystem::path& Path);
 
-        // Whether the DLL can be loaded from the current path (loads it if needed).
+        /// @brief Whether the DLL can be loaded from the current path (loads it if needed).
         static bool IsAvailable();
 
+        /// @brief Compresses data with the given compressor and level; empty if the DLL can't be loaded or
+        ///        compression fails.
         static std::vector<uint8_t>
         Compress(std::vector<uint8_t>& Source, OodleLZCompressor Compressor, OodleLZCompressionLevel Level);
+        /// @brief Decompresses data whose decompressed size is known (DCX headers store it); empty if the DLL can't
+        ///        be loaded or the data is invalid.
         static std::vector<uint8_t> Decompress(std::vector<uint8_t>& Source, int64_t UncompressedSize);
 
     private:
@@ -102,7 +112,7 @@ namespace Souls {
             Force32 = 0x40000000,
         };
 
-        // Oodle's OO_BOOL is a 4-byte int, not a C++ bool, so the "bool" fields are int32_t here.
+        /// @brief Oodle's OO_BOOL is a 4-byte int, not a C++ bool, so the "bool" fields are int32_t here.
         struct CompressOptions {
             uint32_t Verbosity;
             int32_t MinMatchLen;
@@ -153,7 +163,7 @@ namespace Souls {
         using OodleLZ_GetDecodeBufferSize_T = int64_t(__stdcall*)(int64_t RawLen, int32_t CorruptionPossible);
 #pragma endregion
 
-        // Function pointers resolved once from the DLL, which then stays loaded for the life of the process.
+        /// @brief Function pointers resolved once from the DLL, which then stays loaded for the life of the process.
         struct Api {
             OodleLZ_Compress_T Compress                                           = nullptr;
             OodleLZ_CompressOptions_GetDefault_T CompressOptions_GetDefault       = nullptr;
@@ -163,11 +173,11 @@ namespace Souls {
             bool Loaded                                                           = false;
         };
 
-        // Loader state (DLL path, load result, lock); defined in Oodle26.cpp.
+        /// @brief Loader state (DLL path, load result, lock); defined in Oodle26.cpp.
         struct State;
         static State& GetState();
 
-        // Returns nullptr if the DLL or any of its functions couldn't be loaded.
+        /// @brief Returns nullptr if the DLL or any of its functions couldn't be loaded.
         static const Api* GetApi();
 
         static int64_t OodleLZ_Compress(OodleLZCompressor Compressor,

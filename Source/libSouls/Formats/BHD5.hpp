@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/7/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/7/2026
 
 #pragma once
 
@@ -20,78 +20,96 @@ namespace Souls {
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of exported classes; only touched by this DLL's own code
 
-    // The header file (Data0.bhd, DLC.bhd, ...) of the "dvdbnd" container that packages a game's files under hashed
-    // names. The data lives in the matching .bdt file; each FileHeader says where. In most games the header file is
-    // RSA-encrypted on disk and must be decrypted first (see Crypto::DecryptRsaBlocks).
+    /// @brief The header file (Data0.bhd, DLC.bhd, ...) of the "dvdbnd" container that packages a game's files under
+    ///        hashed names.
+    ///
+    /// The data lives in the matching .bdt file; each FileHeader says where. In most games the header file is
+    /// RSA-encrypted on disk and must be decrypted first (see Crypto::DecryptRsaBlocks).
     class SOULS_API BHD5 {
     public:
-        // Which game's layout the file uses.
+        /// @brief Which game's layout the file uses.
         enum class Game {
-            DarkSouls1,  // PC and console
-            DarkSouls2,  // PC, including Scholar of the First Sin
-            DarkSouls3,  // PC, and Sekiro
-            EldenRing,   // PC
+            DarkSouls1,  ///< PC and console
+            DarkSouls2,  ///< PC, including Scholar of the First Sin
+            DarkSouls3,  ///< PC, and Sekiro
+            EldenRing,   ///< PC
         };
 
-        // A byte range of a file, start inclusive and end exclusive.
+        /// @brief A byte range of a file, start inclusive and end exclusive.
         struct SOULS_API Range {
+            /// @brief The beginning of the range, inclusive.
             int64_t StartOffset = 0;
+            /// @brief The end of the range, exclusive.
             int64_t EndOffset   = 0;
         };
 
-        // Salted SHA hash of a file and the ranges of it that are hashed.
+        /// @brief Salted SHA hash of a file and the ranges of it that are hashed.
         struct SOULS_API SHAHash {
-            std::vector<uint8_t> Hash = std::vector<uint8_t>(32);  // 32 bytes
+            std::vector<uint8_t> Hash = std::vector<uint8_t>(32);  ///< 32 bytes
+            /// @brief Hashed sections of the file.
             std::vector<Range> Ranges;
         };
 
-        // The AES key a file is encrypted with and the ranges of it that are encrypted.
+        /// @brief The AES key a file is encrypted with and the ranges of it that are encrypted.
         struct SOULS_API AESKey {
-            std::vector<uint8_t> Key = std::vector<uint8_t>(16);  // 16 bytes
+            std::vector<uint8_t> Key = std::vector<uint8_t>(16);  ///< 16 bytes
+            /// @brief Encrypted sections of the file.
             std::vector<Range> Ranges;
 
-            // Decrypts the encrypted ranges of Bytes in place (AES-128-ECB, no padding).
+            /// @brief Decrypts the encrypted ranges of Bytes in place (AES-128-ECB, no padding).
             void Decrypt(std::span<uint8_t> Bytes) const;
         };
 
-        // A file's entry in the archive.
+        /// @brief A file's entry in the archive.
         struct SOULS_API FileHeader {
-            // Hash of the full file path; see Util::FromPathHash for the older 32-bit form.
+            /// @brief Hash of the full file path; see Util::FromPathHash for the older 32-bit form.
             uint64_t FileNameHash = 0;
-            // Size of the file's data in the BDT, including any encryption padding.
+            /// @brief Size of the file's data in the BDT, including any encryption padding.
             int32_t PaddedFileSize = 0;
-            // Size after decryption; only stored by DS3 and Elden Ring, otherwise -1.
+            /// @brief Size after decryption; only stored by DS3 and Elden Ring, otherwise -1.
             int64_t UnpaddedFileSize = -1;
-            // Where the file's data begins in the BDT.
+            /// @brief Where the file's data begins in the BDT.
             int64_t FileOffset = 0;
+            /// @brief The salted SHA-256 hash of the file and the ranges it covers, if the archive stores one.
             std::optional<SHAHash> SHA;
+            /// @brief The AES key and encrypted ranges, if the file is encrypted.
             std::optional<AESKey> AES;
 
-            // Reads this file's data from the BDT and decrypts it, if it's encrypted.
+            /// @brief Reads this file's data from the BDT and decrypts it, if it's encrypted.
             std::vector<uint8_t> ReadFile(BinaryReader& BdtReader) const;
         };
 
-        // Files grouped by hash for faster lookup.
+        /// @brief Files grouped by hash for faster lookup.
         using Bucket = std::vector<FileHeader>;
 
+        /// @brief Format the file should be written in.
         Game Format;
+        /// @brief Whether the header is big-endian.
         bool BigEndian = false;
-        // Unknown; possibly whether crypto is allowed (offsets are present regardless).
+        /// @brief Unknown; possibly whether crypto is allowed (offsets are present regardless).
         bool Unk05 = false;
-        // Salt for the file data's SHA hashes. DS2 onwards.
+        /// @brief Salt for the file data's SHA hashes.
+        ///
+        /// DS2 onwards.
         std::string Salt;
+        /// @brief Collections of files grouped by their hash value for faster lookup.
         std::vector<Bucket> Buckets;
 
-        // An empty header for the given game.
+        /// @brief An empty header for the given game.
         explicit BHD5(Game Format) : Format(Format) {}
 
-        // Reads a header that is already decrypted.
+        /// @brief Reads a header that is already decrypted.
         static BHD5 Read(BinaryReader& Reader, Game Format);
+        /// @brief Reads an already-decrypted header from memory.
         static BHD5 Read(std::span<const uint8_t> Data, Game Format);
+        /// @brief Reads an already-decrypted header from disk.
         static BHD5 Read(const std::filesystem::path& Path, Game Format);
 
+        /// @brief Writes the header (unencrypted).
         void Write(BinaryWriter& Writer);
+        /// @brief Writes the header (unencrypted) to memory.
         std::vector<uint8_t> Write();
+        /// @brief Writes the header (unencrypted) to disk.
         void Write(const std::filesystem::path& Path);
     };
 

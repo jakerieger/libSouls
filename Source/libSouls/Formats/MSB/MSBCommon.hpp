@@ -1,6 +1,6 @@
-//
-// Created by Jake Rieger on 10/8/2026.
-//
+/// @file
+/// @author Jake Rieger
+/// @date 10/8/2026
 
 #pragma once
 
@@ -18,41 +18,46 @@
 #include <variant>
 #include <vector>
 
-// Pieces shared by the MSB (map layout) formats of the different games.
-//
-// Entries in an MSB refer to each other by index in the file, but are exposed here by name (as upstream SoulsFormats
-// does), so renaming or reordering entries doesn't break references. A reference is a Ref: it behaves like an
-// optional string holding the target's name, and also carries the on-disk index, which is only meaningful while
-// reading and writing.
-//
-// Each entry type describes the layout of its type-specific data once, in a Fields function that takes a "visitor".
-// The visitors read, write, resolve indices to names and resolve names to indices, so the layout can't get out of sync
-// between reading and writing.
+/// @brief Pieces shared by the MSB (map layout) formats of the different games.
+///
+/// Entries in an MSB refer to each other by index in the file, but are exposed here by name (as upstream SoulsFormats
+/// does), so renaming or reordering entries doesn't break references. A reference is a Ref: it behaves like an
+/// optional string holding the target's name, and also carries the on-disk index, which is only meaningful while
+/// reading and writing.
+///
+/// Each entry type describes the layout of its type-specific data once, in a Fields function that takes a "visitor".
+/// The visitors read, write, resolve indices to names and resolve names to indices, so the layout can't get out of sync
+/// between reading and writing.
 namespace Souls::Msb {
 
-    // Tags naming which list of entries a Ref points into.
+    /// @brief Tags naming which list of entries a Ref points into.
     struct ModelList {};
     struct EventList {};
     struct RegionList {};
     struct PartList {};
-    struct CollisionList {};  // just the collision parts (a sublist of PartList); MSB1 connect collisions use it
+    struct CollisionList {};  ///< just the collision parts (a sublist of PartList); MSB1 connect collisions use it
     struct BoneNameList {};
 
-    // A reference to another entry in the MSB. Name is empty for "no reference" (index -1).
+    /// @brief A reference to another entry in the MSB.
+    ///
+    /// Name is empty for "no reference" (index -1).
     template<typename ListTag, typename Storage = int32_t>
     struct Ref : std::optional<std::string> {
         using std::optional<std::string>::optional;
         using std::optional<std::string>::operator=;
 
         Ref() = default;
+        /// @brief A reference to the entry with this name.
         Ref(const char* Text) : std::optional<std::string>(std::string(Text)) {}
 
-        // The index in the file; set while reading (before names are resolved) and while writing (after indices are
-        // resolved). Not meaningful in between.
+        /// @brief The index in the file; set while reading (before names are resolved) and while writing (after indices
+        ///        are resolved).
+        ///
+        /// Not meaningful in between.
         Storage Index = static_cast<Storage>(-1);
     };
 
-    // The shape of a region.
+    /// @brief The shape of a region.
     enum class ShapeType : uint32_t {
         None      = 0xFFFFFFFF,
         Point     = 0,
@@ -65,38 +70,50 @@ namespace Souls::Msb {
     };
 
     namespace Shapes {
-        // A single point.
+        /// @brief A single point.
         struct Point {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Point;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V&) {}
         };
 
-        // A flat circle.
+        /// @brief A flat circle.
         struct Circle {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Circle;
+            /// @brief The radius of the circle.
             float Radius                    = 1;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 F(Radius);
             }
         };
 
-        // A volumetric sphere.
+        /// @brief A volumetric sphere.
         struct Sphere {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Sphere;
+            /// @brief The radius of the sphere.
             float Radius                    = 1;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 F(Radius);
             }
         };
 
-        // A volumetric cylinder.
+        /// @brief A volumetric cylinder.
         struct Cylinder {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Cylinder;
+            /// @brief The radius of the cylinder.
             float Radius                    = 1;
+            /// @brief The height of the cylinder.
             float Height                    = 1;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 F(Radius);
@@ -104,11 +121,15 @@ namespace Souls::Msb {
             }
         };
 
-        // A flat rectangle.
+        /// @brief A flat rectangle.
         struct Rect {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Rect;
+            /// @brief The width of the rectangle.
             float Width                     = 1;
+            /// @brief The depth of the rectangle.
             float Depth                     = 1;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 F(Width);
@@ -116,12 +137,17 @@ namespace Souls::Msb {
             }
         };
 
-        // A rectangular prism.
+        /// @brief A rectangular prism.
         struct Box {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Box;
+            /// @brief The width of the box.
             float Width                     = 1;
+            /// @brief The depth of the box.
             float Depth                     = 1;
+            /// @brief The height of the box.
             float Height                    = 1;
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 F(Width);
@@ -130,18 +156,23 @@ namespace Souls::Msb {
             }
         };
 
-        // A shape composed of references to other regions' shapes.
+        /// @brief A shape composed of references to other regions' shapes.
         struct Composite {
+            /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Composite;
 
+            /// @brief A reference to another region.
             struct Child {
-                // The child region.
+                /// @brief The child region.
                 Ref<RegionList> Region;
+                /// @brief Unknown.
                 int32_t Unk04 = 0;
             };
 
+            /// @brief Other regions referenced by this shape.
             std::array<Child, 8> Children;
 
+            /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
                 for (Child& C : Children) {
@@ -152,20 +183,21 @@ namespace Souls::Msb {
         };
     }  // namespace Shapes
 
-    // Describes the space that a region occupies.
+    /// @brief Describes the space that a region occupies.
     using Shape = std::variant<Shapes::Point, Shapes::Circle, Shapes::Sphere, Shapes::Cylinder, Shapes::Rect, Shapes::Box,
                                Shapes::Composite>;
 
+    /// @brief The type of the shape a Shape holds.
     inline ShapeType TypeOf(const Shape& S) {
         return std::visit([](const auto& Value) { return std::decay_t<decltype(Value)>::Type; }, S);
     }
 
-    // Whether the shape has extra data after the region's common data (everything but a point).
+    /// @brief Whether the shape has extra data after the region's common data (everything but a point).
     inline bool HasShapeData(const Shape& S) {
         return !std::holds_alternative<Shapes::Point>(S);
     }
 
-    // Creates a shape of the given type; throws for types that don't exist.
+    /// @brief Creates a shape of the given type; throws for types that don't exist.
     inline Shape CreateShape(ShapeType Type) {
         switch (Type) {
             case ShapeType::Point: return Shapes::Point{};
@@ -180,7 +212,7 @@ namespace Souls::Msb {
     }
 
     namespace Detail {
-        // Reads fields in order.
+        /// @brief Reads fields in order.
         struct ReadVisitor {
             BinaryReader& Reader;
 
@@ -206,26 +238,26 @@ namespace Souls::Msb {
                 Reference.Index = Reader.Read<Storage>();
             }
 
-            // A value that must be one of the given constants.
+            /// @brief A value that must be one of the given constants.
             template<Scalar T, typename... Rest>
             void Const(T First, Rest... Others) {
                 Reader.Assert<T>(First, static_cast<T>(Others)...);
             }
-            // A boolean stored as a 32-bit 0 or 1.
+            /// @brief A boolean stored as a 32-bit 0 or 1.
             void AsInt32(bool& Value) { Value = Reader.Assert<int32_t>(0, 1) == 1; }
-            // Whether the file uses 64-bit offsets.
+            /// @brief Whether the file uses 64-bit offsets.
             bool Long() const { return Reader.VarintLong; }
-            // A 32- or 64-bit constant, depending on the file.
+            /// @brief A 32- or 64-bit constant, depending on the file.
             void ConstVarint(int64_t Value) { Reader.AssertVarint(Value); }
-            // A color stored as red, green, blue, alpha bytes.
+            /// @brief A color stored as red, green, blue, alpha bytes.
             void RGBA(Color& Value) { Value = ReadRGBA(Reader); }
-            // Count bytes that must be zero.
+            /// @brief Count bytes that must be zero.
             void Pad(size_t Count) { Reader.AssertPattern(Count, 0); }
-            // Count bytes that must all equal Value.
+            /// @brief Count bytes that must all equal Value.
             void Pattern(size_t Count, uint8_t Value) { Reader.AssertPattern(Count, Value); }
         };
 
-        // Writes fields in order.
+        /// @brief Writes fields in order.
         struct WriteVisitor {
             BinaryWriter& Writer;
 
@@ -263,7 +295,7 @@ namespace Souls::Msb {
             void Pattern(size_t Count, uint8_t Value) { Writer.Pad(Count, Value); }
         };
 
-        // Looks up the name of the entry at an index (nullopt for -1).
+        /// @brief Looks up the name of the entry at an index (nullopt for -1).
         template<typename EntryT>
         std::optional<std::string> FindName(const std::vector<EntryT*>& List, int64_t Index) {
             if (Index == -1) {
@@ -275,7 +307,7 @@ namespace Souls::Msb {
             return List[static_cast<size_t>(Index)]->Name;
         }
 
-        // Looks up the index of the entry with a name (-1 for none).
+        /// @brief Looks up the index of the entry with a name (-1 for none).
         template<typename EntryT>
         int64_t FindIndex(const std::vector<EntryT*>& List, const std::optional<std::string>& Name) {
             if (!Name) {
@@ -289,7 +321,9 @@ namespace Souls::Msb {
             throw BinaryException("MSB name not found: " + *Name);
         }
 
-        // Turns the indices read from the file into names. Entries supplies List<Tag>() for each kind of reference.
+        /// @brief Turns the indices read from the file into names.
+        ///
+        /// Entries supplies List<Tag>() for each kind of reference.
         template<typename Entries>
         struct NameVisitor {
             const Entries& Lists;
@@ -316,7 +350,7 @@ namespace Souls::Msb {
             void Pattern(size_t, uint8_t) {}
         };
 
-        // Turns names into the indices to write.
+        /// @brief Turns names into the indices to write.
         template<typename Entries>
         struct IndexVisitor {
             const Entries& Lists;
@@ -343,14 +377,14 @@ namespace Souls::Msb {
             void Pattern(size_t, uint8_t) {}
         };
 
-        // Visits the data of a shape with any visitor.
+        /// @brief Visits the data of a shape with any visitor.
         template<typename V>
         void VisitShape(Shape& S, V& F) {
             std::visit([&](auto& Value) { Value.Fields(F); }, S);
         }
 
-        // Entry names in a map can repeat; upstream makes them unique by adding " {2}", " {3}"... on reading (so
-        // names can be used as keys) and removes those when writing.
+        /// @brief Entry names in a map can repeat; upstream makes them unique by adding " {2}", " {3}"... on reading
+        ///        (so names can be used as keys) and removes those when writing.
         template<typename EntryT>
         void DisambiguateNames(const std::vector<EntryT*>& Entries) {
             bool Ambiguous;
@@ -370,7 +404,7 @@ namespace Souls::Msb {
             } while (Ambiguous);
         }
 
-        // The header shared by the 64-bit MSB formats (Dark Souls II and later).
+        /// @brief The header shared by the 64-bit MSB formats (Dark Souls II and later).
         inline void AssertHeader(BinaryReader& Reader) {
             Reader.AssertMagic("MSB ");
             Reader.Assert<int32_t>(1);
@@ -391,7 +425,7 @@ namespace Souls::Msb {
             Writer.WriteByte(0xFF);
         }
 
-        // Removes the " {n}" suffix DisambiguateNames adds.
+        /// @brief Removes the " {n}" suffix DisambiguateNames adds.
         std::string ReambiguateName(const std::string& Name);
     }  // namespace Detail
 
