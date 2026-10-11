@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = libSouls
 PROJECT_NUMBER         = 0.1.0
-PROJECT_BRIEF          = "A C++ library for FromSoftware's game file formats"
+PROJECT_BRIEF          = "A C/C++ library for FromSoftware's game file formats"
 OUTPUT_DIRECTORY       = Docs
 CREATE_SUBDIRS         = NO
 STRIP_FROM_PATH        = Source
@@ -73,15 +73,8 @@ PREDEFINED             = SOULS_API= \
 #---------------------------------------------------------------------------
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
-HTML_HEADER            = Docs/res/header.html
 HTML_EXTRA_STYLESHEET  = Docs/res/doxygen-awesome.css \
-                         Docs/res/doxygen-awesome-sidebar-only.css \
-                         Docs/res/doxygen-awesome-sidebar-only-darkmode-toggle.css
-HTML_EXTRA_FILES       = Docs/res/doxygen-awesome-darkmode-toggle.js \
-                         Docs/res/doxygen-awesome-fragment-copy-button.js \
-                         Docs/res/doxygen-awesome-paragraph-link.js \
-                         Docs/res/doxygen-awesome-interactive-toc.js \
-                         Docs/res/banner.png
+                         Docs/res/doxygen-awesome-sidebar-only.css
 HTML_COLORSTYLE        = LIGHT
 HTML_DYNAMIC_SECTIONS  = NO
 HTML_COPY_CLIPBOARD    = NO
