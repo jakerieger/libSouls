@@ -9,7 +9,7 @@
 **libSouls** is a C++ library for working with and modifying FromSoftware's Souls games (Dark Souls, ELDEN RING, Sekiro,
 etc.). It is partially a port of the renowned [SoulsFormats](https://github.com/JKAnderson/SoulsFormats) C# library with
 additions for other functionality beyond
-modifying game file formats. It aims to be easily integrable, extensible, and to open the door for language bindings
+modifying game file formats. It aims to be easily integratable, extensible, and to open the door for language bindings
 such that mods can theoretically be written in any language one desires without redoing the ground work already laid by
 the wonderful Souls modding community.
 
