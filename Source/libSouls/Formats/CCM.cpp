@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CCM.hpp"
 
@@ -20,16 +24,15 @@ namespace Souls {
     }  // namespace
 
     void CCM::ReadImpl(BinaryReader& Reader) {
-        Reader.Order = Endian::Little;
+        Reader.Order              = Endian::Little;
         const uint32_t RawVersion = Reader.ReadUInt32();
-        if (RawVersion != static_cast<uint32_t>(CCMVer::DemonsSouls) && RawVersion != static_cast<uint32_t>(CCMVer::DarkSouls1) &&
+        if (RawVersion != static_cast<uint32_t>(CCMVer::DemonsSouls) &&
+            RawVersion != static_cast<uint32_t>(CCMVer::DarkSouls1) &&
             RawVersion != static_cast<uint32_t>(CCMVer::DarkSouls2)) {
             throw BinaryException("Unknown CCM version " + std::to_string(RawVersion));
         }
         Version = static_cast<CCMVer>(RawVersion);
-        if (Version == CCMVer::DemonsSouls) {
-            Reader.Order = Endian::Big;
-        }
+        if (Version == CCMVer::DemonsSouls) { Reader.Order = Endian::Big; }
 
         Reader.ReadInt32();  // file size
         FullWidth = Reader.ReadInt16();
@@ -100,8 +103,8 @@ namespace Souls {
             }
 
             for (int I = 0; I < GlyphCount; ++I) {
-                const int32_t Code          = Reader.ReadInt32();
-                const int32_t RegionOffset  = Reader.ReadInt32();
+                const int32_t Code         = Reader.ReadInt32();
+                const int32_t RegionOffset = Reader.ReadInt32();
                 Glyph G;
                 G.TexIndex = Reader.ReadInt16();
                 G.PreSpace = Reader.ReadInt16();
@@ -111,13 +114,11 @@ namespace Souls {
                 Reader.Assert<int32_t>(0);
 
                 const auto Found = Regions.find(RegionOffset);
-                if (Found == Regions.end()) {
-                    throw BinaryException("CCM glyph refers to a missing texture region");
-                }
+                if (Found == Regions.end()) { throw BinaryException("CCM glyph refers to a missing texture region"); }
                 const TexRegion& Region = Found->second;
-                G.UV1                   = {Region.X1 / static_cast<float>(TexWidth), Region.Y1 / static_cast<float>(TexHeight)};
-                G.UV2                   = {Region.X2 / static_cast<float>(TexWidth), Region.Y2 / static_cast<float>(TexHeight)};
-                Glyphs[Code]            = G;
+                G.UV1        = {Region.X1 / static_cast<float>(TexWidth), Region.Y1 / static_cast<float>(TexHeight)};
+                G.UV2        = {Region.X2 / static_cast<float>(TexWidth), Region.Y2 / static_cast<float>(TexHeight)};
+                Glyphs[Code] = G;
             }
         }
     }
@@ -157,8 +158,7 @@ namespace Souls {
             for (size_t I = 0; I < Codes.size();) {
                 const int32_t StartCode = Codes[I];
                 const int32_t GlyphIdx  = static_cast<int32_t>(I);
-                for (++I; I < Codes.size() && Codes[I] == Codes[I - 1] + 1; ++I) {
-                }
+                for (++I; I < Codes.size() && Codes[I] == Codes[I - 1] + 1; ++I) {}
                 Groups.push_back({StartCode, Codes[I - 1], GlyphIdx});
             }
             Writer.Fill<int16_t>("CodeGroupCount", static_cast<int16_t>(Groups.size()));
@@ -184,17 +184,15 @@ namespace Souls {
             std::map<int32_t, size_t> RegionIndexByCode;
             for (const int32_t Code : Codes) {
                 const Glyph& G = Glyphs.at(Code);
-                const TexRegion Region{static_cast<int16_t>(std::nearbyint(G.UV1.X * TexWidth)),
-                                       static_cast<int16_t>(std::nearbyint(G.UV1.Y * TexHeight)),
-                                       static_cast<int16_t>(std::nearbyint(G.UV2.X * TexWidth)),
-                                       static_cast<int16_t>(std::nearbyint(G.UV2.Y * TexHeight))};
+                const TexRegion Region {static_cast<int16_t>(std::nearbyint(G.UV1.X * TexWidth)),
+                                        static_cast<int16_t>(std::nearbyint(G.UV1.Y * TexHeight)),
+                                        static_cast<int16_t>(std::nearbyint(G.UV2.X * TexWidth)),
+                                        static_cast<int16_t>(std::nearbyint(G.UV2.Y * TexHeight))};
                 size_t Index = 0;
                 while (Index < Regions.size() && !(Regions[Index] == Region)) {
                     ++Index;
                 }
-                if (Index == Regions.size()) {
-                    Regions.push_back(Region);
-                }
+                if (Index == Regions.size()) { Regions.push_back(Region); }
                 RegionIndexByCode[Code] = Index;
             }
 

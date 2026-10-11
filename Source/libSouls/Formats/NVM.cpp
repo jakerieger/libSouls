@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "NVM.hpp"
 
@@ -9,10 +13,10 @@
 namespace Souls {
     static NVM::Box ReadBox(BinaryReader& Reader) {
         NVM::Box B;
-        B.Corner1                  = Reader.ReadVector3();
-        const int32_t TriCount     = Reader.ReadInt32();
-        B.Corner2                  = Reader.ReadVector3();
-        const int32_t TriOffset    = Reader.ReadInt32();
+        B.Corner1                   = Reader.ReadVector3();
+        const int32_t TriCount      = Reader.ReadInt32();
+        B.Corner2                   = Reader.ReadVector3();
+        const int32_t TriOffset     = Reader.ReadInt32();
         const int32_t BoxOffsets[4] = {Reader.ReadInt32(), Reader.ReadInt32(), Reader.ReadInt32(), Reader.ReadInt32()};
         Reader.AssertPattern(16, 0);
 
@@ -37,9 +41,7 @@ namespace Souls {
         const ValuePtr<NVM::Box>* Children[4] = {&B.ChildBox1, &B.ChildBox2, &B.ChildBox3, &B.ChildBox4};
         int32_t Offsets[4]                    = {0, 0, 0, 0};
         for (int I = 0; I < 4; ++I) {
-            if (*Children[I]) {
-                Offsets[I] = WriteBox(Writer, **Children[I], TriangleIndexOffsets);
-            }
+            if (*Children[I]) { Offsets[I] = WriteBox(Writer, **Children[I], TriangleIndexOffsets); }
         }
 
         const int32_t ThisOffset = static_cast<int32_t>(Writer.Position());
@@ -58,9 +60,7 @@ namespace Souls {
     static void WriteBoxTriangleIndices(BinaryWriter& Writer, const NVM::Box& B, std::deque<int32_t>& Offsets) {
         const ValuePtr<NVM::Box>* Children[4] = {&B.ChildBox1, &B.ChildBox2, &B.ChildBox3, &B.ChildBox4};
         for (const ValuePtr<NVM::Box>* Child : Children) {
-            if (*Child) {
-                WriteBoxTriangleIndices(Writer, **Child, Offsets);
-            }
+            if (*Child) { WriteBoxTriangleIndices(Writer, **Child, Offsets); }
         }
         if (B.TriangleIndices.empty()) {
             Offsets.push_back(0);
@@ -119,9 +119,9 @@ namespace Souls {
         Entities.reserve(static_cast<size_t>(EntityCount));
         for (int32_t I = 0; I < EntityCount; ++I) {
             Entity E;
-            E.EntityID                  = Reader.ReadInt32();
-            const int32_t IndexOffset   = Reader.ReadInt32();
-            const int32_t IndexCount    = Reader.ReadInt32();
+            E.EntityID                = Reader.ReadInt32();
+            const int32_t IndexOffset = Reader.ReadInt32();
+            const int32_t IndexCount  = Reader.ReadInt32();
             Reader.Assert<int32_t>(0);
             Reader.StepIn(IndexOffset);
             E.TriangleIndices = Reader.ReadArray<int32_t>(static_cast<size_t>(IndexCount));

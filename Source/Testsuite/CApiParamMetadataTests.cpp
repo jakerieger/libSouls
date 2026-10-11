@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
@@ -16,12 +20,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     namespace fs = std::filesystem;
@@ -30,9 +34,9 @@ namespace {
 
 // Row names and enum names from Paramdex, and field descriptions from its paramdefs.
 int TestCApiParamMetadata() {
-    Failures                   = 0;
-    const fs::path Paramdex    = TestPaths::Paramdex() / "ER";
-    const fs::path Game        = "C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game";
+    Failures                = 0;
+    const fs::path Paramdex = TestPaths::Paramdex() / "ER";
+    const fs::path Game     = "C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game";
     if (!fs::exists(Paramdex / "Names") || !fs::exists(Paramdex / "Tdfs") || !fs::exists(Paramdex / "Defs")) {
         std::printf("Param metadata C API checks skipped (needs Paramdex)\n");
         return TestSkipped;
@@ -62,7 +66,8 @@ int TestCApiParamMetadata() {
     CHECK(Good != nullptr && std::strcmp(Good, "Good") == 0);
     CHECK(souls_param_enums_find_name(Enums, "GAITEM_CATEGORY", 999) == nullptr);
     CHECK(souls_param_enums_find_value(Enums, "GAITEM_CATEGORY", "Nope", &Value) == SOULS_ERR_NOT_FOUND);
-    CHECK(souls_param_enums_entry_value(Enums, "NO_SUCH_ENUM", 0) == 0 && souls_last_error_code() == SOULS_ERR_NOT_FOUND);
+    CHECK(souls_param_enums_entry_value(Enums, "NO_SUCH_ENUM", 0) == 0 &&
+          souls_last_error_code() == SOULS_ERR_NOT_FOUND);
     CHECK(std::strcmp(souls_param_enums_entry_name(Enums, "GAITEM_CATEGORY", 0), "Weapon") == 0);
 
     if (fs::exists(Game / "regulation.bin")) {
@@ -99,9 +104,10 @@ int TestCApiParamMetadata() {
                 CHECK(Info.display_name != nullptr && std::strlen(Info.display_name) > 0);
                 CHECK(Info.internal_type != nullptr && Info.display_format != nullptr);
                 CHECK(Info.has_minimum && Info.has_maximum && Info.minimum <= Info.maximum);
-                SoulsFieldInfo TooSmall{};
+                SoulsFieldInfo TooSmall {};
                 TooSmall.struct_size = 4;
-                CHECK(souls_param_layout_field_info(Layout, static_cast<size_t>(Field), &TooSmall) == SOULS_ERR_INVALID_ARGUMENT);
+                CHECK(souls_param_layout_field_info(Layout, static_cast<size_t>(Field), &TooSmall) ==
+                      SOULS_ERR_INVALID_ARGUMENT);
                 CHECK(souls_param_layout_field_info(Layout, 1000000, &Info) == SOULS_ERR_INVALID_ARGUMENT);
             }
             souls_param_layout_free(Layout);

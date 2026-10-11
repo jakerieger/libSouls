@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "FMG.hpp"
 
@@ -35,9 +39,7 @@ namespace Souls {
     bool FMG::IsImpl(BinaryReader& Reader) {
         constexpr int64_t HeaderSize = 0x14;
         const int64_t Length         = Reader.Length();
-        if (Length < HeaderSize) {
-            return false;
-        }
+        if (Length < HeaderSize) { return false; }
 
         const uint8_t Big     = Reader.ReadAt<uint8_t>(1);
         const uint8_t Version = Reader.ReadAt<uint8_t>(2);
@@ -47,8 +49,8 @@ namespace Souls {
 
         // Fixed bytes after the file size.
         const uint8_t DeSMarker = Version == static_cast<uint8_t>(FMGVersion::DemonsSouls) ? 0xFF : 0x00;
-        if (Reader.ReadAt<uint8_t>(8) != 1 || Reader.ReadAt<uint8_t>(9) != DeSMarker || Reader.ReadAt<uint8_t>(10) != 0 ||
-            Reader.ReadAt<uint8_t>(11) != 0) {
+        if (Reader.ReadAt<uint8_t>(8) != 1 || Reader.ReadAt<uint8_t>(9) != DeSMarker ||
+            Reader.ReadAt<uint8_t>(10) != 0 || Reader.ReadAt<uint8_t>(11) != 0) {
             return false;
         }
 
@@ -79,9 +81,7 @@ namespace Souls {
         const int32_t GroupCount  = Reader.ReadInt32();
         const int32_t StringCount = Reader.ReadInt32();
 
-        if (Wide) {
-            Reader.Assert<int32_t>(0xFF);
-        }
+        if (Wide) { Reader.Assert<int32_t>(0xFF); }
 
         const int64_t StringOffsetsOffset = Wide ? Reader.ReadInt64() : static_cast<int64_t>(Reader.ReadInt32());
 
@@ -104,13 +104,12 @@ namespace Souls {
             const int32_t FirstID     = Reader.ReadInt32();
             const int32_t LastID      = Reader.ReadInt32();
 
-            if (Wide) {
-                Reader.Assert<int32_t>(0);
-            }
+            if (Wide) { Reader.Assert<int32_t>(0); }
 
             const int64_t Count = static_cast<int64_t>(LastID) - FirstID + 1;
             if (Count < 0 || Count * Stride > Reader.Length()) {
-                throw BinaryException("Invalid FMG group range " + std::to_string(FirstID) + ".." + std::to_string(LastID));
+                throw BinaryException("Invalid FMG group range " + std::to_string(FirstID) + ".." +
+                                      std::to_string(LastID));
             }
 
             Reader.StepIn(StringOffsetsOffset + static_cast<int64_t>(OffsetIndex) * Stride);
@@ -162,14 +161,13 @@ namespace Souls {
         for (size_t I = 0; I < Entries.size(); ++I) {
             Writer.WriteInt32(static_cast<int32_t>(I));
             Writer.WriteInt32(Entries[I].ID);
-            while (I + 1 < Entries.size() && static_cast<int64_t>(Entries[I + 1].ID) == static_cast<int64_t>(Entries[I].ID) + 1) {
+            while (I + 1 < Entries.size() &&
+                   static_cast<int64_t>(Entries[I + 1].ID) == static_cast<int64_t>(Entries[I].ID) + 1) {
                 ++I;
             }
             Writer.WriteInt32(Entries[I].ID);
 
-            if (Wide) {
-                Writer.WriteInt32(0);
-            }
+            if (Wide) { Writer.WriteInt32(0); }
             ++GroupCount;
         }
         Writer.Fill<int32_t>("GroupCount", GroupCount);
@@ -198,9 +196,7 @@ namespace Souls {
                 Writer.Fill<int32_t>("StringOffset" + std::to_string(I), static_cast<int32_t>(Offset));
             }
 
-            if (Value) {
-                Writer.WriteUTF16(Text::UTF8ToUTF16(*Value), true);
-            }
+            if (Value) { Writer.WriteUTF16(Text::UTF8ToUTF16(*Value), true); }
         }
 
         Writer.Fill<int32_t>("FileSize", static_cast<int32_t>(Writer.Position()));

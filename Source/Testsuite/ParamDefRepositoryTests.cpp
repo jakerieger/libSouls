@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -17,25 +21,23 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
-    namespace fs = std::filesystem;
+    namespace fs  = std::filesystem;
     using DefType = PARAMDEF::DefType;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -76,28 +78,30 @@ namespace {
         MakeDef("WEAPON_ST", 2, 4).ToXml(Dir / "Defs" / "Old" / "WEAPON_ST_v2.xml");  // another data version
         MakeDef("GOODS_ST", 1).ToXml(Dir / "Defs" / "GOODS_ST.xml");
         MakeDef("DEEP_ST", 1).ToXml(Dir / "Defs" / "a" / "b" / "c" / "DEEP_ST.XML");  // upper-case extension
-        WriteText(Dir / "Defs" / "Meta" / "WEAPON_ST.xml", "<PARAMMETA><Field>x</Field></PARAMMETA>");   // not a def
-        WriteText(Dir / "Defs" / "broken.xml", "<PARAMDEF><ParamType>BROKEN");                           // not XML
+        WriteText(Dir / "Defs" / "Meta" / "WEAPON_ST.xml", "<PARAMMETA><Field>x</Field></PARAMMETA>");  // not a def
+        WriteText(Dir / "Defs" / "broken.xml", "<PARAMDEF><ParamType>BROKEN");                          // not XML
         WriteText(Dir / "Defs" / "incomplete.xml", "<PARAMDEF><ParamType>INCOMPLETE</ParamType></PARAMDEF>");
         WriteText(Dir / "Defs" / "readme.txt", "not an xml file");
 
         ParamDefRepository Repo;
-        CHECK(Repo.Empty() && Repo.Size() == 0 && Repo.Find(PARAM{}) == nullptr && Repo.FindByType("WEAPON_ST") == nullptr);
+        CHECK(Repo.Empty() && Repo.Size() == 0 && Repo.Find(PARAM {}) == nullptr &&
+              Repo.FindByType("WEAPON_ST") == nullptr);
 
         const auto Result = Repo.AddFolder(Dir / "Defs");
         CHECK(Result.Loaded == 4 && Result.Replaced == 0);
-        CHECK(Result.Skipped == 1);       // the metadata file
+        CHECK(Result.Skipped == 1);        // the metadata file
         CHECK(Result.Errors.size() == 2);  // the broken one and the incomplete one
         for (const auto& Error : Result.Errors) {
-            CHECK(!Error.Message.empty() && (EndsWith(Error.Path.string(), "broken.xml") || EndsWith(Error.Path.string(), "incomplete.xml")));
+            CHECK(!Error.Message.empty() &&
+                  (EndsWith(Error.Path.string(), "broken.xml") || EndsWith(Error.Path.string(), "incomplete.xml")));
         }
         CHECK(Repo.Size() == 4 && !Repo.Empty() && Repo.All().size() == 4);
 
         // Lookup by param: type, data version and row size all have to agree.
-        const PARAMDEF V1 = MakeDef("WEAPON_ST", 1);
-        const PARAMDEF V2 = MakeDef("WEAPON_ST", 2, 4);
-        const PARAM ParamV1 = MakeParam(V1);
-        const PARAM ParamV2 = MakeParam(V2);
+        const PARAMDEF V1      = MakeDef("WEAPON_ST", 1);
+        const PARAMDEF V2      = MakeDef("WEAPON_ST", 2, 4);
+        const PARAM ParamV1    = MakeParam(V1);
+        const PARAM ParamV2    = MakeParam(V2);
         const PARAMDEF* Found1 = Repo.Find(ParamV1);
         const PARAMDEF* Found2 = Repo.Find(ParamV2);
         CHECK(Found1 && Found1->DataVersion == 1 && Found1->Fields.size() == 3);
@@ -106,7 +110,7 @@ namespace {
         CHECK(Repo.Find(MakeParam(MakeDef("DEEP_ST", 1))) != nullptr);
         CHECK(Repo.Find(MakeParam(MakeDef("UNKNOWN_ST", 1))) == nullptr);
         CHECK(Repo.Find(MakeParam(MakeDef("WEAPON_ST", 3))) == nullptr);  // no def for that data version
-        PARAM WrongSize = MakeParam(V1);
+        PARAM WrongSize        = MakeParam(V1);
         WrongSize.DetectedSize = 12345;
         CHECK(Repo.Find(WrongSize) == nullptr);
 
@@ -120,7 +124,7 @@ namespace {
         {
             ParamLayout Layout(*Found2, false);
             PARAM::Row Row = Layout.MakeRow(5);
-            Layout.Set(Row, "field3", int32_t{99});
+            Layout.Set(Row, "field3", int32_t {99});
             CHECK(Layout.Get<int32_t>(Row, "field3") == 99 && Layout.RowSize() == 16);
         }
 
@@ -171,15 +175,16 @@ namespace {
             const auto Reloaded = Repo.Reload();
             CHECK(Repo.FindByType("NEW_ST") != nullptr);
             CHECK(Repo.FindCandidates("WEAPON_ST").back()->Fields.size() == 9);
-            CHECK(Repo.FindByType("EXTRA_ST") != nullptr);   // added by hand: kept
-            CHECK(Repo.FindByType("GOODS_ST") != nullptr);   // from "Mine", which is still there
-            CHECK(Reloaded.Errors.size() == 2);              // the same two broken files
+            CHECK(Repo.FindByType("EXTRA_ST") != nullptr);  // added by hand: kept
+            CHECK(Repo.FindByType("GOODS_ST") != nullptr);  // from "Mine", which is still there
+            CHECK(Reloaded.Errors.size() == 2);             // the same two broken files
             fs::remove_all(Dir / "Mine");
             Repo.Reload();
-            CHECK(Repo.FindByType("GOODS_ST") == nullptr);   // its folder is gone, and so is its def
+            CHECK(Repo.FindByType("GOODS_ST") == nullptr);  // its folder is gone, and so is its def
             fs::remove_all(Dir / "Defs");
             const auto Missing = Repo.Reload();
-            CHECK(!Missing.Errors.empty() && Repo.FindByType("EXTRA_ST") != nullptr && Repo.FindByType("NEW_ST") == nullptr);
+            CHECK(!Missing.Errors.empty() && Repo.FindByType("EXTRA_ST") != nullptr &&
+                  Repo.FindByType("NEW_ST") == nullptr);
         }
 
         // Clear forgets the folders too.
@@ -207,14 +212,15 @@ int RunParamDefRepositoryTests() {
     // Dark Souls Remastered end to end: its real defs written out as an XML folder, loaded back, and used to read
     // its real params.
     const fs::path Root = "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED";
-    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") || !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
+    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") ||
+        !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
         std::printf("Real repository checks skipped (Dark Souls Remastered not installed)\n");
     } else {
         const fs::path Dir = fs::temp_directory_path() / "libsouls_defrepo_real";
         try {
             fs::remove_all(Dir);
             const BND3 DefBnd = BND3::Read(Root / "paramdef/paramdef.paramdefbnd.dcx");
-            size_t Written = 0;
+            size_t Written    = 0;
             for (const BinderFile& File : DefBnd.Files) {
                 if (!File.Name || !EndsWith(*File.Name, ".paramdef")) continue;
                 PARAMDEF::Read(File.Bytes).ToXml(Dir / (fs::path(*File.Name).stem().string() + ".xml"));
@@ -242,8 +248,12 @@ int RunParamDefRepositoryTests() {
                     ++Near;  // a def exists, just for another data version
                 }
             }
-            std::printf("Dark Souls Remastered: %zu defs loaded from XML, %d of %d params found their def, %d have only an older def\n",
-                        Repo.Size(), Found, Params, Near);
+            std::printf("Dark Souls Remastered: %zu defs loaded from XML, %d of %d params found their def, %d have "
+                        "only an older def\n",
+                        Repo.Size(),
+                        Found,
+                        Params,
+                        Near);
             CHECK(Params >= 39 && Found == Params - 2 && Near == 2);
             CHECK(DaggerWeight && *DaggerWeight == 0.5);
         } catch (const std::exception& E) {
@@ -253,6 +263,7 @@ int RunParamDefRepositoryTests() {
         fs::remove_all(Dir);
     }
 
-    std::printf(Failures == 0 ? "ParamDefRepository tests passed\n" : "ParamDefRepository tests: %d failure(s)\n", Failures);
+    std::printf(Failures == 0 ? "ParamDefRepository tests passed\n" : "ParamDefRepository tests: %d failure(s)\n",
+                Failures);
     return Failures;
 }

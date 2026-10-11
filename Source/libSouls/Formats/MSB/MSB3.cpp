@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MSB3.hpp"
 
@@ -20,7 +24,7 @@ namespace Souls {
 
         // The pose and bone name params, which have no type numbers.
         constexpr const char* PartsPoseParamName = "MAPSTUDIO_PARTS_POSE_ST";
-        constexpr const char* BoneNameParamName   = "MAPSTUDIO_BONE_NAME_STRING";
+        constexpr const char* BoneNameParamName  = "MAPSTUDIO_BONE_NAME_STRING";
 
         struct BoneName : MSB3::Entry {};
     }  // namespace
@@ -37,9 +41,7 @@ namespace Souls {
         const int64_t TypeDataOffset = Reader.ReadInt64();
         RequireNonZero(NameOffset, "nameOffset");
         RequireNonZero(SibOffset, "sibOffset");
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in model");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in model"); }
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
         Reader.Seek(Start + SibOffset);
@@ -120,13 +122,13 @@ namespace Souls {
     }
 
     void MSB3::Event::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(PartName);
         V(PointName);
     }
 
     void MSB3::Event::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(PartName);
         V(PointName);
     }
@@ -139,10 +141,10 @@ namespace Souls {
         const int64_t NameOffset = Reader.ReadInt64();
         Reader.Assert<uint32_t>(Type());
         Reader.ReadInt32();  // ID
-        const auto ShapeKind = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
-        Position             = Reader.ReadVector3();
-        Rotation             = Reader.ReadVector3();
-        Unk2C                = Reader.ReadInt32();
+        const auto ShapeKind          = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
+        Position                      = Reader.ReadVector3();
+        Rotation                      = Reader.ReadVector3();
+        Unk2C                         = Reader.ReadInt32();
         const int64_t BaseDataOffset1 = Reader.ReadInt64();
         const int64_t BaseDataOffset2 = Reader.ReadInt64();
         Reader.Assert<int32_t>(-1);
@@ -162,7 +164,8 @@ namespace Souls {
         }
         RequireNonZero(BaseDataOffset3, "baseDataOffset3");
         const TypeDataPresence Presence = ShouldHaveTypeData();
-        if ((Presence == TypeDataPresence::Never && TypeDataOffset != 0) || (Presence == TypeDataPresence::Always && TypeDataOffset == 0) ||
+        if ((Presence == TypeDataPresence::Never && TypeDataOffset != 0) ||
+            (Presence == TypeDataPresence::Always && TypeDataOffset == 0) ||
             (Presence == TypeDataPresence::AlwaysNull && TypeDataOffset != 0)) {
             throw BinaryException("Unexpected typeDataOffset in region");
         }
@@ -177,16 +180,14 @@ namespace Souls {
         UnkB                 = Reader.ReadArray<int16_t>(static_cast<size_t>(CountB));
         if (Msb::HasShapeData(Shape)) {
             Reader.Seek(Start + ShapeDataOffset);
-            Msb::Detail::ReadVisitor V{Reader};
+            Msb::Detail::ReadVisitor V {Reader};
             Msb::Detail::VisitShape(Shape, V);
         }
         Reader.Seek(Start + BaseDataOffset3);
         ActivationPartName.Index = Reader.ReadInt32();
         EntityID                 = Reader.ReadInt32();
         if (TypeDataOffset != 0 || Presence == TypeDataPresence::AlwaysNull) {
-            if (TypeDataOffset != 0) {
-                Reader.Seek(Start + TypeDataOffset);
-            }
+            if (TypeDataOffset != 0) { Reader.Seek(Start + TypeDataOffset); }
             ReadTypeData(Reader);
         }
     }
@@ -221,7 +222,7 @@ namespace Souls {
         Writer.Align(8);
         if (Msb::HasShapeData(Shape)) {
             Writer.Fill<int64_t>("ShapeDataOffset", Writer.Position() - Start);
-            Msb::Detail::WriteVisitor V{Writer};
+            Msb::Detail::WriteVisitor V {Writer};
             Msb::Detail::VisitShape(Shape, V);
         } else {
             Writer.Fill<int64_t>("ShapeDataOffset", 0);
@@ -234,20 +235,18 @@ namespace Souls {
         } else {
             Writer.Fill<int64_t>("TypeDataOffset", 0);
         }
-        if (DoesHaveTypeData()) {
-            WriteTypeData(Writer);
-        }
+        if (DoesHaveTypeData()) { WriteTypeData(Writer); }
         Writer.Align(8);
     }
 
     void MSB3::Region::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ActivationPartName);
         // Composite shapes aren't supported, so the shape has no references.
     }
 
     void MSB3::Region::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ActivationPartName);
     }
 #pragma endregion
@@ -320,17 +319,15 @@ namespace Souls {
         Reader.ReadInto(std::span<uint32_t>(DispGroups));
         Reader.ReadInto(std::span<uint32_t>(BackreadGroups));
         Reader.Assert<int32_t>(0);
-        const int64_t EntityDataOffset = Reader.ReadInt64();
-        const int64_t TypeDataOffset   = Reader.ReadInt64();
-        const int64_t GparamOffset     = Reader.ReadInt64();
+        const int64_t EntityDataOffset  = Reader.ReadInt64();
+        const int64_t TypeDataOffset    = Reader.ReadInt64();
+        const int64_t GparamOffset      = Reader.ReadInt64();
         const int64_t SceneGparamOffset = Reader.ReadInt64();
         RequireNonZero(NameOffset, "nameOffset");
         RequireNonZero(SibOffset, "sibOffset");
         RequireNonZero(EntityDataOffset, "entityDataOffset");
         RequireNonZero(TypeDataOffset, "typeDataOffset");
-        if (HasGparamConfig() != (GparamOffset != 0)) {
-            throw BinaryException("Unexpected gparamOffset in part");
-        }
+        if (HasGparamConfig() != (GparamOffset != 0)) { throw BinaryException("Unexpected gparamOffset in part"); }
         if (HasSceneGparamConfig() != (SceneGparamOffset != 0)) {
             throw BinaryException("Unexpected sceneGparamOffset in part");
         }
@@ -401,9 +398,7 @@ namespace Souls {
         Writer.Fill<int64_t>("SibOffset", Writer.Position() - Start);
         Writer.WriteUTF16Text(SibPath, true);
         // This is purely here for byte-perfect writes.
-        if (SibPath.empty()) {
-            Writer.Pad(0x24);
-        }
+        if (SibPath.empty()) { Writer.Pad(0x24); }
         Writer.Align(8);
 
         Writer.Fill<int64_t>("EntityDataOffset", Writer.Position() - Start);
@@ -446,20 +441,18 @@ namespace Souls {
     }
 
     void MSB3::Part::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ModelName);
     }
 
     void MSB3::Part::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ModelName);
     }
 #pragma endregion
 
     bool MSB3::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "MSB ";
     }
 
@@ -573,7 +566,7 @@ namespace Souls {
             P->GetNames(Lists);
         }
         for (PartsPose& P : Poses) {
-            Msb::Detail::NameVisitor<Entries> V{Lists};
+            Msb::Detail::NameVisitor<Entries> V {Lists};
             V(P.PartName);
             for (PartsPose::Bone& B : P.Bones) {
                 B.Name = Msb::Detail::FindName(Lists.BoneNames, B.NameIndex).value_or("");
@@ -601,8 +594,9 @@ namespace Souls {
         }
 
         for (Model* M : ModelPtrs) {
-            M->InstanceCount = static_cast<int32_t>(
-                std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) { return P->ModelName.has_value() && *P->ModelName == M->Name; }));
+            M->InstanceCount = static_cast<int32_t>(std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) {
+                return P->ModelName.has_value() && *P->ModelName == M->Name;
+            }));
         }
         for (Event* E : EventPtrs) {
             E->GetIndices(Lists);
@@ -617,10 +611,11 @@ namespace Souls {
         // Bone names are collected from the poses as they are written.
         std::vector<BoneName> BoneNames;
         for (PartsPose& P : PartsPoses) {
-            Msb::Detail::IndexVisitor<Entries> V{Lists};
+            Msb::Detail::IndexVisitor<Entries> V {Lists};
             V(P.PartName);
             for (PartsPose::Bone& B : P.Bones) {
-                auto Found = std::find_if(BoneNames.begin(), BoneNames.end(), [&](const BoneName& N) { return N.Name == B.Name; });
+                auto Found =
+                  std::find_if(BoneNames.begin(), BoneNames.end(), [&](const BoneName& N) { return N.Name == B.Name; });
                 if (Found == BoneNames.end()) {
                     BoneName N;
                     N.Name = B.Name;

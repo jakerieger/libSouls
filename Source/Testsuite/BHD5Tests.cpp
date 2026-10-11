@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
@@ -18,12 +22,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
@@ -33,9 +37,7 @@ namespace {
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -56,13 +58,15 @@ namespace {
                 if (Game >= BHD5::Game::DarkSouls2) {
                     if (F % 2 == 0) {
                         BHD5::SHAHash Sha;
-                        for (size_t I = 0; I < Sha.Hash.size(); ++I) Sha.Hash[I] = static_cast<uint8_t>(I * 3 + F);
+                        for (size_t I = 0; I < Sha.Hash.size(); ++I)
+                            Sha.Hash[I] = static_cast<uint8_t>(I * 3 + F);
                         Sha.Ranges = {{0, 0x40}, {0x80, 0xC0}};
                         File.SHA   = Sha;
                     }
                     if (F % 3 != 2) {
                         BHD5::AESKey Aes;
-                        for (size_t I = 0; I < Aes.Key.size(); ++I) Aes.Key[I] = static_cast<uint8_t>(0xA0 + I + F);
+                        for (size_t I = 0; I < Aes.Key.size(); ++I)
+                            Aes.Key[I] = static_cast<uint8_t>(0xA0 + I + F);
                         Aes.Ranges = {{0, 0x20}, {-1, -1}};
                         File.AES   = Aes;
                     }
@@ -93,9 +97,10 @@ namespace {
     }
 
     void TestSynthetic() {
-        for (const auto Game : {BHD5::Game::DarkSouls1, BHD5::Game::DarkSouls2, BHD5::Game::DarkSouls3, BHD5::Game::EldenRing}) {
+        for (const auto Game :
+             {BHD5::Game::DarkSouls1, BHD5::Game::DarkSouls2, BHD5::Game::DarkSouls3, BHD5::Game::EldenRing}) {
             for (const bool Big : {false, true}) {
-                BHD5 Source = MakeArchive(Game, Big);
+                BHD5 Source      = MakeArchive(Game, Big);
                 const auto Bytes = Source.Write();
                 BHD5 Back        = BHD5::Read(Bytes, Game);
 
@@ -105,7 +110,12 @@ namespace {
                     CHECK(Back.Buckets[B].size() == Source.Buckets[B].size());
                     for (size_t F = 0; F < Source.Buckets[B].size() && F < Back.Buckets[B].size(); ++F) {
                         const bool Equal = Same(Source.Buckets[B][F], Back.Buckets[B][F]);
-                        if (!Equal) std::printf("  (game %d big %d bucket %zu file %zu differs)\n", static_cast<int>(Game), Big, B, F);
+                        if (!Equal)
+                            std::printf("  (game %d big %d bucket %zu file %zu differs)\n",
+                                        static_cast<int>(Game),
+                                        Big,
+                                        B,
+                                        F);
                         CHECK(Equal);
                     }
                 }
@@ -114,32 +124,38 @@ namespace {
         }
 
         // Bad input.
-        BHD5 Good = MakeArchive(BHD5::Game::DarkSouls3, false);
+        BHD5 Good  = MakeArchive(BHD5::Game::DarkSouls3, false);
         auto Bytes = Good.Write();
-        CHECK(Throws([&] { BHD5::Read(std::vector<uint8_t>{1, 2, 3, 4}, BHD5::Game::DarkSouls3); }));
+        CHECK(Throws([&] { BHD5::Read(std::vector<uint8_t> {1, 2, 3, 4}, BHD5::Game::DarkSouls3); }));
         std::vector<uint8_t> Truncated(Bytes.begin(), Bytes.begin() + 0x30);
         CHECK(Throws([&] { BHD5::Read(Truncated, BHD5::Game::DarkSouls3); }));
         std::vector<uint8_t> BadBuckets = Bytes;
-        BadBuckets[0x10] = 0xFF;
-        BadBuckets[0x11] = 0xFF;
-        BadBuckets[0x12] = 0xFF;
-        BadBuckets[0x13] = 0x7F;
+        BadBuckets[0x10]                = 0xFF;
+        BadBuckets[0x11]                = 0xFF;
+        BadBuckets[0x12]                = 0xFF;
+        BadBuckets[0x13]                = 0x7F;
         CHECK(Throws([&] { BHD5::Read(BadBuckets, BHD5::Game::DarkSouls3); }));
-        BHD5 BadSha = MakeArchive(BHD5::Game::DarkSouls3, false);
-        BadSha.Buckets[1][0].SHA = BHD5::SHAHash{};
+        BHD5 BadSha              = MakeArchive(BHD5::Game::DarkSouls3, false);
+        BadSha.Buckets[1][0].SHA = BHD5::SHAHash {};
         BadSha.Buckets[1][0].SHA->Hash.resize(5);
         CHECK(Throws([&] { BadSha.Write(); }));
     }
 
     void TestCrypto() {
         // FIPS-197 appendix C.1: AES-128 with key 000102..0f.
-        std::vector<uint8_t> Key(16), Cipher = {0x69, 0xc4, 0xe0, 0xd8, 0x6a, 0x7b, 0x04, 0x30, 0xd8, 0xcd, 0xb7, 0x80, 0x70, 0xb4, 0xc5, 0x5a};
-        for (size_t I = 0; I < Key.size(); ++I) Key[I] = static_cast<uint8_t>(I);
-        const std::vector<uint8_t> Plain = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+        std::vector<uint8_t> Key(16),
+          Cipher = {0x69, 0xc4, 0xe0, 0xd8, 0x6a, 0x7b, 0x04, 0x30, 0xd8, 0xcd, 0xb7, 0x80, 0x70, 0xb4, 0xc5, 0x5a};
+        for (size_t I = 0; I < Key.size(); ++I)
+            Key[I] = static_cast<uint8_t>(I);
+        const std::vector<uint8_t> Plain =
+          {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
         std::vector<uint8_t> Data = Cipher;
         Crypto::DecryptAesEcb(Key, Data);
         CHECK(Data == Plain);
-        CHECK(Throws([&] { std::vector<uint8_t> Odd(10); Crypto::DecryptAesEcb(Key, Odd); }));
+        CHECK(Throws([&] {
+            std::vector<uint8_t> Odd(10);
+            Crypto::DecryptAesEcb(Key, Odd);
+        }));
 
         // BHD5::AESKey::Decrypt only touches its ranges.
         BHD5::AESKey Aes;
@@ -154,9 +170,11 @@ namespace {
         CHECK(Throws([&] { Aes.Decrypt(File); }));
 
         // PEM key discovery.
-        const std::string Fake = "xx-----BEGIN RSA PUBLIC KEY-----\nAAAA\n-----END RSA PUBLIC KEY-----yy-----BEGIN RSA PUBLIC KEY-----\nBBBB\n-----END RSA PUBLIC KEY-----";
+        const std::string Fake = "xx-----BEGIN RSA PUBLIC KEY-----\nAAAA\n-----END RSA PUBLIC KEY-----yy-----BEGIN RSA "
+                                 "PUBLIC KEY-----\nBBBB\n-----END RSA PUBLIC KEY-----";
         const auto Keys = Crypto::FindRsaPublicKeys({reinterpret_cast<const uint8_t*>(Fake.data()), Fake.size()});
-        CHECK(Keys.size() == 2 && Keys[0].find("AAAA") != std::string::npos && Keys[1].find("BBBB") != std::string::npos);
+        CHECK(Keys.size() == 2 && Keys[0].find("AAAA") != std::string::npos &&
+              Keys[1].find("BBBB") != std::string::npos);
         CHECK(Throws([&] { Crypto::DecryptRsaBlocks("not a key", std::vector<uint8_t>(256)); }));
     }
 
@@ -216,7 +234,7 @@ int RunBHD5Tests() {
                     continue;
                 }
 
-                BHD5 Bhd = BHD5::Read(Header, BHD5::Game::EldenRing);
+                BHD5 Bhd     = BHD5::Read(Header, BHD5::Game::EldenRing);
                 size_t Files = 0, Encrypted_ = 0;
                 std::unordered_set<uint64_t> Hashes;
                 for (const auto& Bucket : Bhd.Buckets) {
@@ -227,7 +245,11 @@ int RunBHD5Tests() {
                     }
                 }
                 std::printf("%s.bhd: %zu buckets, %zu files (%zu encrypted), salt \"%s\"\n",
-                            Name, Bhd.Buckets.size(), Files, Encrypted_, Bhd.Salt.c_str());
+                            Name,
+                            Bhd.Buckets.size(),
+                            Files,
+                            Encrypted_,
+                            Bhd.Salt.c_str());
                 CHECK(Files > 0);
 
                 // BinderKeys' copy of the key decrypts the same header, and its dictionary of known paths hashes
@@ -240,7 +262,8 @@ int RunBHD5Tests() {
                 if (std::ifstream Dictionary(Keys_ / "Hash" / (std::string(Name) + ".txt")); Dictionary) {
                     size_t Known = 0, Found = 0;
                     for (std::string Line; std::getline(Dictionary, Line);) {
-                        while (!Line.empty() && (Line.back() == '\r' || Line.back() == ' ')) Line.pop_back();
+                        while (!Line.empty() && (Line.back() == '\r' || Line.back() == ' '))
+                            Line.pop_back();
                         if (Line.empty() || Line[0] != '/') continue;
                         ++Known;
                         Found += Hashes.count(Util::FromPathHash64(Line));
@@ -253,7 +276,7 @@ int RunBHD5Tests() {
                 // out the same. The byte layout of the hash/key data is free to differ from the game's own.
                 const auto Rewritten = Bhd.Write();
                 const BHD5 Reparsed  = BHD5::Read(Rewritten, BHD5::Game::EldenRing);
-                bool Equivalent = Reparsed.Buckets.size() == Bhd.Buckets.size() && Reparsed.Salt == Bhd.Salt &&
+                bool Equivalent      = Reparsed.Buckets.size() == Bhd.Buckets.size() && Reparsed.Salt == Bhd.Salt &&
                                   Reparsed.BigEndian == Bhd.BigEndian && Reparsed.Unk05 == Bhd.Unk05;
                 for (size_t B = 0; Equivalent && B < Bhd.Buckets.size(); ++B) {
                     Equivalent = Reparsed.Buckets[B].size() == Bhd.Buckets[B].size();
@@ -273,8 +296,9 @@ int RunBHD5Tests() {
                         if (File.PaddedFileSize <= 0 || File.FileOffset + File.PaddedFileSize > Bdt.Length()) continue;
                         const auto Bytes = File.ReadFile(Bdt);
                         ++Checked;
-                        if (StartsWith(Bytes, "DCX", 3) || StartsWith(Bytes, "BND4", 4) || StartsWith(Bytes, "TPF", 3) ||
-                            StartsWith(Bytes, "BHF4", 4) || StartsWith(Bytes, "BDF4", 4) || StartsWith(Bytes, "FSB5", 4)) {
+                        if (StartsWith(Bytes, "DCX", 3) || StartsWith(Bytes, "BND4", 4) ||
+                            StartsWith(Bytes, "TPF", 3) || StartsWith(Bytes, "BHF4", 4) ||
+                            StartsWith(Bytes, "BDF4", 4) || StartsWith(Bytes, "FSB5", 4)) {
                             ++Recognized;
                         }
                     }

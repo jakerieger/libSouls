@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BHD5.hpp"
 
@@ -61,9 +65,7 @@ namespace Souls {
                     ShaHashOffset = Reader.ReadInt64();
                     AesKeyOffset  = Reader.ReadInt64();
                 }
-                if (Game >= BHD5::Game::DarkSouls3) {
-                    Header.UnpaddedFileSize = Reader.ReadInt64();
-                }
+                if (Game >= BHD5::Game::DarkSouls3) { Header.UnpaddedFileSize = Reader.ReadInt64(); }
             }
 
             if (ShaHashOffset != 0) {
@@ -87,7 +89,8 @@ namespace Souls {
             return Header;
         }
 
-        void WriteFileHeader(BinaryWriter& Writer, BHD5::Game Game, const BHD5::FileHeader& Header, size_t BucketIndex, size_t FileIndex) {
+        void WriteFileHeader(
+          BinaryWriter& Writer, BHD5::Game Game, const BHD5::FileHeader& Header, size_t BucketIndex, size_t FileIndex) {
             if (Game >= BHD5::Game::EldenRing) {
                 Writer.WriteUInt64(Header.FileNameHash);
                 Writer.WriteInt32(Header.PaddedFileSize);
@@ -104,25 +107,20 @@ namespace Souls {
                     Writer.Reserve<int64_t>(Key("SHAHashOffset", BucketIndex, FileIndex));
                     Writer.Reserve<int64_t>(Key("AESKeyOffset", BucketIndex, FileIndex));
                 }
-                if (Game >= BHD5::Game::DarkSouls3) {
-                    Writer.WriteInt64(Header.UnpaddedFileSize);
-                }
+                if (Game >= BHD5::Game::DarkSouls3) { Writer.WriteInt64(Header.UnpaddedFileSize); }
             }
         }
 
-        void WriteHashAndKey(BinaryWriter& Writer, BHD5::Game Game, const BHD5::FileHeader& Header, size_t BucketIndex, size_t FileIndex) {
-            if (Game < BHD5::Game::DarkSouls2) {
-                return;
-            }
+        void WriteHashAndKey(
+          BinaryWriter& Writer, BHD5::Game Game, const BHD5::FileHeader& Header, size_t BucketIndex, size_t FileIndex) {
+            if (Game < BHD5::Game::DarkSouls2) { return; }
 
             auto WriteSha = [&] {
                 if (!Header.SHA) {
                     Writer.Fill<int64_t>(Key("SHAHashOffset", BucketIndex, FileIndex), 0);
                     return;
                 }
-                if (Header.SHA->Hash.size() != 32) {
-                    throw BinaryException("SHA hash must be 32 bytes long.");
-                }
+                if (Header.SHA->Hash.size() != 32) { throw BinaryException("SHA hash must be 32 bytes long."); }
                 Writer.Fill<int64_t>(Key("SHAHashOffset", BucketIndex, FileIndex), Writer.Position());
                 Writer.WriteBytes(Header.SHA->Hash);
                 WriteRanges(Writer, Header.SHA->Ranges);
@@ -133,9 +131,7 @@ namespace Souls {
                     Writer.Fill<int64_t>(Key("AESKeyOffset", BucketIndex, FileIndex), 0);
                     return;
                 }
-                if (Header.AES->Key.size() != 16) {
-                    throw BinaryException("AES key must be 16 bytes long.");
-                }
+                if (Header.AES->Key.size() != 16) { throw BinaryException("AES key must be 16 bytes long."); }
                 Writer.Fill<int64_t>(Key("AESKeyOffset", BucketIndex, FileIndex), Writer.Position());
                 Writer.WriteBytes(Header.AES->Key);
                 WriteRanges(Writer, Header.AES->Ranges);
@@ -154,9 +150,7 @@ namespace Souls {
 
     void BHD5::AESKey::Decrypt(std::span<uint8_t> Bytes) const {
         for (const Range& Range : Ranges) {
-            if (Range.StartOffset == -1 || Range.EndOffset == -1 || Range.StartOffset == Range.EndOffset) {
-                continue;
-            }
+            if (Range.StartOffset == -1 || Range.EndOffset == -1 || Range.StartOffset == Range.EndOffset) { continue; }
             if (Range.StartOffset < 0 || Range.EndOffset < Range.StartOffset ||
                 static_cast<uint64_t>(Range.EndOffset) > Bytes.size()) {
                 throw BinaryException("Encrypted range lies outside the file's data");
@@ -168,16 +162,12 @@ namespace Souls {
     }
 
     std::vector<uint8_t> BHD5::FileHeader::ReadFile(BinaryReader& BdtReader) const {
-        if (PaddedFileSize < 0) {
-            throw BinaryException("Invalid file size in BHD5");
-        }
+        if (PaddedFileSize < 0) { throw BinaryException("Invalid file size in BHD5"); }
         BdtReader.StepIn(FileOffset);
         std::vector<uint8_t> Bytes = BdtReader.ReadBytes(static_cast<size_t>(PaddedFileSize));
         BdtReader.StepOut();
 
-        if (AES) {
-            AES->Decrypt(Bytes);
-        }
+        if (AES) { AES->Decrypt(Bytes); }
         return Bytes;
     }
 
@@ -196,9 +186,7 @@ namespace Souls {
 
         if (Format >= Game::DarkSouls2) {
             const int32_t SaltLength = Reader.ReadInt32();
-            if (SaltLength < 0) {
-                throw BinaryException("Invalid salt length in BHD5");
-            }
+            if (SaltLength < 0) { throw BinaryException("Invalid salt length in BHD5"); }
             Result.Salt = Reader.ReadString(static_cast<size_t>(SaltLength));
         }
 
@@ -283,9 +271,7 @@ namespace Souls {
     }
 
     void BHD5::Write(const std::filesystem::path& Path) {
-        if (Path.has_parent_path()) {
-            std::filesystem::create_directories(Path.parent_path());
-        }
+        if (Path.has_parent_path()) { std::filesystem::create_directories(Path.parent_path()); }
         BinaryWriter Writer(Path, Endian::Little);
         Write(Writer);
         Writer.Finish();

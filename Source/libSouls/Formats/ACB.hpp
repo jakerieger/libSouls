@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -61,7 +65,7 @@ namespace Souls {
             /// @brief Enables interaction normals for water.
             bool NormalInteraction = false;
             /// @brief Unknown.
-            int32_t Unk20          = 0;
+            int32_t Unk20 = 0;
             /// @brief Unknown; alters rendering mode somehow.
             uint8_t RenderType = 0;
             /// @brief If true, the model does not cast shadows.
@@ -69,23 +73,23 @@ namespace Souls {
             /// @brief If true, shadows will not be cast on the model.
             bool DisableShadowTarget = false;
             /// @brief Unknown; makes things render in reverse order or reverses culling or something.
-            bool Unk27  = false;
+            bool Unk27 = false;
             /// @brief Unknown.
             float Unk28 = 0;
             /// @brief Unknown.
-            bool Unk2C  = false;
+            bool Unk2C = false;
             /// @brief If true, the model is always centered on the camera position.
             ///
             /// Used for skyboxes.
             bool FixToCamera = false;
             /// @brief Unknown.
-            bool Unk2E       = false;
+            bool Unk2E = false;
             /// @brief Distance at which low textures are used.
             int16_t LowTextureDistance = 0;
             /// @brief Distance at which the model uses simplified rendering.
             int16_t CheapRenderDistance = 0;
             /// @brief Unknown.
-            uint8_t Unk34               = 0;
+            uint8_t Unk34 = 0;
             /// @brief Disables lighting on water/transparencies.
             bool Unk35 = false;
             /// @brief Unknown.

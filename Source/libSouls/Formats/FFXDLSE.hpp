@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -34,11 +38,11 @@ namespace Souls {
 
         /// @brief A serialized object: class index, version, length, then the object's own data.
         struct SOULS_API Serializable {
-            virtual ~Serializable()                                       = default;
+            virtual ~Serializable() = default;
             /// @brief The class's name, as listed in the file's class name table.
-            virtual const char* ClassName() const                        = 0;
+            virtual const char* ClassName() const = 0;
             /// @brief The class version written with each object of this class.
-            virtual int32_t Version() const                              = 0;
+            virtual int32_t Version() const = 0;
             /// @brief Adds the names of this class and of the classes it contains to the class name table.
             virtual void AddClassNames(ClassNames& Names) const;
             /// @brief Reads the object: its class index, version and length, then its own fields.
@@ -48,7 +52,7 @@ namespace Souls {
 
         protected:
             /// @brief Reads the class's own fields.
-            virtual void Deserialize(BinaryReader& Reader, const ClassNames& Names)  = 0;
+            virtual void Deserialize(BinaryReader& Reader, const ClassNames& Names) = 0;
             /// @brief Writes the class's own fields.
             virtual void Serialize(BinaryWriter& Writer, const ClassNames& Names) const = 0;
         };
@@ -68,7 +72,7 @@ namespace Souls {
             /// @brief Blue.
             float B = 0;
             /// @brief Alpha.
-            float A = 0;
+            float A          = 0;
             PrimitiveColor() = default;
             /// @brief A color from its channels.
             PrimitiveColor(float R, float G, float B, float A) : R(R), G(G), B(B), A(A) {}
@@ -101,7 +105,7 @@ namespace Souls {
         /// @brief A float at a point in time.
         struct SOULS_API TickFloat {
             /// @brief The time.
-            float Tick  = 0;
+            float Tick = 0;
             /// @brief The value.
             float Float = 0;
             /// @brief Reads the tick and value.
@@ -114,7 +118,7 @@ namespace Souls {
         /// @brief Three floats at a point in time.
         struct SOULS_API TickFloat3 {
             /// @brief The time.
-            float Tick   = 0;
+            float Tick = 0;
             /// @brief The first value.
             float Float1 = 0;
             /// @brief The second value.
@@ -170,7 +174,7 @@ namespace Souls {
             /// @brief The opcode that identifies this evaluatable's operation.
             virtual int32_t Opcode() const = 0;
             /// @brief A code written after the opcode; which kind of evaluatable this is.
-            virtual int32_t Type() const   = 0;
+            virtual int32_t Type() const = 0;
             /// @brief Reads whichever kind of evaluatable comes next.
             static std::shared_ptr<Evaluatable> ReadAny(BinaryReader& Reader, const ClassNames& Names);
 
@@ -190,17 +194,17 @@ namespace Souls {
             int32_t Type() const override { return 3; }
         };
         /// @brief Opcode 4: the current tick.
-        using EvaluatableCurrentTick         = EvaluatableLeaf<4>;
+        using EvaluatableCurrentTick = EvaluatableLeaf<4>;
         /// @brief Opcode 5: the total tick.
-        using EvaluatableTotalTick           = EvaluatableLeaf<5>;
+        using EvaluatableTotalTick = EvaluatableLeaf<5>;
         /// @brief Opcode 21: whether a child exists.
-        using EvaluatableChildExists         = EvaluatableLeaf<21>;
+        using EvaluatableChildExists = EvaluatableLeaf<21>;
         /// @brief Opcode 22: whether the parent exists.
-        using EvaluatableParentExists        = EvaluatableLeaf<22>;
+        using EvaluatableParentExists = EvaluatableLeaf<22>;
         /// @brief Opcode 23: the distance from the camera.
-        using EvaluatableDistanceFromCamera  = EvaluatableLeaf<23>;
+        using EvaluatableDistanceFromCamera = EvaluatableLeaf<23>;
         /// @brief Opcode 24: whether the emitters have stopped.
-        using EvaluatableEmittersStopped     = EvaluatableLeaf<24>;
+        using EvaluatableEmittersStopped = EvaluatableLeaf<24>;
 
         /// @brief Opcode 1: a constant int.
         struct SOULS_API EvaluatableConstant : Evaluatable {
@@ -222,7 +226,7 @@ namespace Souls {
         template<int32_t Code>
         struct EvaluatableArg : Evaluatable {
             /// @brief Unknown.
-            int32_t Unk00    = 0;
+            int32_t Unk00 = 0;
             /// @brief Which argument to read.
             int32_t ArgIndex = 0;
             /// @brief The opcode that identifies this evaluatable's operation.
@@ -314,19 +318,19 @@ namespace Souls {
         /// @brief Opcode 8: logical and.
         using EvaluatableAnd = EvaluatableBinary<8>;
         /// @brief Opcode 9: logical or.
-        using EvaluatableOr  = EvaluatableBinary<9>;
+        using EvaluatableOr = EvaluatableBinary<9>;
         /// @brief Opcode 10: greater than or equal.
-        using EvaluatableGE  = EvaluatableBinary<10>;
+        using EvaluatableGE = EvaluatableBinary<10>;
         /// @brief Opcode 11: greater than.
-        using EvaluatableGT  = EvaluatableBinary<11>;
+        using EvaluatableGT = EvaluatableBinary<11>;
         /// @brief Opcode 12: less than or equal.
-        using EvaluatableLE  = EvaluatableBinary<12>;
+        using EvaluatableLE = EvaluatableBinary<12>;
         /// @brief Opcode 13: less than.
-        using EvaluatableLT  = EvaluatableBinary<13>;
+        using EvaluatableLT = EvaluatableBinary<13>;
         /// @brief Opcode 14: equal.
-        using EvaluatableEQ  = EvaluatableBinary<14>;
+        using EvaluatableEQ = EvaluatableBinary<14>;
         /// @brief Opcode 15: not equal.
-        using EvaluatableNE  = EvaluatableBinary<15>;
+        using EvaluatableNE = EvaluatableBinary<15>;
 #pragma endregion
 
 #pragma region Params
@@ -501,7 +505,7 @@ namespace Souls {
         template<int32_t Id>
         struct ArgParam : Param {
             /// @brief Unknown.
-            int32_t Unk04    = 0;
+            int32_t Unk04 = 0;
             /// @brief Which argument to read.
             int32_t ArgIndex = 0;
             /// @brief The param's type number (the N of ParamN).
@@ -523,17 +527,17 @@ namespace Souls {
         };
 
         /// @brief Param type 1: an int.
-        using Param1  = PrimitiveParam<1, PrimitiveKind::Int>;
+        using Param1 = PrimitiveParam<1, PrimitiveKind::Int>;
         /// @brief Param type 2: a list of ints.
-        using Param2  = PrimitiveListParam<2, PrimitiveKind::Int>;
+        using Param2 = PrimitiveListParam<2, PrimitiveKind::Int>;
         /// @brief Param type 5: ints over time.
-        using Param5  = TickListParam<5, TickInt>;
+        using Param5 = TickListParam<5, TickInt>;
         /// @brief Param type 6: ints over time.
-        using Param6  = TickListParam<6, TickInt>;
+        using Param6 = TickListParam<6, TickInt>;
         /// @brief Param type 7: a float.
-        using Param7  = PrimitiveParam<7, PrimitiveKind::Float>;
+        using Param7 = PrimitiveParam<7, PrimitiveKind::Float>;
         /// @brief Param type 9: floats over time.
-        using Param9  = TickListParam<9, TickFloat>;
+        using Param9 = TickListParam<9, TickFloat>;
         /// @brief Param type 11: floats over time.
         using Param11 = TickListParam<11, TickFloat>;
         /// @brief Param type 12: floats over time.

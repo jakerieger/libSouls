@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BND4.hpp"
 #include "BinderFileHeader.hpp"
@@ -17,13 +21,11 @@ namespace Souls {
 
     BND4::BND4() {
         Version = Binder::CurrentVersion();
-        Format = Format::IDs | Format::Names1 | Format::Names2 | Format::Compression;
+        Format  = Format::IDs | Format::Names1 | Format::Names2 | Format::Compression;
     }
 
     bool BND4::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.ReadAt<uint8_t>(0) == 'B' && Reader.ReadAt<uint8_t>(1) == 'N' &&
                Reader.ReadAt<uint8_t>(2) == 'D' && Reader.ReadAt<uint8_t>(3) == '4';
     }
@@ -44,7 +46,7 @@ namespace Souls {
 
         const int32_t FileCount = Reader.ReadInt32();
         Reader.Assert<int64_t>(0x40);  // header size
-        Version = Reader.ReadFixStr(8);
+        Version                      = Reader.ReadFixStr(8);
         const int64_t FileHeaderSize = Reader.ReadInt64();
         // End of headers (includes the hash table). Some binders round it up to 16 bytes; the rest store it exactly,
         // so a multiple of 16 can always be kept by rounding up (which changes nothing for the exact ones).
@@ -140,7 +142,7 @@ namespace Souls {
         }
 
         const int64_t HeadersEnd = Writer.Position();
-        Writer.Fill<int64_t>("HeadersEnd", AlignHeadersEnd ? (HeadersEnd + 0xF) & ~int64_t{0xF} : HeadersEnd);
+        Writer.Fill<int64_t>("HeadersEnd", AlignHeadersEnd ? (HeadersEnd + 0xF) & ~int64_t {0xF} : HeadersEnd);
 
         for (size_t I = 0; I < FileHeaders.size(); ++I) {
             FileHeaders[I].WriteBinder4FileData(Writer, Writer, Format, static_cast<int>(I), Files[I].Bytes);

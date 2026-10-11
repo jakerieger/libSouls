@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BinaryWriter.hpp"
 #include "TextEncoding.hpp"
@@ -13,9 +17,7 @@
 namespace Souls {
     BinaryWriter::BinaryWriter(const std::filesystem::path& Path, Endian Order) : Order(Order) {
         auto File = std::make_unique<std::ofstream>(Path, std::ios::binary | std::ios::trunc);
-        if (!File->is_open()) {
-            throw BinaryException("Failed to open file for writing: " + Path.string());
-        }
+        if (!File->is_open()) { throw BinaryException("Failed to open file for writing: " + Path.string()); }
         Stream = File.get();
         Owned  = std::move(File);
     }
@@ -33,9 +35,7 @@ namespace Souls {
     int64_t BinaryWriter::Position() {
         Stream->clear();
         const auto Pos = Stream->tellp();
-        if (Pos == std::ostream::pos_type(-1)) {
-            throw BinaryException("Failed to query stream position");
-        }
+        if (Pos == std::ostream::pos_type(-1)) { throw BinaryException("Failed to query stream position"); }
         return static_cast<int64_t>(Pos);
     }
 
@@ -70,23 +70,15 @@ namespace Souls {
     }
 
     void BinaryWriter::Align(int64_t Alignment, uint8_t Value) {
-        if (Alignment <= 0) {
-            throw BinaryException("Alignment must be positive");
-        }
+        if (Alignment <= 0) { throw BinaryException("Alignment must be positive"); }
         const int64_t Misalignment = Position() % Alignment;
-        if (Misalignment != 0) {
-            Pad(static_cast<size_t>(Alignment - Misalignment), Value);
-        }
+        if (Misalignment != 0) { Pad(static_cast<size_t>(Alignment - Misalignment), Value); }
     }
 
     void BinaryWriter::AlignRelative(int64_t Start, int64_t Alignment, uint8_t Value) {
-        if (Alignment <= 0) {
-            throw BinaryException("Alignment must be positive");
-        }
+        if (Alignment <= 0) { throw BinaryException("Alignment must be positive"); }
         const int64_t Misalignment = (Position() - Start) % Alignment;
-        if (Misalignment != 0) {
-            Pad(static_cast<size_t>(Alignment - Misalignment), Value);
-        }
+        if (Misalignment != 0) { Pad(static_cast<size_t>(Alignment - Misalignment), Value); }
     }
 
     void BinaryWriter::WriteVector2(const Vector2& Value) {
@@ -124,16 +116,12 @@ namespace Souls {
 #pragma region Strings
     void BinaryWriter::WriteString(std::string_view Value, bool NullTerminate) {
         WriteRaw(Value.data(), Value.size());
-        if (NullTerminate) {
-            WriteByte(0);
-        }
+        if (NullTerminate) { WriteByte(0); }
     }
 
     void BinaryWriter::WriteUTF16(std::u16string_view Value, bool NullTerminate) {
         WriteArray(std::span<const char16_t>(Value.data(), Value.size()));
-        if (NullTerminate) {
-            Write<char16_t>(0);
-        }
+        if (NullTerminate) { Write<char16_t>(0); }
     }
 
     void BinaryWriter::WriteFixedString(std::string_view Value, size_t Length) {
@@ -176,9 +164,7 @@ namespace Souls {
 
     void BinaryWriter::FillVarint(const std::string& Name, int64_t Value) {
         const auto It = Reservations.find(Name);
-        if (It == Reservations.end()) {
-            throw BinaryException("No pending reservation named \"" + Name + "\"");
-        }
+        if (It == Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
         // The placeholder's size, not the current VarintLong, decides the width.
         if (It->second.Size == sizeof(int64_t)) {
             Fill<int64_t>(Name, Value);
@@ -191,18 +177,14 @@ namespace Souls {
     }
 
     void BinaryWriter::ReserveRaw(const std::string& Name, size_t Size) {
-        if (Reservations.contains(Name)) {
-            throw BinaryException("Reservation \"" + Name + "\" already exists");
-        }
+        if (Reservations.contains(Name)) { throw BinaryException("Reservation \"" + Name + "\" already exists"); }
         Reservations[Name] = {Position(), Size};
         Pad(Size);
     }
 
     void BinaryWriter::FillRaw(const std::string& Name, const void* Source, size_t Size) {
         const auto It = Reservations.find(Name);
-        if (It == Reservations.end()) {
-            throw BinaryException("No pending reservation named \"" + Name + "\"");
-        }
+        if (It == Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
         if (It->second.Size != Size) {
             throw BinaryException("Reservation \"" + Name + "\" is " + std::to_string(It->second.Size) +
                                   " bytes, but a " + std::to_string(Size) + "-byte value was supplied");
@@ -221,15 +203,11 @@ namespace Souls {
                                   std::to_string(Reservations.size()) + " pending)");
         }
         Stream->flush();
-        if (Stream->fail()) {
-            throw BinaryException("Failed to flush stream");
-        }
+        if (Stream->fail()) { throw BinaryException("Failed to flush stream"); }
     }
 
     std::vector<uint8_t> BinaryWriter::ReadBack(int64_t Position, size_t Count) {
-        if (!IsMemory) {
-            throw BinaryException("ReadBack is only available on in-memory writers");
-        }
+        if (!IsMemory) { throw BinaryException("ReadBack is only available on in-memory writers"); }
         Stream->flush();
         const std::string Data = static_cast<std::ostringstream*>(Owned.get())->str();
         if (Position < 0 || static_cast<size_t>(Position) + Count > Data.size()) {
@@ -239,18 +217,14 @@ namespace Souls {
     }
 
     std::vector<uint8_t> BinaryWriter::ToBytes() {
-        if (!IsMemory) {
-            throw BinaryException("ToBytes is only available on in-memory writers");
-        }
+        if (!IsMemory) { throw BinaryException("ToBytes is only available on in-memory writers"); }
         Finish();
         const std::string Data = static_cast<std::ostringstream*>(Owned.get())->str();
         return {Data.begin(), Data.end()};
     }
 
     void BinaryWriter::WriteRaw(const void* Source, size_t Size) {
-        if (Size == 0) {
-            return;
-        }
+        if (Size == 0) { return; }
         Stream->write(static_cast<const char*>(Source), static_cast<std::streamsize>(Size));
         if (Stream->fail()) {
             Stream->clear();

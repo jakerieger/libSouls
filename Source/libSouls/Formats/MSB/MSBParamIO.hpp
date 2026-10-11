@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -15,9 +19,7 @@
 namespace Souls::Msb::Detail {
 
     inline void RequireNonZero(int64_t Offset, const char* What) {
-        if (Offset == 0) {
-            throw BinaryException(std::string(What) + " must not be 0.");
-        }
+        if (Offset == 0) { throw BinaryException(std::string(What) + " must not be 0."); }
     }
 
     struct ParamHeader {
@@ -37,9 +39,7 @@ namespace Souls::Msb::Detail {
         }
         const int32_t OffsetCount = Reader.ReadInt32();
         const int64_t NameOffset  = Reader.ReadInt64();
-        if (OffsetCount < 1) {
-            throw BinaryException("Invalid MSB param entry count");
-        }
+        if (OffsetCount < 1) { throw BinaryException("Invalid MSB param entry count"); }
         Header.EntryOffsets    = Reader.ReadArray<int64_t>(static_cast<size_t>(OffsetCount - 1));
         Header.NextParamOffset = Reader.ReadInt64();
         const std::string Name = Reader.GetUTF16Text(NameOffset);
@@ -67,12 +67,13 @@ namespace Souls::Msb::Detail {
     ///
     /// If VersionOut is given, the param's version is stored there.
     template<typename ParamT>
-    typename ParamT::FileOrder ReadTypedParam(BinaryReader& Reader, ParamT& Param, int TypeOffset, std::optional<int32_t> ExpectedVersion,
+    typename ParamT::FileOrder ReadTypedParam(BinaryReader& Reader,
+                                              ParamT& Param,
+                                              int TypeOffset,
+                                              std::optional<int32_t> ExpectedVersion,
                                               int32_t* VersionOut = nullptr) {
         const ParamHeader Header = ReadParamHeader(Reader, ExpectedVersion, ParamT::ParamName);
-        if (VersionOut) {
-            *VersionOut = Header.Version;
-        }
+        if (VersionOut) { *VersionOut = Header.Version; }
         typename ParamT::FileOrder Order;
         for (const int64_t Offset : Header.EntryOffsets) {
             Reader.Seek(Offset);

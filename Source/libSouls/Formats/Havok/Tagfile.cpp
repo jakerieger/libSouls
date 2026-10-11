@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "Tagfile.hpp"
 
@@ -24,13 +28,16 @@ namespace Souls::Havok {
             std::vector<Section> Result;
             size_t Pos = Begin;
             while (Pos + 8 <= End) {
-                const uint32_t Word = (uint32_t(Data[Pos]) << 24) | (uint32_t(Data[Pos + 1]) << 16) | (uint32_t(Data[Pos + 2]) << 8) |
-                                      uint32_t(Data[Pos + 3]);
+                const uint32_t Word = (uint32_t(Data[Pos]) << 24) | (uint32_t(Data[Pos + 1]) << 16) |
+                                      (uint32_t(Data[Pos + 2]) << 8) | uint32_t(Data[Pos + 3]);
                 const size_t Size = Word & 0x3FFFFFFF;
                 if (Size < 8 || Pos + Size > End) {
                     throw BinaryException("Invalid Havok tagfile section size at " + std::to_string(Pos));
                 }
-                Result.push_back({std::string(reinterpret_cast<const char*>(Data.data()) + Pos + 4, 4), Word >> 30, Pos + 8, Pos + Size});
+                Result.push_back({std::string(reinterpret_cast<const char*>(Data.data()) + Pos + 4, 4),
+                                  Word >> 30,
+                                  Pos + 8,
+                                  Pos + Size});
                 Pos += Size;
             }
             return Result;
@@ -62,7 +69,7 @@ namespace Souls::Havok {
                 if ((B & 0x80) == 0) return B;
                 if ((B & 0xC0) == 0x80) return (uint32_t(B & 0x3F) << 8) | Byte();
                 if ((B & 0xE0) == 0xC0) {
-                    const uint32_t Hi = uint32_t(B & 0x1F) << 16;
+                    const uint32_t Hi  = uint32_t(B & 0x1F) << 16;
                     const uint32_t Mid = uint32_t(Byte()) << 8;
                     return Hi | Mid | Byte();
                 }
@@ -77,7 +84,8 @@ namespace Souls::Havok {
 
             uint32_t U32() {
                 uint32_t Value = 0;
-                for (int I = 0; I < 4; ++I) Value |= uint32_t(Byte()) << (8 * I);
+                for (int I = 0; I < 4; ++I)
+                    Value |= uint32_t(Byte()) << (8 * I);
                 return Value;
             }
 
@@ -105,13 +113,14 @@ namespace Souls::Havok {
         }
 
         const std::string& StringAt(const std::vector<std::string>& List, uint32_t Index, const char* What) {
-            if (Index >= List.size()) throw BinaryException(std::string("Havok ") + What + " string index out of range");
+            if (Index >= List.size())
+                throw BinaryException(std::string("Havok ") + What + " string index out of range");
             return List[Index];
         }
 
         // Reads the TYPE section: names (TNA1/TNAM), bodies (TBDY/TBOD) and hashes (THSH).
         std::shared_ptr<TypeTable> ReadTypes(std::span<const uint8_t> Data, const Section& TypeSection) {
-            const std::vector<Section> Parts = ReadSections(Data, TypeSection.Begin, TypeSection.End);
+            const std::vector<Section> Parts            = ReadSections(Data, TypeSection.Begin, TypeSection.End);
             const std::vector<std::string> TypeStrings  = Strings(Data, Require(Parts, "TSTR"));
             const std::vector<std::string> FieldStrings = Strings(Data, Require(Parts, "FSTR"));
 
@@ -165,9 +174,7 @@ namespace Souls::Havok {
                         T.Interfaces.emplace_back(Type, Bodies.Next());
                     }
                 }
-                if (T.Flags & ~0x7Fu) {
-                    throw BinaryException("Unknown Havok type flags on " + T.Name);
-                }
+                if (T.Flags & ~0x7Fu) { throw BinaryException("Unknown Havok type flags on " + T.Name); }
             }
 
             if (const Section* HashSec = Find(Parts, "THSH")) {
@@ -200,14 +207,15 @@ namespace Souls::Havok {
     }
 
     std::string TypeTable::FullName(uint32_t Index) const {
-        const TypeInfo& T = At(Index);
+        const TypeInfo& T  = At(Index);
         std::string Result = T.Name;
         if (!T.Templates.empty()) {
             Result += '<';
             for (size_t I = 0; I < T.Templates.size(); ++I) {
                 if (I) Result += ", ";
                 const auto& [Name, Arg] = T.Templates[I];
-                Result += !Name.empty() && Name[0] == 't' && Arg != 0 ? FullName(static_cast<uint32_t>(Arg)) : std::to_string(Arg);
+                Result += !Name.empty() && Name[0] == 't' && Arg != 0 ? FullName(static_cast<uint32_t>(Arg))
+                                                                      : std::to_string(Arg);
             }
             Result += '>';
         }
@@ -279,7 +287,8 @@ namespace Souls::Havok {
         }
         std::vector<const Member*> Result;
         for (auto It = Chain.rbegin(); It != Chain.rend(); ++It) {
-            for (const Member& M : At(*It).Members) Result.push_back(&M);
+            for (const Member& M : At(*It).Members)
+                Result.push_back(&M);
         }
         return Result;
     }
@@ -319,14 +328,17 @@ namespace Souls::Havok {
             Result.SdkVersion.assign(reinterpret_cast<const char*>(Data.data()) + Sdk->Begin, Sdk->End - Sdk->Begin);
         }
         const Section& DataSec = Require(Parts, "DATA");
-        Result.Data.assign(Data.begin() + static_cast<std::ptrdiff_t>(DataSec.Begin), Data.begin() + static_cast<std::ptrdiff_t>(DataSec.End));
+        Result.Data.assign(Data.begin() + static_cast<std::ptrdiff_t>(DataSec.Begin),
+                           Data.begin() + static_cast<std::ptrdiff_t>(DataSec.End));
 
         if (const Section* TypeSec = Find(Parts, "TYPE")) {
             Result.Types = ReadTypes(Data, *TypeSec);
         } else if (const Section* Ref = Find(Parts, "TCRF")) {
             if (Ref->End - Ref->Begin < 8) throw BinaryException("Invalid Havok compendium reference");
             Result.CompendiumID = ReadU64(Data, Ref->Begin);
-            if (!Types) throw BinaryException("This Havok tagfile keeps its types in a compendium; read the compendium and pass it in");
+            if (!Types)
+                throw BinaryException(
+                  "This Havok tagfile keeps its types in a compendium; read the compendium and pass it in");
             if (std::find(Types->IDs.begin(), Types->IDs.end(), *Result.CompendiumID) == Types->IDs.end()) {
                 throw BinaryException("The compendium given isn't the one this Havok tagfile uses");
             }
@@ -403,7 +415,8 @@ namespace Souls::Havok {
         const bool Signed   = (File->Types->SubtypeOf(Type) & 0x200) != 0;
         const uint8_t* P    = Bytes(Size);
         switch (Size) {
-            case 1: return Signed ? int64_t(int8_t(P[0])) : int64_t(P[0]);
+            case 1:
+                return Signed ? int64_t(int8_t(P[0])) : int64_t(P[0]);
             case 2: {
                 uint16_t V;
                 std::memcpy(&V, P, 2);
@@ -419,7 +432,8 @@ namespace Souls::Havok {
                 std::memcpy(&V, P, 8);
                 return V;
             }
-            default: throw BinaryException("Havok integer of unexpected size in " + TypeName());
+            default:
+                throw BinaryException("Havok integer of unexpected size in " + TypeName());
         }
     }
 
@@ -487,13 +501,15 @@ namespace Souls::Havok {
 
     std::vector<float> Value::AsFloats() const {
         std::vector<float> Result(Size());
-        for (size_t I = 0; I < Result.size(); ++I) Result[I] = static_cast<float>(At(I).AsFloat());
+        for (size_t I = 0; I < Result.size(); ++I)
+            Result[I] = static_cast<float>(At(I).AsFloat());
         return Result;
     }
 
     std::vector<int64_t> Value::AsInts() const {
         std::vector<int64_t> Result(Size());
-        for (size_t I = 0; I < Result.size(); ++I) Result[I] = At(I).AsInt();
+        for (size_t I = 0; I < Result.size(); ++I)
+            Result[I] = At(I).AsInt();
         return Result;
     }
 

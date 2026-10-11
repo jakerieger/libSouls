@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -31,7 +35,7 @@ namespace Souls {
             /// @brief Name given to this value, if any.
             std::optional<std::string> Name;
             /// @brief Value of this entry, of the same type as the parent TDF.
-            Value Val = int32_t{0};
+            Value Val = int32_t {0};
         };
 
         /// @brief The identifier of this type.

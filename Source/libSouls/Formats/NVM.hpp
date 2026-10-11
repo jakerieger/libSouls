@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -21,23 +25,23 @@ namespace Souls {
     public:
         /// @brief Available AI properties of a triangle.
         enum class TriangleFlags : int32_t {
-            None          = 0x0000,
-            InsideWall    = 0x0001,
-            BlockGate     = 0x0002,
-            ClosedDoor    = 0x0004,
-            Door          = 0x0008,
-            Hole          = 0x0010,
-            Ladder        = 0x0020,
-            LargeSpace    = 0x0040,
-            Edge          = 0x0080,
-            Event         = 0x0100,
-            LandingPoint  = 0x0200,
-            FloorToWall   = 0x0400,
-            Degenerate    = 0x0800,
-            Wall          = 0x1000,
-            Block         = 0x2000,
-            Gate          = 0x4000,
-            Disable       = 0x8000,
+            None         = 0x0000,
+            InsideWall   = 0x0001,
+            BlockGate    = 0x0002,
+            ClosedDoor   = 0x0004,
+            Door         = 0x0008,
+            Hole         = 0x0010,
+            Ladder       = 0x0020,
+            LargeSpace   = 0x0040,
+            Edge         = 0x0080,
+            Event        = 0x0100,
+            LandingPoint = 0x0200,
+            FloorToWall  = 0x0400,
+            Degenerate   = 0x0800,
+            Wall         = 0x1000,
+            Block        = 0x2000,
+            Gate         = 0x4000,
+            Disable      = 0x8000,
         };
 
         /// @brief A surface with flags indicating how AI should behave on it.

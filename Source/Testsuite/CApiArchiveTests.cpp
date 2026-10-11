@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -15,12 +19,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     namespace fs = std::filesystem;
@@ -44,10 +48,11 @@ namespace {
         CHECK(souls_binder_set_compression(Bxf, SOULS_DCX_NONE) == SOULS_ERR_UNSUPPORTED);
         CHECK(souls_bxf_write_files(Bxf, Header.c_str(), Data.c_str()) == SOULS_OK);
 
-        SoulsBuffer MemHeader{}, MemData{};
+        SoulsBuffer MemHeader {}, MemData {};
         CHECK(souls_bxf_write_memory(Bxf, &MemHeader, &MemData) == SOULS_OK && MemHeader.size > 0 && MemData.size > 0);
         SoulsBinder* Whole = souls_bxf_read_memory(Kind, MemHeader.data, MemHeader.size, MemData.data, MemData.size);
-        CHECK(Whole != nullptr && souls_binder_file_count(Whole) == 2 && souls_binder_find_file_suffix(Whole, "second.bin") == 1);
+        CHECK(Whole != nullptr && souls_binder_file_count(Whole) == 2 &&
+              souls_binder_find_file_suffix(Whole, "second.bin") == 1);
         souls_binder_free(Whole);
         souls_buffer_free(MemHeader);
         souls_buffer_free(MemData);
@@ -103,21 +108,25 @@ int TestCApiArchivesSynthetic() {
 
 // The real Elden Ring archives: decrypt the headers with the keys in the exe, find files by path, and extract them.
 int TestCApiArchivesElden() {
-    Failures        = 0;
+    Failures            = 0;
     const fs::path Game = "C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game";
     if (!fs::exists(Game / "eldenring.exe") || !fs::exists(Game / "Data0.bhd")) {
         std::printf("Real archive C API checks skipped (no Elden Ring install)\n");
         return TestSkipped;
     }
-    const std::string Exe    = (Game / "eldenring.exe").string();
-    const std::string Oodle  = (Game / "oo2core_6_win64.dll").string();
+    const std::string Exe   = (Game / "eldenring.exe").string();
+    const std::string Oodle = (Game / "oo2core_6_win64.dll").string();
     if (fs::exists(Game / "oo2core_6_win64.dll")) souls_oodle_set_dll_path(Oodle.c_str());
 
     // Files that should be in the archives of every unmodified install.
-    const char* Paths[] = {"/map/mapstudio/m10_00_00_00.msb.dcx", "/map/mapstudio/m11_00_00_00.msb.dcx",
-                           "/map/mapstudio/m60_44_36_00.msb.dcx", "/chr/c0000.chrbnd.dcx",
-                           "/msg/engus/item.msgbnd.dcx",          "/regulation.bin",
-                           "/event/common.emevd.dcx",             "/menu/hi/00_solo.tpf.dcx"};
+    const char* Paths[] = {"/map/mapstudio/m10_00_00_00.msb.dcx",
+                           "/map/mapstudio/m11_00_00_00.msb.dcx",
+                           "/map/mapstudio/m60_44_36_00.msb.dcx",
+                           "/chr/c0000.chrbnd.dcx",
+                           "/msg/engus/item.msgbnd.dcx",
+                           "/regulation.bin",
+                           "/event/common.emevd.dcx",
+                           "/menu/hi/00_solo.tpf.dcx"};
 
     int Found = 0;
     for (const char* Name : {"Data0", "Data1", "Data2", "Data3", "DLC"}) {
@@ -141,7 +150,11 @@ int TestCApiArchivesElden() {
             if (Index < 0) continue;
             ++Found;
             SoulsBuffer File = souls_bhd5_extract(Bhd, Bdt, static_cast<size_t>(Index));
-            std::printf("  %s: %s -> %zu bytes%s\n", Name, Path, File.size, souls_bhd5_file_is_encrypted(Bhd, static_cast<size_t>(Index)) ? " (encrypted)" : "");
+            std::printf("  %s: %s -> %zu bytes%s\n",
+                        Name,
+                        Path,
+                        File.size,
+                        souls_bhd5_file_is_encrypted(Bhd, static_cast<size_t>(Index)) ? " (encrypted)" : "");
             CHECK(File.size > 0);
             // Anything with .dcx in its name should be a DCX that decompresses.
             if (std::strstr(Path, ".dcx") && File.size > 0) {

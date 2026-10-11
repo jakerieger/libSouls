@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "FlverCommon.hpp"
 
@@ -203,54 +207,81 @@ namespace Souls::FLVER {
 
     const char* LayoutTypeName(LayoutType Type) {
         switch (Type) {
-            case LayoutType::Float2: return "Float2";
-            case LayoutType::Float3: return "Float3";
-            case LayoutType::Float4: return "Float4";
-            case LayoutType::Byte4A: return "Byte4A";
-            case LayoutType::Byte4B: return "Byte4B";
-            case LayoutType::Short2toFloat2: return "Short2toFloat2";
-            case LayoutType::Byte4C: return "Byte4C";
-            case LayoutType::UV: return "UV";
-            case LayoutType::UVPair: return "UVPair";
-            case LayoutType::ShortBoneIndices: return "ShortBoneIndices";
-            case LayoutType::Short4toFloat4A: return "Short4toFloat4A";
-            case LayoutType::Short4toFloat4B: return "Short4toFloat4B";
-            case LayoutType::Byte4E: return "Byte4E";
-            case LayoutType::EdgeCompressed: return "EdgeCompressed";
+            case LayoutType::Float2:
+                return "Float2";
+            case LayoutType::Float3:
+                return "Float3";
+            case LayoutType::Float4:
+                return "Float4";
+            case LayoutType::Byte4A:
+                return "Byte4A";
+            case LayoutType::Byte4B:
+                return "Byte4B";
+            case LayoutType::Short2toFloat2:
+                return "Short2toFloat2";
+            case LayoutType::Byte4C:
+                return "Byte4C";
+            case LayoutType::UV:
+                return "UV";
+            case LayoutType::UVPair:
+                return "UVPair";
+            case LayoutType::ShortBoneIndices:
+                return "ShortBoneIndices";
+            case LayoutType::Short4toFloat4A:
+                return "Short4toFloat4A";
+            case LayoutType::Short4toFloat4B:
+                return "Short4toFloat4B";
+            case LayoutType::Byte4E:
+                return "Byte4E";
+            case LayoutType::EdgeCompressed:
+                return "EdgeCompressed";
         }
         return "Unknown";
     }
 
     const char* LayoutSemanticName(LayoutSemantic Semantic) {
         switch (Semantic) {
-            case LayoutSemantic::Position: return "Position";
-            case LayoutSemantic::BoneWeights: return "BoneWeights";
-            case LayoutSemantic::BoneIndices: return "BoneIndices";
-            case LayoutSemantic::Normal: return "Normal";
-            case LayoutSemantic::UV: return "UV";
-            case LayoutSemantic::Tangent: return "Tangent";
-            case LayoutSemantic::Bitangent: return "Bitangent";
-            case LayoutSemantic::VertexColor: return "VertexColor";
+            case LayoutSemantic::Position:
+                return "Position";
+            case LayoutSemantic::BoneWeights:
+                return "BoneWeights";
+            case LayoutSemantic::BoneIndices:
+                return "BoneIndices";
+            case LayoutSemantic::Normal:
+                return "Normal";
+            case LayoutSemantic::UV:
+                return "UV";
+            case LayoutSemantic::Tangent:
+                return "Tangent";
+            case LayoutSemantic::Bitangent:
+                return "Bitangent";
+            case LayoutSemantic::VertexColor:
+                return "VertexColor";
         }
         return "Unknown";
     }
 
     int32_t LayoutMember::Size() const {
         switch (Type) {
-            case LayoutType::EdgeCompressed: return 1;
+            case LayoutType::EdgeCompressed:
+                return 1;
             case LayoutType::Byte4A:
             case LayoutType::Byte4B:
             case LayoutType::Short2toFloat2:
             case LayoutType::Byte4C:
             case LayoutType::UV:
-            case LayoutType::Byte4E: return 4;
+            case LayoutType::Byte4E:
+                return 4;
             case LayoutType::Float2:
             case LayoutType::UVPair:
             case LayoutType::ShortBoneIndices:
             case LayoutType::Short4toFloat4A:
-            case LayoutType::Short4toFloat4B: return 8;
-            case LayoutType::Float3: return 12;
-            case LayoutType::Float4: return 16;
+            case LayoutType::Short4toFloat4B:
+                return 8;
+            case LayoutType::Float3:
+                return 12;
+            case LayoutType::Float4:
+                return 16;
         }
         throw BinaryException("No size defined for buffer layout type " + std::to_string(static_cast<uint32_t>(Type)));
     }
@@ -261,7 +292,8 @@ namespace Souls::FLVER {
 
     int32_t LayoutSize(const LayoutMembers& Layout) {
         int32_t Size = 0;
-        for (const LayoutMember& Member : Layout) Size += Member.Size();
+        for (const LayoutMember& Member : Layout)
+            Size += Member.Size();
         return Size;
     }
 
@@ -284,11 +316,14 @@ namespace Souls::FLVER {
 
                 case LayoutSemantic::BoneWeights:
                     if (Type == LayoutType::Byte4A) {
-                        for (float& Weight : BoneWeights) Weight = Reader.ReadSByte() / 127.f;
+                        for (float& Weight : BoneWeights)
+                            Weight = Reader.ReadSByte() / 127.f;
                     } else if (Type == LayoutType::Byte4C) {
-                        for (float& Weight : BoneWeights) Weight = Reader.ReadByte() / 255.f;
+                        for (float& Weight : BoneWeights)
+                            Weight = Reader.ReadByte() / 255.f;
                     } else if (Type == LayoutType::UVPair || Type == LayoutType::Short4toFloat4A) {
-                        for (float& Weight : BoneWeights) Weight = Reader.ReadInt16() / 32767.f;
+                        for (float& Weight : BoneWeights)
+                            Weight = Reader.ReadInt16() / 32767.f;
                     } else {
                         NotImplemented("Read", Type, Member.Semantic);
                     }
@@ -296,9 +331,11 @@ namespace Souls::FLVER {
 
                 case LayoutSemantic::BoneIndices:
                     if (Type == LayoutType::Byte4B || Type == LayoutType::Byte4E) {
-                        for (int32_t& Index : BoneIndices) Index = Reader.ReadByte();
+                        for (int32_t& Index : BoneIndices)
+                            Index = Reader.ReadByte();
                     } else if (Type == LayoutType::ShortBoneIndices) {
-                        for (int32_t& Index : BoneIndices) Index = Reader.ReadUInt16();
+                        for (int32_t& Index : BoneIndices)
+                            Index = Reader.ReadUInt16();
                     } else {
                         NotImplemented("Read", Type, Member.Semantic);
                     }
@@ -308,9 +345,9 @@ namespace Souls::FLVER {
                     if (Type == LayoutType::Float3) {
                         Normal = Reader.ReadVector3();
                     } else if (Type == LayoutType::Float4) {
-                        Normal              = Reader.ReadVector3();
-                        const float W       = Reader.ReadFloat();
-                        NormalW             = static_cast<int32_t>(W);
+                        Normal        = Reader.ReadVector3();
+                        const float W = Reader.ReadFloat();
+                        NormalW       = static_cast<int32_t>(W);
                         if (W != static_cast<float>(NormalW)) {
                             throw BinaryException("Float4 Normal W was not a whole number: " + std::to_string(W));
                         }
@@ -343,8 +380,9 @@ namespace Souls::FLVER {
                         const Vector2 Second = Reader.ReadVector2();
                         UVs.push_back({First.X, First.Y, 0.f});
                         UVs.push_back({Second.X, Second.Y, 0.f});
-                    } else if (Type == LayoutType::Byte4A || Type == LayoutType::Byte4B || Type == LayoutType::Short2toFloat2 ||
-                               Type == LayoutType::Byte4C || Type == LayoutType::UV) {
+                    } else if (Type == LayoutType::Byte4A || Type == LayoutType::Byte4B ||
+                               Type == LayoutType::Short2toFloat2 || Type == LayoutType::Byte4C ||
+                               Type == LayoutType::UV) {
                         UVs.push_back(ReadShortUV(Reader, UVFactor));
                     } else if (Type == LayoutType::UVPair) {
                         UVs.push_back(ReadShortUV(Reader, UVFactor));
@@ -392,7 +430,8 @@ namespace Souls::FLVER {
                     }
                     break;
 
-                default: NotImplemented("Read", Type, Member.Semantic);
+                default:
+                    NotImplemented("Read", Type, Member.Semantic);
             }
         }
     }
@@ -419,11 +458,14 @@ namespace Souls::FLVER {
 
                 case LayoutSemantic::BoneWeights:
                     if (Type == LayoutType::Byte4A) {
-                        for (const float Weight : BoneWeights) Writer.WriteSByte(ToSByte(Round(Weight * 127.f)));
+                        for (const float Weight : BoneWeights)
+                            Writer.WriteSByte(ToSByte(Round(Weight * 127.f)));
                     } else if (Type == LayoutType::Byte4C) {
-                        for (const float Weight : BoneWeights) Writer.WriteByte(ToByte(Round(Weight * 255.f)));
+                        for (const float Weight : BoneWeights)
+                            Writer.WriteByte(ToByte(Round(Weight * 255.f)));
                     } else if (Type == LayoutType::UVPair || Type == LayoutType::Short4toFloat4A) {
-                        for (const float Weight : BoneWeights) Writer.WriteInt16(ToShort(Round(Weight * 32767.f)));
+                        for (const float Weight : BoneWeights)
+                            Writer.WriteInt16(ToShort(Round(Weight * 32767.f)));
                     } else {
                         NotImplemented("Write", Type, Member.Semantic);
                     }
@@ -431,9 +473,11 @@ namespace Souls::FLVER {
 
                 case LayoutSemantic::BoneIndices:
                     if (Type == LayoutType::Byte4B || Type == LayoutType::Byte4E) {
-                        for (const int32_t Index : BoneIndices) Writer.WriteByte(static_cast<uint8_t>(Index));
+                        for (const int32_t Index : BoneIndices)
+                            Writer.WriteByte(static_cast<uint8_t>(Index));
                     } else if (Type == LayoutType::ShortBoneIndices) {
-                        for (const int32_t Index : BoneIndices) Writer.WriteUInt16(static_cast<uint16_t>(Index));
+                        for (const int32_t Index : BoneIndices)
+                            Writer.WriteUInt16(static_cast<uint16_t>(Index));
                     } else {
                         NotImplemented("Write", Type, Member.Semantic);
                     }
@@ -476,8 +520,9 @@ namespace Souls::FLVER {
                         UV = NextUV();
                         Writer.WriteFloat(UV.X);
                         Writer.WriteFloat(UV.Y);
-                    } else if (Type == LayoutType::Byte4A || Type == LayoutType::Byte4B || Type == LayoutType::Short2toFloat2 ||
-                               Type == LayoutType::Byte4C || Type == LayoutType::UV) {
+                    } else if (Type == LayoutType::Byte4A || Type == LayoutType::Byte4B ||
+                               Type == LayoutType::Short2toFloat2 || Type == LayoutType::Byte4C ||
+                               Type == LayoutType::UV) {
                         WriteShortUV(Writer, UV);
                     } else if (Type == LayoutType::UVPair) {
                         WriteShortUV(Writer, UV);
@@ -495,7 +540,8 @@ namespace Souls::FLVER {
                 }
 
                 case LayoutSemantic::Tangent: {
-                    if (Cursor.Tangent >= Tangents.size()) throw BinaryException("A vertex has fewer tangents than its layout needs");
+                    if (Cursor.Tangent >= Tangents.size())
+                        throw BinaryException("A vertex has fewer tangents than its layout needs");
                     const Vector4& Tangent = Tangents[Cursor.Tangent++];
                     if (Type == LayoutType::Float4) {
                         Writer.WriteVector4(Tangent);
@@ -520,7 +566,8 @@ namespace Souls::FLVER {
                     break;
 
                 case LayoutSemantic::VertexColor: {
-                    if (Cursor.Color >= Colors.size()) throw BinaryException("A vertex has fewer colors than its layout needs");
+                    if (Cursor.Color >= Colors.size())
+                        throw BinaryException("A vertex has fewer colors than its layout needs");
                     const VertexColor& Color = Colors[Cursor.Color++];
                     if (Type == LayoutType::Float4) {
                         WriteFloatRGBA(Writer, Color);
@@ -532,14 +579,16 @@ namespace Souls::FLVER {
                     break;
                 }
 
-                default: NotImplemented("Write", Type, Member.Semantic);
+                default:
+                    NotImplemented("Write", Type, Member.Semantic);
             }
         }
     }
 
     Matrix4x4 Bone::ComputeLocalTransform() const {
-        return Matrix4x4::CreateScale(Scale) * Matrix4x4::CreateRotationX(Rotation.X) * Matrix4x4::CreateRotationZ(Rotation.Z) *
-               Matrix4x4::CreateRotationY(Rotation.Y) * Matrix4x4::CreateTranslation(Translation);
+        return Matrix4x4::CreateScale(Scale) * Matrix4x4::CreateRotationX(Rotation.X) *
+               Matrix4x4::CreateRotationZ(Rotation.Z) * Matrix4x4::CreateRotationY(Rotation.Y) *
+               Matrix4x4::CreateTranslation(Translation);
     }
 
     void Bone::Read(BinaryReader& Reader, bool Unicode) {

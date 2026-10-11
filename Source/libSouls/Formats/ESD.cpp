@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "ESD.hpp"
 
@@ -29,9 +33,7 @@ namespace Souls {
         };
 
         std::vector<int64_t> ReadVarints(BinaryReader& Reader, int64_t Count) {
-            if (Count < 0 || Count > Reader.Remaining()) {
-                throw BinaryException("Invalid ESD offset count");
-            }
+            if (Count < 0 || Count > Reader.Remaining()) { throw BinaryException("Invalid ESD offset count"); }
             std::vector<int64_t> Values;
             Values.reserve(static_cast<size_t>(Count));
             for (int64_t I = 0; I < Count; ++I) {
@@ -41,9 +43,7 @@ namespace Souls {
         }
 
         std::vector<uint8_t> GetBytes(BinaryReader& Reader, int64_t Offset, int64_t Length) {
-            if (Length < 0) {
-                throw BinaryException("Invalid ESD byte count");
-            }
+            if (Length < 0) { throw BinaryException("Invalid ESD byte count"); }
             Reader.StepIn(Offset);
             std::vector<uint8_t> Bytes = Reader.ReadBytes(static_cast<size_t>(Length));
             Reader.StepOut();
@@ -52,8 +52,8 @@ namespace Souls {
 
         CommandCall ReadCommandCall(BinaryReader& Reader, int64_t DataStart) {
             CommandCall C;
-            C.CommandBank           = Reader.Assert<int32_t>(1, 5, 6, 7);
-            C.CommandID             = Reader.ReadInt32();
+            C.CommandBank            = Reader.Assert<int32_t>(1, 5, 6, 7);
+            C.CommandID              = Reader.ReadInt32();
             const int64_t ArgsOffset = Reader.ReadVarint();
             const int64_t ArgsCount  = Reader.ReadVarint();
             Reader.StepIn(DataStart + ArgsOffset);
@@ -66,7 +66,8 @@ namespace Souls {
             return C;
         }
 
-        std::vector<CommandCall> ReadCommandCalls(BinaryReader& Reader, int64_t DataStart, int64_t Offset, int64_t Count) {
+        std::vector<CommandCall>
+        ReadCommandCalls(BinaryReader& Reader, int64_t DataStart, int64_t Offset, int64_t Count) {
             std::vector<CommandCall> Calls;
             Reader.Seek(DataStart + Offset);
             for (int64_t I = 0; I < Count; ++I) {
@@ -77,19 +78,19 @@ namespace Souls {
 
         RawState ReadState(BinaryReader& Reader, int64_t DataStart) {
             RawState S;
-            S.ID                              = Reader.ReadVarint();
-            const int64_t ConditionOffsetsOff = Reader.ReadVarint();
+            S.ID                               = Reader.ReadVarint();
+            const int64_t ConditionOffsetsOff  = Reader.ReadVarint();
             const int64_t ConditionOffsetCount = Reader.ReadVarint();
-            const int64_t EntryOffset         = Reader.ReadVarint();
-            const int64_t EntryCount          = Reader.ReadVarint();
-            const int64_t ExitOffset          = Reader.ReadVarint();
-            const int64_t ExitCount           = Reader.ReadVarint();
-            const int64_t WhileOffset         = Reader.ReadVarint();
-            const int64_t WhileCount          = Reader.ReadVarint();
+            const int64_t EntryOffset          = Reader.ReadVarint();
+            const int64_t EntryCount           = Reader.ReadVarint();
+            const int64_t ExitOffset           = Reader.ReadVarint();
+            const int64_t ExitCount            = Reader.ReadVarint();
+            const int64_t WhileOffset          = Reader.ReadVarint();
+            const int64_t WhileCount           = Reader.ReadVarint();
 
             Reader.StepIn(0);
             Reader.Seek(DataStart + ConditionOffsetsOff);
-            S.ConditionOffsets      = ReadVarints(Reader, ConditionOffsetCount);
+            S.ConditionOffsets    = ReadVarints(Reader, ConditionOffsetCount);
             S.Value.EntryCommands = ReadCommandCalls(Reader, DataStart, EntryOffset, EntryCount);
             S.Value.ExitCommands  = ReadCommandCalls(Reader, DataStart, ExitOffset, ExitCount);
             S.Value.WhileCommands = ReadCommandCalls(Reader, DataStart, WhileOffset, WhileCount);
@@ -110,13 +111,15 @@ namespace Souls {
             Reader.StepIn(0);
             C.Value->PassCommands = ReadCommandCalls(Reader, DataStart, PassCommandsOffset, PassCommandCount);
             Reader.Seek(DataStart + ConditionOffsetsOffset);
-            C.ConditionOffsets  = ReadVarints(Reader, ConditionOffsetCount);
+            C.ConditionOffsets = ReadVarints(Reader, ConditionOffsetCount);
             C.Value->Evaluator = GetBytes(Reader, DataStart + EvaluatorOffset, EvaluatorLength);
             Reader.StepOut();
             return C;
         }
 
-        void ResolveCondition(RawCondition& C, const std::map<int64_t, int64_t>& StateIDs, std::map<int64_t, RawCondition>& Conditions) {
+        void ResolveCondition(RawCondition& C,
+                              const std::map<int64_t, int64_t>& StateIDs,
+                              std::map<int64_t, RawCondition>& Conditions) {
             if (C.StateOffset == -2) {
                 return;  // already processed
             }
@@ -124,9 +127,7 @@ namespace Souls {
                 C.Value->TargetState.reset();
             } else {
                 const auto Found = StateIDs.find(C.StateOffset);
-                if (Found == StateIDs.end()) {
-                    throw BinaryException("Condition target state not found.");
-                }
+                if (Found == StateIDs.end()) { throw BinaryException("Condition target state not found."); }
                 C.Value->TargetState = Found->second;
             }
             C.StateOffset = -2;
@@ -136,9 +137,7 @@ namespace Souls {
             C.Value->Subconditions.clear();
             for (const int64_t Offset : Offsets) {
                 const auto Found = Conditions.find(Offset);
-                if (Found == Conditions.end()) {
-                    throw BinaryException("Subcondition not found.");
-                }
+                if (Found == Conditions.end()) { throw BinaryException("Subcondition not found."); }
                 C.Value->Subconditions.push_back(Found->second.Value);
             }
             for (const int64_t Offset : Offsets) {
@@ -158,8 +157,11 @@ namespace Souls {
         }
 
         // Writes one list of command calls (or fills -1 when empty), appending them to the global command list.
-        void WriteCommandList(BinaryWriter& Writer, const std::string& ReservationName, const std::vector<CommandCall>& List,
-                              int64_t DataStart, std::vector<const CommandCall*>& Commands) {
+        void WriteCommandList(BinaryWriter& Writer,
+                              const std::string& ReservationName,
+                              const std::vector<CommandCall>& List,
+                              int64_t DataStart,
+                              std::vector<const CommandCall*>& Commands) {
             if (List.empty()) {
                 Writer.FillVarint(ReservationName, -1);
                 return;
@@ -173,19 +175,15 @@ namespace Souls {
     }  // namespace
 
     bool ESD::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = Reader.GetASCII(0, 4);
         return Magic == "fSSL" || Magic == "fsSL";
     }
 
     void ESD::ReadImpl(BinaryReader& Reader) {
-        Reader.Order = Endian::Little;
+        Reader.Order            = Endian::Little;
         const std::string Magic = Reader.ReadString(4);
-        if (Magic != "fSSL" && Magic != "fsSL") {
-            throw BinaryException("Not an ESD: bad magic");
-        }
+        if (Magic != "fSSL" && Magic != "fsSL") { throw BinaryException("Not an ESD: bad magic"); }
         LongFormat        = Magic == "fsSL";
         Reader.VarintLong = LongFormat;
 
@@ -222,9 +220,7 @@ namespace Souls {
         Unk74 = Reader.ReadInt32();
         Unk78 = Reader.ReadInt32();
         Unk7C = Reader.ReadInt32();
-        if (LongFormat) {
-            Reader.Assert<int32_t>(0);
-        }
+        if (LongFormat) { Reader.Assert<int32_t>(0); }
         Reader.ReadVarint();  // state groups offset
         Reader.AssertVarint(StateGroupCount);
         const int64_t NameOffset = Reader.ReadVarint();
@@ -254,15 +250,12 @@ namespace Souls {
             // Every state group with more than one state has a dummy state after the end identical to the first.
             if (StateCountG > 1) {
                 const std::vector<uint8_t> First = GetBytes(Reader, DataStart + StatesOffset, StateSize);
-                const std::vector<uint8_t> Dummy = GetBytes(Reader, DataStart + StatesOffset + static_cast<int64_t>(StateSize) * StateCountG, StateSize);
-                if (First != Dummy) {
-                    throw BinaryException("ESD dummy state does not match the first state");
-                }
+                const std::vector<uint8_t> Dummy =
+                  GetBytes(Reader, DataStart + StatesOffset + static_cast<int64_t>(StateSize) * StateCountG, StateSize);
+                if (First != Dummy) { throw BinaryException("ESD dummy state does not match the first state"); }
             }
             for (const auto& [Existing, Offsets] : GroupOffsets) {
-                if (Existing == ID) {
-                    throw BinaryException("Duplicate state group ID.");
-                }
+                if (Existing == ID) { throw BinaryException("Duplicate state group ID."); }
             }
             GroupOffsets.emplace_back(ID, std::move(StateOffsets));
         }
@@ -275,16 +268,14 @@ namespace Souls {
         std::map<int64_t, RawCondition> Conditions;
         std::unordered_map<const Condition*, int64_t> RawByPointer;
         for (int32_t I = 0; I < ConditionCount; ++I) {
-            const int64_t At = Reader.Position() - DataStart;
-            Conditions[At]   = ReadCondition(Reader, DataStart);
+            const int64_t At                         = Reader.Position() - DataStart;
+            Conditions[At]                           = ReadCondition(Reader, DataStart);
             RawByPointer[Conditions[At].Value.get()] = At;
         }
         for (auto& [Offset, S] : States) {
             for (const int64_t ConditionOffset : S.ConditionOffsets) {
                 const auto Found = Conditions.find(ConditionOffset);
-                if (Found == Conditions.end()) {
-                    throw BinaryException("State condition not found.");
-                }
+                if (Found == Conditions.end()) { throw BinaryException("State condition not found."); }
                 S.Value.Conditions.push_back(Found->second.Value);
             }
             S.ConditionOffsets.clear();
@@ -294,20 +285,15 @@ namespace Souls {
         for (const auto& [GroupID, StateOffsets] : GroupOffsets) {
             std::map<int64_t, int64_t> StateIDs;  // state offset -> state ID
             if (StateOffsets.size() > 1) {
-                const int64_t WeirdOffset = StateOffsets[0] + static_cast<int64_t>(StateSize) * static_cast<int64_t>(StateOffsets.size());
-                if (States.erase(WeirdOffset) == 0) {
-                    throw BinaryException("Weird state not found.");
-                }
+                const int64_t WeirdOffset =
+                  StateOffsets[0] + static_cast<int64_t>(StateSize) * static_cast<int64_t>(StateOffsets.size());
+                if (States.erase(WeirdOffset) == 0) { throw BinaryException("Weird state not found."); }
             }
             std::map<int64_t, State> Group;
             for (const int64_t Offset : StateOffsets) {
                 const auto Found = States.find(Offset);
-                if (Found == States.end()) {
-                    throw BinaryException("State not found.");
-                }
-                if (Group.contains(Found->second.ID)) {
-                    throw BinaryException("Duplicate state ID.");
-                }
+                if (Found == States.end()) { throw BinaryException("State not found."); }
+                if (Group.contains(Found->second.ID)) { throw BinaryException("Duplicate state ID."); }
                 Group[Found->second.ID] = std::move(Found->second.Value);
                 StateIDs[Offset]        = Found->second.ID;
                 States.erase(Found);
@@ -319,9 +305,7 @@ namespace Souls {
             }
             StateGroups[GroupID] = std::move(Group);
         }
-        if (!States.empty()) {
-            throw BinaryException("Orphaned states found.");
-        }
+        if (!States.empty()) { throw BinaryException("Orphaned states found."); }
     }
 
     void ESD::WriteImpl(BinaryWriter& Writer) {
@@ -367,9 +351,7 @@ namespace Souls {
         Writer.WriteInt32(Unk74);
         Writer.WriteInt32(Unk78);
         Writer.WriteInt32(Unk7C);
-        if (LongFormat) {
-            Writer.WriteInt32(0);
-        }
+        if (LongFormat) { Writer.WriteInt32(0); }
         Writer.ReserveVarint("StateGroupsOffset");
         Writer.WriteVarint(static_cast<int64_t>(StateGroups.size()));
         Writer.ReserveVarint("NameOffset");
@@ -419,7 +401,7 @@ namespace Souls {
         // Every unique condition (by identity) of each group, parents before their subconditions.
         std::map<int64_t, std::vector<const Condition*>> Conditions;
         for (const auto& [GroupID, Group] : StateGroups) {
-            std::vector<const Condition*>& List = Conditions[GroupID];
+            std::vector<const Condition*>& List             = Conditions[GroupID];
             const std::function<void(const Condition*)> Add = [&](const Condition* C) {
                 if (std::find(List.begin(), List.end(), C) == List.end()) {
                     List.push_back(C);
@@ -443,7 +425,7 @@ namespace Souls {
         std::unordered_map<const Condition*, int64_t> ConditionOffsets;
         for (const auto& [GroupID, List] : Conditions) {
             for (size_t I = 0; I < List.size(); ++I) {
-                const Condition* C = List[I];
+                const Condition* C  = List[I];
                 ConditionOffsets[C] = Writer.Position() - DataStart;
                 if (C->TargetState) {
                     Writer.WriteVarint(StateOffsets.at(GroupID).at(*C->TargetState));
@@ -462,13 +444,29 @@ namespace Souls {
         std::vector<const CommandCall*> Commands;
         for (const auto& [GroupID, Group] : StateGroups) {
             for (const auto& [StateID, S] : Group) {
-                WriteCommandList(Writer, Key("State", GroupID, StateID, "EntryCommandsOffset"), S.EntryCommands, DataStart, Commands);
-                WriteCommandList(Writer, Key("State", GroupID, StateID, "ExitCommandsOffset"), S.ExitCommands, DataStart, Commands);
-                WriteCommandList(Writer, Key("State", GroupID, StateID, "WhileCommandsOffset"), S.WhileCommands, DataStart, Commands);
+                WriteCommandList(Writer,
+                                 Key("State", GroupID, StateID, "EntryCommandsOffset"),
+                                 S.EntryCommands,
+                                 DataStart,
+                                 Commands);
+                WriteCommandList(Writer,
+                                 Key("State", GroupID, StateID, "ExitCommandsOffset"),
+                                 S.ExitCommands,
+                                 DataStart,
+                                 Commands);
+                WriteCommandList(Writer,
+                                 Key("State", GroupID, StateID, "WhileCommandsOffset"),
+                                 S.WhileCommands,
+                                 DataStart,
+                                 Commands);
             }
             const auto& List = Conditions.at(GroupID);
             for (size_t I = 0; I < List.size(); ++I) {
-                WriteCommandList(Writer, Key("Condition", GroupID, static_cast<int64_t>(I), "PassCommandsOffset"), List[I]->PassCommands, DataStart, Commands);
+                WriteCommandList(Writer,
+                                 Key("Condition", GroupID, static_cast<int64_t>(I), "PassCommandsOffset"),
+                                 List[I]->PassCommands,
+                                 DataStart,
+                                 Commands);
             }
         }
         Writer.Fill<int32_t>("CommandCallCount", static_cast<int32_t>(Commands.size()));
@@ -514,13 +512,15 @@ namespace Souls {
 
         for (const auto& [GroupID, List] : Conditions) {
             for (size_t I = 0; I < List.size(); ++I) {
-                Writer.FillVarint(Key("Condition", GroupID, static_cast<int64_t>(I), "EvaluatorOffset"), Writer.Position() - DataStart);
+                Writer.FillVarint(Key("Condition", GroupID, static_cast<int64_t>(I), "EvaluatorOffset"),
+                                  Writer.Position() - DataStart);
                 Writer.WriteBytes(List[I]->Evaluator);
             }
         }
         for (size_t I = 0; I < Commands.size(); ++I) {
             for (size_t A = 0; A < Commands[I]->Arguments.size(); ++A) {
-                Writer.FillVarint("Command" + std::to_string(I) + "-" + std::to_string(A) + ":BytecodeOffset", Writer.Position() - DataStart);
+                Writer.FillVarint("Command" + std::to_string(I) + "-" + std::to_string(A) + ":BytecodeOffset",
+                                  Writer.Position() - DataStart);
                 Writer.WriteBytes(Commands[I]->Arguments[A]);
             }
         }

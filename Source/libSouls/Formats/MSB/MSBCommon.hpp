@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -84,7 +88,7 @@ namespace Souls::Msb {
             /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Circle;
             /// @brief The radius of the circle.
-            float Radius                    = 1;
+            float Radius = 1;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
@@ -97,7 +101,7 @@ namespace Souls::Msb {
             /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Sphere;
             /// @brief The radius of the sphere.
-            float Radius                    = 1;
+            float Radius = 1;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
@@ -110,9 +114,9 @@ namespace Souls::Msb {
             /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Cylinder;
             /// @brief The radius of the cylinder.
-            float Radius                    = 1;
+            float Radius = 1;
             /// @brief The height of the cylinder.
-            float Height                    = 1;
+            float Height = 1;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
@@ -126,9 +130,9 @@ namespace Souls::Msb {
             /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Rect;
             /// @brief The width of the rectangle.
-            float Width                     = 1;
+            float Width = 1;
             /// @brief The depth of the rectangle.
-            float Depth                     = 1;
+            float Depth = 1;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
@@ -142,11 +146,11 @@ namespace Souls::Msb {
             /// @brief The shape type this struct holds.
             static constexpr ShapeType Type = ShapeType::Box;
             /// @brief The width of the box.
-            float Width                     = 1;
+            float Width = 1;
             /// @brief The depth of the box.
-            float Depth                     = 1;
+            float Depth = 1;
             /// @brief The height of the box.
-            float Height                    = 1;
+            float Height = 1;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
             template<typename V>
             void Fields(V& F) {
@@ -184,7 +188,12 @@ namespace Souls::Msb {
     }  // namespace Shapes
 
     /// @brief Describes the space that a region occupies.
-    using Shape = std::variant<Shapes::Point, Shapes::Circle, Shapes::Sphere, Shapes::Cylinder, Shapes::Rect, Shapes::Box,
+    using Shape = std::variant<Shapes::Point,
+                               Shapes::Circle,
+                               Shapes::Sphere,
+                               Shapes::Cylinder,
+                               Shapes::Rect,
+                               Shapes::Box,
                                Shapes::Composite>;
 
     /// @brief The type of the shape a Shape holds.
@@ -200,14 +209,22 @@ namespace Souls::Msb {
     /// @brief Creates a shape of the given type; throws for types that don't exist.
     inline Shape CreateShape(ShapeType Type) {
         switch (Type) {
-            case ShapeType::Point: return Shapes::Point{};
-            case ShapeType::Circle: return Shapes::Circle{};
-            case ShapeType::Sphere: return Shapes::Sphere{};
-            case ShapeType::Cylinder: return Shapes::Cylinder{};
-            case ShapeType::Rect: return Shapes::Rect{};
-            case ShapeType::Box: return Shapes::Box{};
-            case ShapeType::Composite: return Shapes::Composite{};
-            default: throw BinaryException("Unimplemented MSB shape type: " + std::to_string(static_cast<uint32_t>(Type)));
+            case ShapeType::Point:
+                return Shapes::Point {};
+            case ShapeType::Circle:
+                return Shapes::Circle {};
+            case ShapeType::Sphere:
+                return Shapes::Sphere {};
+            case ShapeType::Cylinder:
+                return Shapes::Cylinder {};
+            case ShapeType::Rect:
+                return Shapes::Rect {};
+            case ShapeType::Box:
+                return Shapes::Box {};
+            case ShapeType::Composite:
+                return Shapes::Composite {};
+            default:
+                throw BinaryException("Unimplemented MSB shape type: " + std::to_string(static_cast<uint32_t>(Type)));
         }
     }
 
@@ -298,9 +315,7 @@ namespace Souls::Msb {
         /// @brief Looks up the name of the entry at an index (nullopt for -1).
         template<typename EntryT>
         std::optional<std::string> FindName(const std::vector<EntryT*>& List, int64_t Index) {
-            if (Index == -1) {
-                return std::nullopt;
-            }
+            if (Index == -1) { return std::nullopt; }
             if (Index < 0 || static_cast<size_t>(Index) >= List.size()) {
                 throw BinaryException("MSB reference index " + std::to_string(Index) + " is out of range");
             }
@@ -310,13 +325,9 @@ namespace Souls::Msb {
         /// @brief Looks up the index of the entry with a name (-1 for none).
         template<typename EntryT>
         int64_t FindIndex(const std::vector<EntryT*>& List, const std::optional<std::string>& Name) {
-            if (!Name) {
-                return -1;
-            }
+            if (!Name) { return -1; }
             for (size_t I = 0; I < List.size(); ++I) {
-                if (List[I]->Name == *Name) {
-                    return static_cast<int64_t>(I);
-                }
+                if (List[I]->Name == *Name) { return static_cast<int64_t>(I); }
             }
             throw BinaryException("MSB name not found: " + *Name);
         }
@@ -338,7 +349,8 @@ namespace Souls::Msb {
             }
             template<typename Tag, typename Storage>
             void operator()(Ref<Tag, Storage>& Reference) {
-                static_cast<std::optional<std::string>&>(Reference) = FindName(Lists.template List<Tag>(), Reference.Index);
+                static_cast<std::optional<std::string>&>(Reference) =
+                  FindName(Lists.template List<Tag>(), Reference.Index);
             }
             template<Scalar T, typename... Rest>
             void Const(T, Rest...) {}
@@ -409,9 +421,9 @@ namespace Souls::Msb {
             Reader.AssertMagic("MSB ");
             Reader.Assert<int32_t>(1);
             Reader.Assert<int32_t>(0x10);
-            Reader.Assert<uint8_t>(0);  // is big endian
-            Reader.Assert<uint8_t>(0);  // is bit big endian
-            Reader.Assert<uint8_t>(1);  // text encoding
+            Reader.Assert<uint8_t>(0);     // is big endian
+            Reader.Assert<uint8_t>(0);     // is bit big endian
+            Reader.Assert<uint8_t>(1);     // text encoding
             Reader.Assert<uint8_t>(0xFF);  // is 64-bit offset
         }
 

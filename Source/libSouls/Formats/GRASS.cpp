@@ -1,18 +1,20 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "GRASS.hpp"
 
 namespace Souls {
     bool GRASS::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 0x28) {
-            return false;
-        }
+        if (Reader.Length() < 0x28) { return false; }
         Reader.Order = Endian::Little;
-        return Reader.ReadAt<int32_t>(0) == 1 && Reader.ReadAt<int32_t>(4) == 0x28 && Reader.ReadAt<int32_t>(8) == 0x14 &&
-               Reader.ReadAt<int32_t>(0x10) == 0x24 && Reader.ReadAt<int32_t>(0x18) == 0x18 &&
-               Reader.ReadAt<int32_t>(0x20) == 0x18;
+        return Reader.ReadAt<int32_t>(0) == 1 && Reader.ReadAt<int32_t>(4) == 0x28 &&
+               Reader.ReadAt<int32_t>(8) == 0x14 && Reader.ReadAt<int32_t>(0x10) == 0x24 &&
+               Reader.ReadAt<int32_t>(0x18) == 0x18 && Reader.ReadAt<int32_t>(0x20) == 0x18;
     }
 
     void GRASS::ReadImpl(BinaryReader& Reader) {

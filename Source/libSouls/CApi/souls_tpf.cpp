@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -48,7 +52,7 @@ SOULS_C_API SoulsStatus souls_tpf_write_file(SoulsTPF* tpf, const char* path) {
 }
 
 SOULS_C_API SoulsBuffer souls_tpf_write_memory(SoulsTPF* tpf) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(Require(tpf, "tpf is NULL").Value.Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(Require(tpf, "tpf is NULL").Value.Write()); });
 }
 
 SOULS_C_API size_t souls_tpf_texture_count(const SoulsTPF* tpf) {
@@ -81,8 +85,8 @@ SOULS_C_API SoulsStatus souls_tpf_set_texture_bytes(SoulsTPF* tpf, size_t index,
     });
 }
 
-SOULS_C_API int64_t souls_tpf_add_texture(SoulsTPF* tpf, const char* name, uint8_t format, uint8_t flags1,
-                                          const uint8_t* dds, size_t size) {
+SOULS_C_API int64_t souls_tpf_add_texture(
+  SoulsTPF* tpf, const char* name, uint8_t format, uint8_t flags1, const uint8_t* dds, size_t size) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         if (!name) ThrowInvalid("name is NULL");
         auto& Textures  = Require(tpf, "tpf is NULL").Value.Textures;

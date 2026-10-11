@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -15,25 +19,23 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
-    namespace fs = std::filesystem;
+    namespace fs  = std::filesystem;
     using DefType = PARAMDEF::DefType;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -54,11 +56,12 @@ namespace {
         for (size_t I = 0; I < A.Fields.size(); ++I) {
             const auto& X = A.Fields[I];
             const auto& Y = B.Fields[I];
-            if (X.DisplayName != Y.DisplayName || X.DisplayType != Y.DisplayType || X.DisplayFormat != Y.DisplayFormat ||
-                X.Default != Y.Default || X.Minimum != Y.Minimum || X.Maximum != Y.Maximum || X.Increment != Y.Increment ||
-                X.EditorFlags != Y.EditorFlags || X.ArrayLength != Y.ArrayLength || X.Description != Y.Description ||
-                X.InternalType != Y.InternalType || X.InternalName != Y.InternalName || X.BitSize != Y.BitSize ||
-                X.SortID != Y.SortID || X.UnkB8 != Y.UnkB8 || X.UnkC0 != Y.UnkC0 || X.UnkC8 != Y.UnkC8) {
+            if (X.DisplayName != Y.DisplayName || X.DisplayType != Y.DisplayType ||
+                X.DisplayFormat != Y.DisplayFormat || X.Default != Y.Default || X.Minimum != Y.Minimum ||
+                X.Maximum != Y.Maximum || X.Increment != Y.Increment || X.EditorFlags != Y.EditorFlags ||
+                X.ArrayLength != Y.ArrayLength || X.Description != Y.Description || X.InternalType != Y.InternalType ||
+                X.InternalName != Y.InternalName || X.BitSize != Y.BitSize || X.SortID != Y.SortID ||
+                X.UnkB8 != Y.UnkB8 || X.UnkC0 != Y.UnkC0 || X.UnkC8 != Y.UnkC8) {
                 return false;
             }
         }
@@ -94,20 +97,21 @@ namespace {
         Add(DefType::s16, "small");
 
         // Values that differ from the defaults, so there's something to write.
-        Def.Fields[0].Default     = Version >= 203 ? PARAMDEF::EditorValue(int32_t{5}) : PARAMDEF::EditorValue(5.f);
-        Def.Fields[0].Minimum     = Version >= 203 ? PARAMDEF::EditorValue(int32_t{-10}) : PARAMDEF::EditorValue(-10.f);
-        Def.Fields[0].Maximum     = Version >= 203 ? PARAMDEF::EditorValue(int32_t{999}) : PARAMDEF::EditorValue(999.f);
-        Def.Fields[0].Increment   = Version >= 203 ? PARAMDEF::EditorValue(int32_t{5}) : PARAMDEF::EditorValue(5.f);
+        Def.Fields[0].Default   = Version >= 203 ? PARAMDEF::EditorValue(int32_t {5}) : PARAMDEF::EditorValue(5.f);
+        Def.Fields[0].Minimum   = Version >= 203 ? PARAMDEF::EditorValue(int32_t {-10}) : PARAMDEF::EditorValue(-10.f);
+        Def.Fields[0].Maximum   = Version >= 203 ? PARAMDEF::EditorValue(int32_t {999}) : PARAMDEF::EditorValue(999.f);
+        Def.Fields[0].Increment = Version >= 203 ? PARAMDEF::EditorValue(int32_t {5}) : PARAMDEF::EditorValue(5.f);
         Def.Fields[0].DisplayName = "The \"id\" <of> the row & more";
-        Def.Fields[0].Description = "Line one\nLine two with <tags> & ampersands, \"quotes\" and 'apostrophes' \xE3\x82\xBD";
-        Def.Fields[0].EditorFlags = PARAMDEF::EditFlags::Lock | PARAMDEF::EditFlags::Wrap;
-        Def.Fields[0].InternalType = "ENUM_TYPE";
+        Def.Fields[0].Description =
+          "Line one\nLine two with <tags> & ampersands, \"quotes\" and 'apostrophes' \xE3\x82\xBD";
+        Def.Fields[0].EditorFlags   = PARAMDEF::EditFlags::Lock | PARAMDEF::EditFlags::Wrap;
+        Def.Fields[0].InternalType  = "ENUM_TYPE";
         Def.Fields[0].DisplayFormat = "%x";
-        Def.Fields[4].Default = Version >= 203 ? PARAMDEF::EditorValue(0.1f) : PARAMDEF::EditorValue(0.1f);
-        Def.Fields[4].Increment = Version >= 203 ? PARAMDEF::EditorValue(0.5f) : PARAMDEF::EditorValue(0.5f);
-        Def.Fields[9].Minimum   = Version >= 203 ? PARAMDEF::EditorValue(-1.5e300) : PARAMDEF::EditorValue(-1.5f);
-        Def.Fields[3].EditorFlags = PARAMDEF::EditFlags::Wrap;  // not dummy8's default
-        Def.Fields[2].Description = "";  // present but empty
+        Def.Fields[4].Default       = Version >= 203 ? PARAMDEF::EditorValue(0.1f) : PARAMDEF::EditorValue(0.1f);
+        Def.Fields[4].Increment     = Version >= 203 ? PARAMDEF::EditorValue(0.5f) : PARAMDEF::EditorValue(0.5f);
+        Def.Fields[9].Minimum       = Version >= 203 ? PARAMDEF::EditorValue(-1.5e300) : PARAMDEF::EditorValue(-1.5f);
+        Def.Fields[3].EditorFlags   = PARAMDEF::EditFlags::Wrap;  // not dummy8's default
+        Def.Fields[2].Description   = "";                         // present but empty
         if (Version >= 200) {
             Def.Fields[1].UnkB8 = "b8 text";
             Def.Fields[1].UnkC0 = "c0 text";
@@ -125,7 +129,8 @@ namespace {
                 const bool Same       = SameDef(Source, Back);
                 if (!Same) std::printf("  (v%d: XML round trip differs)\n%s\n", Version, Xml.c_str());
                 CHECK(Same);
-                CHECK(PARAMDEF::FromXmlString(Back.ToXmlString()).Write() == Source.Write());  // second pass is stable too
+                CHECK(PARAMDEF::FromXmlString(Back.ToXmlString()).Write() ==
+                      Source.Write());  // second pass is stable too
             } catch (const std::exception& E) {
                 std::printf("FAIL v%d: %s\n", Version, E.what());
                 ++Failures;
@@ -138,11 +143,12 @@ namespace {
         {
             const std::string Xml = Def.ToXmlString();
             CHECK(Contains(Xml, "<PARAMDEF XmlVersion=\"3\">"));
-            CHECK(Contains(Xml, "<ParamType>XML_TEST_ST</ParamType>") && Contains(Xml, "<BigEndian>False</BigEndian>") &&
-                  Contains(Xml, "<Unicode>True</Unicode>"));
+            CHECK(Contains(Xml, "<ParamType>XML_TEST_ST</ParamType>") &&
+                  Contains(Xml, "<BigEndian>False</BigEndian>") && Contains(Xml, "<Unicode>True</Unicode>"));
             CHECK(Contains(Xml, "Def=\"s32 id = 5\"") && Contains(Xml, "Def=\"u8 flagA:3\"") &&
                   Contains(Xml, "Def=\"dummy8 pad[3]\"") && Contains(Xml, "Def=\"fixstrW wide[4]\""));
-            CHECK(Contains(Xml, "<EditFlags>Wrap, Lock</EditFlags>") && Contains(Xml, "<DisplayFormat>%x</DisplayFormat>"));
+            CHECK(Contains(Xml, "<EditFlags>Wrap, Lock</EditFlags>") &&
+                  Contains(Xml, "<DisplayFormat>%x</DisplayFormat>"));
             CHECK(!Contains(Xml, "<DisplayName>flagA"));  // equals the internal name, so omitted
             CHECK(!Contains(Xml, "<Enum>s8") && !Contains(Xml, "<SortID>0</SortID>"));
             CHECK(Contains(Xml, "&lt;tags&gt; &amp; ampersands"));  // escaped
@@ -156,7 +162,8 @@ namespace {
             CHECK(Contains(Xml, "<!-- +0x0 -->") && Contains(Xml, "<!-- +0x4 -->") && Contains(Xml, "<!-- +0x8 -->"));
             // One comment per field except flagB, which shares flagA's byte (so the offset doesn't move).
             size_t Comments = 0;
-            for (size_t At = Xml.find("<!-- +0x"); At != std::string::npos; At = Xml.find("<!-- +0x", At + 1)) ++Comments;
+            for (size_t At = Xml.find("<!-- +0x"); At != std::string::npos; At = Xml.find("<!-- +0x", At + 1))
+                ++Comments;
             CHECK(Comments == Def.Fields.size() - 1);
             CHECK(SameDef(Def, PARAMDEF::FromXmlString(Xml)));
         }
@@ -164,7 +171,8 @@ namespace {
         // Older layouts (0 to 2) name two elements differently and read back.
         {
             const std::string Xml = Def.ToXmlString(false, 0);
-            CHECK(Contains(Xml, "<Unk06>7</Unk06>") && Contains(Xml, "<Version>104</Version>") && !Contains(Xml, "<DataVersion>"));
+            CHECK(Contains(Xml, "<Unk06>7</Unk06>") && Contains(Xml, "<Version>104</Version>") &&
+                  !Contains(Xml, "<DataVersion>"));
             CHECK(SameDef(Def, PARAMDEF::FromXmlString(Xml)));
             CHECK(SameDef(Def, PARAMDEF::FromXmlString(Def.ToXmlString(false, 2))));
             CHECK(Throws([&] { Def.ToXmlString(false, 4); }) && Throws([&] { Def.ToXmlString(false, -1); }));
@@ -197,18 +205,23 @@ namespace {
     </Field>
   </Fields>
 </PARAMDEF>)";
-            PARAMDEF Hand = PARAMDEF::FromXmlString(Xml);
-            CHECK(Hand.ParamType == "HAND_WRITTEN_ST" && Hand.DataVersion == 2 && Hand.FormatVersion == 203 && Hand.Fields.size() == 5);
+            PARAMDEF Hand   = PARAMDEF::FromXmlString(Xml);
+            CHECK(Hand.ParamType == "HAND_WRITTEN_ST" && Hand.DataVersion == 2 && Hand.FormatVersion == 203 &&
+                  Hand.Fields.size() == 5);
             CHECK(Hand.VariableEditorValueTypes());
             const auto& Id = Hand.Fields[0];
-            CHECK(Id.InternalName == "itemId" && Id.DisplayName == "Item ID" && Id.Description == std::optional<std::string>("Which item."));
-            CHECK(Id.Default == PARAMDEF::EditorValue(int32_t{100}) && Id.Maximum == PARAMDEF::EditorValue(int32_t{9999}));
+            CHECK(Id.InternalName == "itemId" && Id.DisplayName == "Item ID" &&
+                  Id.Description == std::optional<std::string>("Which item."));
+            CHECK(Id.Default == PARAMDEF::EditorValue(int32_t {100}) &&
+                  Id.Maximum == PARAMDEF::EditorValue(int32_t {9999}));
             CHECK(Id.Minimum == PARAMDEF::EditorValue(INT32_MIN) && Id.SortID == 200 && Id.InternalType == "s32");
             CHECK(Id.DisplayFormat == "%d" && Id.EditorFlags == PARAMDEF::EditFlags::Wrap);
-            CHECK(Hand.Fields[1].BitSize == 3 && Hand.Fields[1].InternalName == "option" && Hand.Fields[1].DisplayName == "option");
+            CHECK(Hand.Fields[1].BitSize == 3 && Hand.Fields[1].InternalName == "option" &&
+                  Hand.Fields[1].DisplayName == "option");
             CHECK(Hand.Fields[2].ArrayLength == 5 && Hand.Fields[2].EditorFlags == PARAMDEF::EditFlags::None);
             CHECK(std::holds_alternative<std::monostate>(Hand.Fields[2].Default));
-            CHECK(Hand.Fields[3].Default == PARAMDEF::EditorValue(1.5f) && Hand.Fields[3].Increment == PARAMDEF::EditorValue(0.25f));
+            CHECK(Hand.Fields[3].Default == PARAMDEF::EditorValue(1.5f) &&
+                  Hand.Fields[3].Increment == PARAMDEF::EditorValue(0.25f));
             CHECK(Hand.Fields[4].Maximum == PARAMDEF::EditorValue(1e300));
             CHECK(Hand.GetRowSize() == 4 + 1 + 5 + 4 + 8);
             // And it can be written as a binary PARAMDEF.
@@ -232,17 +245,20 @@ namespace {
             CHECK(Throws([] { PARAMDEF::FromXml("this/file/does/not/exist.xml"); }));
             CHECK(Throws([] { PARAMDEF::FromXmlString("not xml at all"); }));
             CHECK(Throws([] { PARAMDEF::FromXmlString("<SOMETHING_ELSE/>"); }));
-            CHECK(Throws([] { PARAMDEF::FromXmlString("<PARAMDEF><ParamType>X</ParamType></PARAMDEF>"); }));  // missing parts
-            const std::string Head =
-              "<PARAMDEF><ParamType>X</ParamType><DataVersion>1</DataVersion><BigEndian>False</BigEndian><Unicode>False</Unicode>"
-              "<FormatVersion>104</FormatVersion><Fields>";
+            CHECK(Throws(
+              [] { PARAMDEF::FromXmlString("<PARAMDEF><ParamType>X</ParamType></PARAMDEF>"); }));  // missing parts
+            const std::string Head = "<PARAMDEF><ParamType>X</ParamType><DataVersion>1</DataVersion><BigEndian>False</"
+                                     "BigEndian><Unicode>False</Unicode>"
+                                     "<FormatVersion>104</FormatVersion><Fields>";
             const std::string Tail = "</Fields></PARAMDEF>";
             CHECK(!Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"s32 a\"/>" + Tail); }));
-            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field/>" + Tail); }));                           // no Def
-            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"bogus a\"/>" + Tail); }));           // unknown type
-            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"fixstr a\"/>" + Tail); }));          // no length
-            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"s32 a = x\"/>" + Tail); }));         // bad default
-            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"s32 a\"><EditFlags>Bogus</EditFlags></Field>" + Tail); }));
+            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field/>" + Tail); }));                   // no Def
+            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"bogus a\"/>" + Tail); }));   // unknown type
+            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"fixstr a\"/>" + Tail); }));  // no length
+            CHECK(Throws([&] { PARAMDEF::FromXmlString(Head + "<Field Def=\"s32 a = x\"/>" + Tail); }));  // bad default
+            CHECK(Throws([&] {
+                PARAMDEF::FromXmlString(Head + "<Field Def=\"s32 a\"><EditFlags>Bogus</EditFlags></Field>" + Tail);
+            }));
         }
     }
 }  // namespace
@@ -278,8 +294,11 @@ int RunPARAMDEFXmlTests() {
                     ++Failures;
                 }
             }
-            std::printf("Dark Souls Remastered paramdefs through XML: %d defs, %d fields, %d writing identical binaries\n",
-                        Defs, Fields, Identical);
+            std::printf(
+              "Dark Souls Remastered paramdefs through XML: %d defs, %d fields, %d writing identical binaries\n",
+              Defs,
+              Fields,
+              Identical);
             CHECK(Defs > 40 && Identical == Defs);
         } catch (const std::exception& E) {
             std::printf("FAIL real PARAMDEF XML: %s\n", E.what());

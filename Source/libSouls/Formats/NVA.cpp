@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "NVA.hpp"
 
@@ -15,8 +19,11 @@ namespace Souls {
 
         // Reads a section header and its entries, then moves past the section.
         template<typename T, typename... Versions>
-        void ReadSection(BinaryReader& Reader, int32_t Index, NVA::Section<T>& Section,
-                         const std::function<void(int32_t Count, int32_t Version)>& ReadEntries, Versions... Allowed) {
+        void ReadSection(BinaryReader& Reader,
+                         int32_t Index,
+                         NVA::Section<T>& Section,
+                         const std::function<void(int32_t Count, int32_t Version)>& ReadEntries,
+                         Versions... Allowed) {
             Reader.Assert<int32_t>(Index);
             Section.Version      = Reader.Assert<int32_t>(static_cast<int32_t>(Allowed)...);
             const int32_t Length = Reader.ReadInt32();
@@ -27,7 +34,11 @@ namespace Souls {
         }
 
         template<typename T>
-        void WriteSection(BinaryWriter& Writer, int32_t Index, int32_t Version, size_t Count, const std::function<void()>& WriteEntries) {
+        void WriteSection(BinaryWriter& Writer,
+                          int32_t Index,
+                          int32_t Version,
+                          size_t Count,
+                          const std::function<void()>& WriteEntries) {
             Writer.WriteInt32(Index);
             Writer.WriteInt32(Version);
             Writer.Reserve<int32_t>("SectionLength");
@@ -50,9 +61,7 @@ namespace Souls {
     }  // namespace
 
     bool NVA::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "NVMA";
     }
 
@@ -60,197 +69,237 @@ namespace Souls {
         Reader.Order = Endian::Little;
         Reader.AssertMagic("NVMA");
         Version = static_cast<NVAVersion>(Reader.ReadUInt32());
-        Reader.ReadUInt32();  // file size
+        Reader.ReadUInt32();                                                   // file size
         Reader.Assert<int32_t>(Version == NVAVersion::OldBloodborne ? 8 : 9);  // section count
 
         // Navmeshes refer to map nodes by index into a later section, so keep the indices until that is read.
         std::vector<std::pair<int16_t, int16_t>> NodeRanges;
         Navmeshes.Items.clear();
-        ReadSection<Navmesh>(Reader, 0, Navmeshes, [&](int32_t Count, int32_t SectionVersion) {
-            for (int32_t I = 0; I < Count; ++I) {
-                Navmesh N;
-                N.Position = Reader.ReadVector3();
-                Reader.Assert<float>(1);
-                N.Rotation = Reader.ReadVector3();
-                Reader.Assert<int32_t>(0);
-                N.Scale = Reader.ReadVector3();
-                Reader.Assert<int32_t>(0);
-                N.NameID                  = Reader.ReadInt32();
-                N.ModelID                 = Reader.ReadInt32();
-                N.Unk38                   = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                N.VertexCount             = Reader.ReadInt32();
-                const int32_t NameRefCount = Reader.ReadInt32();
-                const int16_t NodesIndex  = Reader.ReadInt16();
-                const int16_t NodeCount   = Reader.ReadInt16();
-                N.Unk4C                   = Reader.Assert<int32_t>(0, 1) == 1;
-                if (SectionVersion < 4) {
-                    if (NameRefCount > 16) {
-                        throw BinaryException("Name reference count should not exceed 16 in DS3/BB.");
-                    }
-                    N.NameReferenceIDs = Reader.ReadArray<int32_t>(static_cast<size_t>(NameRefCount));
-                    for (int32_t R = 0; R < 16 - NameRefCount; ++R) {
-                        Reader.Assert<int32_t>(-1);
-                    }
-                } else {
-                    const int32_t NameRefOffset = Reader.ReadInt32();
-                    Reader.Assert<int32_t>(0);
-                    Reader.Assert<int32_t>(0);
-                    Reader.Assert<int32_t>(0);
-                    Reader.StepIn(NameRefOffset);
-                    N.NameReferenceIDs = Reader.ReadArray<int32_t>(static_cast<size_t>(NameRefCount));
-                    Reader.StepOut();
-                }
-                NodeRanges.emplace_back(NodesIndex, NodeCount);
-                Navmeshes.Items.push_back(std::move(N));
-            }
-        }, 2, 3, 4);
+        ReadSection<Navmesh>(
+          Reader,
+          0,
+          Navmeshes,
+          [&](int32_t Count, int32_t SectionVersion) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  Navmesh N;
+                  N.Position = Reader.ReadVector3();
+                  Reader.Assert<float>(1);
+                  N.Rotation = Reader.ReadVector3();
+                  Reader.Assert<int32_t>(0);
+                  N.Scale = Reader.ReadVector3();
+                  Reader.Assert<int32_t>(0);
+                  N.NameID  = Reader.ReadInt32();
+                  N.ModelID = Reader.ReadInt32();
+                  N.Unk38   = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  N.VertexCount              = Reader.ReadInt32();
+                  const int32_t NameRefCount = Reader.ReadInt32();
+                  const int16_t NodesIndex   = Reader.ReadInt16();
+                  const int16_t NodeCount    = Reader.ReadInt16();
+                  N.Unk4C                    = Reader.Assert<int32_t>(0, 1) == 1;
+                  if (SectionVersion < 4) {
+                      if (NameRefCount > 16) {
+                          throw BinaryException("Name reference count should not exceed 16 in DS3/BB.");
+                      }
+                      N.NameReferenceIDs = Reader.ReadArray<int32_t>(static_cast<size_t>(NameRefCount));
+                      for (int32_t R = 0; R < 16 - NameRefCount; ++R) {
+                          Reader.Assert<int32_t>(-1);
+                      }
+                  } else {
+                      const int32_t NameRefOffset = Reader.ReadInt32();
+                      Reader.Assert<int32_t>(0);
+                      Reader.Assert<int32_t>(0);
+                      Reader.Assert<int32_t>(0);
+                      Reader.StepIn(NameRefOffset);
+                      N.NameReferenceIDs = Reader.ReadArray<int32_t>(static_cast<size_t>(NameRefCount));
+                      Reader.StepOut();
+                  }
+                  NodeRanges.emplace_back(NodesIndex, NodeCount);
+                  Navmeshes.Items.push_back(std::move(N));
+              }
+          },
+          2,
+          3,
+          4);
 
         Entries1.Items.clear();
-        ReadSection<Entry1>(Reader, 1, Entries1, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                Entry1 E;
-                E.Unk00 = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                Entries1.Items.push_back(E);
-            }
-        }, 1);
+        ReadSection<Entry1>(
+          Reader,
+          1,
+          Entries1,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  Entry1 E;
+                  E.Unk00 = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  Entries1.Items.push_back(E);
+              }
+          },
+          1);
 
         Entries2.Items.clear();
-        ReadSection<Entry2>(Reader, 2, Entries2, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                Entry2 E;
-                E.Unk00                       = Reader.ReadInt32();
-                const int32_t ReferenceCount  = Reader.ReadInt32();
-                E.Unk08                       = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                if (ReferenceCount > 64) {
-                    throw BinaryException("Entry2 reference count should not exceed 64.");
-                }
-                for (int32_t R = 0; R < ReferenceCount; ++R) {
-                    Reference Ref;
-                    Ref.UnkIndex = Reader.ReadInt32();
-                    Ref.NameID   = Reader.ReadInt32();
-                    E.References.push_back(Ref);
-                }
-                for (int32_t R = 0; R < 64 - ReferenceCount; ++R) {
-                    Reader.Assert<int64_t>(0);
-                }
-                Entries2.Items.push_back(std::move(E));
-            }
-        }, 1);
+        ReadSection<Entry2>(
+          Reader,
+          2,
+          Entries2,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  Entry2 E;
+                  E.Unk00                      = Reader.ReadInt32();
+                  const int32_t ReferenceCount = Reader.ReadInt32();
+                  E.Unk08                      = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  if (ReferenceCount > 64) { throw BinaryException("Entry2 reference count should not exceed 64."); }
+                  for (int32_t R = 0; R < ReferenceCount; ++R) {
+                      Reference Ref;
+                      Ref.UnkIndex = Reader.ReadInt32();
+                      Ref.NameID   = Reader.ReadInt32();
+                      E.References.push_back(Ref);
+                  }
+                  for (int32_t R = 0; R < 64 - ReferenceCount; ++R) {
+                      Reader.Assert<int64_t>(0);
+                  }
+                  Entries2.Items.push_back(std::move(E));
+              }
+          },
+          1);
 
         // Section 3 is empty in all known NVAs.
         NVA::Section<int> Section3;
-        ReadSection<int>(Reader, 3, Section3, [&](int32_t Count, int32_t) {
-            if (Count != 0) {
-                throw BinaryException("Section3 is empty in all known NVAs.");
-            }
-        }, 1);
+        ReadSection<int>(
+          Reader,
+          3,
+          Section3,
+          [&](int32_t Count, int32_t) {
+              if (Count != 0) { throw BinaryException("Section3 is empty in all known NVAs."); }
+          },
+          1);
 
         std::vector<std::pair<int32_t, int32_t>> ConnectorRanges;  // points index/count, conditions index/count
         Connectors.Items.clear();
         std::vector<std::array<int32_t, 4>> ConnectorIndices;
-        ReadSection<Connector>(Reader, 4, Connectors, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                Connector C;
-                C.MainNameID                  = Reader.ReadInt32();
-                C.TargetNameID                = Reader.ReadInt32();
-                const int32_t PointCount      = Reader.ReadInt32();
-                const int32_t ConditionCount  = Reader.ReadInt32();
-                const int32_t PointsIndex     = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                const int32_t ConditionsIndex = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                ConnectorIndices.push_back({PointsIndex, PointCount, ConditionsIndex, ConditionCount});
-                Connectors.Items.push_back(std::move(C));
-            }
-        }, 1);
+        ReadSection<Connector>(
+          Reader,
+          4,
+          Connectors,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  Connector C;
+                  C.MainNameID                 = Reader.ReadInt32();
+                  C.TargetNameID               = Reader.ReadInt32();
+                  const int32_t PointCount     = Reader.ReadInt32();
+                  const int32_t ConditionCount = Reader.ReadInt32();
+                  const int32_t PointsIndex    = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  const int32_t ConditionsIndex = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  ConnectorIndices.push_back({PointsIndex, PointCount, ConditionsIndex, ConditionCount});
+                  Connectors.Items.push_back(std::move(C));
+              }
+          },
+          1);
 
         NVA::Section<ConnectorPoint> Points;
-        ReadSection<ConnectorPoint>(Reader, 5, Points, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                ConnectorPoint P;
-                P.Unk00 = Reader.ReadInt32();
-                P.Unk04 = Reader.ReadInt32();
-                P.Unk08 = Reader.ReadInt32();
-                P.Unk0C = Reader.ReadInt32();
-                Points.Items.push_back(P);
-            }
-        }, 1);
+        ReadSection<ConnectorPoint>(
+          Reader,
+          5,
+          Points,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  ConnectorPoint P;
+                  P.Unk00 = Reader.ReadInt32();
+                  P.Unk04 = Reader.ReadInt32();
+                  P.Unk08 = Reader.ReadInt32();
+                  P.Unk0C = Reader.ReadInt32();
+                  Points.Items.push_back(P);
+              }
+          },
+          1);
 
         NVA::Section<ConnectorCondition> Conditions;
-        ReadSection<ConnectorCondition>(Reader, 6, Conditions, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                ConnectorCondition C;
-                C.Condition1 = Reader.ReadInt32();
-                C.Condition2 = Reader.ReadInt32();
-                Conditions.Items.push_back(C);
-            }
-        }, 1);
+        ReadSection<ConnectorCondition>(
+          Reader,
+          6,
+          Conditions,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  ConnectorCondition C;
+                  C.Condition1 = Reader.ReadInt32();
+                  C.Condition2 = Reader.ReadInt32();
+                  Conditions.Items.push_back(C);
+              }
+          },
+          1);
 
         Entries7.Items.clear();
-        ReadSection<Entry7>(Reader, 7, Entries7, [&](int32_t Count, int32_t) {
-            for (int32_t I = 0; I < Count; ++I) {
-                Entry7 E;
-                E.Position = Reader.ReadVector3();
-                Reader.Assert<float>(1);
-                E.NameID = Reader.ReadInt32();
-                E.Unk14  = Reader.ReadInt32();
-                E.Unk18 = Reader.ReadInt32();
-                Reader.Assert<int32_t>(0);
-                Entries7.Items.push_back(E);
-            }
-        }, 1);
+        ReadSection<Entry7>(
+          Reader,
+          7,
+          Entries7,
+          [&](int32_t Count, int32_t) {
+              for (int32_t I = 0; I < Count; ++I) {
+                  Entry7 E;
+                  E.Position = Reader.ReadVector3();
+                  Reader.Assert<float>(1);
+                  E.NameID = Reader.ReadInt32();
+                  E.Unk14  = Reader.ReadInt32();
+                  E.Unk18  = Reader.ReadInt32();
+                  Reader.Assert<int32_t>(0);
+                  Entries7.Items.push_back(E);
+              }
+          },
+          1);
 
         NVA::Section<MapNode> MapNodes;
         MapNodes.Version = 1;
         if (Version != NVAVersion::OldBloodborne) {
-            ReadSection<MapNode>(Reader, 8, MapNodes, [&](int32_t Count, int32_t SectionVersion) {
-                for (int32_t I = 0; I < Count; ++I) {
-                    MapNode N;
-                    N.Position      = Reader.ReadVector3();
-                    N.Section0Index = Reader.ReadInt16();
-                    N.MainID        = Reader.ReadInt16();
-                    if (SectionVersion < 2) {
-                        for (const uint16_t S : Reader.ReadArray<uint16_t>(16)) {
-                            N.SiblingDistances.push_back(DistanceFromShort(S));
-                        }
-                    } else {
-                        const int32_t SubIDCount   = Reader.ReadInt32();
-                        N.Unk14                    = Reader.ReadInt32();
-                        const int32_t SubIDsOffset = Reader.ReadInt32();
-                        Reader.Assert<int32_t>(0);
-                        Reader.StepIn(SubIDsOffset);
-                        for (const uint16_t S : Reader.ReadArray<uint16_t>(static_cast<size_t>(SubIDCount))) {
-                            N.SiblingDistances.push_back(DistanceFromShort(S));
-                        }
-                        Reader.StepOut();
-                    }
-                    MapNodes.Items.push_back(std::move(N));
-                }
-            }, 1, 2);
+            ReadSection<MapNode>(
+              Reader,
+              8,
+              MapNodes,
+              [&](int32_t Count, int32_t SectionVersion) {
+                  for (int32_t I = 0; I < Count; ++I) {
+                      MapNode N;
+                      N.Position      = Reader.ReadVector3();
+                      N.Section0Index = Reader.ReadInt16();
+                      N.MainID        = Reader.ReadInt16();
+                      if (SectionVersion < 2) {
+                          for (const uint16_t S : Reader.ReadArray<uint16_t>(16)) {
+                              N.SiblingDistances.push_back(DistanceFromShort(S));
+                          }
+                      } else {
+                          const int32_t SubIDCount   = Reader.ReadInt32();
+                          N.Unk14                    = Reader.ReadInt32();
+                          const int32_t SubIDsOffset = Reader.ReadInt32();
+                          Reader.Assert<int32_t>(0);
+                          Reader.StepIn(SubIDsOffset);
+                          for (const uint16_t S : Reader.ReadArray<uint16_t>(static_cast<size_t>(SubIDCount))) {
+                              N.SiblingDistances.push_back(DistanceFromShort(S));
+                          }
+                          Reader.StepOut();
+                      }
+                      MapNodes.Items.push_back(std::move(N));
+                  }
+              },
+              1,
+              2);
         }
 
         // Hand each navmesh its map nodes, and each connector its points and conditions.
         for (size_t I = 0; I < Navmeshes.Items.size(); ++I) {
-            Navmesh& N               = Navmeshes.Items[I];
+            Navmesh& N                = Navmeshes.Items[I];
             const auto [Index, Count] = NodeRanges[I];
             for (int32_t K = 0; K < Count; ++K) {
                 const size_t At = static_cast<size_t>(Index) + static_cast<size_t>(K);
-                if (At >= MapNodes.Items.size()) {
-                    throw BinaryException("Navmesh map node index out of range");
-                }
+                if (At >= MapNodes.Items.size()) { throw BinaryException("Navmesh map node index out of range"); }
                 N.MapNodes.push_back(MapNodes.Items[At]);
             }
             for (MapNode& M : N.MapNodes) {
-                if (M.SiblingDistances.size() > N.MapNodes.size()) {
-                    M.SiblingDistances.resize(N.MapNodes.size());
-                }
+                if (M.SiblingDistances.size() > N.MapNodes.size()) { M.SiblingDistances.resize(N.MapNodes.size()); }
             }
         }
         for (size_t I = 0; I < Connectors.Items.size(); ++I) {
-            Connector& C = Connectors.Items[I];
+            Connector& C    = Connectors.Items[I];
             const auto& Idx = ConnectorIndices[I];
             for (int32_t K = 0; K < Idx[1]; ++K) {
                 const size_t At = static_cast<size_t>(Idx[0] + K);
@@ -345,9 +394,7 @@ namespace Souls {
                 Writer.WriteInt32(static_cast<int32_t>(E.References.size()));
                 Writer.WriteInt32(E.Unk08);
                 Writer.WriteInt32(0);
-                if (E.References.size() > 64) {
-                    throw BinaryException("Entry2 reference count should not exceed 64.");
-                }
+                if (E.References.size() > 64) { throw BinaryException("Entry2 reference count should not exceed 64."); }
                 for (const Reference& R : E.References) {
                     Writer.WriteInt32(R.UnkIndex);
                     Writer.WriteInt32(R.NameID);
@@ -427,7 +474,8 @@ namespace Souls {
                 }
                 if (MapNodeVersion >= 2) {
                     for (size_t I = 0; I < MapNodes.size(); ++I) {
-                        Writer.Fill<int32_t>("SubIDsOffset" + std::to_string(I), static_cast<int32_t>(Writer.Position()));
+                        Writer.Fill<int32_t>("SubIDsOffset" + std::to_string(I),
+                                             static_cast<int32_t>(Writer.Position()));
                         for (const float Distance : MapNodes[I]->SiblingDistances) {
                             Writer.WriteUInt16(DistanceToShort(Distance));
                         }

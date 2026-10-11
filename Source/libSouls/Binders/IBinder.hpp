@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -24,15 +28,15 @@ namespace Souls {
         std::vector<BinderFile> Files;
 
     protected:
-        IBinder()                          = default;
+        IBinder() = default;
         /// @brief Binders are copyable and movable values.
-        IBinder(const IBinder&)            = default;
+        IBinder(const IBinder&) = default;
         /// @brief Binders are copyable and movable values.
-        IBinder(IBinder&&)                 = default;
+        IBinder(IBinder&&) = default;
         /// @brief Binders are copyable and movable values.
         IBinder& operator=(const IBinder&) = default;
         /// @brief Binders are copyable and movable values.
-        IBinder& operator=(IBinder&&)      = default;
+        IBinder& operator=(IBinder&&) = default;
     };
 
     /// @brief The two halves of a BXF3/BXF4 pair as bytes: the header file (.bhd, .tpfbhd, ...) and the data file

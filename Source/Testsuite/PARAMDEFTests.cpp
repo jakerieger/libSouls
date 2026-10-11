@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -17,25 +21,23 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
-    namespace fs = std::filesystem;
+    namespace fs  = std::filesystem;
     using DefType = PARAMDEF::DefType;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -114,7 +116,8 @@ namespace {
                 for (const bool Unicode : {false, true}) {
                     PARAMDEF Source = MakeDef(Version, Big, Unicode);
                     if (Version < 102) {
-                        for (auto& Field : Source.Fields) Field.BitSize = -1;  // no bit info before 102
+                        for (auto& Field : Source.Fields)
+                            Field.BitSize = -1;  // no bit info before 102
                     }
 
                     try {
@@ -127,7 +130,11 @@ namespace {
                                     Back.Fields.size() == Source.Fields.size();
                         for (size_t I = 0; Same && I < Source.Fields.size(); ++I) {
                             Same = SameField(Source.Fields[I], Back.Fields[I], Version);
-                            if (!Same) std::printf("  (v%d field %zu '%s' differs)\n", Version, I, Source.Fields[I].InternalName.c_str());
+                            if (!Same)
+                                std::printf("  (v%d field %zu '%s' differs)\n",
+                                            Version,
+                                            I,
+                                            Source.Fields[I].InternalName.c_str());
                         }
                         if (!Same) std::printf("  (v%d big %d unicode %d differs)\n", Version, Big, Unicode);
                         CHECK(Same);
@@ -141,12 +148,13 @@ namespace {
             }
         }
 
-        // Row size: s32(4) + u8:3/u8:5 sharing a byte (1) + s16(2) + dummy8[3](3) + f32(4) + angle32(4) + fixstr[8](8) +
-        // fixstrW[4](8) + b32(4) + f64(8) + u32(4) + u16(2) + s8(1) = 53.
+        // Row size: s32(4) + u8:3/u8:5 sharing a byte (1) + s16(2) + dummy8[3](3) + f32(4) + angle32(4) + fixstr[8](8)
+        // + fixstrW[4](8) + b32(4) + f64(8) + u32(4) + u16(2) + s8(1) = 53.
         {
             const PARAMDEF Def = MakeDef(104, false, false);
             CHECK(Def.GetRowSize() == 53);
-            CHECK(Def.GetFieldsSize(0) == 0 && Def.GetFieldsSize(1) == 4 && Def.GetFieldsSize(2) == 5 && Def.GetFieldsSize(3) == 5);
+            CHECK(Def.GetFieldsSize(0) == 0 && Def.GetFieldsSize(1) == 4 && Def.GetFieldsSize(2) == 5 &&
+                  Def.GetFieldsSize(3) == 5);
             CHECK(Throws([&] { Def.GetFieldsSize(99); }));
             CHECK(Def.ToString() == "TEST_PARAM_ST v5");
 
@@ -167,21 +175,23 @@ namespace {
             CHECK(Plain.ToString() == "s32 x" && Plain.DisplayFormat == "%d");
             CHECK(std::holds_alternative<float>(Plain.Default));
             PARAMDEF::Field Variable(&New, DefType::s32, "x");
-            CHECK(std::holds_alternative<int32_t>(Variable.Default) && std::get<int32_t>(Variable.Maximum) == INT32_MAX);
+            CHECK(std::holds_alternative<int32_t>(Variable.Default) &&
+                  std::get<int32_t>(Variable.Maximum) == INT32_MAX);
             CHECK(MakeField(Old, DefType::u8, "f", 3).ToString() == "u8 f:3");
             CHECK(MakeField(Old, DefType::fixstr, "s", -1, 8).ToString() == "fixstr s[8]");
             CHECK(PARAMDEF::Field().ToString() == "f32 placeholder");
-            CHECK(ParamUtil::ParseDefType("angle32") == DefType::angle32 && Throws([] { ParamUtil::ParseDefType("nope"); }));
+            CHECK(ParamUtil::ParseDefType("angle32") == DefType::angle32 &&
+                  Throws([] { ParamUtil::ParseDefType("nope"); }));
             CHECK(ParamUtil::GetValueSize(DefType::fixstrW) == 2 && ParamUtil::GetBitLimit(DefType::s16) == 16);
             CHECK(Throws([] { ParamUtil::GetBitLimit(DefType::f32); }));
         }
 
         // Validation and bad input.
         {
-            PARAMDEF Bad = MakeDef(104, false, false);
+            PARAMDEF Bad      = MakeDef(104, false, false);
             Bad.FormatVersion = 999;
             CHECK(Throws([&] { Bad.Write(); }));
-            PARAMDEF BadLength = MakeDef(104, false, false);
+            PARAMDEF BadLength              = MakeDef(104, false, false);
             BadLength.Fields[0].ArrayLength = 4;  // only array types may have a length
             CHECK(Throws([&] { BadLength.Write(); }));
 
@@ -201,7 +211,8 @@ int RunPARAMDEFTests() {
 
     // Dark Souls Remastered ships its paramdefs, and its params to check them against.
     const fs::path Root = "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED";
-    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") || !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
+    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") ||
+        !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
         std::printf("Real PARAMDEF checks skipped (Dark Souls Remastered not installed)\n");
     } else {
         try {
@@ -223,7 +234,10 @@ int RunPARAMDEFTests() {
                 if (Rewritten == File.Bytes) {
                     ++ByteIdentical;
                 } else {
-                    std::printf("  rewrite differs: %s (%zu vs %zu bytes)\n", File.Name->c_str(), Rewritten.size(), File.Bytes.size());
+                    std::printf("  rewrite differs: %s (%zu vs %zu bytes)\n",
+                                File.Name->c_str(),
+                                Rewritten.size(),
+                                File.Bytes.size());
                     if (const char* DumpDir = std::getenv("PARAMDEF_DUMP_DIR")) {
                         const std::string Short = fs::path(*File.Name).filename().string();
                         BinaryWriter A(fs::path(DumpDir) / (Short + ".orig"));
@@ -245,13 +259,17 @@ int RunPARAMDEFTests() {
                 CHECK(SameFields);
                 ByType[Def.ParamType] = std::move(Def);
             }
-            std::printf("Dark Souls Remastered paramdefs: %d defs, %d fields, %d byte-identical rewrites\n", Defs, Fields, ByteIdentical);
+            std::printf("Dark Souls Remastered paramdefs: %d defs, %d fields, %d byte-identical rewrites\n",
+                        Defs,
+                        Fields,
+                        ByteIdentical);
             CHECK(Defs > 40);
             // Five of the game's own files can't be reproduced exactly: two have extra spaces in field names (lost
             // when read, as upstream does), and three have unexplained padding or size quirks.
             CHECK(ByteIdentical >= Defs - 5);
 
-            // The strongest check there is: every def's computed row size matches the spacing of rows in the real params.
+            // The strongest check there is: every def's computed row size matches the spacing of rows in the real
+            // params.
             BND3 ParamBnd = BND3::Read(Root / "param/GameParam/GameParam.parambnd.dcx");
             int Params = 0, Matched = 0, NoDef = 0, Mismatched = 0, EmptyParams = 0, OlderDef = 0;
             for (const BinderFile& File : ParamBnd.Files) {
@@ -272,18 +290,27 @@ int RunPARAMDEFTests() {
                     ++Matched;
                     if (It->second.DataVersion != Param.ParamdefDataVersion) {
                         ++OlderDef;
-                        std::printf("  %s: def is v%d but the param is v%d (same size)\n", Param.ParamType.c_str(),
-                                    It->second.DataVersion, Param.ParamdefDataVersion);
+                        std::printf("  %s: def is v%d but the param is v%d (same size)\n",
+                                    Param.ParamType.c_str(),
+                                    It->second.DataVersion,
+                                    Param.ParamdefDataVersion);
                     }
                 } else {
                     ++Mismatched;
-                    std::printf("  MISMATCH %s: def v%d size %d, param v%d row size %lld\n", Param.ParamType.c_str(),
-                                It->second.DataVersion, It->second.GetRowSize(), Param.ParamdefDataVersion,
+                    std::printf("  MISMATCH %s: def v%d size %d, param v%d row size %lld\n",
+                                Param.ParamType.c_str(),
+                                It->second.DataVersion,
+                                It->second.GetRowSize(),
+                                Param.ParamdefDataVersion,
                                 static_cast<long long>(Param.DetectedSize));
                 }
             }
             std::printf("GameParam: %d params, %d row sizes match their def, %d mismatched, %d with no def, %d empty\n",
-                        Params, Matched, Mismatched, NoDef, EmptyParams);
+                        Params,
+                        Matched,
+                        Mismatched,
+                        NoDef,
+                        EmptyParams);
             CHECK(Params > 30 && Mismatched == 0 && NoDef == 0 && Matched == Params);
         } catch (const std::exception& E) {
             std::printf("FAIL real PARAMDEF: %s\n", E.what());

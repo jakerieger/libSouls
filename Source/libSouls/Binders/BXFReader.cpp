@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BXFReader.hpp"
 #include "BXFHeaders.hpp"
@@ -19,7 +23,9 @@ namespace Souls {
     namespace {
         std::string Lower(std::string_view Text) {
             std::string Result(Text);
-            std::transform(Result.begin(), Result.end(), Result.begin(), [](unsigned char C) { return std::tolower(C); });
+            std::transform(Result.begin(), Result.end(), Result.begin(), [](unsigned char C) {
+                return std::tolower(C);
+            });
             return Result;
         }
 
@@ -52,21 +58,17 @@ namespace Souls {
         Initialize(Header);
     }
 
-    BXFReader::~BXFReader()                                  = default;
-    BXFReader::BXFReader(BXFReader&&) noexcept               = default;
-    BXFReader& BXFReader::operator=(BXFReader&&) noexcept    = default;
+    BXFReader::~BXFReader()                               = default;
+    BXFReader::BXFReader(BXFReader&&) noexcept            = default;
+    BXFReader& BXFReader::operator=(BXFReader&&) noexcept = default;
 
     void BXFReader::Initialize(std::span<const uint8_t> Header) {
-        if (Header.size() < 4) {
-            throw BinaryException("BXF header file is too small");
-        }
+        if (Header.size() < 4) { throw BinaryException("BXF header file is too small"); }
 
         BinaryReader HeaderReader(Header);
         const bool IsBXF3 = Header[0] == 'B' && Header[1] == 'H' && Header[2] == 'F' && Header[3] == '3';
         const bool IsBXF4 = Header[0] == 'B' && Header[1] == 'H' && Header[2] == 'F' && Header[3] == '4';
-        if (!IsBXF3 && !IsBXF4) {
-            throw BinaryException("The header file is not a BXF3 or BXF4 header (BHF3/BHF4)");
-        }
+        if (!IsBXF3 && !IsBXF4) { throw BinaryException("The header file is not a BXF3 or BXF4 header (BHF3/BHF4)"); }
 
         if (IsBXF3) {
             BXF3 Settings;
@@ -107,7 +109,8 @@ namespace Souls {
 
     const BXFReader::FileInfo& BXFReader::File(size_t Index) const {
         if (Index >= Files.size()) {
-            throw BinaryException("File index " + std::to_string(Index) + " is out of range (" + std::to_string(Files.size()) + " files)");
+            throw BinaryException("File index " + std::to_string(Index) + " is out of range (" +
+                                  std::to_string(Files.size()) + " files)");
         }
         return Files[Index];
     }
@@ -145,9 +148,7 @@ namespace Souls {
 
     TPF BXFReader::ReadTPF(std::string_view FileName) {
         const auto Index = IndexOfFileName(FileName);
-        if (!Index) {
-            throw BinaryException("No file named \"" + std::string(FileName) + "\" in this archive");
-        }
+        if (!Index) { throw BinaryException("No file named \"" + std::string(FileName) + "\" in this archive"); }
         return ReadTPF(*Index);
     }
 }  // namespace Souls

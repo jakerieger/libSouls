@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TAE3.hpp"
 
@@ -26,8 +30,8 @@ namespace Souls {
             E.EndTime   = Reader.ReadAt<float>(Header.EndTimeOffset);
 
             Reader.StepIn(Header.DataOffset);
-            const uint64_t Type         = Reader.ReadUInt64();
-            const int64_t FieldsOffset  = Reader.ReadInt64();
+            const uint64_t Type        = Reader.ReadUInt64();
+            const int64_t FieldsOffset = Reader.ReadInt64();
             if (FieldsOffset != Reader.Position() && !(Raw && FieldsOffset == 0)) {
                 throw BinaryException("Unexpected TAE event fields offset " + std::to_string(FieldsOffset));
             }
@@ -35,9 +39,7 @@ namespace Souls {
                 E.IsRaw             = true;
                 E.RawType           = Type;
                 E.RawNoFieldsOffset = FieldsOffset == 0;
-                if (RawEnd < Reader.Position()) {
-                    throw BinaryException("TAE event data ends before it begins.");
-                }
+                if (RawEnd < Reader.Position()) { throw BinaryException("TAE event data ends before it begins."); }
                 E.RawData = Reader.ReadBytes(static_cast<size_t>(RawEnd - Reader.Position()));
             } else {
                 E.Data = ReadTAE3EventData(static_cast<TAE3EventType>(Type), Reader);
@@ -47,14 +49,13 @@ namespace Souls {
         }
 
         bool EndsWith(const std::string& Text, const std::string& Suffix) {
-            return Text.size() >= Suffix.size() && Text.compare(Text.size() - Suffix.size(), Suffix.size(), Suffix) == 0;
+            return Text.size() >= Suffix.size() &&
+                   Text.compare(Text.size() - Suffix.size(), Suffix.size(), Suffix) == 0;
         }
     }  // namespace
 
     bool TAE3::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "TAE ";
     }
 
@@ -73,9 +74,9 @@ namespace Souls {
         Reader.Assert<int64_t>(0);
         Reader.ReadInto(std::span<uint8_t>(Flags));
         Reader.Assert<int64_t>(1);
-        ID                         = Reader.ReadInt32();
-        const int32_t AnimCount    = Reader.ReadInt32();
-        const int64_t AnimsOffset  = Reader.ReadInt64();
+        ID                        = Reader.ReadInt32();
+        const int32_t AnimCount   = Reader.ReadInt32();
+        const int64_t AnimsOffset = Reader.ReadInt64();
         Reader.ReadInt64();  // anim groups offset
         Reader.Assert<int64_t>(0xA0);
         Reader.Assert<int64_t>(AnimCount);
@@ -101,7 +102,7 @@ namespace Souls {
 
         // Where each structure in the animations begins, so the raw event data of version 0x1000D can be given an end.
         const bool Raw = Version == 0x1000D;
-        std::set<int64_t> Starts{Reader.Length()};
+        std::set<int64_t> Starts {Reader.Length()};
         if (Raw) {
             Reader.StepIn(AnimsOffset);
             for (int32_t I = 0; I < AnimCount; ++I) {
@@ -120,7 +121,7 @@ namespace Souls {
         Reader.StepIn(AnimsOffset);
         for (int32_t I = 0; I < AnimCount; ++I) {
             Animation A;
-            A.ID                = Reader.ReadInt64();
+            A.ID                 = Reader.ReadInt64();
             const int64_t Offset = Reader.ReadInt64();
             Reader.StepIn(Offset);
             const int64_t EventHeadersOffset = Reader.ReadInt64();
@@ -166,8 +167,11 @@ namespace Souls {
                 Reader.StepOut();
                 Reader.StepIn(ValuesOffset);
                 for (const int32_t Offset32 : Reader.ReadArray<int32_t>(static_cast<size_t>(EntryCount))) {
-                    const auto Found = std::find(EventHeaderOffsets.begin(), EventHeaderOffsets.end(), static_cast<int64_t>(Offset32));
-                    Group.Indices.push_back(Found == EventHeaderOffsets.end() ? -1 : static_cast<int32_t>(Found - EventHeaderOffsets.begin()));
+                    const auto Found =
+                      std::find(EventHeaderOffsets.begin(), EventHeaderOffsets.end(), static_cast<int64_t>(Offset32));
+                    Group.Indices.push_back(Found == EventHeaderOffsets.end()
+                                              ? -1
+                                              : static_cast<int32_t>(Found - EventHeaderOffsets.begin()));
                 }
                 Reader.StepOut();
                 A.EventGroups.push_back(std::move(Group));
@@ -182,9 +186,7 @@ namespace Souls {
             A.AnimFileUnk1C                  = Reader.ReadInt32();
             Reader.Assert<int64_t>(0);
             Reader.Assert<int64_t>(0);
-            if (AnimFileNameOffset < Reader.Length()) {
-                A.AnimFileName = Reader.GetUTF16Text(AnimFileNameOffset);
-            }
+            if (AnimFileNameOffset < Reader.Length()) { A.AnimFileName = Reader.GetUTF16Text(AnimFileNameOffset); }
             // When Reference is false, there is always a filename. When true, there usually is not, but sometimes
             // there is, for unknown reasons; dropping it here is a hack to achieve byte-perfection.
             // (Only for references: Sekiro has non-reference names without the dot, such as "a000_003011hkt".)
@@ -247,7 +249,9 @@ namespace Souls {
             Writer.WriteInt64(0);
         }
 
-        std::stable_sort(Animations.begin(), Animations.end(), [](const Animation& A, const Animation& B) { return A.ID < B.ID; });
+        std::stable_sort(Animations.begin(), Animations.end(), [](const Animation& A, const Animation& B) {
+            return A.ID < B.ID;
+        });
         std::vector<int64_t> AnimOffsets;
         if (Animations.empty()) {
             Writer.Fill<int64_t>("AnimsOffset", 0);
@@ -263,7 +267,7 @@ namespace Souls {
         Writer.Fill<int64_t>("AnimGroupsOffset", Writer.Position());
         Writer.Reserve<int64_t>("AnimGroupsCount");
         Writer.Reserve<int64_t>("AnimGroupsOffset");
-        int64_t GroupCount      = 0;
+        int64_t GroupCount       = 0;
         const int64_t GroupStart = Writer.Position();
         for (size_t I = 0; I < Animations.size(); ++I) {
             const size_t FirstIndex = I;
@@ -297,7 +301,7 @@ namespace Souls {
         }
 
         for (size_t I = 0; I < Animations.size(); ++I) {
-            const Animation& A      = Animations[I];
+            const Animation& A    = Animations[I];
             const std::string Idx = std::to_string(I);
 
             // Anim file reference.

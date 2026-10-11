@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MSB2.hpp"
 
@@ -15,9 +19,9 @@ namespace Souls {
         using Msb::Detail::Upcast;
 
         constexpr const char* PartsPoseParamName = "MAPSTUDIO_PARTS_POSE_ST";
-        constexpr const char* BoneNameParamName   = "MAPSTUDIO_BONE_NAME_STRING";
-        constexpr const char* RouteParamName      = "ROUTE_PARAM_ST";
-        constexpr const char* LayerParamName      = "LAYER_PARAM_ST";
+        constexpr const char* BoneNameParamName  = "MAPSTUDIO_BONE_NAME_STRING";
+        constexpr const char* RouteParamName     = "ROUTE_PARAM_ST";
+        constexpr const char* LayerParamName     = "LAYER_PARAM_ST";
 
         struct BoneName : MSB2::Entry {};
 
@@ -45,9 +49,7 @@ namespace Souls {
                 NameOffset  = Reader.ReadInt32();
                 OffsetCount = Reader.ReadInt32();
             }
-            if (OffsetCount < 1) {
-                throw BinaryException("Invalid MSB param entry count");
-            }
+            if (OffsetCount < 1) { throw BinaryException("Invalid MSB param entry count"); }
             Header Result;
             for (int32_t I = 0; I < OffsetCount - 1; ++I) {
                 Result.EntryOffsets.push_back(Reader.ReadVarint());
@@ -119,15 +121,11 @@ namespace Souls {
         Reader.Assert<uint8_t>(static_cast<uint8_t>(Type()));
         Reader.Assert<uint8_t>(0);
         Reader.ReadInt16();  // ID
-        if (Reader.VarintLong) {
-            Reader.Assert<int32_t>(0);
-        }
+        if (Reader.VarintLong) { Reader.Assert<int32_t>(0); }
         const int64_t TypeDataOffset = Reader.ReadVarint();
         Reader.AssertVarint(0);
         RequireNonZero(NameOffset, "nameOffset");
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in model");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in model"); }
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
         if (HasTypeData()) {
@@ -142,9 +140,7 @@ namespace Souls {
         Writer.WriteByte(static_cast<uint8_t>(Type()));
         Writer.WriteByte(0);
         Writer.WriteInt16(static_cast<int16_t>(Index));
-        if (Writer.VarintLong) {
-            Writer.WriteInt32(0);
-        }
+        if (Writer.VarintLong) { Writer.WriteInt32(0); }
         Writer.ReserveVarint("TypeDataOffset");
         Writer.WriteVarint(0);
         Writer.FillVarint("NameOffset", Writer.Position() - Start);
@@ -208,11 +204,11 @@ namespace Souls {
         Reader.Assert<uint8_t>(static_cast<uint8_t>(Type()));
         const auto ShapeKind = static_cast<Msb::ShapeType>(Reader.ReadByte());
         Reader.ReadInt16();  // ID
-        Unk0E                         = Reader.ReadInt16();
-        Position                      = Reader.ReadVector3();
-        Rotation                      = Reader.ReadVector3();
-        const int64_t UnkOffsetA      = Reader.ReadVarint();
-        const int64_t UnkOffsetB      = Reader.ReadVarint();
+        Unk0E                    = Reader.ReadInt16();
+        Position                 = Reader.ReadVector3();
+        Rotation                 = Reader.ReadVector3();
+        const int64_t UnkOffsetA = Reader.ReadVarint();
+        const int64_t UnkOffsetB = Reader.ReadVarint();
         Reader.Assert<int32_t>(-1);
         Reader.AssertPattern(0x24, 0);
         const int64_t ShapeDataOffset = Reader.ReadVarint();
@@ -234,9 +230,7 @@ namespace Souls {
         if (Msb::HasShapeData(Shape) != (ShapeDataOffset != 0)) {
             throw BinaryException("Unexpected shapeDataOffset in region");
         }
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in region");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in region"); }
 
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
@@ -246,7 +240,7 @@ namespace Souls {
         Reader.Assert<int32_t>(0);
         if (Msb::HasShapeData(Shape)) {
             Reader.Seek(Start + ShapeDataOffset);
-            Msb::Detail::ReadVisitor V{Reader};
+            Msb::Detail::ReadVisitor V {Reader};
             Msb::Detail::VisitShape(Shape, V);
         }
         if (HasTypeData()) {
@@ -288,7 +282,7 @@ namespace Souls {
         Writer.Align(VarintSize(Writer));
         if (Msb::HasShapeData(Shape)) {
             Writer.FillVarint("ShapeDataOffset", Writer.Position() - Start);
-            Msb::Detail::WriteVisitor V{Writer};
+            Msb::Detail::WriteVisitor V {Writer};
             Msb::Detail::VisitShape(Shape, V);
         } else {
             Writer.FillVarint("ShapeDataOffset", 0);
@@ -327,9 +321,7 @@ namespace Souls {
         Unk6E = Reader.ReadByte();
         Reader.Assert<uint8_t>(0);
         const int64_t TypeDataOffset = Reader.ReadVarint();
-        if (Reader.VarintLong) {
-            Reader.Assert<int64_t>(0);
-        }
+        if (Reader.VarintLong) { Reader.Assert<int64_t>(0); }
         RequireNonZero(NameOffset, "nameOffset");
         RequireNonZero(TypeDataOffset, "typeDataOffset");
         Reader.Seek(Start + NameOffset);
@@ -362,9 +354,7 @@ namespace Souls {
         Writer.WriteByte(Unk6E);
         Writer.WriteByte(0);
         Writer.ReserveVarint("TypeDataOffset");
-        if (Writer.VarintLong) {
-            Writer.WriteInt64(0);
-        }
+        if (Writer.VarintLong) { Writer.WriteInt64(0); }
         const int64_t NameStart = Writer.Position();
         const int64_t NamePad   = Writer.VarintLong ? 0x20 : 0x2C;
         Writer.FillVarint("NameOffset", NameStart - Start);
@@ -378,32 +368,27 @@ namespace Souls {
     }
 
     void MSB2::Part::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ModelName);
     }
 
     void MSB2::Part::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ModelName);
     }
 #pragma endregion
 
     bool MSB2::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 0x14) {
-            return false;
-        }
+        if (Reader.Length() < 0x14) { return false; }
         Reader.Order = Endian::Little;
-        if (Reader.GetASCII(0, 4) == "MSB ") {
-            return Reader.ReadAt<int32_t>(0x10) == 5;
-        }
+        if (Reader.GetASCII(0, 4) == "MSB ") { return Reader.ReadAt<int32_t>(0x10) == 5; }
         // The 32-bit formats have no header; they start with the model param, in either byte order.
         for (const Endian Order : {Endian::Little, Endian::Big}) {
             Reader.Order = Order;
-            if (Reader.ReadAt<uint32_t>(0) != 5) {
-                continue;
-            }
+            if (Reader.ReadAt<uint32_t>(0) != 5) { continue; }
             const int64_t NameOffset = Reader.ReadAt<uint32_t>(4);
-            if (NameOffset >= 0 && NameOffset + 30 <= Reader.Length() && Reader.GetUTF16Text(NameOffset) == "MODEL_PARAM_ST") {
+            if (NameOffset >= 0 && NameOffset + 30 <= Reader.Length() &&
+                Reader.GetUTF16Text(NameOffset) == "MODEL_PARAM_ST") {
                 return true;
             }
         }
@@ -424,13 +409,13 @@ namespace Souls {
             Reader.Order = Endian::Big;
         }
 
-        Models     = {};
-        Events     = {};
-        Regions    = {};
-        Parts      = {};
+        Models  = {};
+        Events  = {};
+        Regions = {};
+        Parts   = {};
         PartPoses.clear();
 
-        const int64_t VS         = VarintSize(Reader);
+        const int64_t VS       = VarintSize(Reader);
         const auto ModelOrder  = ReadParam(Reader, Models, VS);
         const auto EventOrder  = ReadParam(Reader, Events, VS + 4);
         const auto RegionOrder = ReadParam(Reader, Regions, VS + 2);
@@ -455,9 +440,7 @@ namespace Souls {
                 PartPose P;
                 P.PartName.Index        = Reader.ReadInt16();
                 const int16_t BoneCount = Reader.ReadInt16();
-                if (Reader.VarintLong) {
-                    Reader.Assert<int32_t>(0);
-                }
+                if (Reader.VarintLong) { Reader.Assert<int32_t>(0); }
                 const int64_t BonesOffset = Reader.ReadVarint();
                 Reader.Seek(Start + BonesOffset);
                 for (int16_t I = 0; I < BoneCount; ++I) {
@@ -511,7 +494,7 @@ namespace Souls {
             P->GetNames(Lists);
         }
         for (PartPose& P : Poses) {
-            Msb::Detail::NameVisitor<Entries> V{Lists};
+            Msb::Detail::NameVisitor<Entries> V {Lists};
             V(P.PartName);
             for (PartPose::Bone& B : P.Bones) {
                 B.Name = Msb::Detail::FindName(Lists.BoneNames, B.NameIndex).value_or("");
@@ -542,10 +525,11 @@ namespace Souls {
         // Bone names are collected from the poses as they are written.
         std::vector<BoneName> BoneNames;
         for (PartPose& P : PartPoses) {
-            Msb::Detail::IndexVisitor<Entries> V{Lists};
+            Msb::Detail::IndexVisitor<Entries> V {Lists};
             V(P.PartName);
             for (PartPose::Bone& B : P.Bones) {
-                auto Found = std::find_if(BoneNames.begin(), BoneNames.end(), [&](const BoneName& N) { return N.Name == B.Name; });
+                auto Found =
+                  std::find_if(BoneNames.begin(), BoneNames.end(), [&](const BoneName& N) { return N.Name == B.Name; });
                 if (Found == BoneNames.end()) {
                     BoneName N;
                     N.Name = B.Name;
@@ -558,9 +542,7 @@ namespace Souls {
 
         Writer.Order      = Format == MSBFormat::DarkSouls2BE ? Endian::Big : Endian::Little;
         Writer.VarintLong = Format == MSBFormat::DarkSouls2Scholar;
-        if (Format == MSBFormat::DarkSouls2Scholar) {
-            Msb::Detail::WriteHeader(Writer);
-        }
+        if (Format == MSBFormat::DarkSouls2Scholar) { Msb::Detail::WriteHeader(Writer); }
         WriteParam(Writer, ModelParam::ParamVersion, ModelParam::ParamName, ModelPtrs);
         Writer.FillVarint("NextParamOffset", Writer.Position());
         WriteParam(Writer, EventParam::ParamVersion, EventParam::ParamName, EventPtrs);
@@ -581,9 +563,7 @@ namespace Souls {
             Writer.FillVarint("EntryOffset" + std::to_string(I), Start);
             Writer.WriteInt16(P.PartName.Index);
             Writer.WriteInt16(static_cast<int16_t>(P.Bones.size()));
-            if (Writer.VarintLong) {
-                Writer.WriteInt32(0);
-            }
+            if (Writer.VarintLong) { Writer.WriteInt32(0); }
             Writer.ReserveVarint("BonesOffset");
             Writer.FillVarint("BonesOffset", Writer.Position() - Start);
             for (const PartPose::Bone& B : P.Bones) {

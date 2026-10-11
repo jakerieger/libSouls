@@ -1,3 +1,11 @@
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
 /// @file souls.h
 /// @brief libSouls C API.
 ///
@@ -19,47 +27,47 @@
 ///  - Handles are not internally synchronized; don't use one object from two threads at once. Error state is
 ///    per-thread.
 #ifndef LIBSOULS_CAPI_SOULS_H
-#define LIBSOULS_CAPI_SOULS_H
+    #define LIBSOULS_CAPI_SOULS_H
 
-#include <stddef.h>
-#include <stdint.h>
+    #include <stddef.h>
+    #include <stdint.h>
 
-#ifdef __cplusplus
-    /// @brief Gives the API C linkage when the header is used from C++.
-    #define SOULS_EXTERN_C extern "C"
-#else
-    #define SOULS_EXTERN_C
-#endif
-
-#if defined(_WIN32)
-    #ifdef LIBSOULS_EXPORTS
-        #define SOULS_CALL __declspec(dllexport)
+    #ifdef __cplusplus
+        /// @brief Gives the API C linkage when the header is used from C++.
+        #define SOULS_EXTERN_C extern "C"
     #else
-        #define SOULS_CALL __declspec(dllimport)
+        #define SOULS_EXTERN_C
     #endif
-#else
-    /// @brief Imports or exports the API from Souls.dll.
-    #define SOULS_CALL
-#endif
 
-/// @brief Marks a function of the C API.
-#define SOULS_C_API SOULS_EXTERN_C SOULS_CALL
+    #if defined(_WIN32)
+        #ifdef LIBSOULS_EXPORTS
+            #define SOULS_CALL __declspec(dllexport)
+        #else
+            #define SOULS_CALL __declspec(dllimport)
+        #endif
+    #else
+        /// @brief Imports or exports the API from Souls.dll.
+        #define SOULS_CALL
+    #endif
 
-#ifdef __cplusplus
+    /// @brief Marks a function of the C API.
+    #define SOULS_C_API SOULS_EXTERN_C SOULS_CALL
+
+    #ifdef __cplusplus
 extern "C" {
-#endif
+    #endif
 
 /// @name Core
 /// @{
 
 typedef enum SoulsStatus {
     SOULS_OK                   = 0,
-    SOULS_ERR_INVALID_ARGUMENT = 1, ///< NULL handle, bad index, bad enum value, ...
-    SOULS_ERR_IO               = 2, ///< a file couldn't be opened, read or written
-    SOULS_ERR_PARSE            = 3, ///< the data isn't valid for the format (or is an unsupported variant)
-    SOULS_ERR_NOT_FOUND        = 4, ///< a lookup found nothing (no matching paramdef, no such entry, ...)
-    SOULS_ERR_INTERNAL         = 5, ///< anything unexpected
-    SOULS_ERR_UNSUPPORTED      = 6  ///< valid request that this object or game doesn't support
+    SOULS_ERR_INVALID_ARGUMENT = 1,  ///< NULL handle, bad index, bad enum value, ...
+    SOULS_ERR_IO               = 2,  ///< a file couldn't be opened, read or written
+    SOULS_ERR_PARSE            = 3,  ///< the data isn't valid for the format (or is an unsupported variant)
+    SOULS_ERR_NOT_FOUND        = 4,  ///< a lookup found nothing (no matching paramdef, no such entry, ...)
+    SOULS_ERR_INTERNAL         = 5,  ///< anything unexpected
+    SOULS_ERR_UNSUPPORTED      = 6   ///< valid request that this object or game doesn't support
 } SoulsStatus;
 
 /// @brief Bytes owned by the caller.
@@ -99,30 +107,30 @@ SOULS_C_API int souls_oodle_is_available(void);
 /// @{
 
 typedef enum SoulsDcxType {
-    SOULS_DCX_UNKNOWN              = 0,
-    SOULS_DCX_NONE                 = 1, ///< not compressed
-    SOULS_DCX_ZLIB                 = 2,
-    SOULS_DCX_DCP_EDGE             = 3, ///< decompress only
-    SOULS_DCX_DCP_DFLT             = 4,
-    SOULS_DCX_DCX_EDGE             = 5,
-    SOULS_DCX_DCX_DFLT_10000_24_9  = 6, ///< Dark Souls, Dark Souls II
-    SOULS_DCX_DCX_DFLT_10000_44_9  = 7, ///< Bloodborne, Dark Souls III
-    SOULS_DCX_DCX_DFLT_11000_44_8  = 8,
-    SOULS_DCX_DCX_DFLT_11000_44_9  = 9, ///< Sekiro
-    SOULS_DCX_DCX_DFLT_11000_44_9_15 = 10, ///< Elden Ring regulation
-    SOULS_DCX_DCX_KRAK_6           = 11, ///< Sekiro, Elden Ring (needs Oodle)
-    SOULS_DCX_DCX_KRAK_9           = 12, ///< Armored Core VI (needs Oodle)
-    SOULS_DCX_DCX_ZSTD             = 13
+    SOULS_DCX_UNKNOWN                = 0,
+    SOULS_DCX_NONE                   = 1,  ///< not compressed
+    SOULS_DCX_ZLIB                   = 2,
+    SOULS_DCX_DCP_EDGE               = 3,  ///< decompress only
+    SOULS_DCX_DCP_DFLT               = 4,
+    SOULS_DCX_DCX_EDGE               = 5,
+    SOULS_DCX_DCX_DFLT_10000_24_9    = 6,  ///< Dark Souls, Dark Souls II
+    SOULS_DCX_DCX_DFLT_10000_44_9    = 7,  ///< Bloodborne, Dark Souls III
+    SOULS_DCX_DCX_DFLT_11000_44_8    = 8,
+    SOULS_DCX_DCX_DFLT_11000_44_9    = 9,   ///< Sekiro
+    SOULS_DCX_DCX_DFLT_11000_44_9_15 = 10,  ///< Elden Ring regulation
+    SOULS_DCX_DCX_KRAK_6             = 11,  ///< Sekiro, Elden Ring (needs Oodle)
+    SOULS_DCX_DCX_KRAK_9             = 12,  ///< Armored Core VI (needs Oodle)
+    SOULS_DCX_DCX_ZSTD               = 13
 } SoulsDcxType;
 
 typedef enum SoulsGame {
-    SOULS_GAME_DEMONS_SOULS  = 0,
-    SOULS_GAME_DARK_SOULS_1  = 1,
-    SOULS_GAME_DARK_SOULS_2  = 2,
-    SOULS_GAME_BLOODBORNE    = 3,
-    SOULS_GAME_DARK_SOULS_3  = 4,
-    SOULS_GAME_SEKIRO        = 5,
-    SOULS_GAME_ELDEN_RING    = 6,
+    SOULS_GAME_DEMONS_SOULS   = 0,
+    SOULS_GAME_DARK_SOULS_1   = 1,
+    SOULS_GAME_DARK_SOULS_2   = 2,
+    SOULS_GAME_BLOODBORNE     = 3,
+    SOULS_GAME_DARK_SOULS_3   = 4,
+    SOULS_GAME_SEKIRO         = 5,
+    SOULS_GAME_ELDEN_RING     = 6,
     SOULS_GAME_ARMORED_CORE_6 = 7
 } SoulsGame;
 
@@ -166,10 +174,7 @@ typedef enum SoulsBinderKind {
 /// @brief Per-file flags; combine with bitwise or.
 ///
 /// Bit 0 says the file is compressed inside the binder.
-enum {
-    SOULS_FILE_COMPRESSED = 0x01,
-    SOULS_FILE_FLAG1      = 0x02
-};
+enum { SOULS_FILE_COMPRESSED = 0x01, SOULS_FILE_FLAG1 = 0x02 };
 
 SOULS_C_API SoulsBinder* souls_binder_new(SoulsBinderKind kind);
 /// @brief Reads either kind, detecting which.
@@ -201,13 +206,16 @@ SOULS_C_API int64_t souls_binder_find_file(const SoulsBinder* binder, const char
 /// Handy for build-machine paths.
 SOULS_C_API int64_t souls_binder_find_file_suffix(const SoulsBinder* binder, const char* suffix);
 
-SOULS_C_API SoulsStatus souls_binder_set_file_bytes(SoulsBinder* binder, size_t index, const uint8_t* data, size_t size);
+SOULS_C_API SoulsStatus souls_binder_set_file_bytes(SoulsBinder* binder,
+                                                    size_t index,
+                                                    const uint8_t* data,
+                                                    size_t size);
 SOULS_C_API SoulsStatus souls_binder_set_file_id(SoulsBinder* binder, size_t index, int32_t id);
 SOULS_C_API SoulsStatus souls_binder_set_file_name(SoulsBinder* binder, size_t index, const char* name_or_null);
 SOULS_C_API SoulsStatus souls_binder_set_file_flags(SoulsBinder* binder, size_t index, uint8_t flags);
 /// @brief Appends a file (name may be NULL) and returns its index, or -1 on failure.
-SOULS_C_API int64_t souls_binder_add_file(SoulsBinder* binder, int32_t id, const char* name_or_null, uint8_t flags,
-                                          const uint8_t* data, size_t size);
+SOULS_C_API int64_t souls_binder_add_file(
+  SoulsBinder* binder, int32_t id, const char* name_or_null, uint8_t flags, const uint8_t* data, size_t size);
 SOULS_C_API SoulsStatus souls_binder_remove_file(SoulsBinder* binder, size_t index);
 
 /// @brief regulation.bin: decrypt to a binder, and encrypt a binder back to a file.
@@ -242,8 +250,8 @@ typedef struct SoulsFMG SoulsFMG;
 
 typedef enum SoulsFmgVersion {
     SOULS_FMG_DEMONS_SOULS = 0,
-    SOULS_FMG_DARK_SOULS_1 = 1, ///< and Dark Souls II
-    SOULS_FMG_DARK_SOULS_3 = 2  ///< Bloodborne, Dark Souls III, Sekiro, Elden Ring
+    SOULS_FMG_DARK_SOULS_1 = 1,  ///< and Dark Souls II
+    SOULS_FMG_DARK_SOULS_3 = 2   ///< Bloodborne, Dark Souls III, Sekiro, Elden Ring
 } SoulsFmgVersion;
 
 SOULS_C_API SoulsFMG* souls_fmg_new(SoulsFmgVersion version);
@@ -338,7 +346,7 @@ typedef enum SoulsFieldType {
     SOULS_FIELD_F32     = 7,
     SOULS_FIELD_ANGLE32 = 8,
     SOULS_FIELD_F64     = 9,
-    SOULS_FIELD_DUMMY8  = 10, ///< padding bytes; read and written with the bytes functions
+    SOULS_FIELD_DUMMY8  = 10,  ///< padding bytes; read and written with the bytes functions
     SOULS_FIELD_FIXSTR  = 11,
     SOULS_FIELD_FIXSTRW = 12
 } SoulsFieldType;
@@ -356,24 +364,31 @@ SOULS_C_API int64_t souls_param_layout_find_field(const SoulsParamLayout* layout
 /// @brief Numeric fields (everything but dummy8 and strings), as doubles.
 ///
 /// Writes convert to the field's own type.
-SOULS_C_API SoulsStatus souls_param_get_number(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                               const char* field, double* out_value);
-SOULS_C_API SoulsStatus souls_param_set_number(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                               const char* field, double value);
+SOULS_C_API SoulsStatus souls_param_get_number(
+  const SoulsParamLayout* layout, const SoulsParam* param, size_t row, const char* field, double* out_value);
+SOULS_C_API SoulsStatus
+souls_param_set_number(const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, double value);
 /// @brief fixstr / fixstrW fields.
 ///
 /// The returned text is borrowed from the layout until its next string read.
-SOULS_C_API const char* souls_param_get_string(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                               const char* field);
-SOULS_C_API SoulsStatus souls_param_set_string(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                               const char* field, const char* text);
+SOULS_C_API const char*
+souls_param_get_string(const SoulsParamLayout* layout, const SoulsParam* param, size_t row, const char* field);
+SOULS_C_API SoulsStatus souls_param_set_string(
+  const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, const char* text);
 /// @brief dummy8 arrays: copies up to capacity bytes into out and reports the field's full length in *out_size.
-SOULS_C_API SoulsStatus souls_param_get_bytes(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                              const char* field, uint8_t* out, size_t capacity, size_t* out_size);
-SOULS_C_API SoulsStatus souls_param_set_bytes(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                              const char* field, const uint8_t* data, size_t size);
+SOULS_C_API SoulsStatus souls_param_get_bytes(const SoulsParamLayout* layout,
+                                              const SoulsParam* param,
+                                              size_t row,
+                                              const char* field,
+                                              uint8_t* out,
+                                              size_t capacity,
+                                              size_t* out_size);
+SOULS_C_API SoulsStatus souls_param_set_bytes(
+  const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, const uint8_t* data, size_t size);
 /// @brief Appends a row with every field at its default and returns its index, or -1 on failure.
-SOULS_C_API int64_t souls_param_add_row(const SoulsParamLayout* layout, SoulsParam* param, int32_t id,
+SOULS_C_API int64_t souls_param_add_row(const SoulsParamLayout* layout,
+                                        SoulsParam* param,
+                                        int32_t id,
                                         const char* name_or_null);
 
 /// @}
@@ -387,14 +402,14 @@ SOULS_C_API int64_t souls_param_add_row(const SoulsParamLayout* layout, SoulsPar
 typedef struct SoulsFieldInfo {
     /// @brief Set to sizeof(SoulsFieldInfo) before the call; lets the struct grow in later versions.
     size_t struct_size;
-    const char* display_name;   ///< borrowed
-    const char* description;    ///< borrowed; NULL if there is none
-    const char* internal_type;  ///< borrowed; the type in the engine, which may name an enum (see SoulsParamEnums)
-    const char* display_format; ///< borrowed; a printf-style format
-    int32_t array_length;       ///< elements for array types, otherwise 1
-    int32_t bit_size;           ///< bits used by a bitfield, otherwise -1
-    int32_t sort_id;            ///< editors order fields by this
-    int32_t edit_flags;         ///< bit 0: wraps around, bit 2: locked
+    const char* display_name;    ///< borrowed
+    const char* description;     ///< borrowed; NULL if there is none
+    const char* internal_type;   ///< borrowed; the type in the engine, which may name an enum (see SoulsParamEnums)
+    const char* display_format;  ///< borrowed; a printf-style format
+    int32_t array_length;        ///< elements for array types, otherwise 1
+    int32_t bit_size;            ///< bits used by a bitfield, otherwise -1
+    int32_t sort_id;             ///< editors order fields by this
+    int32_t edit_flags;          ///< bit 0: wraps around, bit 2: locked
     /// @brief Whether default_value is set.
     int has_default;
     /// @brief Whether minimum is set.
@@ -413,7 +428,9 @@ typedef struct SoulsFieldInfo {
     double increment;
 } SoulsFieldInfo;
 
-SOULS_C_API SoulsStatus souls_param_layout_field_info(const SoulsParamLayout* layout, size_t field, SoulsFieldInfo* out_info);
+SOULS_C_API SoulsStatus souls_param_layout_field_info(const SoulsParamLayout* layout,
+                                                      size_t field,
+                                                      SoulsFieldInfo* out_info);
 
 /// @brief Names for param rows, which the game's own files leave out.
 ///
@@ -433,7 +450,10 @@ SOULS_C_API const char* souls_param_names_find(const SoulsParamNames* names, con
 /// @brief Gives rows their names (rows that already have one keep it unless overwrite is set).
 ///
 /// Returns how many were named, or -1.
-SOULS_C_API int64_t souls_param_names_apply(const SoulsParamNames* names, SoulsParam* param, const char* param_name, int overwrite);
+SOULS_C_API int64_t souls_param_names_apply(const SoulsParamNames* names,
+                                            SoulsParam* param,
+                                            const char* param_name,
+                                            int overwrite);
 SOULS_C_API size_t souls_param_names_load_error_count(const SoulsParamNames* names);
 SOULS_C_API const char* souls_param_names_load_error(const SoulsParamNames* names, size_t index);
 
@@ -457,7 +477,10 @@ SOULS_C_API const char* souls_param_enums_entry_name(const SoulsParamEnums* enum
 /// @brief The name of a value, or NULL if the enum doesn't name it.
 SOULS_C_API const char* souls_param_enums_find_name(const SoulsParamEnums* enums, const char* enum_name, int64_t value);
 /// @brief Looks a name up: returns SOULS_OK and fills *out_value, or SOULS_ERR_NOT_FOUND.
-SOULS_C_API SoulsStatus souls_param_enums_find_value(const SoulsParamEnums* enums, const char* enum_name, const char* entry_name, int64_t* out_value);
+SOULS_C_API SoulsStatus souls_param_enums_find_value(const SoulsParamEnums* enums,
+                                                     const char* enum_name,
+                                                     const char* entry_name,
+                                                     int64_t* out_value);
 SOULS_C_API size_t souls_param_enums_load_error_count(const SoulsParamEnums* enums);
 SOULS_C_API const char* souls_param_enums_load_error(const SoulsParamEnums* enums, size_t index);
 
@@ -485,8 +508,8 @@ SOULS_C_API SoulsStatus souls_tpf_set_texture_name(SoulsTPF* tpf, size_t index, 
 SOULS_C_API const uint8_t* souls_tpf_texture_bytes(const SoulsTPF* tpf, size_t index, size_t* out_size);
 SOULS_C_API SoulsStatus souls_tpf_set_texture_bytes(SoulsTPF* tpf, size_t index, const uint8_t* data, size_t size);
 /// @brief Appends a PC texture from a DDS file and returns its index, or -1 (for example if the bytes aren't a DDS).
-SOULS_C_API int64_t souls_tpf_add_texture(SoulsTPF* tpf, const char* name, uint8_t format, uint8_t flags1,
-                                          const uint8_t* dds, size_t size);
+SOULS_C_API int64_t
+souls_tpf_add_texture(SoulsTPF* tpf, const char* name, uint8_t format, uint8_t flags1, const uint8_t* dds, size_t size);
 SOULS_C_API SoulsStatus souls_tpf_remove_texture(SoulsTPF* tpf, size_t index);
 
 /// @}
@@ -519,11 +542,11 @@ SOULS_C_API SoulsStatus souls_tpf_remove_texture(SoulsTPF* tpf, size_t index);
 typedef struct SoulsMsb SoulsMsb;
 
 typedef enum SoulsMsbKind {
-    SOULS_MSB_DARK_SOULS_1 = 1, ///< MSB1
-    SOULS_MSB_DARK_SOULS_2 = 2, ///< MSB2, including Scholar of the First Sin
-    SOULS_MSB_DARK_SOULS_3 = 3, ///< MSB3
-    SOULS_MSB_SEKIRO       = 4, ///< MSBS
-    SOULS_MSB_ELDEN_RING   = 5  ///< MSBE
+    SOULS_MSB_DARK_SOULS_1 = 1,  ///< MSB1
+    SOULS_MSB_DARK_SOULS_2 = 2,  ///< MSB2, including Scholar of the First Sin
+    SOULS_MSB_DARK_SOULS_3 = 3,  ///< MSB3
+    SOULS_MSB_SEKIRO       = 4,  ///< MSBS
+    SOULS_MSB_ELDEN_RING   = 5   ///< MSBE
 } SoulsMsbKind;
 
 typedef enum SoulsMsbCategory {
@@ -534,21 +557,21 @@ typedef enum SoulsMsbCategory {
 } SoulsMsbCategory;
 
 typedef enum SoulsPropertyKind {
-    SOULS_PROPERTY_INT       = 0, ///< int64
-    SOULS_PROPERTY_STRING    = 1, ///< text; may be absent (NULL)
-    SOULS_PROPERTY_VEC3      = 2, ///< three floats
-    SOULS_PROPERTY_INT_ARRAY = 3, ///< array of int64 (fixed length)
-    SOULS_PROPERTY_FLOAT     = 4, ///< double (animation events)
-    SOULS_PROPERTY_BYTES     = 5  ///< fixed-length byte array (animation events)
+    SOULS_PROPERTY_INT       = 0,  ///< int64
+    SOULS_PROPERTY_STRING    = 1,  ///< text; may be absent (NULL)
+    SOULS_PROPERTY_VEC3      = 2,  ///< three floats
+    SOULS_PROPERTY_INT_ARRAY = 3,  ///< array of int64 (fixed length)
+    SOULS_PROPERTY_FLOAT     = 4,  ///< double (animation events)
+    SOULS_PROPERTY_BYTES     = 5   ///< fixed-length byte array (animation events)
 } SoulsPropertyKind;
 
 typedef enum SoulsShapeType {
     SOULS_SHAPE_POINT    = 0,
-    SOULS_SHAPE_CIRCLE   = 1, ///< radius
-    SOULS_SHAPE_SPHERE   = 2, ///< radius
-    SOULS_SHAPE_CYLINDER = 3, ///< radius, height
-    SOULS_SHAPE_RECT     = 4, ///< width, depth
-    SOULS_SHAPE_BOX      = 5  ///< width, depth, height
+    SOULS_SHAPE_CIRCLE   = 1,  ///< radius
+    SOULS_SHAPE_SPHERE   = 2,  ///< radius
+    SOULS_SHAPE_CYLINDER = 3,  ///< radius, height
+    SOULS_SHAPE_RECT     = 4,  ///< width, depth
+    SOULS_SHAPE_BOX      = 5   ///< width, depth, height
 } SoulsShapeType;
 
 SOULS_C_API SoulsMsb* souls_msb_new(SoulsMsbKind kind);
@@ -562,7 +585,10 @@ SOULS_C_API SoulsMsbKind souls_msb_kind(const SoulsMsb* msb);
 SOULS_C_API size_t souls_msb_entry_count(const SoulsMsb* msb, SoulsMsbCategory category);
 /// @brief Borrowed.
 SOULS_C_API const char* souls_msb_entry_name(const SoulsMsb* msb, SoulsMsbCategory category, size_t index);
-SOULS_C_API SoulsStatus souls_msb_set_entry_name(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* name);
+SOULS_C_API SoulsStatus souls_msb_set_entry_name(SoulsMsb* msb,
+                                                 SoulsMsbCategory category,
+                                                 size_t index,
+                                                 const char* name);
 /// @brief Borrowed, such as "Enemy".
 ///
 /// Valid for the life of the process.
@@ -578,38 +604,59 @@ SOULS_C_API const char* souls_msb_type_name(const SoulsMsb* msb, SoulsMsbCategor
 /// @brief Adds an entry of the named type with default values (and the given name, if not NULL).
 ///
 /// Returns its index, or -1.
-SOULS_C_API int64_t souls_msb_add_entry(SoulsMsb* msb, SoulsMsbCategory category, const char* type_name, const char* name_or_null);
+SOULS_C_API int64_t souls_msb_add_entry(SoulsMsb* msb,
+                                        SoulsMsbCategory category,
+                                        const char* type_name,
+                                        const char* name_or_null);
 SOULS_C_API SoulsStatus souls_msb_remove_entry(SoulsMsb* msb, SoulsMsbCategory category, size_t index);
 
 /// @brief Property discovery for one entry.
 SOULS_C_API size_t souls_msb_property_count(const SoulsMsb* msb, SoulsMsbCategory category, size_t index);
-SOULS_C_API const char* souls_msb_property_name(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, size_t property);
-SOULS_C_API SoulsPropertyKind souls_msb_property_kind(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, size_t property);
+SOULS_C_API const char*
+souls_msb_property_name(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, size_t property);
+SOULS_C_API SoulsPropertyKind souls_msb_property_kind(const SoulsMsb* msb,
+                                                      SoulsMsbCategory category,
+                                                      size_t index,
+                                                      size_t property);
 
 /// @brief Property access by name.
 ///
 /// These fail with SOULS_ERR_UNSUPPORTED if the entry doesn't have the property, and with SOULS_ERR_INVALID_ARGUMENT if
 /// it has it with a different kind.
-SOULS_C_API SoulsStatus souls_msb_get_int(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, int64_t* out_value);
-SOULS_C_API SoulsStatus souls_msb_set_int(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, int64_t value);
+SOULS_C_API SoulsStatus souls_msb_get_int(
+  const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, int64_t* out_value);
+SOULS_C_API SoulsStatus
+souls_msb_set_int(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, int64_t value);
 /// @brief *out_text is borrowed, and NULL when the property is absent.
-SOULS_C_API SoulsStatus souls_msb_get_string(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const char** out_text);
-SOULS_C_API SoulsStatus souls_msb_set_string(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const char* text_or_null);
-SOULS_C_API SoulsStatus souls_msb_get_vec3(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, float out_xyz[3]);
-SOULS_C_API SoulsStatus souls_msb_set_vec3(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const float xyz[3]);
+SOULS_C_API SoulsStatus souls_msb_get_string(
+  const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const char** out_text);
+SOULS_C_API SoulsStatus souls_msb_set_string(
+  SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const char* text_or_null);
+SOULS_C_API SoulsStatus souls_msb_get_vec3(
+  const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, float out_xyz[3]);
+SOULS_C_API SoulsStatus
+souls_msb_set_vec3(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const float xyz[3]);
 /// @brief Copies up to capacity values and reports the array's full length in *out_count.
-SOULS_C_API SoulsStatus souls_msb_get_int_array(const SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property,
-                                                int64_t* out, size_t capacity, size_t* out_count);
+SOULS_C_API SoulsStatus souls_msb_get_int_array(const SoulsMsb* msb,
+                                                SoulsMsbCategory category,
+                                                size_t index,
+                                                const char* property,
+                                                int64_t* out,
+                                                size_t capacity,
+                                                size_t* out_count);
 /// @brief The array length is fixed: count must match.
-SOULS_C_API SoulsStatus souls_msb_set_int_array(SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property,
-                                                const int64_t* values, size_t count);
+SOULS_C_API SoulsStatus souls_msb_set_int_array(
+  SoulsMsb* msb, SoulsMsbCategory category, size_t index, const char* property, const int64_t* values, size_t count);
 
 /// @brief Region shapes.
 ///
 /// dims receives up to 3 values (radius; radius, height; width, depth; width, depth, height).
 SOULS_C_API SoulsShapeType souls_msb_region_shape(const SoulsMsb* msb, size_t region_index);
 SOULS_C_API SoulsStatus souls_msb_region_shape_dims(const SoulsMsb* msb, size_t region_index, float out_dims[3]);
-SOULS_C_API SoulsStatus souls_msb_set_region_shape(SoulsMsb* msb, size_t region_index, SoulsShapeType shape, const float dims[3]);
+SOULS_C_API SoulsStatus souls_msb_set_region_shape(SoulsMsb* msb,
+                                                   size_t region_index,
+                                                   SoulsShapeType shape,
+                                                   const float dims[3]);
 
 /// @}
 
@@ -627,14 +674,14 @@ SOULS_C_API SoulsStatus souls_msb_set_region_shape(SoulsMsb* msb, size_t region_
 typedef struct SoulsFlver SoulsFlver;
 
 typedef enum SoulsVertexAttribute {
-    SOULS_VERTEX_POSITION     = 0, ///< 3 floats
-    SOULS_VERTEX_NORMAL       = 1, ///< 3 floats
-    SOULS_VERTEX_BONE_WEIGHTS = 2, ///< 4 floats
-    SOULS_VERTEX_BONE_INDICES = 3, ///< 4 int32 (indices into the mesh's bone indices list); use the _ints functions
-    SOULS_VERTEX_UV           = 4, ///< 3 floats per UV set (z is 0 unless the format has three components)
-    SOULS_VERTEX_TANGENT      = 5, ///< 4 floats per tangent set
-    SOULS_VERTEX_BITANGENT    = 6, ///< 4 floats
-    SOULS_VERTEX_COLOR        = 7  ///< 4 floats (r, g, b, a, each 0 to 1) per color set
+    SOULS_VERTEX_POSITION     = 0,  ///< 3 floats
+    SOULS_VERTEX_NORMAL       = 1,  ///< 3 floats
+    SOULS_VERTEX_BONE_WEIGHTS = 2,  ///< 4 floats
+    SOULS_VERTEX_BONE_INDICES = 3,  ///< 4 int32 (indices into the mesh's bone indices list); use the _ints functions
+    SOULS_VERTEX_UV           = 4,  ///< 3 floats per UV set (z is 0 unless the format has three components)
+    SOULS_VERTEX_TANGENT      = 5,  ///< 4 floats per tangent set
+    SOULS_VERTEX_BITANGENT    = 6,  ///< 4 floats
+    SOULS_VERTEX_COLOR        = 7   ///< 4 floats (r, g, b, a, each 0 to 1) per color set
 } SoulsVertexAttribute;
 
 SOULS_C_API SoulsFlver* souls_flver_new(void);
@@ -660,15 +707,29 @@ SOULS_C_API SoulsStatus souls_flver_set_bone_parent(SoulsFlver* flver, size_t bo
 /// @brief Local translation, rotation (Euler angles in radians) and scale.
 ///
 /// Any output may be NULL.
-SOULS_C_API SoulsStatus souls_flver_bone_transform(const SoulsFlver* flver, size_t bone, float translation[3], float rotation[3], float scale[3]);
-SOULS_C_API SoulsStatus souls_flver_set_bone_transform(SoulsFlver* flver, size_t bone, const float translation[3], const float rotation[3], const float scale[3]);
+SOULS_C_API SoulsStatus souls_flver_bone_transform(
+  const SoulsFlver* flver, size_t bone, float translation[3], float rotation[3], float scale[3]);
+SOULS_C_API SoulsStatus souls_flver_set_bone_transform(
+  SoulsFlver* flver, size_t bone, const float translation[3], const float rotation[3], const float scale[3]);
 
 /// @brief Dummy points.
 SOULS_C_API size_t souls_flver_dummy_count(const SoulsFlver* flver);
-SOULS_C_API SoulsStatus souls_flver_dummy(const SoulsFlver* flver, size_t dummy, float position[3], float forward[3], float upward[3],
-                                          int32_t* reference_id, int32_t* parent_bone, int32_t* attach_bone);
-SOULS_C_API SoulsStatus souls_flver_set_dummy(SoulsFlver* flver, size_t dummy, const float position[3], const float forward[3],
-                                              const float upward[3], int32_t reference_id, int32_t parent_bone, int32_t attach_bone);
+SOULS_C_API SoulsStatus souls_flver_dummy(const SoulsFlver* flver,
+                                          size_t dummy,
+                                          float position[3],
+                                          float forward[3],
+                                          float upward[3],
+                                          int32_t* reference_id,
+                                          int32_t* parent_bone,
+                                          int32_t* attach_bone);
+SOULS_C_API SoulsStatus souls_flver_set_dummy(SoulsFlver* flver,
+                                              size_t dummy,
+                                              const float position[3],
+                                              const float forward[3],
+                                              const float upward[3],
+                                              int32_t reference_id,
+                                              int32_t parent_bone,
+                                              int32_t attach_bone);
 
 /// @brief Materials and their textures.
 SOULS_C_API size_t souls_flver_material_count(const SoulsFlver* flver);
@@ -681,7 +742,8 @@ SOULS_C_API size_t souls_flver_texture_count(const SoulsFlver* flver, size_t mat
 /// @brief What the texture is for ("g_Diffuse") and where it comes from.
 SOULS_C_API const char* souls_flver_texture_type(const SoulsFlver* flver, size_t material, size_t texture);
 SOULS_C_API const char* souls_flver_texture_path(const SoulsFlver* flver, size_t material, size_t texture);
-SOULS_C_API SoulsStatus souls_flver_set_texture(SoulsFlver* flver, size_t material, size_t texture, const char* type, const char* path);
+SOULS_C_API SoulsStatus
+souls_flver_set_texture(SoulsFlver* flver, size_t material, size_t texture, const char* type, const char* path);
 SOULS_C_API int64_t souls_flver_add_texture(SoulsFlver* flver, size_t material, const char* type, const char* path);
 SOULS_C_API SoulsStatus souls_flver_remove_texture(SoulsFlver* flver, size_t material, size_t texture);
 
@@ -694,8 +756,12 @@ SOULS_C_API int souls_flver_mesh_is_dynamic(const SoulsFlver* flver, size_t mesh
 /// @brief The bones that vertex bone indices refer to.
 ///
 /// Copies up to capacity values and reports the full count.
-SOULS_C_API SoulsStatus souls_flver_mesh_bone_indices(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity, size_t* out_count);
-SOULS_C_API SoulsStatus souls_flver_set_mesh_bone_indices(SoulsFlver* flver, size_t mesh, const int32_t* indices, size_t count);
+SOULS_C_API SoulsStatus
+souls_flver_mesh_bone_indices(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity, size_t* out_count);
+SOULS_C_API SoulsStatus souls_flver_set_mesh_bone_indices(SoulsFlver* flver,
+                                                          size_t mesh,
+                                                          const int32_t* indices,
+                                                          size_t count);
 SOULS_C_API int64_t souls_flver_duplicate_mesh(SoulsFlver* flver, size_t mesh);
 SOULS_C_API SoulsStatus souls_flver_remove_mesh(SoulsFlver* flver, size_t mesh);
 
@@ -708,13 +774,19 @@ SOULS_C_API size_t souls_flver_attribute_components(SoulsVertexAttribute attribu
 /// @brief Copies one attribute of every vertex into out as vertex_count * components values, vertex after vertex.
 ///
 /// capacity is the size of out in values; the call fails if it is too small. set picks the UV / tangent / color set.
-SOULS_C_API SoulsStatus souls_flver_read_vertex_floats(const SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set,
-                                                       float* out, size_t capacity);
-SOULS_C_API SoulsStatus souls_flver_write_vertex_floats(SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set,
-                                                        const float* values, size_t count);
+SOULS_C_API SoulsStatus souls_flver_read_vertex_floats(
+  const SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set, float* out, size_t capacity);
+SOULS_C_API SoulsStatus souls_flver_write_vertex_floats(
+  SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set, const float* values, size_t count);
 /// @brief Bone indices (SOULS_VERTEX_BONE_INDICES), 4 per vertex.
-SOULS_C_API SoulsStatus souls_flver_read_vertex_ints(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity);
-SOULS_C_API SoulsStatus souls_flver_write_vertex_ints(SoulsFlver* flver, size_t mesh, const int32_t* values, size_t count);
+SOULS_C_API SoulsStatus souls_flver_read_vertex_ints(const SoulsFlver* flver,
+                                                     size_t mesh,
+                                                     int32_t* out,
+                                                     size_t capacity);
+SOULS_C_API SoulsStatus souls_flver_write_vertex_ints(SoulsFlver* flver,
+                                                      size_t mesh,
+                                                      const int32_t* values,
+                                                      size_t count);
 
 /// @brief Faces.
 ///
@@ -724,9 +796,11 @@ SOULS_C_API size_t souls_flver_face_set_count(const SoulsFlver* flver, size_t me
 SOULS_C_API uint32_t souls_flver_face_set_flags(const SoulsFlver* flver, size_t mesh, size_t face_set);
 /// @brief Number of indices after turning strips into plain triangles (three per face).
 SOULS_C_API size_t souls_flver_face_set_index_count(const SoulsFlver* flver, size_t mesh, size_t face_set);
-SOULS_C_API SoulsStatus souls_flver_read_face_set(const SoulsFlver* flver, size_t mesh, size_t face_set, int32_t* out, size_t capacity);
+SOULS_C_API SoulsStatus
+souls_flver_read_face_set(const SoulsFlver* flver, size_t mesh, size_t face_set, int32_t* out, size_t capacity);
 /// @brief Replaces the face set's indices with a triangle list (and stops it being a strip).
-SOULS_C_API SoulsStatus souls_flver_write_face_set(SoulsFlver* flver, size_t mesh, size_t face_set, const int32_t* indices, size_t count);
+SOULS_C_API SoulsStatus
+souls_flver_write_face_set(SoulsFlver* flver, size_t mesh, size_t face_set, const int32_t* indices, size_t count);
 
 /// @}
 
@@ -737,8 +811,8 @@ SOULS_C_API SoulsStatus souls_flver_write_face_set(SoulsFlver* flver, size_t mes
 ///
 /// The result is a SoulsBinder: use souls_binder_* to inspect and edit it.
 SOULS_C_API SoulsBinder* souls_bxf_read_files(SoulsBinderKind kind, const char* header_path, const char* data_path);
-SOULS_C_API SoulsBinder* souls_bxf_read_memory(SoulsBinderKind kind, const uint8_t* header, size_t header_size,
-                                               const uint8_t* data, size_t data_size);
+SOULS_C_API SoulsBinder* souls_bxf_read_memory(
+  SoulsBinderKind kind, const uint8_t* header, size_t header_size, const uint8_t* data, size_t data_size);
 SOULS_C_API SoulsStatus souls_bxf_write_files(SoulsBinder* binder, const char* header_path, const char* data_path);
 SOULS_C_API SoulsStatus souls_bxf_write_memory(SoulsBinder* binder, SoulsBuffer* out_header, SoulsBuffer* out_data);
 
@@ -784,7 +858,7 @@ typedef struct SoulsBdt SoulsBdt;
 typedef enum SoulsBhd5Game {
     SOULS_BHD5_DARK_SOULS_1 = 0,
     SOULS_BHD5_DARK_SOULS_2 = 1,
-    SOULS_BHD5_DARK_SOULS_3 = 2, ///< and Sekiro
+    SOULS_BHD5_DARK_SOULS_3 = 2,  ///< and Sekiro
     SOULS_BHD5_ELDEN_RING   = 3
 } SoulsBhd5Game;
 
@@ -798,7 +872,8 @@ SOULS_C_API uint64_t souls_path_hash64(const char* path);
 ///
 /// Most are RSA-encrypted; the key is a public key stored in the game's executable. Pass the exe's path (every key in
 /// it is tried) and/or a PEM key; if the header isn't encrypted both may be NULL.
-SOULS_C_API SoulsBhd5* souls_bhd5_open(SoulsBhd5Game game, const char* header_path, const char* exe_path_or_null, const char* key_pem_or_null);
+SOULS_C_API SoulsBhd5*
+souls_bhd5_open(SoulsBhd5Game game, const char* header_path, const char* exe_path_or_null, const char* key_pem_or_null);
 /// @brief Reads a header that is already decrypted.
 SOULS_C_API SoulsBhd5* souls_bhd5_read_memory(SoulsBhd5Game game, const uint8_t* data, size_t size);
 SOULS_C_API void souls_bhd5_free(SoulsBhd5* bhd5);
@@ -834,9 +909,9 @@ SOULS_C_API SoulsBuffer souls_bhd5_extract(const SoulsBhd5* bhd5, SoulsBdt* bdt,
 typedef struct SoulsEmevd SoulsEmevd;
 
 typedef enum SoulsEmevdGame {
-    SOULS_EMEVD_DARK_SOULS_1    = 0, ///< and Dark Souls II on PC
-    SOULS_EMEVD_DARK_SOULS_1_BE = 1, ///< console, big-endian
-    SOULS_EMEVD_BLOODBORNE      = 2, ///< and Dark Souls II: Scholar of the First Sin
+    SOULS_EMEVD_DARK_SOULS_1    = 0,  ///< and Dark Souls II on PC
+    SOULS_EMEVD_DARK_SOULS_1_BE = 1,  ///< console, big-endian
+    SOULS_EMEVD_BLOODBORNE      = 2,  ///< and Dark Souls II: Scholar of the First Sin
     SOULS_EMEVD_DARK_SOULS_3    = 3,
     SOULS_EMEVD_SEKIRO          = 4  ///< and Elden Ring
 } SoulsEmevdGame;
@@ -880,32 +955,57 @@ SOULS_C_API size_t souls_emevd_instruction_count(const SoulsEmevd* emevd, size_t
 SOULS_C_API int32_t souls_emevd_instruction_bank(const SoulsEmevd* emevd, size_t event, size_t instruction);
 SOULS_C_API int32_t souls_emevd_instruction_id(const SoulsEmevd* emevd, size_t event, size_t instruction);
 /// @brief The raw argument bytes (borrowed).
-SOULS_C_API const uint8_t* souls_emevd_instruction_args(const SoulsEmevd* emevd, size_t event, size_t instruction, size_t* out_size);
-SOULS_C_API SoulsStatus souls_emevd_set_instruction_args(SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* data, size_t size);
-SOULS_C_API SoulsStatus souls_emevd_set_instruction(SoulsEmevd* emevd, size_t event, size_t instruction, int32_t bank, int32_t id);
+SOULS_C_API const uint8_t*
+souls_emevd_instruction_args(const SoulsEmevd* emevd, size_t event, size_t instruction, size_t* out_size);
+SOULS_C_API SoulsStatus
+souls_emevd_set_instruction_args(SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* data, size_t size);
+SOULS_C_API SoulsStatus
+souls_emevd_set_instruction(SoulsEmevd* emevd, size_t event, size_t instruction, int32_t bank, int32_t id);
 /// @brief The layer mask (Elden Ring and Sekiro), if the instruction has one.
 ///
 /// Returns 1 and fills *out_layer if so, else 0.
-SOULS_C_API int souls_emevd_instruction_layer(const SoulsEmevd* emevd, size_t event, size_t instruction, uint32_t* out_layer);
-SOULS_C_API SoulsStatus souls_emevd_set_instruction_layer(SoulsEmevd* emevd, size_t event, size_t instruction, int has_layer, uint32_t layer);
+SOULS_C_API int
+souls_emevd_instruction_layer(const SoulsEmevd* emevd, size_t event, size_t instruction, uint32_t* out_layer);
+SOULS_C_API SoulsStatus
+souls_emevd_set_instruction_layer(SoulsEmevd* emevd, size_t event, size_t instruction, int has_layer, uint32_t layer);
 /// @brief Appends an instruction and returns its index, or -1.
-SOULS_C_API int64_t souls_emevd_add_instruction(SoulsEmevd* emevd, size_t event, int32_t bank, int32_t id, const uint8_t* args, size_t args_size);
+SOULS_C_API int64_t souls_emevd_add_instruction(
+  SoulsEmevd* emevd, size_t event, int32_t bank, int32_t id, const uint8_t* args, size_t args_size);
 SOULS_C_API SoulsStatus souls_emevd_remove_instruction(SoulsEmevd* emevd, size_t event, size_t instruction);
 /// @brief Argument bytes as numbers, for an argument layout given as SoulsEmevdArgType values.
 ///
 /// unpack writes one double per argument (exact for every type but 64-bit values, which don't occur); pack builds the
 /// bytes from the doubles, aligning each argument and padding the end to 4 bytes.
-SOULS_C_API SoulsStatus souls_emevd_unpack_args(const SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* arg_types,
-                                                size_t arg_count, double* out_values);
-SOULS_C_API SoulsStatus souls_emevd_pack_args(SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* arg_types,
-                                              size_t arg_count, const double* values);
+SOULS_C_API SoulsStatus souls_emevd_unpack_args(const SoulsEmevd* emevd,
+                                                size_t event,
+                                                size_t instruction,
+                                                const uint8_t* arg_types,
+                                                size_t arg_count,
+                                                double* out_values);
+SOULS_C_API SoulsStatus souls_emevd_pack_args(SoulsEmevd* emevd,
+                                              size_t event,
+                                              size_t instruction,
+                                              const uint8_t* arg_types,
+                                              size_t arg_count,
+                                              const double* values);
 
 /// @brief Parameters: bytes of an event's own arguments copied into its instructions when it starts.
 SOULS_C_API size_t souls_emevd_parameter_count(const SoulsEmevd* emevd, size_t event);
-SOULS_C_API SoulsStatus souls_emevd_parameter(const SoulsEmevd* emevd, size_t event, size_t parameter, int64_t* instruction_index,
-                                              int64_t* target_start_byte, int64_t* source_start_byte, int32_t* byte_count, int32_t* unk_id);
-SOULS_C_API int64_t souls_emevd_add_parameter(SoulsEmevd* emevd, size_t event, int64_t instruction_index, int64_t target_start_byte,
-                                              int64_t source_start_byte, int32_t byte_count, int32_t unk_id);
+SOULS_C_API SoulsStatus souls_emevd_parameter(const SoulsEmevd* emevd,
+                                              size_t event,
+                                              size_t parameter,
+                                              int64_t* instruction_index,
+                                              int64_t* target_start_byte,
+                                              int64_t* source_start_byte,
+                                              int32_t* byte_count,
+                                              int32_t* unk_id);
+SOULS_C_API int64_t souls_emevd_add_parameter(SoulsEmevd* emevd,
+                                              size_t event,
+                                              int64_t instruction_index,
+                                              int64_t target_start_byte,
+                                              int64_t source_start_byte,
+                                              int32_t byte_count,
+                                              int32_t unk_id);
 SOULS_C_API SoulsStatus souls_emevd_remove_parameter(SoulsEmevd* emevd, size_t event, size_t parameter);
 
 /// @brief String data shared by instructions, and offsets into it naming linked files.
@@ -961,17 +1061,22 @@ SOULS_C_API SoulsStatus souls_tae3_remove_animation(SoulsTae3* tae, size_t anima
 /// @brief An animation can just point at another animation file instead of having events.
 SOULS_C_API int souls_tae3_animation_is_reference(const SoulsTae3* tae, size_t animation);
 SOULS_C_API const char* souls_tae3_animation_file_name(const SoulsTae3* tae, size_t animation);
-SOULS_C_API SoulsStatus souls_tae3_set_animation_reference(SoulsTae3* tae, size_t animation, int is_reference, const char* file_name);
+SOULS_C_API SoulsStatus souls_tae3_set_animation_reference(SoulsTae3* tae,
+                                                           size_t animation,
+                                                           int is_reference,
+                                                           const char* file_name);
 
 SOULS_C_API size_t souls_tae3_event_count(const SoulsTae3* tae, size_t animation);
 SOULS_C_API double souls_tae3_event_start(const SoulsTae3* tae, size_t animation, size_t event);
 SOULS_C_API double souls_tae3_event_end(const SoulsTae3* tae, size_t animation, size_t event);
-SOULS_C_API SoulsStatus souls_tae3_set_event_times(SoulsTae3* tae, size_t animation, size_t event, double start, double end);
+SOULS_C_API SoulsStatus
+souls_tae3_set_event_times(SoulsTae3* tae, size_t animation, size_t event, double start, double end);
 /// @brief The event type number (see souls_tae3_type_number) and its name (borrowed).
 SOULS_C_API int64_t souls_tae3_event_type(const SoulsTae3* tae, size_t animation, size_t event);
 SOULS_C_API const char* souls_tae3_event_type_name(const SoulsTae3* tae, size_t animation, size_t event);
 /// @brief Adds an event of the given type with default fields and returns its index, or -1.
-SOULS_C_API int64_t souls_tae3_add_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end);
+SOULS_C_API int64_t
+souls_tae3_add_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end);
 /// @brief Events are referred to by event groups by index, so removing one shifts the later indices.
 SOULS_C_API SoulsStatus souls_tae3_remove_event(SoulsTae3* tae, size_t animation, size_t event);
 
@@ -982,11 +1087,13 @@ SOULS_C_API SoulsStatus souls_tae3_remove_event(SoulsTae3* tae, size_t animation
 /// The field functions below fail with SOULS_ERR_UNSUPPORTED for them. Their type names are NULL, because the same
 /// number means different things in different games.
 SOULS_C_API int souls_tae3_event_is_raw(const SoulsTae3* tae, size_t animation, size_t event);
-SOULS_C_API const uint8_t* souls_tae3_event_raw_data(const SoulsTae3* tae, size_t animation, size_t event, size_t* out_size);
-SOULS_C_API SoulsStatus souls_tae3_set_event_raw_data(SoulsTae3* tae, size_t animation, size_t event, const uint8_t* data, size_t size);
+SOULS_C_API const uint8_t*
+souls_tae3_event_raw_data(const SoulsTae3* tae, size_t animation, size_t event, size_t* out_size);
+SOULS_C_API SoulsStatus
+souls_tae3_set_event_raw_data(SoulsTae3* tae, size_t animation, size_t event, const uint8_t* data, size_t size);
 /// @brief Appends a raw event (for 0x1000D files) with any type number and returns its index, or -1.
-SOULS_C_API int64_t souls_tae3_add_raw_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end,
-                                             const uint8_t* data, size_t size);
+SOULS_C_API int64_t souls_tae3_add_raw_event(
+  SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end, const uint8_t* data, size_t size);
 
 SOULS_C_API size_t souls_tae3_field_count(const SoulsTae3* tae, size_t animation, size_t event);
 SOULS_C_API const char* souls_tae3_field_name(const SoulsTae3* tae, size_t animation, size_t event, size_t field);
@@ -994,26 +1101,42 @@ SOULS_C_API SoulsPropertyKind souls_tae3_field_kind(const SoulsTae3* tae, size_t
 /// @brief Numeric and boolean fields, as doubles.
 ///
 /// Fields of other kinds fail with SOULS_ERR_INVALID_ARGUMENT.
-SOULS_C_API SoulsStatus souls_tae3_get_number(const SoulsTae3* tae, size_t animation, size_t event, const char* field, double* out_value);
-SOULS_C_API SoulsStatus souls_tae3_set_number(SoulsTae3* tae, size_t animation, size_t event, const char* field, double value);
+SOULS_C_API SoulsStatus
+souls_tae3_get_number(const SoulsTae3* tae, size_t animation, size_t event, const char* field, double* out_value);
+SOULS_C_API SoulsStatus
+souls_tae3_set_number(SoulsTae3* tae, size_t animation, size_t event, const char* field, double value);
 /// @brief Byte-array and integer-array fields (fixed length).
-SOULS_C_API SoulsStatus souls_tae3_get_bytes(const SoulsTae3* tae, size_t animation, size_t event, const char* field, uint8_t* out,
-                                             size_t capacity, size_t* out_count);
-SOULS_C_API SoulsStatus souls_tae3_set_bytes(SoulsTae3* tae, size_t animation, size_t event, const char* field, const uint8_t* data, size_t count);
-SOULS_C_API SoulsStatus souls_tae3_get_int_array(const SoulsTae3* tae, size_t animation, size_t event, const char* field, int64_t* out,
-                                                 size_t capacity, size_t* out_count);
-SOULS_C_API SoulsStatus souls_tae3_set_int_array(SoulsTae3* tae, size_t animation, size_t event, const char* field, const int64_t* values, size_t count);
+SOULS_C_API SoulsStatus souls_tae3_get_bytes(const SoulsTae3* tae,
+                                             size_t animation,
+                                             size_t event,
+                                             const char* field,
+                                             uint8_t* out,
+                                             size_t capacity,
+                                             size_t* out_count);
+SOULS_C_API SoulsStatus souls_tae3_set_bytes(
+  SoulsTae3* tae, size_t animation, size_t event, const char* field, const uint8_t* data, size_t count);
+SOULS_C_API SoulsStatus souls_tae3_get_int_array(const SoulsTae3* tae,
+                                                 size_t animation,
+                                                 size_t event,
+                                                 const char* field,
+                                                 int64_t* out,
+                                                 size_t capacity,
+                                                 size_t* out_count);
+SOULS_C_API SoulsStatus souls_tae3_set_int_array(
+  SoulsTae3* tae, size_t animation, size_t event, const char* field, const int64_t* values, size_t count);
 
 /// @brief Event groups tie events of one type together; they hold event indices.
 SOULS_C_API size_t souls_tae3_group_count(const SoulsTae3* tae, size_t animation);
 SOULS_C_API int64_t souls_tae3_group_type(const SoulsTae3* tae, size_t animation, size_t group);
-SOULS_C_API SoulsStatus souls_tae3_group_indices(const SoulsTae3* tae, size_t animation, size_t group, int32_t* out, size_t capacity, size_t* out_count);
-SOULS_C_API int64_t souls_tae3_add_group(SoulsTae3* tae, size_t animation, int64_t type_number, const int32_t* indices, size_t count);
+SOULS_C_API SoulsStatus souls_tae3_group_indices(
+  const SoulsTae3* tae, size_t animation, size_t group, int32_t* out, size_t capacity, size_t* out_count);
+SOULS_C_API int64_t
+souls_tae3_add_group(SoulsTae3* tae, size_t animation, int64_t type_number, const int32_t* indices, size_t count);
 SOULS_C_API SoulsStatus souls_tae3_remove_group(SoulsTae3* tae, size_t animation, size_t group);
 
-#ifdef __cplusplus
-} ///< extern "C"
-#endif
+    #ifdef __cplusplus
+}  ///< extern "C"
+    #endif
 
-#endif ///< LIBSOULS_CAPI_SOULS_H
+#endif  ///< LIBSOULS_CAPI_SOULS_H
 /// @}

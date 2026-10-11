@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -57,7 +61,8 @@ SOULS_C_API SoulsStatus souls_param_write_file(SoulsParam* param, const char* pa
 }
 
 SOULS_C_API SoulsBuffer souls_param_write_memory(SoulsParam* param) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(Require(param, "param is NULL").Value.Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0},
+                      [&] { return MakeBuffer(Require(param, "param is NULL").Value.Write()); });
 }
 
 SOULS_C_API const char* souls_param_type(const SoulsParam* param) {
@@ -163,7 +168,8 @@ SOULS_C_API SoulsParamLayout* souls_param_layout_create(const SoulsParam* param,
         std::optional<ParamLayout> Layout;
         if (Found) Layout = ParamLayout::TryCreate(P, *Found);
         if (!Layout) {
-            SetError(SOULS_ERR_NOT_FOUND, "No paramdef matches param type \"" + P.ParamType + "\" with this data version and row size.");
+            SetError(SOULS_ERR_NOT_FOUND,
+                     "No paramdef matches param type \"" + P.ParamType + "\" with this data version and row size.");
             return nullptr;
         }
         return new SoulsParamLayout(std::move(*Layout));
@@ -205,21 +211,22 @@ SOULS_C_API int64_t souls_param_layout_find_field(const SoulsParamLayout* layout
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_get_number(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                               const char* field, double* out_value) {
+SOULS_C_API SoulsStatus souls_param_get_number(
+  const SoulsParamLayout* layout, const SoulsParam* param, size_t row, const char* field, double* out_value) {
     return Guard([&] {
         if (!out_value) ThrowInvalid("out_value is NULL");
         *out_value = Require(layout, "layout is NULL").Value.GetNumber(RowAt(param, row), FieldName(field));
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_set_number(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                               const char* field, double value) {
-    return Guard([&] { Require(layout, "layout is NULL").Value.SetNumber(RowAt(param, row), FieldName(field), value); });
+SOULS_C_API SoulsStatus
+souls_param_set_number(const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, double value) {
+    return Guard(
+      [&] { Require(layout, "layout is NULL").Value.SetNumber(RowAt(param, row), FieldName(field), value); });
 }
 
-SOULS_C_API const char* souls_param_get_string(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                               const char* field) {
+SOULS_C_API const char*
+souls_param_get_string(const SoulsParamLayout* layout, const SoulsParam* param, size_t row, const char* field) {
     return GuardValue<const char*>(nullptr, [&] {
         SoulsParamLayout& L = const_cast<SoulsParamLayout&>(Require(layout, "layout is NULL"));
         L.Scratch           = L.Value.Get<std::string>(RowAt(param, row), FieldName(field));
@@ -227,16 +234,21 @@ SOULS_C_API const char* souls_param_get_string(const SoulsParamLayout* layout, c
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_set_string(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                               const char* field, const char* text) {
+SOULS_C_API SoulsStatus souls_param_set_string(
+  const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, const char* text) {
     return Guard([&] {
         if (!text) ThrowInvalid("text is NULL");
         Require(layout, "layout is NULL").Value.Set(RowAt(param, row), FieldName(field), CellValue(std::string(text)));
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_get_bytes(const SoulsParamLayout* layout, const SoulsParam* param, size_t row,
-                                              const char* field, uint8_t* out, size_t capacity, size_t* out_size) {
+SOULS_C_API SoulsStatus souls_param_get_bytes(const SoulsParamLayout* layout,
+                                              const SoulsParam* param,
+                                              size_t row,
+                                              const char* field,
+                                              uint8_t* out,
+                                              size_t capacity,
+                                              size_t* out_size) {
     return Guard([&] {
         const CellValue Value = Require(layout, "layout is NULL").Value.Get(RowAt(param, row), FieldName(field));
         std::vector<uint8_t> Data;
@@ -252,20 +264,23 @@ SOULS_C_API SoulsStatus souls_param_get_bytes(const SoulsParamLayout* layout, co
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_set_bytes(const SoulsParamLayout* layout, SoulsParam* param, size_t row,
-                                              const char* field, const uint8_t* data, size_t size) {
+SOULS_C_API SoulsStatus souls_param_set_bytes(
+  const SoulsParamLayout* layout, SoulsParam* param, size_t row, const char* field, const uint8_t* data, size_t size) {
     return Guard([&] {
         const auto Span = Bytes(data, size);
         Require(layout, "layout is NULL")
-            .Value.Set(RowAt(param, row), FieldName(field), CellValue(std::vector<uint8_t>(Span.begin(), Span.end())));
+          .Value.Set(RowAt(param, row), FieldName(field), CellValue(std::vector<uint8_t>(Span.begin(), Span.end())));
     });
 }
 
-SOULS_C_API int64_t souls_param_add_row(const SoulsParamLayout* layout, SoulsParam* param, int32_t id, const char* name_or_null) {
+SOULS_C_API int64_t souls_param_add_row(const SoulsParamLayout* layout,
+                                        SoulsParam* param,
+                                        int32_t id,
+                                        const char* name_or_null) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         auto& Rows = Require(param, "param is NULL").Value.Rows;
         Rows.push_back(Require(layout, "layout is NULL")
-                           .Value.MakeRow(id, name_or_null ? std::optional<std::string>(name_or_null) : std::nullopt));
+                         .Value.MakeRow(id, name_or_null ? std::optional<std::string>(name_or_null) : std::nullopt));
         return static_cast<int64_t>(Rows.size() - 1);
     });
 }

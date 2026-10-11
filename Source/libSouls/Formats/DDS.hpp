@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -229,42 +233,42 @@ namespace Souls {
         /// @brief Present when the pixel format's FourCC is "DX10".
         struct SOULS_API Header10 {
             /// @brief The pixel format.
-            DXGIFormat Format        = DXGIFormat::UNKNOWN;
+            DXGIFormat Format = DXGIFormat::UNKNOWN;
             /// @brief Whether the texture is 1D, 2D or 3D.
             Dimension ResourceDimension = Dimension::TEXTURE2D;
             /// @brief Miscellaneous flags (cubemap).
-            ResourceMisc MiscFlag    = static_cast<ResourceMisc>(0);
+            ResourceMisc MiscFlag = static_cast<ResourceMisc>(0);
             /// @brief The number of textures in the array (of cubemaps, for cubemaps).
-            uint32_t ArraySize       = 1;
+            uint32_t ArraySize = 1;
             /// @brief How alpha is stored.
-            AlphaMode MiscFlags2     = AlphaMode::UNKNOWN;
+            AlphaMode MiscFlags2 = AlphaMode::UNKNOWN;
         };
 
-        DDSD Flags             = static_cast<DDSD>(0x1 | 0x2 | 0x4 | 0x1000);  ///< CAPS | HEIGHT | WIDTH | PIXELFORMAT
+        DDSD Flags = static_cast<DDSD>(0x1 | 0x2 | 0x4 | 0x1000);  ///< CAPS | HEIGHT | WIDTH | PIXELFORMAT
         /// @brief Height in pixels.
-        int32_t Height         = 0;
+        int32_t Height = 0;
         /// @brief Width in pixels.
-        int32_t Width          = 0;
+        int32_t Width = 0;
         /// @brief Bytes per row (uncompressed) or of the top mip level (compressed).
         int32_t PitchOrLinearSize = 0;
         /// @brief Depth of a volume texture.
-        int32_t Depth          = 0;
+        int32_t Depth = 0;
         /// @brief The number of mip levels.
-        int32_t MipMapCount    = 0;
+        int32_t MipMapCount = 0;
         /// @brief Unused.
-        std::array<int32_t, 11> Reserved1{};
+        std::array<int32_t, 11> Reserved1 {};
         /// @brief How the pixels are stored.
         PixelFormat Pixels;
         /// @brief Complexity of the surface.
-        DDSCAPS Caps           = DDSCAPS::TEXTURE;
+        DDSCAPS Caps = DDSCAPS::TEXTURE;
         /// @brief Cubemap faces and volume flags.
-        DDSCAPS2 Caps2         = static_cast<DDSCAPS2>(0);
+        DDSCAPS2 Caps2 = static_cast<DDSCAPS2>(0);
         /// @brief Unused.
-        int32_t Caps3          = 0;
+        int32_t Caps3 = 0;
         /// @brief Unused.
-        int32_t Caps4          = 0;
+        int32_t Caps4 = 0;
         /// @brief Unused.
-        int32_t Reserved2      = 0;
+        int32_t Reserved2 = 0;
         /// @brief The DX10 header extension, present when the FourCC is "DX10".
         std::optional<Header10> DX10;
 
@@ -279,7 +283,9 @@ namespace Souls {
         int32_t DataOffset() const { return Pixels.FourCC == "DX10" ? 0x94 : 0x80; }
 
         /// @brief Whether the texture is a cubemap.
-        bool IsCubemap() const { return (static_cast<uint32_t>(Caps2) & static_cast<uint32_t>(DDSCAPS2::CUBEMAP)) != 0; }
+        bool IsCubemap() const {
+            return (static_cast<uint32_t>(Caps2) & static_cast<uint32_t>(DDSCAPS2::CUBEMAP)) != 0;
+        }
         /// @brief Whether the texture is a volume (3D) texture.
         bool IsVolume() const { return (static_cast<uint32_t>(Caps2) & static_cast<uint32_t>(DDSCAPS2::VOLUME)) != 0; }
 

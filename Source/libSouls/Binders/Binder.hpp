@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -75,19 +79,33 @@ namespace Souls::Binder {
     SOULS_API void WriteFormat(BinaryWriter& Writer, bool BitBigEndian, Format Value);
 
     /// @brief Whether the format forces big-endian values.
-    constexpr bool ForceBigEndian(Format Value) { return HasAny(Value, Format::BigEndian); }
+    constexpr bool ForceBigEndian(Format Value) {
+        return HasAny(Value, Format::BigEndian);
+    }
     /// @brief Whether file headers store IDs.
-    constexpr bool HasIDs(Format Value) { return HasAny(Value, Format::IDs); }
+    constexpr bool HasIDs(Format Value) {
+        return HasAny(Value, Format::IDs);
+    }
     /// @brief Whether file headers store names.
-    constexpr bool HasNames(Format Value) { return HasAny(Value, Format::Names1 | Format::Names2); }
+    constexpr bool HasNames(Format Value) {
+        return HasAny(Value, Format::Names1 | Format::Names2);
+    }
     /// @brief Whether file data offsets are 64-bit.
-    constexpr bool HasLongOffsets(Format Value) { return HasAny(Value, Format::LongOffsets); }
+    constexpr bool HasLongOffsets(Format Value) {
+        return HasAny(Value, Format::LongOffsets);
+    }
     /// @brief Whether file headers store uncompressed sizes (files may be compressed).
-    constexpr bool HasCompression(Format Value) { return HasAny(Value, Format::Compression); }
+    constexpr bool HasCompression(Format Value) {
+        return HasAny(Value, Format::Compression);
+    }
     /// @brief Whether unknown format flag 6 is set.
-    constexpr bool HasFlag6(Format Value) { return HasAny(Value, Format::Flag6); }
+    constexpr bool HasFlag6(Format Value) {
+        return HasAny(Value, Format::Flag6);
+    }
     /// @brief Whether unknown format flag 7 is set.
-    constexpr bool HasFlag7(Format Value) { return HasAny(Value, Format::Flag7); }
+    constexpr bool HasFlag7(Format Value) {
+        return HasAny(Value, Format::Flag7);
+    }
 
     /// @brief Size in bytes of one file header in a BND4 with this format.
     constexpr int64_t GetBND4FileHeaderSize(Format Value) {
@@ -103,6 +121,8 @@ namespace Souls::Binder {
     SOULS_API void WriteFileFlags(BinaryWriter& Writer, bool BitBigEndian, FileFlags Value);
 
     /// @brief Whether the flags mark a file as compressed.
-    constexpr bool IsCompressed(FileFlags Value) { return HasAny(Value, FileFlags::Compressed); }
+    constexpr bool IsCompressed(FileFlags Value) {
+        return HasAny(Value, FileFlags::Compressed);
+    }
 #pragma endregion
 }  // namespace Souls::Binder

@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -152,7 +156,8 @@ namespace Souls {
         ///        folders.
         ///
         /// IncludeOffsets adds a "+0xNN" comment before each field at that byte offset in the row.
-        void ToXml(const std::filesystem::path& Path, bool IncludeOffsets = false, int XmlVersion = CurrentXmlVersion) const;
+        void
+        ToXml(const std::filesystem::path& Path, bool IncludeOffsets = false, int XmlVersion = CurrentXmlVersion) const;
         /// @brief The PARAMDEF as XML text (see ToXml).
         std::string ToXmlString(bool IncludeOffsets = false, int XmlVersion = CurrentXmlVersion) const;
 #pragma endregion

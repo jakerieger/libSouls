@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -46,7 +50,8 @@ namespace Souls {
 
         /// @brief One value; the alternative in use depends on the param's Type (uint8_t for Byte, int16_t for Short,
         ///        int32_t for IntA/IntB, bool for BoolA/BoolB, float, Vector2/3/4, and a 4-byte array for Byte4).
-        using ParamValue = std::variant<uint8_t, int16_t, int32_t, bool, float, Vector2, Vector3, Vector4, std::array<uint8_t, 4>>;
+        using ParamValue =
+          std::variant<uint8_t, int16_t, int32_t, bool, float, Vector2, Vector3, Vector4, std::array<uint8_t, 4>>;
 
         /// @brief A collection of values controlling the same parameter in different circumstances.
         struct Param {
@@ -98,7 +103,7 @@ namespace Souls {
         /// @brief Indicates the format of the GPARAM.
         GPGame Game = GPGame::Sekiro;
         /// @brief Unknown.
-        bool Unk0D  = false;
+        bool Unk0D = false;
         /// @brief Unknown; in Dark Souls II, number of entries in UnkBlock2.
         int32_t Unk14 = 0;
         /// @brief Unknown; zero before Elden Ring.

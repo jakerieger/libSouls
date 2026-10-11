@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MQB.hpp"
 
@@ -44,9 +48,14 @@ namespace Souls {
         CustomData::Point ReadPoint(BinaryReader& Reader, DataType ValueType, int32_t PointType) {
             CustomData::Point P;
             switch (ValueType) {
-                case DataType::Byte: P.Value = Reader.ReadByte(); break;
-                case DataType::Float: P.Value = Reader.ReadFloat(); break;
-                default: throw BinaryException("Unsupported sequence value type");
+                case DataType::Byte:
+                    P.Value = Reader.ReadByte();
+                    break;
+                case DataType::Float:
+                    P.Value = Reader.ReadFloat();
+                    break;
+                default:
+                    throw BinaryException("Unsupported sequence value type");
             }
             if (ValueType == DataType::Byte) {
                 Reader.Assert<int16_t>(0);
@@ -65,9 +74,14 @@ namespace Souls {
 
         void WritePoint(BinaryWriter& Writer, const CustomData::Point& P, DataType ValueType, int32_t PointType) {
             switch (ValueType) {
-                case DataType::Byte: Writer.WriteByte(std::get<uint8_t>(P.Value)); break;
-                case DataType::Float: Writer.WriteFloat(std::get<float>(P.Value)); break;
-                default: throw BinaryException("Unsupported sequence value type");
+                case DataType::Byte:
+                    Writer.WriteByte(std::get<uint8_t>(P.Value));
+                    break;
+                case DataType::Float:
+                    Writer.WriteFloat(std::get<float>(P.Value));
+                    break;
+                default:
+                    throw BinaryException("Unsupported sequence value type");
             }
             if (ValueType == DataType::Byte) {
                 Writer.WriteInt16(0);
@@ -120,17 +134,35 @@ namespace Souls {
             int64_t ValueOffset = Reader.Position();
             int32_t Length      = 0;  // of the extra data after the header, for strings, custom data and colors
             switch (D.Type) {
-                case DataType::Bool: D.Value = Reader.ReadBool(); break;
-                case DataType::SByte: D.Value = Reader.ReadSByte(); break;
-                case DataType::Byte: D.Value = Reader.ReadByte(); break;
-                case DataType::Short: D.Value = Reader.ReadInt16(); break;
-                case DataType::Int: D.Value = Reader.ReadInt32(); break;
-                case DataType::UInt: D.Value = Reader.ReadUInt32(); break;
-                case DataType::Float: D.Value = Reader.ReadFloat(); break;
+                case DataType::Bool:
+                    D.Value = Reader.ReadBool();
+                    break;
+                case DataType::SByte:
+                    D.Value = Reader.ReadSByte();
+                    break;
+                case DataType::Byte:
+                    D.Value = Reader.ReadByte();
+                    break;
+                case DataType::Short:
+                    D.Value = Reader.ReadInt16();
+                    break;
+                case DataType::Int:
+                    D.Value = Reader.ReadInt32();
+                    break;
+                case DataType::UInt:
+                    D.Value = Reader.ReadUInt32();
+                    break;
+                case DataType::Float:
+                    D.Value = Reader.ReadFloat();
+                    break;
                 case DataType::String:
                 case DataType::Custom:
-                case DataType::Color: Length = Reader.ReadInt32(); break;
-                default: throw BinaryException("Unimplemented custom data type: " + std::to_string(static_cast<uint32_t>(D.Type)));
+                case DataType::Color:
+                    Length = Reader.ReadInt32();
+                    break;
+                default:
+                    throw BinaryException("Unimplemented custom data type: " +
+                                          std::to_string(static_cast<uint32_t>(D.Type)));
             }
             if (D.Type == DataType::Bool || D.Type == DataType::SByte || D.Type == DataType::Byte) {
                 Reader.Assert<uint8_t>(0);
@@ -159,7 +191,7 @@ namespace Souls {
                 }
                 ValueOffset     = Reader.Position();
                 const uint8_t R = Reader.ReadByte(), G = Reader.ReadByte(), B = Reader.ReadByte();
-                D.Value         = Color::FromArgb(255, R, G, B);
+                D.Value = Color::FromArgb(255, R, G, B);
                 Reader.Assert<uint8_t>(0);
             }
             if (SequenceCount > 0) {
@@ -180,9 +212,7 @@ namespace Souls {
             if (D.Type == DataType::String) {
                 const std::u16string Text = UTF8ToUTF16(std::get<std::string>(D.Value));
                 Length                    = static_cast<int32_t>((Text.size() + 1) * 2);
-                if (Length % 0x10 != 0) {
-                    Length += 0x10 - Length % 0x10;
-                }
+                if (Length % 0x10 != 0) { Length += 0x10 - Length % 0x10; }
             } else if (D.Type == DataType::Custom) {
                 Length = static_cast<int32_t>(std::get<std::vector<uint8_t>>(D.Value).size());
                 if (Length % 4 != 0) {
@@ -193,17 +223,35 @@ namespace Souls {
             }
             int64_t ValueOffset = Writer.Position();
             switch (D.Type) {
-                case DataType::Bool: Writer.WriteBool(std::get<bool>(D.Value)); break;
-                case DataType::SByte: Writer.WriteSByte(std::get<int8_t>(D.Value)); break;
-                case DataType::Byte: Writer.WriteByte(std::get<uint8_t>(D.Value)); break;
-                case DataType::Short: Writer.WriteInt16(std::get<int16_t>(D.Value)); break;
-                case DataType::Int: Writer.WriteInt32(std::get<int32_t>(D.Value)); break;
-                case DataType::UInt: Writer.WriteUInt32(std::get<uint32_t>(D.Value)); break;
-                case DataType::Float: Writer.WriteFloat(std::get<float>(D.Value)); break;
+                case DataType::Bool:
+                    Writer.WriteBool(std::get<bool>(D.Value));
+                    break;
+                case DataType::SByte:
+                    Writer.WriteSByte(std::get<int8_t>(D.Value));
+                    break;
+                case DataType::Byte:
+                    Writer.WriteByte(std::get<uint8_t>(D.Value));
+                    break;
+                case DataType::Short:
+                    Writer.WriteInt16(std::get<int16_t>(D.Value));
+                    break;
+                case DataType::Int:
+                    Writer.WriteInt32(std::get<int32_t>(D.Value));
+                    break;
+                case DataType::UInt:
+                    Writer.WriteUInt32(std::get<uint32_t>(D.Value));
+                    break;
+                case DataType::Float:
+                    Writer.WriteFloat(std::get<float>(D.Value));
+                    break;
                 case DataType::String:
                 case DataType::Custom:
-                case DataType::Color: Writer.WriteInt32(Length); break;
-                default: throw BinaryException("Unimplemented custom data type: " + std::to_string(static_cast<uint32_t>(D.Type)));
+                case DataType::Color:
+                    Writer.WriteInt32(Length);
+                    break;
+                default:
+                    throw BinaryException("Unimplemented custom data type: " +
+                                          std::to_string(static_cast<uint32_t>(D.Type)));
             }
             if (D.Type == DataType::Bool || D.Type == DataType::SByte || D.Type == DataType::Byte) {
                 Writer.WriteByte(0);
@@ -259,7 +307,8 @@ namespace Souls {
         void WriteSequencePoints(BinaryWriter& Writer, const CustomData& D, size_t Index) {
             for (size_t I = 0; I < D.Sequences.size(); ++I) {
                 const CustomData::Sequence& S = D.Sequences[I];
-                Writer.Fill<int32_t>("PointsOffset[" + std::to_string(Index) + ":" + std::to_string(I) + "]", static_cast<int32_t>(Writer.Position()));
+                Writer.Fill<int32_t>("PointsOffset[" + std::to_string(Index) + ":" + std::to_string(I) + "]",
+                                     static_cast<int32_t>(Writer.Position()));
                 for (const CustomData::Point& P : S.Points) {
                     WritePoint(Writer, P, S.ValueType, S.PointType);
                 }
@@ -350,13 +399,13 @@ namespace Souls {
             }
         }
 
-        MQB::Timeline ReadTimeline(BinaryReader& Reader, MQB::MQBVersion Version, std::map<int64_t, MQB::Disposition>& DisposByOffset) {
+        MQB::Timeline ReadTimeline(BinaryReader& Reader,
+                                   MQB::MQBVersion Version,
+                                   std::map<int64_t, MQB::Disposition>& DisposByOffset) {
             MQB::Timeline T;
             const int64_t DisposOffsetsOffset = Reader.ReadVarint();
             const int32_t DisposCount         = Reader.ReadInt32();
-            if (Version == MQB::MQBVersion::DarkSouls2Scholar) {
-                Reader.Assert<int32_t>(0);
-            }
+            if (Version == MQB::MQBVersion::DarkSouls2Scholar) { Reader.Assert<int32_t>(0); }
             const int64_t CustomDataOffset = Reader.ReadVarint();
             const int32_t CustomDataCount  = Reader.ReadInt32();
             T.Unk10                        = Reader.ReadInt32();
@@ -384,16 +433,12 @@ namespace Souls {
             C.Duration                = Reader.ReadInt32();
             Reader.Assert<int32_t>(0);
             const int32_t TimelineCount = Reader.ReadInt32();
-            if (Version == MQB::MQBVersion::DarkSouls2Scholar) {
-                Reader.Assert<int32_t>(0);
-            }
+            if (Version == MQB::MQBVersion::DarkSouls2Scholar) { Reader.Assert<int32_t>(0); }
             const int64_t TimelinesOffset = Reader.ReadVarint();
-            if (Version != MQB::MQBVersion::DarkSouls2Scholar) {
-                Reader.Assert<int64_t>(0);
-            }
+            if (Version != MQB::MQBVersion::DarkSouls2Scholar) { Reader.Assert<int64_t>(0); }
             std::map<int64_t, MQB::Disposition> DisposByOffset;
             for (int32_t I = 0; I < DisposCount; ++I) {
-                const int64_t Offset    = Reader.Position();
+                const int64_t Offset   = Reader.Position();
                 DisposByOffset[Offset] = ReadDisposition(Reader);
             }
             Reader.StepIn(TimelinesOffset);
@@ -417,16 +462,19 @@ namespace Souls {
         Reader.Assert<uint8_t>(0);
         const int8_t LongFormat = Reader.Assert<int8_t>(0, -1);
         Reader.Assert<uint8_t>(0);
-        Version                 = static_cast<MQBVersion>(Reader.ReadUInt32());
+        Version                  = static_cast<MQBVersion>(Reader.ReadUInt32());
         const int32_t HeaderSize = Reader.ReadInt32();
-        if ((Version != MQBVersion::DarkSouls2Scholar && LongFormat == -1) || (Version == MQBVersion::DarkSouls2Scholar && LongFormat == 0)) {
+        if ((Version != MQBVersion::DarkSouls2Scholar && LongFormat == -1) ||
+            (Version == MQBVersion::DarkSouls2Scholar && LongFormat == 0)) {
             throw BinaryException("Unexpected long format for this MQB version.");
         }
-        if ((Version == MQBVersion::DarkSouls2 && HeaderSize != 0x14) || (Version == MQBVersion::DarkSouls2Scholar && HeaderSize != 0x28) ||
-            (Version == MQBVersion::Bloodborne && HeaderSize != 0x20) || (Version == MQBVersion::DarkSouls3 && HeaderSize != 0x24)) {
+        if ((Version == MQBVersion::DarkSouls2 && HeaderSize != 0x14) ||
+            (Version == MQBVersion::DarkSouls2Scholar && HeaderSize != 0x28) ||
+            (Version == MQBVersion::Bloodborne && HeaderSize != 0x20) ||
+            (Version == MQBVersion::DarkSouls3 && HeaderSize != 0x24)) {
             throw BinaryException("Unexpected header size for this MQB version.");
         }
-        Reader.VarintLong                = Version == MQBVersion::DarkSouls2Scholar;
+        Reader.VarintLong                 = Version == MQBVersion::DarkSouls2Scholar;
         const int64_t ResourcePathsOffset = Reader.ReadVarint();
         if (Version == MQBVersion::DarkSouls2Scholar) {
             for (int I = 0; I < 4; ++I) {
@@ -436,14 +484,12 @@ namespace Souls {
             Reader.Assert<int32_t>(1);
             Reader.Assert<int32_t>(0);
             Reader.Assert<int32_t>(0);
-            if (Version >= MQBVersion::DarkSouls3) {
-                Reader.Assert<int32_t>(0);
-            }
+            if (Version >= MQBVersion::DarkSouls3) { Reader.Assert<int32_t>(0); }
         }
-        Name                         = ReadName(Reader);
-        Framerate                    = Reader.ReadFloat();
-        const int32_t ResourceCount  = Reader.ReadInt32();
-        const int32_t CutCount       = Reader.ReadInt32();
+        Name                        = ReadName(Reader);
+        Framerate                   = Reader.ReadFloat();
+        const int32_t ResourceCount = Reader.ReadInt32();
+        const int32_t CutCount      = Reader.ReadInt32();
         for (int I = 0; I < 5; ++I) {
             Reader.Assert<int32_t>(0);
         }
@@ -467,7 +513,8 @@ namespace Souls {
         }
 
         Reader.Seek(ResourcePathsOffset);
-        const std::vector<int64_t> PathOffsets = GetVarints(Reader, ResourcePathsOffset, static_cast<size_t>(ResourceCount));
+        const std::vector<int64_t> PathOffsets =
+          GetVarints(Reader, ResourcePathsOffset, static_cast<size_t>(ResourceCount));
         Reader.Skip(static_cast<int64_t>(ResourceCount) * (Reader.VarintLong ? 8 : 4));
         ResourceDirectory = Reader.ReadUTF16Text();
         for (int32_t I = 0; I < ResourceCount; ++I) {
@@ -487,11 +534,20 @@ namespace Souls {
         Writer.WriteByte(0);
         Writer.WriteUInt32(static_cast<uint32_t>(Version));
         switch (Version) {
-            case MQBVersion::DarkSouls2: Writer.WriteInt32(0x14); break;
-            case MQBVersion::DarkSouls2Scholar: Writer.WriteInt32(0x28); break;
-            case MQBVersion::Bloodborne: Writer.WriteInt32(0x20); break;
-            case MQBVersion::DarkSouls3: Writer.WriteInt32(0x24); break;
-            default: throw BinaryException("Missing header size for this MQB version.");
+            case MQBVersion::DarkSouls2:
+                Writer.WriteInt32(0x14);
+                break;
+            case MQBVersion::DarkSouls2Scholar:
+                Writer.WriteInt32(0x28);
+                break;
+            case MQBVersion::Bloodborne:
+                Writer.WriteInt32(0x20);
+                break;
+            case MQBVersion::DarkSouls3:
+                Writer.WriteInt32(0x24);
+                break;
+            default:
+                throw BinaryException("Missing header size for this MQB version.");
         }
         Writer.ReserveVarint("ResourcePathsOffset");
         if (Version == MQBVersion::DarkSouls2Scholar) {
@@ -502,9 +558,7 @@ namespace Souls {
             Writer.WriteInt32(1);
             Writer.WriteInt32(0);
             Writer.WriteInt32(0);
-            if (Version >= MQBVersion::DarkSouls3) {
-                Writer.WriteInt32(0);
-            }
+            if (Version >= MQBVersion::DarkSouls3) { Writer.WriteInt32(0); }
         }
         WriteName(Writer, Name);
         Writer.WriteFloat(Framerate);
@@ -528,7 +582,7 @@ namespace Souls {
         }
 
         for (size_t I = 0; I < Cuts.size(); ++I) {
-            const Cut& C = Cuts[I];
+            const Cut& C       = Cuts[I];
             size_t DisposCount = 0;
             for (const Timeline& T : C.Timelines) {
                 DisposCount += T.Dispositions.size();
@@ -539,13 +593,9 @@ namespace Souls {
             Writer.WriteInt32(C.Duration);
             Writer.WriteInt32(0);
             Writer.WriteInt32(static_cast<int32_t>(C.Timelines.size()));
-            if (Version == MQBVersion::DarkSouls2Scholar) {
-                Writer.WriteInt32(0);
-            }
+            if (Version == MQBVersion::DarkSouls2Scholar) { Writer.WriteInt32(0); }
             Writer.ReserveVarint("TimelinesOffset" + std::to_string(I));
-            if (Version != MQBVersion::DarkSouls2Scholar) {
-                Writer.WriteInt64(0);
-            }
+            if (Version != MQBVersion::DarkSouls2Scholar) { Writer.WriteInt64(0); }
             for (const Timeline& T : C.Timelines) {
                 for (const Disposition& D : T.Dispositions) {
                     Context.DisposOffsets[&D] = Writer.Position();
@@ -563,9 +613,7 @@ namespace Souls {
                 const Timeline& T = Cuts[I].Timelines[J];
                 Writer.ReserveVarint(Tag(I, J, "DisposOffsetsOffset"));
                 Writer.WriteInt32(static_cast<int32_t>(T.Dispositions.size()));
-                if (Version == MQBVersion::DarkSouls2Scholar) {
-                    Writer.WriteInt32(0);
-                }
+                if (Version == MQBVersion::DarkSouls2Scholar) { Writer.WriteInt32(0); }
                 Writer.ReserveVarint(Tag(I, J, "TimelineCustomDataOffset"));
                 Writer.WriteInt32(static_cast<int32_t>(T.CustomData.size()));
                 Writer.WriteInt32(T.Unk10);

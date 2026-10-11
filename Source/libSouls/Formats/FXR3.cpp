@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "FXR3.hpp"
 
@@ -89,8 +93,8 @@ namespace Souls {
             R.Assert<int16_t>(48);
             R.Assert<uint8_t>(0);
             R.Assert<uint8_t>(1);
-            S.Unk04              = R.ReadInt32();
-            const int32_t Count  = R.ReadInt32();
+            S.Unk04             = R.ReadInt32();
+            const int32_t Count = R.ReadInt32();
             R.Assert<int32_t>(0);
             const int32_t Offset = R.ReadInt32();
             R.Assert<int32_t>(0);
@@ -103,9 +107,9 @@ namespace Souls {
             S.Unk00 = R.ReadInt16();
             R.Assert<uint8_t>(0);
             R.Assert<uint8_t>(1);
-            S.Unk04                     = R.ReadInt32();
-            const int32_t Section11Count = R.ReadInt32();
-            const int32_t Section9Count  = R.ReadInt32();
+            S.Unk04                       = R.ReadInt32();
+            const int32_t Section11Count  = R.ReadInt32();
+            const int32_t Section9Count   = R.ReadInt32();
             const int32_t Section11Offset = R.ReadInt32();
             R.Assert<int32_t>(0);
             const int32_t Section9Offset = R.ReadInt32();
@@ -166,8 +170,10 @@ namespace Souls {
             R.Assert<int32_t>(0);
 
             R.StepIn(Section7Offset);
-            for (int32_t I = 0; I < Section7Count1; ++I) H.Properties1.push_back(ReadProperty(R));
-            for (int32_t I = 0; I < Section7Count2; ++I) H.Properties2.push_back(ReadProperty(R));
+            for (int32_t I = 0; I < Section7Count1; ++I)
+                H.Properties1.push_back(ReadProperty(R));
+            for (int32_t I = 0; I < Section7Count2; ++I)
+                H.Properties2.push_back(ReadProperty(R));
             R.StepOut();
             H.Section10s = ReadList<Section10>(R, Section10Offset, Section10Count, ReadSection10);
             R.StepIn(Section11Offset);
@@ -346,8 +352,10 @@ namespace Souls {
                 W.Fill<int32_t>(Idx("Section4Section4sOffset", Index), 0);
             } else {
                 W.Fill<int32_t>(Idx("Section4Section4sOffset", Index), static_cast<int32_t>(W.Position()));
-                for (const Section4& Child : S.Section4s) WriteSection4(W, Child, List);
-                for (const Section4& Child : S.Section4s) WriteSection4Children(W, Child, List);
+                for (const Section4& Child : S.Section4s)
+                    WriteSection4(W, Child, List);
+                for (const Section4& Child : S.Section4s)
+                    WriteSection4Children(W, Child, List);
             }
         }
 
@@ -366,10 +374,8 @@ namespace Souls {
     }  // namespace
 
     bool FXR3::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 8) {
-            return false;
-        }
-        Reader.Order = Endian::Little;
+        if (Reader.Length() < 8) { return false; }
+        Reader.Order            = Endian::Little;
         const std::string Magic = Reader.GetASCII(0, 4);
         const int16_t Version_  = Reader.ReadAt<int16_t>(6);
         return Magic == std::string("FXR\0", 4) && (Version_ == 4 || Version_ == 5);
@@ -385,7 +391,7 @@ namespace Souls {
         }
         Version = static_cast<FXRVersion>(RawVersion);
         Reader.Assert<int32_t>(1);
-        ID                          = Reader.ReadInt32();
+        ID                           = Reader.ReadInt32();
         const int32_t Section1Offset = Reader.ReadInt32();
         Reader.Assert<int32_t>(1);  // section 1 count
         Reader.ReadInt32();         // section 2 offset
@@ -533,8 +539,10 @@ namespace Souls {
         std::vector<const FFXProperty*> Section7s;
         for (size_t I = 0; I < Section6s.size(); ++I) {
             W.Fill<int32_t>(Idx("Section6Section7sOffset", static_cast<int64_t>(I)), Here());
-            for (const FFXProperty& P : Section6s[I]->Properties1) WriteProperty(W, P, Section7s);
-            for (const FFXProperty& P : Section6s[I]->Properties2) WriteProperty(W, P, Section7s);
+            for (const FFXProperty& P : Section6s[I]->Properties1)
+                WriteProperty(W, P, Section7s);
+            for (const FFXProperty& P : Section6s[I]->Properties2)
+                WriteProperty(W, P, Section7s);
         }
         W.Fill<int32_t>("Section7Count", static_cast<int32_t>(Section7s.size()));
         W.Align(0x10);
@@ -543,7 +551,8 @@ namespace Souls {
         std::vector<const Section8*> Section8s;
         for (size_t I = 0; I < Section7s.size(); ++I) {
             W.Fill<int32_t>(Idx("Section7Section8sOffset", static_cast<int64_t>(I)), Here());
-            for (const Section8& S : Section7s[I]->Section8s) WriteSection8(W, S, Section8s);
+            for (const Section8& S : Section7s[I]->Section8s)
+                WriteSection8(W, S, Section8s);
         }
         W.Fill<int32_t>("Section8Count", static_cast<int32_t>(Section8s.size()));
         W.Align(0x10);
@@ -552,7 +561,8 @@ namespace Souls {
         std::vector<const Section9*> Section9s;
         for (size_t I = 0; I < Section8s.size(); ++I) {
             W.Fill<int32_t>(Idx("Section8Section9sOffset", static_cast<int64_t>(I)), Here());
-            for (const Section9& S : Section8s[I]->Section9s) WriteSection9(W, S, Section9s);
+            for (const Section9& S : Section8s[I]->Section9s)
+                WriteSection9(W, S, Section9s);
         }
         W.Fill<int32_t>("Section9Count", static_cast<int32_t>(Section9s.size()));
         W.Align(0x10);
@@ -561,7 +571,8 @@ namespace Souls {
         std::vector<const Section10*> Section10s;
         for (size_t I = 0; I < Section6s.size(); ++I) {
             W.Fill<int32_t>(Idx("Section6Section10sOffset", static_cast<int64_t>(I)), Here());
-            for (const Section10& S : Section6s[I]->Section10s) WriteSection10(W, S, Section10s);
+            for (const Section10& S : Section6s[I]->Section10s)
+                WriteSection10(W, S, Section10s);
         }
         W.Fill<int32_t>("Section10Count", static_cast<int32_t>(Section10s.size()));
         W.Align(0x10);

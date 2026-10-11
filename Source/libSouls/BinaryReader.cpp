@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BinaryReader.hpp"
 #include "TextEncoding.hpp"
@@ -33,9 +37,7 @@ namespace Souls {
                         Target = (egptr() - Base) + Offset;
                         break;
                 }
-                if (Target < 0 || Target > egptr() - Base) {
-                    return pos_type(off_type(-1));
-                }
+                if (Target < 0 || Target > egptr() - Base) { return pos_type(off_type(-1)); }
                 setg(Base, Base + Target, egptr());
                 return pos_type(Target);
             }
@@ -48,9 +50,7 @@ namespace Souls {
 
     BinaryReader::BinaryReader(const std::filesystem::path& Path, Endian Order) : Order(Order) {
         auto File = std::make_unique<std::ifstream>(Path, std::ios::binary);
-        if (!File->is_open()) {
-            throw BinaryException("Failed to open file for reading: " + Path.string());
-        }
+        if (!File->is_open()) { throw BinaryException("Failed to open file for reading: " + Path.string()); }
         Stream = File.get();
         Owned  = std::move(File);
     }
@@ -77,9 +77,7 @@ namespace Souls {
     int64_t BinaryReader::Position() {
         Stream->clear();
         const auto Pos = Stream->tellg();
-        if (Pos == std::istream::pos_type(-1)) {
-            throw BinaryException("Failed to query stream position");
-        }
+        if (Pos == std::istream::pos_type(-1)) { throw BinaryException("Failed to query stream position"); }
         return static_cast<int64_t>(Pos);
     }
 
@@ -116,23 +114,15 @@ namespace Souls {
     }
 
     void BinaryReader::Align(int64_t Alignment) {
-        if (Alignment <= 0) {
-            throw BinaryException("Alignment must be positive");
-        }
+        if (Alignment <= 0) { throw BinaryException("Alignment must be positive"); }
         const int64_t Misalignment = Position() % Alignment;
-        if (Misalignment != 0) {
-            Skip(Alignment - Misalignment);
-        }
+        if (Misalignment != 0) { Skip(Alignment - Misalignment); }
     }
 
     void BinaryReader::AlignRelative(int64_t Start, int64_t Alignment) {
-        if (Alignment <= 0) {
-            throw BinaryException("Alignment must be positive");
-        }
+        if (Alignment <= 0) { throw BinaryException("Alignment must be positive"); }
         const int64_t Misalignment = (Position() - Start) % Alignment;
-        if (Misalignment != 0) {
-            Skip(Alignment - Misalignment);
-        }
+        if (Misalignment != 0) { Skip(Alignment - Misalignment); }
     }
 
     void BinaryReader::StepIn(int64_t Position) {
@@ -146,9 +136,7 @@ namespace Souls {
     }
 
     void BinaryReader::StepOut() {
-        if (StepStack.empty()) {
-            throw BinaryException("StepOut without matching StepIn");
-        }
+        if (StepStack.empty()) { throw BinaryException("StepOut without matching StepIn"); }
         const int64_t Target = StepStack.back();
         StepStack.pop_back();
         Seek(Target);
@@ -182,9 +170,7 @@ namespace Souls {
         std::string Result;
         while (true) {
             const uint8_t Byte = ReadByte();
-            if (Byte == 0) {
-                return Result;
-            }
+            if (Byte == 0) { return Result; }
             Result.push_back(static_cast<char>(Byte));
         }
     }
@@ -193,9 +179,7 @@ namespace Souls {
         std::u16string Result;
         while (true) {
             const char16_t Unit = Read<char16_t>();
-            if (Unit == 0) {
-                return Result;
-            }
+            if (Unit == 0) { return Result; }
             Result.push_back(Unit);
         }
     }
@@ -223,13 +207,9 @@ namespace Souls {
 
     std::u16string BinaryReader::ReadFixStrW(size_t Size) {
         std::u16string Raw = ReadUTF16(Size / 2);
-        if (Size % 2 != 0) {
-            Skip(1);
-        }
+        if (Size % 2 != 0) { Skip(1); }
         const size_t End = Raw.find(u'\0');
-        if (End != std::u16string::npos) {
-            Raw.resize(End);
-        }
+        if (End != std::u16string::npos) { Raw.resize(End); }
         return Raw;
     }
 #pragma endregion
@@ -280,9 +260,7 @@ namespace Souls {
 #pragma endregion
 
     void BinaryReader::ReadRaw(void* Destination, size_t Size) {
-        if (Size == 0) {
-            return;
-        }
+        if (Size == 0) { return; }
         const int64_t At = Position();
         Stream->read(static_cast<char*>(Destination), static_cast<std::streamsize>(Size));
         if (static_cast<size_t>(Stream->gcount()) != Size) {
@@ -296,15 +274,14 @@ namespace Souls {
     void BinaryReader::CheckAvailable(size_t Count, size_t ElementSize) {
         const int64_t Left = Remaining();
         if (Left < 0 || Count > static_cast<size_t>(Left) / ElementSize) {
-            throw BinaryException("Requested " + std::to_string(Count) + " elements of " +
-                                  std::to_string(ElementSize) + " bytes, but only " + std::to_string(Left) +
-                                  " bytes remain");
+            throw BinaryException("Requested " + std::to_string(Count) + " elements of " + std::to_string(ElementSize) +
+                                  " bytes, but only " + std::to_string(Left) + " bytes remain");
         }
     }
 
     void BinaryReader::ThrowAssert(int64_t At, const std::string& Expected, const std::string& Actual) {
-        throw BinaryException("Assertion failed at offset " + std::to_string(At) + ": expected " + Expected +
-                              ", got " + Actual);
+        throw BinaryException("Assertion failed at offset " + std::to_string(At) + ": expected " + Expected + ", got " +
+                              Actual);
     }
 }  // namespace Souls
 

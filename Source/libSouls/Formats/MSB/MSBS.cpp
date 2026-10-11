@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MSBS.hpp"
 
@@ -22,15 +26,13 @@ namespace Souls {
         const int64_t NameOffset = Reader.ReadInt64();
         Reader.Assert<uint32_t>(Type());
         Reader.ReadInt32();  // ID
-        const int64_t SibOffset = Reader.ReadInt64();
-        InstanceCount           = Reader.ReadInt32();
-        Unk1C                   = Reader.ReadInt32();
+        const int64_t SibOffset      = Reader.ReadInt64();
+        InstanceCount                = Reader.ReadInt32();
+        Unk1C                        = Reader.ReadInt32();
         const int64_t TypeDataOffset = Reader.ReadInt64();
         RequireNonZero(NameOffset, "nameOffset");
         RequireNonZero(SibOffset, "sibOffset");
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in model");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in model"); }
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
         Reader.Seek(Start + SibOffset);
@@ -76,9 +78,7 @@ namespace Souls {
         const int64_t TypeDataOffset = Reader.ReadInt64();
         RequireNonZero(NameOffset, "nameOffset");
         RequireNonZero(BaseDataOffset, "baseDataOffset");
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in event");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in event"); }
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
         Reader.Seek(Start + BaseDataOffset);
@@ -118,13 +118,13 @@ namespace Souls {
     }
 
     void MSBS::Event::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
 
     void MSBS::Event::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
@@ -136,10 +136,10 @@ namespace Souls {
         const int64_t NameOffset = Reader.ReadInt64();
         Reader.Assert<uint32_t>(Type());
         Reader.ReadInt32();  // ID
-        const auto ShapeKind = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
-        Position             = Reader.ReadVector3();
-        Rotation             = Reader.ReadVector3();
-        Unk2C                = Reader.ReadInt32();
+        const auto ShapeKind          = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
+        Position                      = Reader.ReadVector3();
+        Rotation                      = Reader.ReadVector3();
+        Unk2C                         = Reader.ReadInt32();
         const int64_t BaseDataOffset1 = Reader.ReadInt64();
         const int64_t BaseDataOffset2 = Reader.ReadInt64();
         Reader.Assert<int32_t>(-1);
@@ -155,9 +155,7 @@ namespace Souls {
             throw BinaryException("Unexpected shapeDataOffset in region");
         }
         RequireNonZero(BaseDataOffset3, "baseDataOffset3");
-        if (HasTypeData() != (TypeDataOffset != 0)) {
-            throw BinaryException("Unexpected typeDataOffset in region");
-        }
+        if (HasTypeData() != (TypeDataOffset != 0)) { throw BinaryException("Unexpected typeDataOffset in region"); }
 
         Reader.Seek(Start + NameOffset);
         Name = Reader.ReadUTF16Text();
@@ -169,7 +167,7 @@ namespace Souls {
         UnkB                 = Reader.ReadArray<int16_t>(static_cast<size_t>(CountB));
         if (Msb::HasShapeData(Shape)) {
             Reader.Seek(Start + ShapeDataOffset);
-            Msb::Detail::ReadVisitor V{Reader};
+            Msb::Detail::ReadVisitor V {Reader};
             Msb::Detail::VisitShape(Shape, V);
         }
         Reader.Seek(Start + BaseDataOffset3);
@@ -211,7 +209,7 @@ namespace Souls {
         Writer.Align(8);
         if (Msb::HasShapeData(Shape)) {
             Writer.Fill<int64_t>("ShapeDataOffset", Writer.Position() - Start);
-            Msb::Detail::WriteVisitor V{Writer};
+            Msb::Detail::WriteVisitor V {Writer};
             Msb::Detail::VisitShape(Shape, V);
         } else {
             Writer.Fill<int64_t>("ShapeDataOffset", 0);
@@ -222,9 +220,7 @@ namespace Souls {
         if (HasTypeData()) {
             const uint32_t T = Type();
             // Sound space overrides, parts group areas and auto draw group points align their type data.
-            if (T == 23 || T == 25 || T == 26) {
-                Writer.Align(8);
-            }
+            if (T == 23 || T == 25 || T == 26) { Writer.Align(8); }
             Writer.Fill<int64_t>("TypeDataOffset", Writer.Position() - Start);
             WriteTypeData(Writer);
         } else {
@@ -234,13 +230,13 @@ namespace Souls {
     }
 
     void MSBS::Region::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ActivationPartName);
         Msb::Detail::VisitShape(Shape, V);
     }
 
     void MSBS::Region::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ActivationPartName);
         Msb::Detail::VisitShape(Shape, V);
     }
@@ -325,25 +321,25 @@ namespace Souls {
         }
 
         Reader.Seek(Start + EntityDataOffset);
-        EntityID = Reader.ReadInt32();
-        UnkE04   = Reader.ReadByte();
-        UnkE05   = Reader.ReadByte();
-        UnkE06   = Reader.ReadByte();
-        LanternID = Reader.ReadByte();
-        LodParamID = Reader.ReadByte();
-        UnkE09     = Reader.ReadByte();
-        IsPointLightShadowSrc = Reader.ReadBool();
-        UnkE0B                = Reader.ReadByte();
-        IsShadowSrc           = Reader.ReadBool();
-        IsStaticShadowSrc     = Reader.ReadByte();
-        IsCascade3ShadowSrc   = Reader.ReadByte();
-        UnkE0F                = Reader.ReadByte();
-        UnkE10                = Reader.ReadByte();
-        IsShadowDest          = Reader.ReadBool();
-        IsShadowOnly          = Reader.ReadBool();
-        DrawByReflectCam      = Reader.ReadBool();
-        DrawOnlyReflectCam    = Reader.ReadBool();
-        EnableOnAboveShadow   = Reader.ReadByte();
+        EntityID                = Reader.ReadInt32();
+        UnkE04                  = Reader.ReadByte();
+        UnkE05                  = Reader.ReadByte();
+        UnkE06                  = Reader.ReadByte();
+        LanternID               = Reader.ReadByte();
+        LodParamID              = Reader.ReadByte();
+        UnkE09                  = Reader.ReadByte();
+        IsPointLightShadowSrc   = Reader.ReadBool();
+        UnkE0B                  = Reader.ReadByte();
+        IsShadowSrc             = Reader.ReadBool();
+        IsStaticShadowSrc       = Reader.ReadByte();
+        IsCascade3ShadowSrc     = Reader.ReadByte();
+        UnkE0F                  = Reader.ReadByte();
+        UnkE10                  = Reader.ReadByte();
+        IsShadowDest            = Reader.ReadBool();
+        IsShadowOnly            = Reader.ReadBool();
+        DrawByReflectCam        = Reader.ReadBool();
+        DrawOnlyReflectCam      = Reader.ReadBool();
+        EnableOnAboveShadow     = Reader.ReadByte();
         DisablePointLightEffect = Reader.ReadBool();
         UnkE17                  = Reader.ReadByte();
         UnkE18                  = Reader.ReadInt32();
@@ -448,20 +444,18 @@ namespace Souls {
     }
 
     void MSBS::Part::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ModelName);
     }
 
     void MSBS::Part::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ModelName);
     }
 #pragma endregion
 
     bool MSBS::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "MSB ";
     }
 
@@ -552,8 +546,9 @@ namespace Souls {
         }
 
         for (Model* M : ModelPtrs) {
-            M->InstanceCount = static_cast<int32_t>(
-                std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) { return P->ModelName.has_value() && *P->ModelName == M->Name; }));
+            M->InstanceCount = static_cast<int32_t>(std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) {
+                return P->ModelName.has_value() && *P->ModelName == M->Name;
+            }));
         }
         for (Event* E : EventPtrs) {
             E->GetIndices(Lists);

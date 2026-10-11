@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "Crypto.hpp"
 #include "Endian.hpp"
@@ -25,7 +29,8 @@ namespace Souls::Crypto {
 
         void Check(NTSTATUS Status, const char* What) {
             if (!Succeeded(Status)) {
-                throw BinaryException(std::string(What) + " failed (NTSTATUS 0x" + std::to_string(static_cast<unsigned>(Status)) + ")");
+                throw BinaryException(std::string(What) + " failed (NTSTATUS 0x" +
+                                      std::to_string(static_cast<unsigned>(Status)) + ")");
             }
         }
 
@@ -89,9 +94,7 @@ namespace Souls::Crypto {
 
         const auto Cipher = Data.subspan(BlockSize);
         std::vector<uint8_t> Plain(Cipher.size());
-        if (Cipher.empty()) {
-            return Plain;
-        }
+        if (Cipher.empty()) { return Plain; }
 
         ULONG Written = 0;
         Check(BCryptDecrypt(Aes.Get(),
@@ -112,7 +115,8 @@ namespace Souls::Crypto {
     std::vector<uint8_t> RandomBytes(size_t Count) {
         std::vector<uint8_t> Bytes(Count);
         if (Count > 0) {
-            Check(BCryptGenRandom(nullptr, Bytes.data(), static_cast<ULONG>(Count), BCRYPT_USE_SYSTEM_PREFERRED_RNG), "BCryptGenRandom");
+            Check(BCryptGenRandom(nullptr, Bytes.data(), static_cast<ULONG>(Count), BCRYPT_USE_SYSTEM_PREFERRED_RNG),
+                  "BCryptGenRandom");
         }
         return Bytes;
     }
@@ -147,10 +151,9 @@ namespace Souls::Crypto {
         return Output;
     }
 
-    std::vector<uint8_t> EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data) {
-        if (IV.size() != BlockSize) {
-            throw BinaryException("The AES-CBC IV must be 16 bytes");
-        }
+    std::vector<uint8_t>
+    EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data) {
+        if (IV.size() != BlockSize) { throw BinaryException("The AES-CBC IV must be 16 bytes"); }
         if (Data.size() % BlockSize != 0) {
             throw BinaryException("AES-CBC data without padding must be a whole number of 16-byte blocks");
         }
@@ -159,9 +162,7 @@ namespace Souls::Crypto {
         std::copy(IV.begin(), IV.end(), IVForCipher);
 
         std::vector<uint8_t> Output(Data.size());
-        if (Data.empty()) {
-            return Output;
-        }
+        if (Data.empty()) { return Output; }
         ULONG Written = 0;
         Check(BCryptEncrypt(Aes.Get(),
                             const_cast<PUCHAR>(Data.data()),
@@ -181,8 +182,13 @@ namespace Souls::Crypto {
     std::array<uint8_t, 16> Md5(std::span<const uint8_t> Data) {
         BCRYPT_ALG_HANDLE Algorithm = nullptr;
         Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_MD5_ALGORITHM, nullptr, 0), "BCryptOpenAlgorithmProvider");
-        std::array<uint8_t, 16> Hash{};
-        const NTSTATUS Status = BCryptHash(Algorithm, nullptr, 0, const_cast<PUCHAR>(Data.data()), static_cast<ULONG>(Data.size()), Hash.data(),
+        std::array<uint8_t, 16> Hash {};
+        const NTSTATUS Status = BCryptHash(Algorithm,
+                                           nullptr,
+                                           0,
+                                           const_cast<PUCHAR>(Data.data()),
+                                           static_cast<ULONG>(Data.size()),
+                                           Hash.data(),
                                            static_cast<ULONG>(Hash.size()));
         BCryptCloseAlgorithmProvider(Algorithm, 0);
         Check(Status, "BCryptHash");
@@ -190,12 +196,8 @@ namespace Souls::Crypto {
     }
 
     void DecryptAesEcb(std::span<const uint8_t> Key, std::span<uint8_t> Data) {
-        if (Data.size() % BlockSize != 0) {
-            throw BinaryException("AES-ECB data length must be a multiple of 16");
-        }
-        if (Data.empty()) {
-            return;
-        }
+        if (Data.size() % BlockSize != 0) { throw BinaryException("AES-ECB data length must be a multiple of 16"); }
+        if (Data.empty()) { return; }
 
         const AesKey Aes(Key, Mode::ECB);
         ULONG Written = 0;
@@ -252,9 +254,7 @@ namespace Souls::Crypto {
                     Length = (Length << 8) | Der[Pos++];
                 }
             }
-            if (Pos + Length > Der.size()) {
-                throw BinaryException("Malformed RSA public key (truncated DER)");
-            }
+            if (Pos + Length > Der.size()) { throw BinaryException("Malformed RSA public key (truncated DER)"); }
             return Length;
         }
 
@@ -291,25 +291,25 @@ namespace Souls::Crypto {
                 BlockLength                         = Modulus.size();
 
                 std::vector<uint8_t> Blob(sizeof(BCRYPT_RSAKEY_BLOB) + Exponent.size() + Modulus.size());
-                auto* Header         = reinterpret_cast<BCRYPT_RSAKEY_BLOB*>(Blob.data());
-                Header->Magic        = BCRYPT_RSAPUBLIC_MAGIC;
-                Header->BitLength    = static_cast<ULONG>(Modulus.size() * 8);
-                Header->cbPublicExp  = static_cast<ULONG>(Exponent.size());
-                Header->cbModulus    = static_cast<ULONG>(Modulus.size());
-                Header->cbPrime1     = 0;
-                Header->cbPrime2     = 0;
+                auto* Header        = reinterpret_cast<BCRYPT_RSAKEY_BLOB*>(Blob.data());
+                Header->Magic       = BCRYPT_RSAPUBLIC_MAGIC;
+                Header->BitLength   = static_cast<ULONG>(Modulus.size() * 8);
+                Header->cbPublicExp = static_cast<ULONG>(Exponent.size());
+                Header->cbModulus   = static_cast<ULONG>(Modulus.size());
+                Header->cbPrime1    = 0;
+                Header->cbPrime2    = 0;
                 std::copy(Exponent.begin(), Exponent.end(), Blob.begin() + sizeof(BCRYPT_RSAKEY_BLOB));
                 std::copy(Modulus.begin(), Modulus.end(), Blob.begin() + sizeof(BCRYPT_RSAKEY_BLOB) + Exponent.size());
 
                 Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_RSA_ALGORITHM, nullptr, 0),
                       "BCryptOpenAlgorithmProvider");
                 const NTSTATUS Status = BCryptImportKeyPair(Algorithm,
-                                                           nullptr,
-                                                           BCRYPT_RSAPUBLIC_BLOB,
-                                                           &Handle,
-                                                           Blob.data(),
-                                                           static_cast<ULONG>(Blob.size()),
-                                                           0);
+                                                            nullptr,
+                                                            BCRYPT_RSAPUBLIC_BLOB,
+                                                            &Handle,
+                                                            Blob.data(),
+                                                            static_cast<ULONG>(Blob.size()),
+                                                            0);
                 if (!Succeeded(Status)) {
                     BCryptCloseAlgorithmProvider(Algorithm, 0);
                     Check(Status, "BCryptImportKeyPair");
@@ -337,9 +337,7 @@ namespace Souls::Crypto {
         const RsaPublicKey Key(KeyPem);
         const size_t InputSize  = Key.BlockLength;
         const size_t OutputSize = InputSize - 1;
-        if (InputSize < 2) {
-            throw BinaryException("RSA key is too small");
-        }
+        if (InputSize < 2) { throw BinaryException("RSA key is too small"); }
 
         std::vector<uint8_t> Result;
         Result.reserve(Data.size() / InputSize * OutputSize);
@@ -357,9 +355,7 @@ namespace Souls::Crypto {
                                 &Written,
                                 BCRYPT_PAD_NONE),
                   "BCryptEncrypt (RSA)");
-            if (Written != InputSize) {
-                throw BinaryException("Unexpected RSA block size");
-            }
+            if (Written != InputSize) { throw BinaryException("Unexpected RSA block size"); }
             // Plaintext blocks are one byte shorter than the modulus; the leading byte is always zero.
             Result.insert(Result.end(), Block.begin() + 1, Block.end());
         }
@@ -375,9 +371,7 @@ namespace Souls::Crypto {
         size_t Pos = 0;
         while ((Pos = Text.find(Begin, Pos)) != std::string_view::npos) {
             const size_t Stop = Text.find(End, Pos);
-            if (Stop == std::string_view::npos) {
-                break;
-            }
+            if (Stop == std::string_view::npos) { break; }
             Keys.emplace_back(Text.substr(Pos, Stop + End.size() - Pos));
             Pos = Stop + End.size();
         }

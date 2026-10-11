@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -122,9 +126,9 @@ namespace Souls::FLVER {
         /// @brief Where the vertex is.
         Vector3 Position;
         /// @brief Weight of the vertex's attachment to bones; must be 4 length.
-        std::array<float, 4> BoneWeights{};
+        std::array<float, 4> BoneWeights {};
         /// @brief Bones the vertex is weighted to, indexing the parent mesh's bone indices; must be 4 length.
-        std::array<int32_t, 4> BoneIndices{};
+        std::array<int32_t, 4> BoneIndices {};
         /// @brief Vector pointing away from the surface.
         Vector3 Normal;
         /// @brief The fourth component of the normal, a whole number with a meaning that depends on the game.
@@ -168,11 +172,11 @@ namespace Souls::FLVER {
         /// @brief Corresponds to the name of a bone in the parent skeleton, if present.
         std::string Name;
         /// @brief Indices into the bone list; -1 for none.
-        int16_t ParentIndex          = -1;
+        int16_t ParentIndex = -1;
         /// @brief Index of the first child in this FLVER's bone collection, or -1 for none.
-        int16_t ChildIndex           = -1;
+        int16_t ChildIndex = -1;
         /// @brief Index of the next child of this bone's parent, or -1 for none.
-        int16_t NextSiblingIndex     = -1;
+        int16_t NextSiblingIndex = -1;
         /// @brief Index of the previous child of this bone's parent, or -1 for none.
         int16_t PreviousSiblingIndex = -1;
         /// @brief Translation of this bone.
@@ -180,7 +184,7 @@ namespace Souls::FLVER {
         /// @brief Euler angles in radians.
         Vector3 Rotation;
         /// @brief Scale of this bone.
-        Vector3 Scale{1.f, 1.f, 1.f};
+        Vector3 Scale {1.f, 1.f, 1.f};
         /// @brief Minimum extent of the vertices weighted to this bone.
         Vector3 BoundingBoxMin;
         /// @brief Maximum extent of the vertices weighted to this bone.
@@ -212,7 +216,7 @@ namespace Souls::FLVER {
         /// @brief Vector indicating the dummy point's upward direction.
         Vector3 Upward;
         /// @brief Indicates the type of dummy point this is (hitbox, sfx, etc).
-        int16_t ReferenceID     = 0;
+        int16_t ReferenceID = 0;
         /// @brief Index of a bone that the dummy point is initially transformed to before binding to the attach bone.
         int16_t ParentBoneIndex = -1;
         /// @brief Index of the bone that the dummy point follows physically.
@@ -220,13 +224,13 @@ namespace Souls::FLVER {
         /// @brief Unknown; only used in Sekiro.
         Color Tint;
         /// @brief Unknown.
-        bool Flag1           = false;
+        bool Flag1 = false;
         /// @brief If false, the upward vector is not read.
         bool UseUpwardVector = false;
         /// @brief Unknown; only used in Sekiro.
-        int32_t Unk30        = 0;
+        int32_t Unk30 = 0;
         /// @brief Unknown; only used in Sekiro.
-        int32_t Unk34        = 0;
+        int32_t Unk34 = 0;
 
         /// @brief Reads the dummy point; the FLVER version decides the layout.
         void Read(BinaryReader& Reader, int32_t Version);

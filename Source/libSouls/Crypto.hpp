@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -33,7 +37,8 @@ namespace Souls::Crypto {
     ///        blocks.
     ///
     /// The result is just the ciphertext (the IV is not prepended). This is the form save files use.
-    SOULS_API std::vector<uint8_t> EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data);
+    SOULS_API std::vector<uint8_t>
+    EncryptAesCbcNoPadding(std::span<const uint8_t> Key, std::span<const uint8_t> IV, std::span<const uint8_t> Data);
 
     /// @brief Decrypts in place with AES-ECB and no padding, as used for the encrypted ranges of files in game archives
     ///        (BHD5).

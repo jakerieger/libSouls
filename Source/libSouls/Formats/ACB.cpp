@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "ACB.hpp"
 
@@ -8,9 +12,7 @@
 
 namespace Souls {
     bool ACB::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == std::string("ACB\0", 4);
     }
 
@@ -37,7 +39,7 @@ namespace Souls {
                 throw BinaryException("Unsupported ACB asset type: " + std::to_string(RawType));
             }
             Asset A;
-            A.Type                      = static_cast<AssetType>(RawType);
+            A.Type                       = static_cast<AssetType>(RawType);
             const int32_t AbsoluteOffset = Reader.ReadInt32();
             const int32_t RelativeOffset = Reader.ReadInt32();
             Reader.Assert<uint16_t>(RawType);
@@ -58,10 +60,10 @@ namespace Souls {
                     A.Unk10 = Reader.ReadInt32();
                     break;
                 case AssetType::Model: {
-                    ModelOptions& M = A.Model;
-                    M.Unk0A                    = Reader.ReadInt16();
+                    ModelOptions& M             = A.Model;
+                    M.Unk0A                     = Reader.ReadInt16();
                     const int32_t MembersOffset = Reader.ReadInt32();
-                    M.DrawDistance             = Reader.ReadInt32();
+                    M.DrawDistance              = Reader.ReadInt32();
                     Reader.Assert<int32_t>(0);
                     Reader.Assert<int32_t>(0);
                     M.MeshLodRate         = Reader.ReadInt16();
@@ -87,11 +89,12 @@ namespace Souls {
                     if (MembersOffset != 0) {
                         Reader.Seek(MembersOffset);
                         MemberList List;
-                        List.Unk00                    = Reader.ReadInt16();
-                        const int16_t MemberCount     = Reader.ReadInt16();
+                        List.Unk00                        = Reader.ReadInt16();
+                        const int16_t MemberCount         = Reader.ReadInt16();
                         const int32_t MemberOffsetsOffset = Reader.ReadInt32();
                         Reader.StepIn(MemberOffsetsOffset);
-                        const std::vector<int32_t> MemberOffsets = Reader.ReadArray<int32_t>(static_cast<size_t>(MemberCount));
+                        const std::vector<int32_t> MemberOffsets =
+                          Reader.ReadArray<int32_t>(static_cast<size_t>(MemberCount));
                         for (const int32_t MemberOffset : MemberOffsets) {
                             Reader.Seek(MemberOffset);
                             Member Mem;
@@ -171,16 +174,12 @@ namespace Souls {
             } else {
                 Writer.WriteInt16(0);
                 Writer.WriteInt32(0);
-                if (A.Type == AssetType::GITexture) {
-                    Writer.WriteInt32(A.Unk10);
-                }
+                if (A.Type == AssetType::GITexture) { Writer.WriteInt32(A.Unk10); }
             }
         }
 
         for (size_t I = 0; I < Assets.size(); ++I) {
-            if (Assets[I].Type != AssetType::Model) {
-                continue;
-            }
+            if (Assets[I].Type != AssetType::Model) { continue; }
             const std::string Index = std::to_string(I);
             const ModelOptions& M   = Assets[I].Model;
             if (!M.Members) {
@@ -199,7 +198,8 @@ namespace Souls {
                 Writer.Reserve<int32_t>("MemberOffset" + Index + ":" + std::to_string(J));
             }
             for (size_t J = 0; J < M.Members->Members.size(); ++J) {
-                Writer.Fill<int32_t>("MemberOffset" + Index + ":" + std::to_string(J), static_cast<int32_t>(Writer.Position()));
+                Writer.Fill<int32_t>("MemberOffset" + Index + ":" + std::to_string(J),
+                                     static_cast<int32_t>(Writer.Position()));
                 OffsetIndex.push_back(static_cast<int32_t>(Writer.Position()));
                 Writer.Reserve<int32_t>("MemberTextOffset" + Index + ":" + std::to_string(J));
                 Writer.WriteInt32(M.Members->Members[J].Unk04);
@@ -218,7 +218,8 @@ namespace Souls {
             if (Assets[I].Type == AssetType::Model && Assets[I].Model.Members) {
                 const auto& List = Assets[I].Model.Members->Members;
                 for (size_t J = 0; J < List.size(); ++J) {
-                    Writer.Fill<int32_t>("MemberTextOffset" + std::to_string(I) + ":" + std::to_string(J), static_cast<int32_t>(Writer.Position()));
+                    Writer.Fill<int32_t>("MemberTextOffset" + std::to_string(I) + ":" + std::to_string(J),
+                                         static_cast<int32_t>(Writer.Position()));
                     Writer.WriteUTF16Text(List[J].Text, true);
                 }
             }

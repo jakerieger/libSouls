@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
@@ -30,12 +34,12 @@ int TestCApiParamMetadata();
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     namespace fs = std::filesystem;
@@ -45,10 +49,12 @@ namespace {
         Souls::PARAM Param;
         Param.ParamType           = "TEST_PARAM_ST";
         Param.ParamdefDataVersion = 7;
-        Param.Format2D            = Souls::PARAM::FormatFlags1::LongDataOffset | Souls::PARAM::FormatFlags1::OffsetParamType;
-        Param.Format2E            = Souls::PARAM::FormatFlags2::UnicodeRowNames;
+        Param.Format2D = Souls::PARAM::FormatFlags1::LongDataOffset | Souls::PARAM::FormatFlags1::OffsetParamType;
+        Param.Format2E = Souls::PARAM::FormatFlags2::UnicodeRowNames;
         for (int32_t I = 0; I < 3; ++I) {
-            Param.Rows.push_back(Souls::PARAM::Row(100 + I * 10, "Row " + std::to_string(I), std::vector<uint8_t>(8, static_cast<uint8_t>(I + 1))));
+            Param.Rows.push_back(Souls::PARAM::Row(100 + I * 10,
+                                                   "Row " + std::to_string(I),
+                                                   std::vector<uint8_t>(8, static_cast<uint8_t>(I + 1))));
         }
         const std::vector<uint8_t> Bytes = Param.Write();
 
@@ -62,7 +68,7 @@ namespace {
         CHECK(souls_param_row_id(P, 2) == 120);
         CHECK(std::strcmp(souls_param_row_name(P, 1), "Row 1") == 0);
 
-        size_t Size = 0;
+        size_t Size        = 0;
         const uint8_t* Row = souls_param_row_bytes(P, 1, &Size);
         CHECK(Row != nullptr && Size == 8 && Row[0] == 2);
 
@@ -71,7 +77,7 @@ namespace {
         CHECK(souls_param_set_row_id(P, 0, 99) == SOULS_OK);
         CHECK(souls_param_remove_row(P, 2) == SOULS_OK);
 
-        SoulsBuffer Out = souls_param_write_memory(P);
+        SoulsBuffer Out  = souls_param_write_memory(P);
         SoulsParam* Back = souls_param_read_memory(Out.data, Out.size);
         CHECK(Back != nullptr && souls_param_row_count(Back) == 2 && souls_param_row_id(Back, 0) == 99);
         souls_param_free(Back);
@@ -85,7 +91,6 @@ namespace {
         souls_paramdefs_free(Defs);
         souls_param_free(P);
     }
-
 
     // Elden Ring: decrypt regulation.bin, edit a weapon through a layout, write it back through the binder.
     int TestEldenRing() {
@@ -107,12 +112,12 @@ namespace {
             souls_binder_free(Bnd);
             return 0;
         }
-        size_t Size = 0;
+        size_t Size         = 0;
         const uint8_t* Data = souls_binder_file_bytes(Bnd, static_cast<size_t>(Index), &Size);
         SoulsParam* Param   = souls_param_read_memory(Data, Size);
         CHECK(Param != nullptr);
 
-        SoulsParamDefs* Repo = souls_paramdefs_new();
+        SoulsParamDefs* Repo       = souls_paramdefs_new();
         const std::string DefsPath = Defs.string();
         CHECK(souls_paramdefs_add_folder(Repo, DefsPath.c_str(), 1) == SOULS_OK);
         CHECK(souls_paramdefs_count(Repo) > 0);
@@ -129,7 +134,8 @@ namespace {
             double Again = 0;
             souls_param_get_number(Layout, Param, static_cast<size_t>(Dagger), "weight", &Again);
             CHECK(Again == 4.5);
-            CHECK(souls_param_get_number(Layout, Param, static_cast<size_t>(Dagger), "no_such_field", &Again) != SOULS_OK);
+            CHECK(souls_param_get_number(Layout, Param, static_cast<size_t>(Dagger), "no_such_field", &Again) !=
+                  SOULS_OK);
             CHECK(souls_param_layout_find_field(Layout, "weight") >= 0);
 
             const int64_t Added = souls_param_add_row(Layout, Param, 999999999, "C API test");
@@ -178,7 +184,7 @@ namespace {
         if (!Tpf) return 0;
         const size_t Count = souls_tpf_texture_count(Tpf);
         CHECK(Count > 0);
-        size_t Size = 0;
+        size_t Size        = 0;
         const uint8_t* Dds = souls_tpf_texture_bytes(Tpf, 0, &Size);
         CHECK(Dds != nullptr && Size > 4 && std::memcmp(Dds, "DDS ", 4) == 0);
         CHECK(souls_tpf_texture_name(Tpf, 0) != nullptr);
@@ -221,5 +227,8 @@ int RunCApiTests() {
     if (Metadata != TestSkipped) Failures += Metadata;
     std::printf("C API tests: %s\n", Failures ? "FAILED" : "ok");
     if (Failures) return 1;
-    return Er == TestSkipped && Tpf == TestSkipped && RealMsb == TestSkipped && RealFlver == TestSkipped && RealArchives == TestSkipped && RealEmevd == TestSkipped ? TestSkipped : 0;
+    return Er == TestSkipped && Tpf == TestSkipped && RealMsb == TestSkipped && RealFlver == TestSkipped &&
+               RealArchives == TestSkipped && RealEmevd == TestSkipped
+             ? TestSkipped
+             : 0;
 }

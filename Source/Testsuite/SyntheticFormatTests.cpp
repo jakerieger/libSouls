@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 // Round-trip tests on hand-built files for formats that can't be checked against real game files here.
 
@@ -24,12 +28,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
@@ -64,16 +68,16 @@ namespace {
 
         MSB2::PointParam::Region0 R0;
         R0.Name     = "Region A";
-        R0.Shape    = Msb::Shapes::Box{2.f, 3.f, 4.f};
+        R0.Shape    = Msb::Shapes::Box {2.f, 3.f, 4.f};
         R0.Position = Vector3(10.f, 0.f, -5.f);
         Msb.Regions.Add(R0);
         MSB2::PointParam::Sound Snd;
         Snd.Name    = "Region B";
         Snd.SoundID = 77;
-        Snd.Shape   = Msb::Shapes::Sphere{9.f};
+        Snd.Shape   = Msb::Shapes::Sphere {9.f};
         Msb.Regions.Add(Snd);
         MSB2::PointParam::Fog Fog;
-        Fog.Name  = "Region C";
+        Fog.Name   = "Region C";
         Fog.UnkT04 = 3;
         Msb.Regions.Add(Fog);
 
@@ -110,15 +114,15 @@ namespace {
         BoneA.Name        = "Master";
         BoneA.Translation = Vector3(0.f, 1.f, 0.f);
         MSB2::PartPose::Bone BoneB;
-        BoneB.Name = "Spine";
+        BoneB.Name     = "Spine";
         BoneB.Rotation = Vector3(0.5f, 0.f, 0.f);
-        Pose.Bones = {BoneA, BoneB};
+        Pose.Bones     = {BoneA, BoneB};
         Msb.PartPoses.push_back(Pose);
         return Msb;
     }
 
     void TestMsb2(MSB2::MSBFormat Format, const char* Label) {
-        const int Before = Failures;
+        const int Before  = Failures;
         const MSB2 Source = MakeMsb2(Format);
         MSB2 Copy         = Source;
         const auto Bytes  = Copy.Write();
@@ -130,29 +134,29 @@ namespace {
         CHECK(Read.Events.GetEntries().size() == 3);
         CHECK(Read.Regions.GetEntries().size() == 3);
         CHECK(Read.Parts.GetEntries().size() == 5);
-        CHECK(Read.Regions.Region0s.size() == 1 && std::holds_alternative<Msb::Shapes::Box>(Read.Regions.Region0s[0].Shape));
+        CHECK(Read.Regions.Region0s.size() == 1 &&
+              std::holds_alternative<Msb::Shapes::Box>(Read.Regions.Region0s[0].Shape));
         CHECK(Read.Regions.Sounds.size() == 1 && Read.Regions.Sounds[0].SoundID == 77);
         CHECK(Read.Events.Warps.size() == 1 && Read.Events.Warps[0].Position.Y == 2.f);
         CHECK(Read.Parts.MapPieces.size() == 1 && Read.Parts.MapPieces[0].ModelName == "m1000");
         CHECK(Read.Parts.Objects.size() == 1 && Read.Parts.Objects[0].MapObjectInstanceParamID == 42);
-        CHECK(Read.Parts.ConnectCollisions.size() == 1 && Read.Parts.ConnectCollisions[0].CollisionName == "h1000_0000");
-        CHECK(Read.PartPoses.size() == 1 && Read.PartPoses[0].PartName == "o1000_0000" && Read.PartPoses[0].Bones.size() == 2 &&
-              Read.PartPoses[0].Bones[1].Name == "Spine");
+        CHECK(Read.Parts.ConnectCollisions.size() == 1 &&
+              Read.Parts.ConnectCollisions[0].CollisionName == "h1000_0000");
+        CHECK(Read.PartPoses.size() == 1 && Read.PartPoses[0].PartName == "o1000_0000" &&
+              Read.PartPoses[0].Bones.size() == 2 && Read.PartPoses[0].Bones[1].Name == "Spine");
 
         MSB2 Again = Read;
         CHECK(Again.Write() == Bytes);
-        if (Failures != Before) {
-            std::printf("  (in MSB2 %s)\n", Label);
-        }
+        if (Failures != Before) { std::printf("  (in MSB2 %s)\n", Label); }
     }
 
     void TestFfxdlse() {
         FFXDLSE Ffx;
         Ffx.Effect.ID = 1234;
 
-        auto Spawn = std::make_shared<FFXDLSE::Param37>();
-        Spawn->ID  = 55;
-        auto Inner = std::make_shared<FFXDLSE::Param7>();
+        auto Spawn   = std::make_shared<FFXDLSE::Param37>();
+        Spawn->ID    = 55;
+        auto Inner   = std::make_shared<FFXDLSE::Param7>();
         Inner->Value = 2.5f;
         Spawn->Params->Params.push_back(Inner);
         Ffx.Effect.ParamList1.Params.push_back(Spawn);
@@ -169,15 +173,15 @@ namespace {
         ColorCurve->Ticks.push_back(Tc);
         Ffx.Effect.ParamList2.Params.push_back(ColorCurve);
 
-        auto Scaled = std::make_shared<FFXDLSE::Param82>();
+        auto Scaled   = std::make_shared<FFXDLSE::Param82>();
         Scaled->Inner = std::make_shared<FFXDLSE::Param1>();
         Scaled->Float = 0.5f;
         Ffx.Effect.ParamList2.Params.push_back(Scaled);
 
         FFXDLSE::State State;
         FFXDLSE::Action Action;
-        Action.ID = 7;
-        auto Arg = std::make_shared<FFXDLSE::Param44>();
+        Action.ID     = 7;
+        auto Arg      = std::make_shared<FFXDLSE::Param44>();
         Arg->ArgIndex = 3;
         Action.Params.Params.push_back(Arg);
         State.Actions.push_back(Action);
@@ -193,7 +197,7 @@ namespace {
         Trigger.Evaluator  = And;
         State.Triggers.push_back(Trigger);
         Ffx.Effect.States.States.push_back(State);
-        Ffx.Effect.States.States.push_back(FFXDLSE::State{});
+        Ffx.Effect.States.States.push_back(FFXDLSE::State {});
         Ffx.Effect.Resources.Vector3 = {1, 2, 3};
 
         const auto Bytes = Ffx.Write();
@@ -267,7 +271,7 @@ namespace {
         MQB::CustomData Counter;
         Counter.Name  = "Counter";
         Counter.Type  = MQB::CustomData::DataType::Int;
-        Counter.Value = int32_t{7};
+        Counter.Value = int32_t {7};
         Timeline.CustomData.push_back(Counter);
         Cut.Timelines.push_back(Timeline);
         Mqb.Cuts.push_back(Cut);
@@ -284,12 +288,11 @@ namespace {
         CHECK(Read.Name == "TestCutscene");
         CHECK(Read.Resources.size() == 2 && Read.Resources[0].CustomData.size() == 3);
         CHECK(Read.Resources[0].Path == "cut0010\\camera.sibcam" && !Read.Resources[1].Path);
-        CHECK(Read.Cuts.size() == 1 && Read.Cuts[0].Timelines.size() == 1 && Read.Cuts[0].Timelines[0].Dispositions.size() == 1);
+        CHECK(Read.Cuts.size() == 1 && Read.Cuts[0].Timelines.size() == 1 &&
+              Read.Cuts[0].Timelines[0].Dispositions.size() == 1);
         CHECK(Read.Cuts[0].Timelines[0].Dispositions[0].CustomData[0].Sequences.size() == 1);
         CHECK(Read.Write() == Bytes);
-        if (Failures != Before) {
-            std::printf("  (in MQB %s)\n", Label);
-        }
+        if (Failures != Before) { std::printf("  (in MQB %s)\n", Label); }
     }
 
     void TestMsb3() {
@@ -311,7 +314,7 @@ namespace {
 
         MSB3::PointParam::Event Ev;
         Ev.Name     = "Region A";
-        Ev.Shape    = Msb::Shapes::Box{4.f, 5.f, 6.f};
+        Ev.Shape    = Msb::Shapes::Box {4.f, 5.f, 6.f};
         Ev.Position = Vector3(9.f, 8.f, 7.f);
         Msb.Regions.Add(Ev);
         MSB3::PointParam::PatrolRoute Route;
@@ -380,7 +383,8 @@ namespace {
         CHECK(TAE3::Is(Bytes));
         TAE3 Read = TAE3::Read(Bytes);
         CHECK(Read.ID == 1234 && Read.SkeletonName == "skeleton.hkt");
-        CHECK(Read.Animations.size() == 2 && Read.Animations[0].Events.size() == 2 && Read.Animations[0].EventGroups.size() == 1);
+        CHECK(Read.Animations.size() == 2 && Read.Animations[0].Events.size() == 2 &&
+              Read.Animations[0].EventGroups.size() == 1);
         CHECK(Read.Animations[1].AnimFileReference && Read.Animations[1].AnimFileName == "a000_003000.hkt");
         CHECK(Read.Write() == Bytes);
     }

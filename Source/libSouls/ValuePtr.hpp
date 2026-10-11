@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -28,9 +32,7 @@ namespace Souls {
 
         /// @brief A deep copy: replaces the object with a copy of Other's.
         ValuePtr& operator=(const ValuePtr& Other) {
-            if (this != &Other) {
-                Pointer = Other.Pointer ? std::make_unique<T>(*Other.Pointer) : nullptr;
-            }
+            if (this != &Other) { Pointer = Other.Pointer ? std::make_unique<T>(*Other.Pointer) : nullptr; }
             return *this;
         }
         /// @brief Takes Other's object, leaving Other empty.

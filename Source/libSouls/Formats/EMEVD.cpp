@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "EMEVD.hpp"
 
@@ -13,7 +17,8 @@
 namespace Souls {
     namespace {
         struct Offsets {
-            int64_t Events = 0, Instructions = 0, Layers = 0, Parameters = 0, LinkedFiles = 0, Arguments = 0, Strings = 0;
+            int64_t Events = 0, Instructions = 0, Layers = 0, Parameters = 0, LinkedFiles = 0, Arguments = 0,
+                    Strings = 0;
         };
 
         using Game = EMEVD::Game;
@@ -108,32 +113,51 @@ namespace Souls {
         BinaryWriter Writer(BigEndian ? Endian::Big : Endian::Little);
         for (const ArgValue& Arg : Args) {
             std::visit(
-                [&](auto Value) {
-                    using T = decltype(Value);
-                    if constexpr (sizeof(T) > 1) {
-                        Writer.Align(sizeof(T));
-                    }
-                    Writer.Write<T>(Value);
-                },
-                Arg);
+              [&](auto Value) {
+                  using T = decltype(Value);
+                  if constexpr (sizeof(T) > 1) { Writer.Align(sizeof(T)); }
+                  Writer.Write<T>(Value);
+              },
+              Arg);
         }
         Writer.Align(4);
         ArgData = Writer.ToBytes();
     }
 
-    std::vector<EMEVD::ArgValue> EMEVD::Instruction::UnpackArgs(const std::vector<ArgType>& ArgStruct, bool BigEndian) const {
+    std::vector<EMEVD::ArgValue> EMEVD::Instruction::UnpackArgs(const std::vector<ArgType>& ArgStruct,
+                                                                bool BigEndian) const {
         BinaryReader Reader(std::span<const uint8_t>(ArgData), BigEndian ? Endian::Big : Endian::Little);
         std::vector<ArgValue> Result;
         for (const ArgType Arg : ArgStruct) {
             switch (Arg) {
-                case ArgType::Byte: Result.emplace_back(Reader.ReadByte()); break;
-                case ArgType::UInt16: Reader.Align(2); Result.emplace_back(Reader.ReadUInt16()); break;
-                case ArgType::UInt32: Reader.Align(4); Result.emplace_back(Reader.ReadUInt32()); break;
-                case ArgType::SByte: Result.emplace_back(Reader.ReadSByte()); break;
-                case ArgType::Int16: Reader.Align(2); Result.emplace_back(Reader.ReadInt16()); break;
-                case ArgType::Int32: Reader.Align(4); Result.emplace_back(Reader.ReadInt32()); break;
-                case ArgType::Single: Reader.Align(4); Result.emplace_back(Reader.ReadFloat()); break;
-                default: throw BinaryException("Unimplemented argument type");
+                case ArgType::Byte:
+                    Result.emplace_back(Reader.ReadByte());
+                    break;
+                case ArgType::UInt16:
+                    Reader.Align(2);
+                    Result.emplace_back(Reader.ReadUInt16());
+                    break;
+                case ArgType::UInt32:
+                    Reader.Align(4);
+                    Result.emplace_back(Reader.ReadUInt32());
+                    break;
+                case ArgType::SByte:
+                    Result.emplace_back(Reader.ReadSByte());
+                    break;
+                case ArgType::Int16:
+                    Reader.Align(2);
+                    Result.emplace_back(Reader.ReadInt16());
+                    break;
+                case ArgType::Int32:
+                    Reader.Align(4);
+                    Result.emplace_back(Reader.ReadInt32());
+                    break;
+                case ArgType::Single:
+                    Reader.Align(4);
+                    Result.emplace_back(Reader.ReadFloat());
+                    break;
+                default:
+                    throw BinaryException("Unimplemented argument type");
             }
         }
         return Result;
@@ -146,38 +170,32 @@ namespace Souls {
         }
         for (Event& E : Events) {
             const auto Found = Names.find(E.ID);
-            if ((Overwrite || !E.Name) && Found != Names.end()) {
-                E.Name = Found->second;
-            }
+            if ((Overwrite || !E.Name) && Found != Names.end()) { E.Name = Found->second; }
         }
     }
 
     EMELD EMEVD::ExportEMELD() const {
         EMELD Eld(Format);
         for (const Event& E : Events) {
-            if (E.Name) {
-                Eld.Events.push_back({E.ID, *E.Name});
-            }
+            if (E.Name) { Eld.Events.push_back({E.ID, *E.Name}); }
         }
         return Eld;
     }
 
     bool EMEVD::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = Reader.GetASCII(0, 4);
         return Magic == std::string("EVD\0", 4);
     }
 
     void EMEVD::ReadImpl(BinaryReader& Reader) {
         Reader.AssertMagic(std::string_view("EVD\0", 4));
-        const bool BigEndian = Reader.ReadBool();
-        const bool Is64Bit   = Reader.Assert<int8_t>(0, -1) == -1;
-        const bool Unk06     = Reader.ReadBool();
-        const bool Unk07     = Reader.Assert<int8_t>(0, -1) == -1;
-        Reader.Order         = BigEndian ? Endian::Big : Endian::Little;
-        Reader.VarintLong    = Is64Bit;
+        const bool BigEndian  = Reader.ReadBool();
+        const bool Is64Bit    = Reader.Assert<int8_t>(0, -1) == -1;
+        const bool Unk06      = Reader.ReadBool();
+        const bool Unk07      = Reader.Assert<int8_t>(0, -1) == -1;
+        Reader.Order          = BigEndian ? Endian::Big : Endian::Little;
+        Reader.VarintLong     = Is64Bit;
         const int32_t Version = Reader.Assert<int32_t>(0xCC, 0xCD);
         Reader.ReadInt32();  // file size
 
@@ -209,12 +227,10 @@ namespace Souls {
         const int64_t LinkedCount = Reader.ReadVarint();
         Offs.LinkedFiles          = Reader.ReadVarint();
         Reader.ReadVarint();  // argument data length
-        Offs.Arguments             = Reader.ReadVarint();
+        Offs.Arguments              = Reader.ReadVarint();
         const int64_t StringsLength = Reader.ReadVarint();
-        Offs.Strings               = Reader.ReadVarint();
-        if (!Is64Bit) {
-            Reader.Assert<int32_t>(0);
-        }
+        Offs.Strings                = Reader.ReadVarint();
+        if (!Is64Bit) { Reader.Assert<int32_t>(0); }
 
         Reader.Seek(Offs.Events);
         Events.clear();
@@ -234,10 +250,10 @@ namespace Souls {
     }
 
     void EMEVD::WriteImpl(BinaryWriter& Writer) {
-        const bool BigEndian = Format == Game::DarkSouls1BE;
-        const bool Is64Bit   = Format >= Game::Bloodborne;
-        const bool Unk06     = Format >= Game::DarkSouls3;
-        const bool Unk07     = Format >= Game::Sekiro;
+        const bool BigEndian  = Format == Game::DarkSouls1BE;
+        const bool Is64Bit    = Format >= Game::Bloodborne;
+        const bool Unk06      = Format >= Game::DarkSouls3;
+        const bool Unk07      = Format >= Game::Sekiro;
         const int32_t Version = Format < Game::DarkSouls3 ? 0xCC : 0xCD;
 
         std::vector<uint32_t> Layers;
@@ -279,9 +295,7 @@ namespace Souls {
         Writer.ReserveVarint("ArgumentsOffset");
         Writer.WriteVarint(static_cast<int64_t>(StringData.size()));
         Writer.ReserveVarint("StringsOffset");
-        if (!Is64Bit) {
-            Writer.WriteInt32(0);
-        }
+        if (!Is64Bit) { Writer.WriteInt32(0); }
 
         Offs.Events = Writer.Position();
         Writer.FillVarint("EventsOffset", Writer.Position());
@@ -307,7 +321,8 @@ namespace Souls {
         Writer.FillVarint("InstructionsOffset", Writer.Position());
         for (size_t I = 0; I < Events.size(); ++I) {
             const Event& E = Events[I];
-            Writer.FillVarint(Key(I, "InstrsOffset"), E.Instructions.empty() ? -1 : Writer.Position() - Offs.Instructions);
+            Writer.FillVarint(Key(I, "InstrsOffset"),
+                              E.Instructions.empty() ? -1 : Writer.Position() - Offs.Instructions);
             for (size_t J = 0; J < E.Instructions.size(); ++J) {
                 const Instruction& In = E.Instructions[J];
                 Writer.WriteInt32(In.Bank);
@@ -340,7 +355,7 @@ namespace Souls {
         }
         for (size_t I = 0; I < Events.size(); ++I) {
             for (size_t J = 0; J < Events[I].Instructions.size(); ++J) {
-                const Instruction& In = Events[I].Instructions[J];
+                const Instruction& In     = Events[I].Instructions[J];
                 const int64_t LayerOffset = In.Layer ? LayerOffsets.at(*In.Layer) : -1;
                 if (Format < Game::DarkSouls3) {
                     Writer.Fill<int32_t>(Key(I, J, "LayerOffset"), static_cast<int32_t>(LayerOffset));
@@ -354,7 +369,7 @@ namespace Souls {
         Writer.FillVarint("ArgumentsOffset", Writer.Position());
         for (size_t I = 0; I < Events.size(); ++I) {
             for (size_t J = 0; J < Events[I].Instructions.size(); ++J) {
-                const Instruction& In = Events[I].Instructions[J];
+                const Instruction& In    = Events[I].Instructions[J];
                 const int64_t ArgsOffset = In.ArgData.empty() ? -1 : Writer.Position() - Offs.Arguments;
                 if (Format < Game::Sekiro) {
                     Writer.Fill<int32_t>(Key(I, J, "ArgsOffset"), static_cast<int32_t>(ArgsOffset));
@@ -373,7 +388,7 @@ namespace Souls {
         Offs.Parameters = Writer.Position();
         Writer.FillVarint("ParametersOffset", Writer.Position());
         for (size_t I = 0; I < Events.size(); ++I) {
-            const Event& E = Events[I];
+            const Event& E             = Events[I];
             const int64_t ParamsOffset = E.Parameters.empty() ? -1 : Writer.Position() - Offs.Parameters;
             if (Format < Game::DarkSouls3) {
                 Writer.Fill<int32_t>(Key(I, "ParamsOffset"), static_cast<int32_t>(ParamsOffset));

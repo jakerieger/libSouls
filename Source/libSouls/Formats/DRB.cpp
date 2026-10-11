@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "DRB.hpp"
 
@@ -15,24 +19,27 @@ namespace Souls {
         constexpr int32_t ScdoSize = 0x10;
         constexpr int32_t DlgoSize = 0x20;
 
-        using Strings   = DRB::StringTable;
-        using Offsets   = DRB::StringOffsets;
+        using Strings     = DRB::StringTable;
+        using Offsets     = DRB::StringOffsets;
         using OffsetQueue = std::queue<int32_t>;
 
         int32_t FourCC(const char* Name) {
-            return static_cast<uint8_t>(Name[0]) | (static_cast<uint8_t>(Name[1]) << 8) | (static_cast<uint8_t>(Name[2]) << 16) |
-                   (static_cast<uint8_t>(Name[3]) << 24);
+            return static_cast<uint8_t>(Name[0]) | (static_cast<uint8_t>(Name[1]) << 8) |
+                   (static_cast<uint8_t>(Name[2]) << 16) | (static_cast<uint8_t>(Name[3]) << 24);
         }
 
         // Colors are stored as one 32-bit value laid out RGBA from the top byte down.
         Color ReadColor(BinaryReader& Reader) {
             const uint32_t Value = Reader.ReadUInt32();
-            return Color::FromArgb(static_cast<uint8_t>(Value), static_cast<uint8_t>(Value >> 24), static_cast<uint8_t>(Value >> 16),
+            return Color::FromArgb(static_cast<uint8_t>(Value),
+                                   static_cast<uint8_t>(Value >> 24),
+                                   static_cast<uint8_t>(Value >> 16),
                                    static_cast<uint8_t>(Value >> 8));
         }
 
         void WriteColor(BinaryWriter& Writer, const Color& C) {
-            Writer.WriteUInt32(C.A | (static_cast<uint32_t>(C.R) << 24) | (static_cast<uint32_t>(C.G) << 16) | (static_cast<uint32_t>(C.B) << 8));
+            Writer.WriteUInt32(C.A | (static_cast<uint32_t>(C.R) << 24) | (static_cast<uint32_t>(C.G) << 16) |
+                               (static_cast<uint32_t>(C.B) << 8));
         }
 
         const std::string& StringAt(const Strings& Table, int32_t Offset) {
@@ -45,16 +52,12 @@ namespace Souls {
 
         int32_t OffsetOf(const Offsets& Table, const std::string& Text) {
             const auto Found = Table.find(Text);
-            if (Found == Table.end()) {
-                throw BinaryException("DRB string missing from string table: " + Text);
-            }
+            if (Found == Table.end()) { throw BinaryException("DRB string missing from string table: " + Text); }
             return Found->second;
         }
 
         int32_t Pop(OffsetQueue& Queue) {
-            if (Queue.empty()) {
-                throw BinaryException("DRB offset queue ran out");
-            }
+            if (Queue.empty()) { throw BinaryException("DRB offset queue ran out"); }
             const int32_t Value = Queue.front();
             Queue.pop();
             return Value;
@@ -138,8 +141,17 @@ namespace Souls {
             Writer.Fill<int32_t>(std::string("BlockCount") + Name, Count);
         }
 
-        const char* ShapeNames[] = {"Dialog", "GouraudFrame", "GouraudRect", "GouraudSprite", "Mask", "MonoFrame",
-                                    "MonoRect", "Null", "ScrollText", "Sprite", "Text"};
+        const char* ShapeNames[]   = {"Dialog",
+                                      "GouraudFrame",
+                                      "GouraudRect",
+                                      "GouraudSprite",
+                                      "Mask",
+                                      "MonoFrame",
+                                      "MonoRect",
+                                      "Null",
+                                      "ScrollText",
+                                      "Sprite",
+                                      "Text"};
         const char* ControlNames[] = {"DmeCtrlScrollText", "FrpgMenuDlgObjContentsHelpItem", "Static"};
     }  // namespace
 
@@ -247,20 +259,18 @@ namespace Souls {
     }
 
     void DRB::TextBase::CollectStrings(std::vector<std::string>& Out) const {
-        if (TextType == TxtType::Literal) {
-            Out.push_back(TextLiteral);
-        }
+        if (TextType == TxtType::Literal) { Out.push_back(TextLiteral); }
     }
 
     void DRB::TextBase::ReadSpecific(BinaryReader& Reader, const StringTable& Table) {
-        BlendMode          = static_cast<BlendingMode>(Reader.ReadByte());
-        const bool HasUnk  = Reader.ReadBool();
-        LineSpacing        = Reader.ReadInt16();
-        PaletteColor       = Reader.ReadInt32();
-        CustomColor        = ReadColor(Reader);
-        FontSize           = Reader.ReadInt16();
-        Alignment          = static_cast<AlignFlags>(Reader.ReadByte());
-        TextType           = static_cast<TxtType>(Reader.ReadByte());
+        BlendMode         = static_cast<BlendingMode>(Reader.ReadByte());
+        const bool HasUnk = Reader.ReadBool();
+        LineSpacing       = Reader.ReadInt16();
+        PaletteColor      = Reader.ReadInt32();
+        CustomColor       = ReadColor(Reader);
+        FontSize          = Reader.ReadInt16();
+        Alignment         = static_cast<AlignFlags>(Reader.ReadByte());
+        TextType          = static_cast<TxtType>(Reader.ReadByte());
         Reader.Assert<int32_t>(0x1C);  // local offset to the variable data below
         TextLiteral.clear();
         if (TextType == TxtType::Literal) {
@@ -280,14 +290,14 @@ namespace Souls {
         Unknown.reset();
         if (HasUnk) {
             UnknownA A;
-            A.Unk00                = Reader.ReadInt32();
-            const int16_t HasSub   = Reader.Assert<int16_t>(0, 1);
+            A.Unk00              = Reader.ReadInt32();
+            const int16_t HasSub = Reader.Assert<int16_t>(0, 1);
             if (HasSub == 1) {
                 UnknownB B;
-                B.Unk00 = Reader.ReadInt32();
-                B.Unk04 = Reader.ReadInt16();
-                B.Unk06 = Reader.ReadInt16();
-                B.Unk08 = Reader.ReadInt16();
+                B.Unk00      = Reader.ReadInt32();
+                B.Unk04      = Reader.ReadInt16();
+                B.Unk06      = Reader.ReadInt16();
+                B.Unk08      = Reader.ReadInt16();
                 A.SubUnknown = B;
             }
             Unknown = A;
@@ -326,11 +336,11 @@ namespace Souls {
     }
 
     void DRB::Dialog::ReadSpecific(BinaryReader& Reader, const StringTable&) {
-        DlgIndex     = Reader.ReadInt16();
-        Unk02        = Reader.ReadByte();
-        Unk03        = Reader.ReadByte();
-        PaletteColor = Reader.ReadInt32();
-        CustomColor  = ReadColor(Reader);
+        DlgIndex          = Reader.ReadInt16();
+        Unk02             = Reader.ReadByte();
+        Unk03             = Reader.ReadByte();
+        PaletteColor      = Reader.ReadInt32();
+        CustomColor       = ReadColor(Reader);
         const bool HasUnk = Reader.ReadBool();
         Reader.Assert<uint8_t>(0);
         Reader.Assert<uint8_t>(0);
@@ -525,9 +535,7 @@ namespace Souls {
     }  // namespace
 
     bool DRB::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = Reader.GetASCII(0, 4);
         return Magic == std::string("DRB\0", 4) || Magic == std::string("\0BRD", 4);
     }
@@ -801,28 +809,23 @@ namespace Souls {
 
         std::optional<DRB> Fallback;
         std::string FirstError;
-        for (const DRBVersion V : {DRBVersion::DarkSoulsRemastered, DRBVersion::DarkSoulsRemasteredOriginOnly, DRBVersion::DarkSouls}) {
+        for (const DRBVersion V :
+             {DRBVersion::DarkSoulsRemastered, DRBVersion::DarkSoulsRemasteredOriginOnly, DRBVersion::DarkSouls}) {
             try {
                 DRB Candidate;
-                BinaryReader Source{std::span<const uint8_t>(Bytes)};
+                BinaryReader Source {std::span<const uint8_t>(Bytes)};
                 Candidate.ReadVersion(Source, V);
                 if (Candidate.Write() == Bytes) {
                     *this             = std::move(Candidate);
                     this->Compression = Kept;
                     return;
                 }
-                if (!Fallback) {
-                    Fallback = std::move(Candidate);
-                }
+                if (!Fallback) { Fallback = std::move(Candidate); }
             } catch (const std::exception& E) {
-                if (FirstError.empty()) {
-                    FirstError = E.what();
-                }
+                if (FirstError.empty()) { FirstError = E.what(); }
             }
         }
-        if (!Fallback) {
-            throw BinaryException("Failed to read DRB: " + FirstError);
-        }
+        if (!Fallback) { throw BinaryException("Failed to read DRB: " + FirstError); }
         *this             = std::move(*Fallback);
         this->Compression = Kept;
     }
@@ -912,7 +915,7 @@ namespace Souls {
 
         OffsetQueue ShprOffsets;
         {
-            const int64_t Start = WriteBlobBlock(Writer, "SHPR");
+            const int64_t Start   = WriteBlobBlock(Writer, "SHPR");
             const auto WriteShape = [&](const Shape& S) {
                 ShprOffsets.push(static_cast<int32_t>(Writer.Position() - Start));
                 S.WriteData(Writer, Version, StringOffsets);
@@ -928,7 +931,7 @@ namespace Souls {
 
         OffsetQueue CtprOffsets;
         {
-            const int64_t Start = WriteBlobBlock(Writer, "CTPR");
+            const int64_t Start     = WriteBlobBlock(Writer, "CTPR");
             const auto WriteControl = [&](const Control& C) {
                 CtprOffsets.push(static_cast<int32_t>(Writer.Position() - Start));
                 C.WriteData(Writer);
@@ -962,7 +965,7 @@ namespace Souls {
 
         OffsetQueue DlgShapOffsets, DlgoShapOffsets;
         {
-            const int64_t Start = WriteBlockHeader(Writer, "SHAP");
+            const int64_t Start   = WriteBlockHeader(Writer, "SHAP");
             const auto WriteShape = [&](const Shape& S) {
                 const auto Offset = static_cast<int32_t>(Writer.Position() - Start);
                 Writer.WriteInt32(OffsetOf(StringOffsets, S.TypeName()));
@@ -983,7 +986,7 @@ namespace Souls {
 
         OffsetQueue DlgCtrlOffsets, DlgoCtrlOffsets;
         {
-            const int64_t Start = WriteBlockHeader(Writer, "CTRL");
+            const int64_t Start     = WriteBlockHeader(Writer, "CTRL");
             const auto WriteControl = [&](const Control& C) {
                 const auto Offset = static_cast<int32_t>(Writer.Position() - Start);
                 Writer.WriteInt32(OffsetOf(StringOffsets, C.TypeName()));

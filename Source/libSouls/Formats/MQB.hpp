@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -47,14 +51,23 @@ namespace Souls {
             };
 
             /// @brief The value of a custom data entry; which alternative is active depends on Type.
-            using Value_t = std::variant<bool, int8_t, uint8_t, int16_t, int32_t, uint32_t, float, std::string, std::vector<uint8_t>, Souls::Color>;
+            using Value_t = std::variant<bool,
+                                         int8_t,
+                                         uint8_t,
+                                         int16_t,
+                                         int32_t,
+                                         uint32_t,
+                                         float,
+                                         std::string,
+                                         std::vector<uint8_t>,
+                                         Souls::Color>;
 
             /// @brief A single keyed value in a sequence.
             struct Point {
                 /// @brief The value: a byte or a float, matching the sequence's ValueType.
-                std::variant<uint8_t, float> Value = uint8_t{0};
+                std::variant<uint8_t, float> Value = uint8_t {0};
                 /// @brief Unknown.
-                int32_t Unk08                      = 0;
+                int32_t Unk08 = 0;
                 /// @brief Unknown.
                 float Unk10 = 0;
                 /// @brief Unknown.
@@ -66,7 +79,7 @@ namespace Souls {
                 /// @brief Whether the points hold bytes or floats.
                 DataType ValueType = DataType::Byte;
                 /// @brief 1 or 2; decides the size of each point (0x10 or 0x18 bytes).
-                int32_t PointType  = 1;
+                int32_t PointType = 1;
                 /// @brief Which byte of the parent value the sequence animates (Byte sequences only).
                 int32_t ValueIndex = 0;
                 /// @brief The keyed values.
@@ -78,7 +91,7 @@ namespace Souls {
             /// @brief The type of the value.
             DataType Type = DataType::Int;
             /// @brief The value; the alternative matches Type.
-            Value_t Value = int32_t{0};
+            Value_t Value = int32_t {0};
             /// @brief Animation of the value over time.
             std::vector<Sequence> Sequences;
         };
@@ -90,7 +103,7 @@ namespace Souls {
             /// @brief The index of the parent resource.
             int32_t ParentIndex = 0;
             /// @brief Unknown.
-            int32_t Unk48       = 0;
+            int32_t Unk48 = 0;
             /// @brief The resource's custom data.
             std::vector<MQB::CustomData> CustomData;
             /// @brief Where the resource is loaded from; absent if it has no path.
@@ -114,7 +127,7 @@ namespace Souls {
             /// @brief Unknown.
             Vector3 Unk40;
             /// @brief The scale.
-            Vector3 Scale{1.f, 1.f, 1.f};
+            Vector3 Scale {1.f, 1.f, 1.f};
             /// @brief Unknown.
             Vector3 Unk58;
             /// @brief Unknown.
@@ -124,7 +137,7 @@ namespace Souls {
         /// @brief A resource's presence during a stretch of a cut.
         struct Disposition {
             /// @brief The disposition's ID.
-            int32_t ID            = 0;
+            int32_t ID = 0;
             /// @brief The resource this disposition places, by its index in Resources.
             int32_t ResourceIndex = 0;
             /// @brief Unknown; possibly a timeline index.
@@ -132,7 +145,7 @@ namespace Souls {
             /// @brief The frame the disposition starts at.
             int32_t StartFrame = 0;
             /// @brief Duration in frames.
-            int32_t Duration   = 0;
+            int32_t Duration = 0;
             /// @brief Unknown.
             int32_t Unk14 = 0;
             /// @brief Unknown.
@@ -163,7 +176,7 @@ namespace Souls {
             /// @brief The cut's name.
             std::string Name;
             /// @brief Unknown.
-            int32_t Unk44    = 0;
+            int32_t Unk44 = 0;
             /// @brief Duration of the cut in frames.
             int32_t Duration = 0;
             /// @brief The cut's timelines.
@@ -171,9 +184,9 @@ namespace Souls {
         };
 
         /// @brief Whether the file is big-endian (console versions).
-        bool BigEndian       = false;
+        bool BigEndian = false;
         /// @brief The game the file is from.
-        MQBVersion Version   = MQBVersion::DarkSouls3;
+        MQBVersion Version = MQBVersion::DarkSouls3;
         /// @brief The cutscene's name.
         std::string Name;
         /// @brief Frames per second.

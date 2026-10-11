@@ -1,14 +1,16 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "EMELD.hpp"
 
 namespace Souls {
     bool EMELD::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == std::string("ELD\0", 4);
     }
 
@@ -51,11 +53,9 @@ namespace Souls {
         Events.reserve(static_cast<size_t>(EventCount));
         for (int64_t I = 0; I < EventCount; ++I) {
             Event E;
-            E.ID                      = Reader.ReadVarint();
-            const int64_t NameOffset  = Reader.ReadVarint();
-            if (Format < EMEVD::Game::Bloodborne) {
-                Reader.Assert<int32_t>(0);
-            }
+            E.ID                     = Reader.ReadVarint();
+            const int64_t NameOffset = Reader.ReadVarint();
+            if (Format < EMEVD::Game::Bloodborne) { Reader.Assert<int32_t>(0); }
             E.Name = Reader.GetUTF16Text(StringsOffset + NameOffset);
             Events.push_back(std::move(E));
         }
@@ -92,9 +92,7 @@ namespace Souls {
         for (size_t I = 0; I < Events.size(); ++I) {
             Writer.WriteVarint(Events[I].ID);
             Writer.ReserveVarint("Event" + std::to_string(I) + "NameOffset");
-            if (Format < EMEVD::Game::Bloodborne) {
-                Writer.WriteInt32(0);
-            }
+            if (Format < EMEVD::Game::Bloodborne) { Writer.WriteInt32(0); }
         }
 
         Writer.FillVarint("Offset2", Writer.Position());

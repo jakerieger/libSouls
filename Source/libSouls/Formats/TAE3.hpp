@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -31,7 +35,7 @@ namespace Souls {
             /// @brief When the event begins and ends, in seconds.
             float StartTime = 0;
             /// @brief When the event ends.
-            float EndTime   = 0;
+            float EndTime = 0;
             /// @brief The type and the type's fields.
             ///
             /// Used for Dark Souls III (version 0x1000C) files.
@@ -78,9 +82,9 @@ namespace Souls {
             /// @brief Unknown.
             bool AnimFileReference = false;
             /// @brief Unknown.
-            int32_t AnimFileUnk18  = 0;
+            int32_t AnimFileUnk18 = 0;
             /// @brief Unknown.
-            int32_t AnimFileUnk1C  = 0;
+            int32_t AnimFileUnk1C = 0;
             /// @brief Unknown.
             std::string AnimFileName;
         };
@@ -92,7 +96,7 @@ namespace Souls {
         /// @brief ID number of this TAE.
         int32_t ID = 0;
         /// @brief Unknown flags.
-        std::array<uint8_t, 8> Flags{};
+        std::array<uint8_t, 8> Flags {};
         /// @brief Unknown .hkt file.
         std::string SkeletonName;
         /// @brief Unknown .sib file.

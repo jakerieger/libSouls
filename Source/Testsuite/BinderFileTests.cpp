@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -45,7 +49,8 @@ namespace {
     // Every file under Root whose name ends with one of the suffixes, sorted, then thinned to at most Max.
     std::vector<fs::path> Collect(const fs::path& Root, std::initializer_list<const char*> Suffixes, size_t Max) {
         std::vector<fs::path> Found;
-        for (const auto& Entry : fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
+        for (const auto& Entry :
+             fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
             if (!Entry.is_regular_file()) continue;
             const std::string Name = Entry.path().filename().string();
             for (const char* Suffix : Suffixes) {
@@ -59,7 +64,8 @@ namespace {
         std::sort(Found.begin(), Found.end());
         const size_t Step = std::max<size_t>(1, Found.size() / std::max<size_t>(1, Max));
         std::vector<fs::path> Sampled;
-        for (size_t I = 0; I < Found.size(); I += Step) Sampled.push_back(Found[I]);
+        for (size_t I = 0; I < Found.size(); I += Step)
+            Sampled.push_back(Found[I]);
         return Sampled;
     }
 
@@ -85,8 +91,8 @@ namespace {
                 BinaryReader Header(Original, Big ? Endian::Big : Endian::Little);
                 const int32_t HeadersEnd = Header.ReadAt<int32_t>(0x14);
 
-                const DCX::Type Compression = Bnd.Compression;
-                Bnd.Compression             = DCX::Type::None;
+                const DCX::Type Compression          = Bnd.Compression;
+                Bnd.Compression                      = DCX::Type::None;
                 const std::vector<uint8_t> Rewritten = Bnd.Write();
                 if (HeadersEnd <= 0 || static_cast<size_t>(HeadersEnd) > Original.size() ||
                     static_cast<size_t>(HeadersEnd) > Rewritten.size() ||
@@ -103,22 +109,23 @@ namespace {
                 // Re-wrapping with the original compression must also read back.
                 if (Compression != DCX::Type::None) {
                     Bnd.Compression = Compression;
-                    if (!SameFiles(Bnd.Files, BND3::Read(Bnd.Write()).Files)) Fail(Path, "files differ after DCX rewrite");
+                    if (!SameFiles(Bnd.Files, BND3::Read(Bnd.Write()).Files))
+                        Fail(Path, "files differ after DCX rewrite");
                 }
-            } catch (const std::exception& E) {
-                Fail(Path, E.what());
-            }
+            } catch (const std::exception& E) { Fail(Path, E.what()); }
         }
         std::printf("BND3: %d real binders checked, %d header mismatches\n", Tested, Mismatched);
         if (Tested == 0) std::printf("  (no BND3 binders found)\n");
     }
 
     template<typename B>
-    void TestPairs(const char* Label, const fs::path& Root, std::initializer_list<const char*> HeaderSuffixes, size_t Max) {
+    void
+    TestPairs(const char* Label, const fs::path& Root, std::initializer_list<const char*> HeaderSuffixes, size_t Max) {
         int Tested = 0, HeaderMismatches = 0;
         for (const fs::path& HeaderPath : Collect(Root, HeaderSuffixes, Max)) {
             fs::path DataPath = HeaderPath;
-            DataPath.replace_extension(HeaderPath.extension().string().replace(HeaderPath.extension().string().size() - 3, 3, "bdt"));
+            DataPath.replace_extension(
+              HeaderPath.extension().string().replace(HeaderPath.extension().string().size() - 3, 3, "bdt"));
             if (!fs::exists(DataPath)) continue;
             try {
                 if (!B::IsBHD(HeaderPath) || !B::IsBDT(DataPath)) continue;
@@ -130,7 +137,7 @@ namespace {
                     continue;
                 }
 
-                const BXFBytes Rewritten = Bxf.Write();
+                const BXFBytes Rewritten                  = Bxf.Write();
                 const std::vector<uint8_t> OriginalHeader = ReadAll(HeaderPath);
                 if (Rewritten.Header != OriginalHeader) {
                     ++HeaderMismatches;
@@ -141,14 +148,13 @@ namespace {
                     }
                     Fail(HeaderPath,
                          "rewritten header differs from the original at offset " + std::to_string(At) + " (sizes " +
-                           std::to_string(OriginalHeader.size()) + " vs " + std::to_string(Rewritten.Header.size()) + ")");
+                           std::to_string(OriginalHeader.size()) + " vs " + std::to_string(Rewritten.Header.size()) +
+                           ")");
                 }
 
                 B Back = B::Read(Rewritten.Header, Rewritten.Data);
                 if (!SameFiles(Bxf.Files, Back.Files)) Fail(HeaderPath, "files differ after rewrite");
-            } catch (const std::exception& E) {
-                Fail(HeaderPath, E.what());
-            }
+            } catch (const std::exception& E) { Fail(HeaderPath, E.what()); }
         }
         std::printf("%s: %d real header/data pairs checked, %d header mismatches\n", Label, Tested, HeaderMismatches);
         if (Tested == 0) std::printf("  (no pairs found)\n");

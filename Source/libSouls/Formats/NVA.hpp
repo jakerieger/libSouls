@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -45,7 +49,7 @@ namespace Souls {
             /// @brief Index to a navmesh.
             int16_t Section0Index = 0;
             /// @brief Unknown.
-            int16_t MainID        = 0;
+            int16_t MainID = 0;
             /// @brief Unknown.
             ///
             /// -1 marks unused slots.
@@ -61,13 +65,13 @@ namespace Souls {
             /// @brief Rotation of the mesh, in radians.
             Vector3 Rotation;
             /// @brief Scale of the mesh.
-            Vector3 Scale{1.f, 1.f, 1.f};
+            Vector3 Scale {1.f, 1.f, 1.f};
             /// @brief Unknown.
-            int32_t NameID      = 0;
+            int32_t NameID = 0;
             /// @brief Unknown.
-            int32_t ModelID     = 0;
+            int32_t ModelID = 0;
             /// @brief Unknown.
-            int32_t Unk38       = 0;
+            int32_t Unk38 = 0;
             /// @brief Should equal number of vertices in the model file.
             int32_t VertexCount = 0;
             /// @brief Unknown.
@@ -89,7 +93,7 @@ namespace Souls {
             /// @brief Unknown.
             int32_t UnkIndex = 0;
             /// @brief Unknown.
-            int32_t NameID   = 0;
+            int32_t NameID = 0;
         };
 
         /// @brief Unknown.
@@ -151,7 +155,7 @@ namespace Souls {
         /// @brief Navmesh instances in the map.
         ///
         /// Version: 2 for Dark Souls III and the BB test map, 3 for BB, 4 for Sekiro.
-        Section<Navmesh> Navmeshes{2, {}};
+        Section<Navmesh> Navmeshes {2, {}};
         /// @brief Unknown.
         Section<Entry1> Entries1;
         /// @brief Unknown.

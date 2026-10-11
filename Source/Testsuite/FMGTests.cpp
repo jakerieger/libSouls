@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -18,12 +22,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
@@ -33,9 +37,7 @@ namespace {
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -65,7 +67,7 @@ namespace {
         using V = FMG::FMGVersion;
         for (const V Version : {V::DemonsSouls, V::DarkSouls1, V::DarkSouls3}) {
             for (const bool Big : {false, true}) {
-                FMG Source    = MakeFmg(Version);
+                FMG Source       = MakeFmg(Version);
                 Source.BigEndian = Big;
                 const auto Bytes = Source.Write();
 
@@ -74,7 +76,8 @@ namespace {
                 CHECK(Back.Version == Version && Back.BigEndian == Big);
 
                 // Write sorted the source; both sides now agree on order.
-                CHECK(std::is_sorted(Source.Entries.begin(), Source.Entries.end(),
+                CHECK(std::is_sorted(Source.Entries.begin(),
+                                     Source.Entries.end(),
                                      [](const FMG::Entry& A, const FMG::Entry& B) { return A.ID < B.ID; }));
                 const bool Same = SameEntries(Source.Entries, Back.Entries);
                 if (!Same) std::printf("  (version %d big %d: entries differ)\n", static_cast<int>(Version), Big);
@@ -90,7 +93,7 @@ namespace {
 
         // Group layout: 10..12 is one group, so 3 groups cover the 8 sample IDs (-5, 10-12, 50, 100-101, max).
         {
-            FMG Fmg = MakeFmg(FMG::FMGVersion::DarkSouls1);
+            FMG Fmg          = MakeFmg(FMG::FMGVersion::DarkSouls1);
             const auto Bytes = Fmg.Write();
             BinaryReader Reader(Bytes);
             CHECK(Reader.ReadAt<int32_t>(0x0C) == 5);  // group count
@@ -112,7 +115,7 @@ namespace {
         {
             const std::vector<uint8_t> Junk(64, 0xAB);
             CHECK(!FMG::Is(Junk));
-            CHECK(!FMG::Is(std::vector<uint8_t>{0, 0, 1, 0}));
+            CHECK(!FMG::Is(std::vector<uint8_t> {0, 0, 1, 0}));
             CHECK(!FMG::IsRead(Junk).has_value());
             CHECK(Throws([&] { FMG::Read(Junk); }));
 
@@ -120,18 +123,18 @@ namespace {
             std::vector<uint8_t> Truncated(Bytes.begin(), Bytes.begin() + 0x20);
             CHECK(Throws([&] { FMG::Read(Truncated); }));
             std::vector<uint8_t> BadVersion = Bytes;
-            BadVersion[2] = 9;
+            BadVersion[2]                   = 9;
             CHECK(Throws([&] { FMG::Read(BadVersion); }));
             CHECK(!FMG::Is(BadVersion));
             std::vector<uint8_t> BadCount = Bytes;
-            BadCount[0x0F] = 0x7F;  // group count 0x7F...... (little-endian)
+            BadCount[0x0F]                = 0x7F;  // group count 0x7F...... (little-endian)
             CHECK(Throws([&] { FMG::Read(BadCount); }));
         }
 
         // Through DCX.
         {
-            FMG Fmg         = MakeFmg(FMG::FMGVersion::DarkSouls3);
-            Fmg.Compression = DCX::Type::DCX_DFLT_10000_44_9;
+            FMG Fmg          = MakeFmg(FMG::FMGVersion::DarkSouls3);
+            Fmg.Compression  = DCX::Type::DCX_DFLT_10000_44_9;
             const auto Bytes = Fmg.Write();
             CHECK(DCX::Is(Bytes) && FMG::Is(Bytes));
             const FMG Back = FMG::Read(Bytes);
@@ -154,7 +157,8 @@ namespace {
         std::sort(Found.begin(), Found.end());
         const size_t Step = std::max<size_t>(1, Found.size() / std::max<size_t>(1, Max));
         std::vector<fs::path> Sampled;
-        for (size_t I = 0; I < Found.size(); I += Step) Sampled.push_back(Found[I]);
+        for (size_t I = 0; I < Found.size(); I += Step)
+            Sampled.push_back(Found[I]);
         return Sampled;
     }
 
@@ -173,7 +177,9 @@ namespace {
                     ++Fmgs;
 
                     if (!FMG::Is(File.Bytes)) {
-                        std::printf("FAIL %s: %s is not recognized as an FMG\n", Path.string().c_str(), File.Name->c_str());
+                        std::printf("FAIL %s: %s is not recognized as an FMG\n",
+                                    Path.string().c_str(),
+                                    File.Name->c_str());
                         ++Failed;
                         continue;
                     }
@@ -209,10 +215,17 @@ namespace {
             }
         }
         std::printf("%s: %d msgbnd files, %d FMGs, %d strings, %d matching the game's layout, %d failures\n",
-                    Label, Bnds, Fmgs, Strings, LayoutMatches, Failed);
+                    Label,
+                    Bnds,
+                    Fmgs,
+                    Strings,
+                    LayoutMatches,
+                    Failed);
         if (OtherLayout > 0) std::printf("  (%d use a different string layout)\n", OtherLayout);
-        if (WithTrailingData > 0) std::printf("  (%d of them carry more than 16 unreferenced bytes at the end)\n", WithTrailingData);
-        for (const auto& [Version, Count] : Versions) std::printf("  FMG version %d: %d files\n", Version, Count);
+        if (WithTrailingData > 0)
+            std::printf("  (%d of them carry more than 16 unreferenced bytes at the end)\n", WithTrailingData);
+        for (const auto& [Version, Count] : Versions)
+            std::printf("  FMG version %d: %d files\n", Version, Count);
         Failures += Failed;
     }
 }  // namespace

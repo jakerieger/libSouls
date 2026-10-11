@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "Oodle26.hpp"
 
@@ -56,11 +60,14 @@ namespace Souls {
             // options), so unloading it would leave those pointers dangling.
             HMODULE Module = ::LoadLibraryW(S.Path.c_str());
             if (!Module) {
-                std::fprintf(stderr, "Failed to load Oodle DLL \"%s\" (error %lu)\n", S.Path.string().c_str(), ::GetLastError());
+                std::fprintf(stderr,
+                             "Failed to load Oodle DLL \"%s\" (error %lu)\n",
+                             S.Path.string().c_str(),
+                             ::GetLastError());
                 return nullptr;
             }
 
-            Api& Result = S.Instance;
+            Api& Result     = S.Instance;
             Result.Compress = LoadProc<OodleLZ_Compress_T>(Module, "OodleLZ_Compress");
             Result.CompressOptions_GetDefault =
               LoadProc<OodleLZ_CompressOptions_GetDefault_T>(Module, "OodleLZ_CompressOptions_GetDefault");

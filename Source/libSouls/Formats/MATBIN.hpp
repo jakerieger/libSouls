@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -41,7 +45,7 @@ namespace Souls {
             /// @brief The name of the parameter.
             std::string Name;
             /// @brief The value to be used.
-            ParamValue Value = int32_t{0};
+            ParamValue Value = int32_t {0};
             /// @brief Unknown, presumed to be an identifier for documentation.
             uint32_t Key = 0;
             /// @brief The type of value provided.

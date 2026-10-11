@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -25,13 +29,13 @@ namespace Souls {
             DarkSouls2LE,  ///< Dark Souls II on PC and Scholar of the First Sin on all platforms
             DarkSouls2BE,  ///< Dark Souls II on PS3 and Xbox 360
             Bloodborne,
-            DarkSouls3,    ///< on all platforms
+            DarkSouls3,  ///< on all platforms
         };
 
         /// @brief A probe giving directional lighting information at a given point.
         struct Probe {
             /// @brief First-order spherical harmonics coefficients in R0G0B0R1G1B1... order.
-            std::array<int16_t, 12> Coefficients{};
+            std::array<int16_t, 12> Coefficients {};
             /// @brief Multiplies sun lighting, where 0 is 0% sun and 1024 is 100%.
             int16_t LightMask = 0;
             /// @brief Always 0 outside the chalice BTPB.
@@ -49,17 +53,17 @@ namespace Souls {
             /// @brief Appears to be flags, highly speculative.
             int32_t Flags08 = 0;
             /// @brief Unknown.
-            int32_t Unk10   = 0;
+            int32_t Unk10 = 0;
             /// @brief Unknown.
-            int32_t Unk14   = 0;
+            int32_t Unk14 = 0;
             /// @brief Unknown.
-            int32_t Unk18   = 0;
+            int32_t Unk18 = 0;
             /// @brief Unknown.
-            float Unk1C     = 0;
+            float Unk1C = 0;
             /// @brief Unknown.
-            float Unk20     = 0;
+            float Unk20 = 0;
             /// @brief Unknown.
-            float Unk24     = 0;
+            float Unk24 = 0;
             /// @brief Probably bounding box min and max.
             Vector3 Unk28;
             /// @brief Unknown; probably bounding box max.
@@ -67,11 +71,11 @@ namespace Souls {
             /// @brief Light probes in this group.
             std::vector<Probe> Probes;
             /// @brief Only present since Dark Souls III.
-            float Unk48  = 0;
+            float Unk48 = 0;
             /// @brief Unknown; only present since DS3.
-            float Unk4C  = 0;
+            float Unk4C = 0;
             /// @brief Unknown; only present since DS3.
-            float Unk50  = 0;
+            float Unk50 = 0;
             /// @brief Unknown; only present since DS3.
             uint8_t Unk94 = 0;
             /// @brief Unknown; only present since DS3.

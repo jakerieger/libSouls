@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -17,12 +21,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
@@ -32,9 +36,7 @@ namespace {
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -46,7 +48,8 @@ namespace {
         Header.Pixels.Flags  = DDS::DDPF::FOURCC;
         Header.Pixels.FourCC = "DXT1";
         std::vector<uint8_t> Data(Pixels);
-        for (size_t I = 0; I < Data.size(); ++I) Data[I] = static_cast<uint8_t>(I + Width);
+        for (size_t I = 0; I < Data.size(); ++I)
+            Data[I] = static_cast<uint8_t>(I + Width);
         return Header.Write(Data);
     }
 
@@ -62,11 +65,17 @@ namespace {
     void FillWithTpfs(Bxf& Container) {
         for (int I = 0; I < 5; ++I) {
             const std::string Name = "tex" + std::to_string(I);
-            BinderFile File(Binder::FileFlags::Flag1, I * 10, "N:\\textures\\" + Name + ".tpf.dcx", MakeTpfFile(Name, 4 << I));
+            BinderFile File(Binder::FileFlags::Flag1,
+                            I * 10,
+                            "N:\\textures\\" + Name + ".tpf.dcx",
+                            MakeTpfFile(Name, 4 << I));
             Container.Files.push_back(std::move(File));
         }
         // A file the binder compresses itself, and an empty one.
-        BinderFile Packed(Binder::FileFlags::Flag1 | Binder::FileFlags::Compressed, 50, "N:\\textures\\packed.bin", std::vector<uint8_t>(3000, 0x5A));
+        BinderFile Packed(Binder::FileFlags::Flag1 | Binder::FileFlags::Compressed,
+                          50,
+                          "N:\\textures\\packed.bin",
+                          std::vector<uint8_t>(3000, 0x5A));
         Container.Files.push_back(std::move(Packed));
         Container.Files.push_back(BinderFile(Binder::FileFlags::Flag1, 60, "N:\\textures\\empty.bin", {}));
     }
@@ -86,13 +95,14 @@ namespace {
                 if (Variant == 1) Reader = std::make_unique<BXFReader>(Bytes.Header, Dir / "pair.tpfbdt");
                 if (Variant == 2) Reader = std::make_unique<BXFReader>(Bytes.Header, Bytes.Data);
 
-                CHECK(Reader->Kind == Expected && Reader->Format == Container.Format && Reader->Version == Container.Version);
+                CHECK(Reader->Kind == Expected && Reader->Format == Container.Format &&
+                      Reader->Version == Container.Version);
                 CHECK(Reader->BigEndian == Container.BigEndian && Reader->BitBigEndian == Container.BitBigEndian);
                 CHECK(Reader->FileCount() == Container.Files.size());
 
                 for (size_t I = 0; I < Container.Files.size(); ++I) {
                     const BinderFile& Expect = Container.Files[I];
-                    const auto& Info = Reader->File(I);
+                    const auto& Info         = Reader->File(I);
                     CHECK(Info.Name == Expect.Name && Info.ID == Expect.ID && Info.Flags == Expect.Flags);
                     CHECK(Info.IsCompressed() == Binder::IsCompressed(Expect.Flags));
                     CHECK(Reader->ReadFile(I).Bytes == Expect.Bytes);  // compressed files come back decompressed
@@ -129,7 +139,7 @@ namespace {
             CHECK(Throws([&] { BXFReader(Dir / "pair.tpfbdt", Dir / "pair.tpfbdt"); }));
             CHECK(Throws([&] { BXFReader(Dir / "pair.tpfbhd", Dir / "pair.tpfbhd"); }));
             CHECK(Throws([&] { BXFReader(Dir / "nope.tpfbhd", Dir / "pair.tpfbdt"); }));
-            CHECK(Throws([&] { BXFReader(std::vector<uint8_t>{1, 2}, Dir / "pair.tpfbdt"); }));
+            CHECK(Throws([&] { BXFReader(std::vector<uint8_t> {1, 2}, Dir / "pair.tpfbdt"); }));
         } catch (const std::exception& E) {
             std::printf("FAIL %s: %s\n", Label, E.what());
             ++Failures;
@@ -145,7 +155,7 @@ namespace {
     // reader and the load-everything BXF classes agree.
     template<typename Bxf>
     void TestRealPair(const fs::path& Header, const fs::path& Data, size_t MaxFiles, bool CompareWithFull) {
-        using Clock = std::chrono::steady_clock;
+        using Clock      = std::chrono::steady_clock;
         const auto Start = Clock::now();
         BXFReader Reader(Header, Data);
         const double OpenSeconds = std::chrono::duration<double>(Clock::now() - Start).count();
@@ -162,12 +172,18 @@ namespace {
                 Textures += Tpf.Textures.size();
                 if (Tpf.Textures.empty()) ++Failed;
             } catch (const std::exception& E) {
-                if (Failed++ < 3) std::printf("FAIL %s file %zu: %s\n", Header.filename().string().c_str(), I, E.what());
+                if (Failed++ < 3)
+                    std::printf("FAIL %s file %zu: %s\n", Header.filename().string().c_str(), I, E.what());
             }
         }
         std::printf("%s: %s, %zu files; opened in %.2fs; read %zu TPFs (%zu textures), %zu failures\n",
-                    Header.filename().string().c_str(), Reader.Kind == BXFReader::Generation::BXF3 ? "BXF3" : "BXF4", Count,
-                    OpenSeconds, Read, Textures, Failed);
+                    Header.filename().string().c_str(),
+                    Reader.Kind == BXFReader::Generation::BXF3 ? "BXF3" : "BXF4",
+                    Count,
+                    OpenSeconds,
+                    Read,
+                    Textures,
+                    Failed);
         Failures += static_cast<int>(Failed);
         CHECK(Count > 0 && Read > 0);
 
@@ -195,7 +211,8 @@ int RunBXFReaderTests() {
 
         BXF3 Big;
         Big.BigEndian = Big.BitBigEndian = true;
-        Big.Format = Binder::Format::BigEndian | Binder::Format::IDs | Binder::Format::Names1 | Binder::Format::Names2 | Binder::Format::Compression;
+        Big.Format = Binder::Format::BigEndian | Binder::Format::IDs | Binder::Format::Names1 | Binder::Format::Names2 |
+                     Binder::Format::Compression;
         FillWithTpfs(Big);
         TestPair("bxf3big", Big, BXFReader::Generation::BXF3);
     }
@@ -206,7 +223,7 @@ int RunBXFReaderTests() {
     }
 
     // Real texture archives.
-    const fs::path Steam = "C:/Program Files (x86)/Steam/steamapps/common";
+    const fs::path Steam     = "C:/Program Files (x86)/Steam/steamapps/common";
     const fs::path DarkSouls = Steam / "DARK SOULS REMASTERED/map";
     if (fs::exists(DarkSouls)) {
         size_t Pairs = 0;

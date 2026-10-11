@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/9/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -113,9 +117,7 @@ namespace Souls::CApi {
         try {
             Fn();
             return SOULS_OK;
-        } catch (...) {
-            return TranslateCurrentException();
-        }
+        } catch (...) { return TranslateCurrentException(); }
     }
 
     /// @brief For functions that return a pointer, a number or a buffer: runs Fn and returns its result, or Fallback if
@@ -144,16 +146,12 @@ namespace Souls::CApi {
 
     template<typename T>
     T& Require(T* Pointer, const char* What) {
-        if (!Pointer) {
-            ThrowInvalid(What);
-        }
+        if (!Pointer) { ThrowInvalid(What); }
         return *Pointer;
     }
 
     inline void CheckIndex(size_t Index, size_t Count, const char* What) {
-        if (Index >= Count) {
-            ThrowInvalid(What);
-        }
+        if (Index >= Count) { ThrowInvalid(What); }
     }
 
     /// @brief A UTF-8 path from the C side.

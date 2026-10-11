@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
@@ -25,12 +29,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
@@ -39,7 +43,6 @@ namespace {
     bool EndsWith(const std::string& Text, const std::string& Suffix) {
         return Text.size() >= Suffix.size() && Text.compare(Text.size() - Suffix.size(), Suffix.size(), Suffix) == 0;
     }
-
 
     bool SameFieldLists(const PARAMDEF& A, const PARAMDEF& B) {
         if (A.Fields.size() != B.Fields.size()) return false;
@@ -64,7 +67,8 @@ namespace {
             if (X.DisplayType != Y.DisplayType || X.ArrayLength != Y.ArrayLength) return false;
             if (Original.FormatVersion >= 102) {
                 if (X.BitSize != Y.BitSize) return false;
-                if (X.InternalName.compare(0, Y.InternalName.size(), Y.InternalName) != 0) return false;  // Y is X or a prefix of it
+                if (X.InternalName.compare(0, Y.InternalName.size(), Y.InternalName) != 0)
+                    return false;  // Y is X or a prefix of it
             }
         }
         return true;
@@ -79,9 +83,15 @@ namespace {
 
             ParamDefRepository Repo;
             const auto Result = Repo.AddFolder(Defs);
-            std::printf("%-6s %6zu %8zu %7zu", Game.path().filename().string().c_str(), Result.Loaded, Result.Skipped, Result.Errors.size());
+            std::printf("%-6s %6zu %8zu %7zu",
+                        Game.path().filename().string().c_str(),
+                        Result.Loaded,
+                        Result.Skipped,
+                        Result.Errors.size());
             for (size_t I = 0; I < Result.Errors.size() && I < 3; ++I) {
-                std::printf("\n    ERROR %s: %s", Result.Errors[I].Path.filename().string().c_str(), Result.Errors[I].Message.c_str());
+                std::printf("\n    ERROR %s: %s",
+                            Result.Errors[I].Path.filename().string().c_str(),
+                            Result.Errors[I].Message.c_str());
             }
             if (Result.Errors.size() > 3) std::printf("\n    ... and %zu more errors", Result.Errors.size() - 3);
 
@@ -92,30 +102,49 @@ namespace {
                 Fields += Def->Fields.size();
                 ++Versions[Def->FormatVersion];
                 try {
-                    PARAMDEF Copy = *Def;
+                    PARAMDEF Copy         = *Def;
                     const PARAMDEF ViaXml = PARAMDEF::FromXmlString(Copy.ToXmlString());
-                    const bool XmlOk = SameFieldLists(*Def, ViaXml) && ViaXml.GetRowSize() == Def->GetRowSize();
-                    // A few games' defs (Nightreign's) carry a format version with no binary form; nothing to check there.
+                    const bool XmlOk      = SameFieldLists(*Def, ViaXml) && ViaXml.GetRowSize() == Def->GetRowSize();
+                    // A few games' defs (Nightreign's) carry a format version with no binary form; nothing to check
+                    // there.
                     const bool HasBinaryForm = Def->FormatVersion != 0;
-                    PARAMDEF Writable = *Def;
+                    PARAMDEF Writable        = *Def;
                     const PARAMDEF ViaBinary = HasBinaryForm ? PARAMDEF::Read(Writable.Write()) : *Def;
-                    const bool BinaryOk = BinaryEquivalent(*Def, ViaBinary);
+                    const bool BinaryOk      = BinaryEquivalent(*Def, ViaBinary);
                     if (!BinaryOk && std::getenv("PARAMDEX_DEBUG")) {
                         for (size_t F = 0; F < Def->Fields.size() && F < ViaBinary.Fields.size(); ++F) {
                             const auto& X = Def->Fields[F];
                             const auto& Y = ViaBinary.Fields[F];
-                            if (X.InternalName != Y.InternalName || X.DisplayType != Y.DisplayType || X.BitSize != Y.BitSize || X.ArrayLength != Y.ArrayLength) {
-                                std::printf("\n      %s field %zu: '%s' type %d bits %d len %d  ->  '%s' type %d bits %d len %d", Def->ParamType.c_str(), F,
-                                            X.InternalName.c_str(), static_cast<int>(X.DisplayType), X.BitSize, X.ArrayLength,
-                                            Y.InternalName.c_str(), static_cast<int>(Y.DisplayType), Y.BitSize, Y.ArrayLength);
+                            if (X.InternalName != Y.InternalName || X.DisplayType != Y.DisplayType ||
+                                X.BitSize != Y.BitSize || X.ArrayLength != Y.ArrayLength) {
+                                std::printf(
+                                  "\n      %s field %zu: '%s' type %d bits %d len %d  ->  '%s' type %d bits %d len %d",
+                                  Def->ParamType.c_str(),
+                                  F,
+                                  X.InternalName.c_str(),
+                                  static_cast<int>(X.DisplayType),
+                                  X.BitSize,
+                                  X.ArrayLength,
+                                  Y.InternalName.c_str(),
+                                  static_cast<int>(Y.DisplayType),
+                                  Y.BitSize,
+                                  Y.ArrayLength);
                                 break;
                             }
                         }
-                        if (Def->Fields.size() != ViaBinary.Fields.size()) std::printf("\n      %s: %zu fields -> %zu", Def->ParamType.c_str(), Def->Fields.size(), ViaBinary.Fields.size());
+                        if (Def->Fields.size() != ViaBinary.Fields.size())
+                            std::printf("\n      %s: %zu fields -> %zu",
+                                        Def->ParamType.c_str(),
+                                        Def->Fields.size(),
+                                        ViaBinary.Fields.size());
                     }
                     if (!XmlOk || !BinaryOk) {
                         ++Bad;
-                        if (Bad <= 3) std::printf("\n    ROUND TRIP %s (%s%s)", Def->ParamType.c_str(), XmlOk ? "" : "xml ", BinaryOk ? "" : "binary");
+                        if (Bad <= 3)
+                            std::printf("\n    ROUND TRIP %s (%s%s)",
+                                        Def->ParamType.c_str(),
+                                        XmlOk ? "" : "xml ",
+                                        BinaryOk ? "" : "binary");
                     }
                 } catch (const std::exception& E) {
                     ++Bad;
@@ -123,7 +152,8 @@ namespace {
                 }
             }
             std::printf("\n       %zu fields; format versions:", Fields);
-            for (const auto& [Version, Count] : Versions) std::printf(" %d x%zu", Version, Count);
+            for (const auto& [Version, Count] : Versions)
+                std::printf(" %d x%zu", Version, Count);
             std::printf("%s\n", Bad ? "  <-- round-trip problems" : "");
 
             CHECK(Result.Errors.empty());
@@ -133,7 +163,8 @@ namespace {
     }
 
     struct Tally {
-        int Params = 0, Matched = 0, NoDef = 0, WrongVersion = 0, WrongSize = 0, Rows = 0, NonFinite = 0, Unchanged = 0, Changed = 0, Cells = 0;
+        int Params = 0, Matched = 0, NoDef = 0, WrongVersion = 0, WrongSize = 0, Rows = 0, NonFinite = 0, Unchanged = 0,
+            Changed = 0, Cells = 0;
         std::vector<std::string> Unmatched;
     };
 
@@ -153,14 +184,17 @@ namespace {
                     ++Totals.NoDef;
                     Why = "no def for type";
                 } else {
-                    bool VersionExists = std::any_of(Candidates.begin(), Candidates.end(),
-                                                     [&](const PARAMDEF* D) { return D->DataVersion == Param.ParamdefDataVersion; });
+                    bool VersionExists = std::any_of(Candidates.begin(), Candidates.end(), [&](const PARAMDEF* D) {
+                        return D->DataVersion == Param.ParamdefDataVersion;
+                    });
                     if (VersionExists) {
                         ++Totals.WrongSize;
-                        Why = "row size " + std::to_string(Param.DetectedSize) + " vs def " + std::to_string(Candidates[0]->GetRowSize());
+                        Why = "row size " + std::to_string(Param.DetectedSize) + " vs def " +
+                              std::to_string(Candidates[0]->GetRowSize());
                     } else {
                         ++Totals.WrongVersion;
-                        Why = "param v" + std::to_string(Param.ParamdefDataVersion) + " vs def v" + std::to_string(Candidates[0]->DataVersion);
+                        Why = "param v" + std::to_string(Param.ParamdefDataVersion) + " vs def v" +
+                              std::to_string(Candidates[0]->DataVersion);
                     }
                 }
                 Totals.Unmatched.push_back(Param.ParamType + " (" + Why + ")");
@@ -193,11 +227,23 @@ namespace {
     }
 
     void Report(const char* Label, const Tally& Totals) {
-        std::printf("%s: %d params; %d matched a def (%d rows, %d cells; %d unchanged / %d changed on write-back; %d non-finite floats)\n",
-                    Label, Totals.Params, Totals.Matched, Totals.Rows, Totals.Cells, Totals.Unchanged, Totals.Changed, Totals.NonFinite);
-        std::printf("  unmatched: %d with no def for the type, %d with only another data version, %d with another row size\n",
-                    Totals.NoDef, Totals.WrongVersion, Totals.WrongSize);
-        for (size_t I = 0; I < Totals.Unmatched.size() && I < 8; ++I) std::printf("    %s\n", Totals.Unmatched[I].c_str());
+        std::printf("%s: %d params; %d matched a def (%d rows, %d cells; %d unchanged / %d changed on write-back; %d "
+                    "non-finite floats)\n",
+                    Label,
+                    Totals.Params,
+                    Totals.Matched,
+                    Totals.Rows,
+                    Totals.Cells,
+                    Totals.Unchanged,
+                    Totals.Changed,
+                    Totals.NonFinite);
+        std::printf(
+          "  unmatched: %d with no def for the type, %d with only another data version, %d with another row size\n",
+          Totals.NoDef,
+          Totals.WrongVersion,
+          Totals.WrongSize);
+        for (size_t I = 0; I < Totals.Unmatched.size() && I < 8; ++I)
+            std::printf("    %s\n", Totals.Unmatched[I].c_str());
         if (Totals.Unmatched.size() > 8) std::printf("    ... and %zu more\n", Totals.Unmatched.size() - 8);
     }
 
@@ -208,7 +254,8 @@ namespace {
         const auto Loaded = Repo.AddFolder(DefsFolder);
         CHECK(Loaded.Errors.empty());
         Tally Totals;
-        for (const Binder& Bnd : Binders) TestBinder(Bnd, Repo, Totals);
+        for (const Binder& Bnd : Binders)
+            TestBinder(Bnd, Repo, Totals);
         Report(Label, Totals);
         CHECK(Totals.Params > 0 && Totals.NonFinite == 0 && Totals.Changed == 0);
         // Nearly every param should find its def; report the exceptions above rather than hide them behind a number.
@@ -240,10 +287,14 @@ int RunParamdexTests() {
                 if (!File.Name || !EndsWith(*File.Name, ".paramdef")) continue;
                 const PARAMDEF Shipped = PARAMDEF::Read(File.Bytes);
                 const auto Candidates  = Repo.FindCandidates(Shipped.ParamType);
-                const auto It = std::find_if(Candidates.begin(), Candidates.end(), [&](const PARAMDEF* D) { return D->DataVersion == Shipped.DataVersion; });
+                const auto It          = std::find_if(Candidates.begin(), Candidates.end(), [&](const PARAMDEF* D) {
+                    return D->DataVersion == Shipped.DataVersion;
+                });
                 if (It == Candidates.end()) {
                     ++Missing;
-                    std::printf("  Paramdex has no DS1R def for %s v%d\n", Shipped.ParamType.c_str(), Shipped.DataVersion);
+                    std::printf("  Paramdex has no DS1R def for %s v%d\n",
+                                Shipped.ParamType.c_str(),
+                                Shipped.DataVersion);
                     continue;
                 }
                 ++Compared;
@@ -253,15 +304,23 @@ int RunParamdexTests() {
                     std::printf("  DS1R %s: shipped and Paramdex fields differ\n", Shipped.ParamType.c_str());
                 }
             }
-            std::printf("DS1R shipped defs vs Paramdex: %d compared, %d identical field lists, %d with no Paramdex def\n", Compared, Same, Missing);
+            std::printf(
+              "DS1R shipped defs vs Paramdex: %d compared, %d identical field lists, %d with no Paramdex def\n",
+              Compared,
+              Same,
+              Missing);
             CHECK(Compared > 40 && Same == Compared);
         }
 
         if (fs::exists(Steam / "ELDEN RING/Game/regulation.bin")) {
-            TestGame<BND4>("Elden Ring (regulation.bin)", Paramdex / "ER/Defs", {Regulation::DecryptER(Steam / "ELDEN RING/Game/regulation.bin")});
+            TestGame<BND4>("Elden Ring (regulation.bin)",
+                           Paramdex / "ER/Defs",
+                           {Regulation::DecryptER(Steam / "ELDEN RING/Game/regulation.bin")});
         }
         if (fs::exists(Steam / "DARK SOULS III/Game/Data0.bdt")) {
-            TestGame<BND4>("Dark Souls III (Data0.bdt)", Paramdex / "DS3/Defs", {Regulation::DecryptDS3(Steam / "DARK SOULS III/Game/Data0.bdt")});
+            TestGame<BND4>("Dark Souls III (Data0.bdt)",
+                           Paramdex / "DS3/Defs",
+                           {Regulation::DecryptDS3(Steam / "DARK SOULS III/Game/Data0.bdt")});
         }
         if (fs::exists(Steam / "DARK SOULS REMASTERED/param")) {
             std::vector<BND3> Binders;

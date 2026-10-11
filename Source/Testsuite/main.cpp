@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -48,14 +52,18 @@ namespace {
         if (std::strcmp(Name, "paramdefrepo") == 0) return RunParamDefRepositoryTests();
         if (std::strcmp(Name, "paramdex") == 0) return RunParamdexTests();
         if (std::strcmp(Name, "bxfreader") == 0) return RunBXFReaderTests();
-        if (std::strcmp(Name, "flver") == 0) return RunFLVERTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
+        if (std::strcmp(Name, "flver") == 0)
+            return RunFLVERTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
         if (std::strcmp(Name, "formats") == 0) {
             // formats [FormatName] [max files per source]
-            return RunFormatScanTests(Argc > 2 ? Argv[2] : "", Argc > 3 ? static_cast<size_t>(std::strtoull(Argv[3], nullptr, 10)) : 30);
+            return RunFormatScanTests(Argc > 2 ? Argv[2] : "",
+                                      Argc > 3 ? static_cast<size_t>(std::strtoull(Argv[3], nullptr, 10)) : 30);
         }
-        if (std::strcmp(Name, "tpf") == 0) return RunTPFTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 100);
+        if (std::strcmp(Name, "tpf") == 0)
+            return RunTPFTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 100);
         if (std::strcmp(Name, "paramdefxml") == 0) return RunPARAMDEFXmlTests();
-        if (std::strcmp(Name, "fmg") == 0) return RunFMGTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 30);
+        if (std::strcmp(Name, "fmg") == 0)
+            return RunFMGTests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 30);
         if (std::strcmp(Name, "binder") == 0) return RunBinderTests();
         if (std::strcmp(Name, "binderfiles") == 0) {
             const size_t MaxFiles = Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40;
@@ -66,7 +74,8 @@ namespace {
         if (std::strcmp(Name, "capi") == 0) return RunCApiTests();
         if (std::strcmp(Name, "sl2") == 0) return RunSL2Tests();
         if (std::strcmp(Name, "havok") == 0) return RunHavokTests();
-        if (std::strcmp(Name, "msbe") == 0) return RunMSBETests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
+        if (std::strcmp(Name, "msbe") == 0)
+            return RunMSBETests(Argc > 2 ? static_cast<size_t>(std::strtoull(Argv[2], nullptr, 10)) : 40);
         if (std::strcmp(Name, "oodle") == 0) return RunOodleTests();
         if (std::strcmp(Name, "soulsfile") == 0) return RunSoulsFileTests();
         if (std::strcmp(Name, "realfiles") == 0) {
@@ -75,7 +84,9 @@ namespace {
         }
         std::fprintf(
           stderr,
-          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, tpf [max files], bxfreader, flver [max files], formats [format] [max files], fmg [max files], binder, oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
+          "Unknown test suite \"%s\" (binary, bhd5, param, paramdef, paramdefxml, paramlayout, paramdefrepo, paramdex, "
+          "tpf [max files], bxfreader, flver [max files], formats [format] [max files], fmg [max files], binder, "
+          "oodle, soulsfile, regulation, binderfiles [max files], realfiles [max files])\n",
           Name);
         return 1;
     }
@@ -94,7 +105,25 @@ int main(int Argc, char** Argv) {
         }
 
         int Failed = 0;
-        for (const char* Name : {"binary", "bhd5", "fmg", "param", "paramdef", "paramdefxml", "paramlayout", "paramdefrepo", "paramdex", "tpf", "bxfreader", "flver", "formats", "binder", "oodle", "soulsfile", "regulation", "binderfiles", "realfiles"}) {
+        for (const char* Name : {"binary",
+                                 "bhd5",
+                                 "fmg",
+                                 "param",
+                                 "paramdef",
+                                 "paramdefxml",
+                                 "paramlayout",
+                                 "paramdefrepo",
+                                 "paramdex",
+                                 "tpf",
+                                 "bxfreader",
+                                 "flver",
+                                 "formats",
+                                 "binder",
+                                 "oodle",
+                                 "soulsfile",
+                                 "regulation",
+                                 "binderfiles",
+                                 "realfiles"}) {
             const int Result = Run(Name, Argc, Argv);
             if (Result != 0 && Result != TestSkipped) { ++Failed; }
         }

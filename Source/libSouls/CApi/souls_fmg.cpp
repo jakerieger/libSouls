@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -45,11 +49,12 @@ SOULS_C_API SoulsStatus souls_fmg_write_file(SoulsFMG* fmg, const char* path) {
 }
 
 SOULS_C_API SoulsBuffer souls_fmg_write_memory(SoulsFMG* fmg) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(Require(fmg, "fmg is NULL").Value.Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(Require(fmg, "fmg is NULL").Value.Write()); });
 }
 
 SOULS_C_API SoulsFmgVersion souls_fmg_version(const SoulsFMG* fmg) {
-    return GuardValue(SOULS_FMG_DARK_SOULS_1, [&] { return static_cast<SoulsFmgVersion>(Require(fmg, "fmg is NULL").Value.Version); });
+    return GuardValue(SOULS_FMG_DARK_SOULS_1,
+                      [&] { return static_cast<SoulsFmgVersion>(Require(fmg, "fmg is NULL").Value.Version); });
 }
 
 SOULS_C_API size_t souls_fmg_entry_count(const SoulsFMG* fmg) {
@@ -76,7 +81,8 @@ SOULS_C_API const char* souls_fmg_get_text(const SoulsFMG* fmg, int32_t id) {
 
 SOULS_C_API SoulsStatus souls_fmg_set_text(SoulsFMG* fmg, int32_t id, const char* text_or_null) {
     return Guard([&] {
-        Require(fmg, "fmg is NULL").Value.SetText(id, text_or_null ? std::optional<std::string>(text_or_null) : std::nullopt);
+        Require(fmg, "fmg is NULL")
+          .Value.SetText(id, text_or_null ? std::optional<std::string>(text_or_null) : std::nullopt);
     });
 }
 

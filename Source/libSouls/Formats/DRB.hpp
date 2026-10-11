@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -39,7 +43,7 @@ namespace Souls {
         };
 
         /// @brief The file's strings by offset, as read.
-        using StringTable   = std::map<int32_t, std::string>;
+        using StringTable = std::map<int32_t, std::string>;
         /// @brief The offsets strings are written at.
         using StringOffsets = std::map<std::string, int32_t>;
 
@@ -63,11 +67,11 @@ namespace Souls {
 
         /// @brief Behavior attached to an element.
         struct SOULS_API Control {
-            virtual ~Control()                = default;
+            virtual ~Control() = default;
             /// @brief The type number of this entry as stored in the file.
-            virtual ControlType Type() const  = 0;
+            virtual ControlType Type() const = 0;
             /// @brief Reads the type-specific data.
-            virtual void ReadData(BinaryReader& Reader)        = 0;
+            virtual void ReadData(BinaryReader& Reader) = 0;
             /// @brief Writes the type-specific data.
             virtual void WriteData(BinaryWriter& Writer) const = 0;
             /// @brief The type's name, as SoulsFormats calls it.
@@ -149,10 +153,10 @@ namespace Souls {
 
         /// @brief Flags; combine with |.
         enum class SpriteOrientation : uint8_t {
-            None          = 0,
-            RotateCW      = 0x10,
-            Rotate180     = 0x20,
-            FlipVertical  = 0x40,
+            None           = 0,
+            RotateCW       = 0x10,
+            Rotate180      = 0x20,
+            FlipVertical   = 0x40,
             FlipHorizontal = 0x80,
         };
 
@@ -191,9 +195,9 @@ namespace Souls {
             /// @brief For DSR, the behavior of scaling for this element.
             int16_t ScalingMode = 0;
 
-            virtual ~Shape()                = default;
+            virtual ~Shape() = default;
             /// @brief The type number of this entry as stored in the file.
-            virtual ShapeType Type() const  = 0;
+            virtual ShapeType Type() const = 0;
             /// @brief The type's name, as SoulsFormats calls it.
             const char* TypeName() const;
             /// @brief Reads the type-specific data.
@@ -205,7 +209,7 @@ namespace Souls {
 
         protected:
             /// @brief Reads the fields specific to this shape type.
-            virtual void ReadSpecific(BinaryReader& Reader, const StringTable& Strings)           = 0;
+            virtual void ReadSpecific(BinaryReader& Reader, const StringTable& Strings) = 0;
             /// @brief Writes the fields specific to this shape type.
             virtual void WriteSpecific(BinaryWriter& Writer, const StringOffsets& Strings) const = 0;
         };
@@ -225,7 +229,7 @@ namespace Souls {
             /// @brief Flags modifying the orientation of the texture.
             SpriteOrientation Orientation = SpriteOrientation::None;
             /// @brief Color blending mode.
-            BlendingMode BlendMode        = BlendingMode::Alpha;
+            BlendingMode BlendMode = BlendingMode::Alpha;
 
         protected:
             /// @brief Reads the fields specific to this shape type.
@@ -258,24 +262,24 @@ namespace Souls {
             /// @brief Color blending mode.
             BlendingMode BlendMode = BlendingMode::Alpha;
             /// @brief Distance between each line of text.
-            int16_t LineSpacing    = 0;
+            int16_t LineSpacing = 0;
             /// @brief Index of a color in the menu color param, or 0 to use the CustomColor.
-            int32_t PaletteColor   = 0;
+            int32_t PaletteColor = 0;
             /// @brief Custom color used when PaletteColor is 0.
             Color CustomColor;
             /// @brief From 0-11, different sizes of the menu font. 12 is the subtitle font.
-            int16_t FontSize        = 0;
+            int16_t FontSize = 0;
             /// @brief The horizontal and vertical alignment of the text.
-            AlignFlags Alignment    = AlignFlags::TopLeft;
+            AlignFlags Alignment = AlignFlags::TopLeft;
             /// @brief Whether the element uses a text literal, a static FMG ID, or is assigned at runtime.
-            TxtType TextType        = TxtType::FMG;
+            TxtType TextType = TxtType::FMG;
             /// @brief The maximum characters to display.
-            int32_t CharLength      = 0;
+            int32_t CharLength = 0;
             std::string TextLiteral;  ///< only for TxtType::Literal
             /// @brief If TextType is FMG, the FMG ID to display, otherwise -1.
             int32_t TextID = -1;
             /// @brief An unknown optional structure which is always present in practice.
-            std::optional<UnknownA> Unknown = UnknownA{};
+            std::optional<UnknownA> Unknown = UnknownA {};
 
             void CollectStrings(std::vector<std::string>& Out) const override;
 
@@ -305,13 +309,13 @@ namespace Souls {
             /// @brief The dialog shown, by its position in DRB::Dlgs; -1 for none.
             int16_t DlgIndex = -1;
             /// @brief Unknown; always 0 or 1.
-            uint8_t Unk02    = 1;
+            uint8_t Unk02 = 1;
             /// @brief Unknown; always 0 or 1. Determines whether the optional structure is loaded.
-            uint8_t Unk03    = 1;
+            uint8_t Unk03 = 1;
             /// @brief Index of a color in the menu color param, or 0 to use the CustomColor.
             int32_t PaletteColor = 0;
             /// @brief Custom color used when PaletteColor is 0.
-            Color CustomColor    = Color::White();
+            Color CustomColor = Color::White();
             /// @brief An unknown, optional, and unused structure; only loaded if Unk03 is non-zero.
             std::optional<UnknownA> Unknown;
             /// @brief The type number of this entry as stored in the file.
@@ -329,7 +333,7 @@ namespace Souls {
             /// @brief Color blending mode.
             BlendingMode BlendMode = BlendingMode::Alpha;
             /// @brief Thickness of the border.
-            uint8_t Thickness      = 1;
+            uint8_t Thickness = 1;
             /// @brief The color at the top left corner.
             Color TopLeftColor = Color::Black();
             /// @brief The color at the top right corner.
@@ -395,13 +399,13 @@ namespace Souls {
             /// @brief The name of the element this mask applies to.
             std::string DlgoName;
             /// @brief Unknown; always 1.
-            uint8_t Unk04  = 1;
+            uint8_t Unk04 = 1;
             /// @brief Unknown; always 0.
-            int32_t Unk05  = 0;
+            int32_t Unk05 = 0;
             /// @brief Unknown; always 0.
-            int32_t Unk09  = 0;
+            int32_t Unk09 = 0;
             /// @brief Unknown; always 0.
-            int16_t Unk0D  = 0;
+            int16_t Unk0D = 0;
             /// @brief The type number of this entry as stored in the file.
             ShapeType Type() const override { return ShapeType::Mask; }
             void CollectStrings(std::vector<std::string>& Out) const override { Out.push_back(DlgoName); }
@@ -418,11 +422,11 @@ namespace Souls {
             /// @brief Color blending mode.
             BlendingMode BlendMode = BlendingMode::Alpha;
             /// @brief Thickness of the border.
-            uint8_t Thickness      = 1;
+            uint8_t Thickness = 1;
             /// @brief Index of a color in the menu color param, or 0 to use the CustomColor.
-            int32_t PaletteColor   = 0;
+            int32_t PaletteColor = 0;
             /// @brief Custom color used when PaletteColor is 0.
-            Color CustomColor      = Color::Black();
+            Color CustomColor = Color::Black();
             /// @brief The type number of this entry as stored in the file.
             ShapeType Type() const override { return ShapeType::MonoFrame; }
 
@@ -438,9 +442,9 @@ namespace Souls {
             /// @brief Color blending mode.
             BlendingMode BlendMode = BlendingMode::Alpha;
             /// @brief Index of a color in the menu color param, or 0 to use the CustomColor.
-            int32_t PaletteColor   = 0;
+            int32_t PaletteColor = 0;
             /// @brief Custom color used when PaletteColor is 0.
-            Color CustomColor      = Color::Black();
+            Color CustomColor = Color::Black();
             /// @brief The type number of this entry as stored in the file.
             ShapeType Type() const override { return ShapeType::MonoRect; }
 
@@ -476,7 +480,7 @@ namespace Souls {
             /// @brief Unknown; always 15 or 100.
             int16_t ScrollSpeed = 15;
             /// @brief Unknown.
-            int16_t UnkX0A      = 0;
+            int16_t UnkX0A = 0;
             /// @brief The type number of this entry as stored in the file.
             ShapeType Type() const override { return ShapeType::ScrollText; }
 
@@ -492,7 +496,7 @@ namespace Souls {
             /// @brief Index of a color in the menu color param, or 0 to use the CustomColor.
             int32_t PaletteColor = 0;
             /// @brief Custom color used when PaletteColor is 0.
-            Color CustomColor    = Color::White();
+            Color CustomColor = Color::White();
             /// @brief The type number of this entry as stored in the file.
             ShapeType Type() const override { return ShapeType::Sprite; }
 
@@ -590,7 +594,7 @@ namespace Souls {
             /// @brief An index into the Anim list.
             int32_t AnimIndex = 0;
             /// @brief Unknown; always 0-1.
-            int32_t Scdp04    = 0;
+            int32_t Scdp04 = 0;
         };
 
         /// @brief Unknown.
@@ -648,7 +652,7 @@ namespace Souls {
             /// @brief Bottom edge of the group.
             int16_t BottomEdge = 0;
             /// @brief Unknown.
-            std::array<int16_t, 5> Unk30{-1, -1, -1, -1, -1};
+            std::array<int16_t, 5> Unk30 {-1, -1, -1, -1, -1};
             /// @brief Unknown; always 0.
             int16_t Unk3A = 0;
             /// @brief Unknown; always 0.
@@ -657,9 +661,7 @@ namespace Souls {
             /// @brief The element with this name, or nullptr.
             Dlgo* Find(const std::string& Name) {
                 for (Dlgo& D : Dlgos) {
-                    if (D.Name == Name) {
-                        return &D;
-                    }
+                    if (D.Name == Name) { return &D; }
                 }
                 return nullptr;
             }
@@ -669,7 +671,7 @@ namespace Souls {
         /// @brief The version of the format used for this file.
         DRBVersion Version = DRBVersion::DarkSoulsRemastered;
         /// @brief True for PS3/X360, false otherwise.
-        bool BigEndian     = false;
+        bool BigEndian = false;
         /// @brief Available UI textures for reference; not actually necessary for textures to work.
         std::vector<Texture> Textures;
         /// @brief Unknown data used by Aniks.
@@ -686,9 +688,7 @@ namespace Souls {
         /// @brief The dialog with this name, or nullptr.
         Dlg* Find(const std::string& Name) {
             for (Dlg& D : Dlgs) {
-                if (D.Name == Name) {
-                    return &D;
-                }
+                if (D.Name == Name) { return &D; }
             }
             return nullptr;
         }

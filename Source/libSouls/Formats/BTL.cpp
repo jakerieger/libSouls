@@ -1,13 +1,17 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BTL.hpp"
 
 namespace Souls {
     template<size_t N>
     static std::array<uint8_t, N> ReadBytesArray(BinaryReader& Reader) {
-        std::array<uint8_t, N> Result{};
+        std::array<uint8_t, N> Result {};
         Reader.ReadInto(std::span<uint8_t>(Result));
         return Result;
     }
@@ -20,9 +24,9 @@ namespace Souls {
     void BTL::ReadImpl(BinaryReader& Reader) {
         Reader.Order = Endian::Little;
         Reader.Assert<int32_t>(2);
-        Version                     = Reader.Assert<int32_t>(1, 2, 5, 6, 15, 16, 18);
-        const int32_t LightCount    = Reader.ReadInt32();
-        const int32_t NamesLength   = Reader.ReadInt32();
+        Version                   = Reader.Assert<int32_t>(1, 2, 5, 6, 15, 16, 18);
+        const int32_t LightCount  = Reader.ReadInt32();
+        const int32_t NamesLength = Reader.ReadInt32();
         Reader.Assert<int32_t>(0);
         const int32_t LightSize = Reader.Assert<int32_t>(0xC0, 0xC8, 0xE8, 0xF0);
         Reader.AssertPattern(0x24, 0);
@@ -37,10 +41,10 @@ namespace Souls {
         Lights.reserve(static_cast<size_t>(LightCount));
         for (int32_t I = 0; I < LightCount; ++I) {
             Light L;
-            L.Unk00 = ReadBytesArray<16>(Reader);
-            L.Name  = Reader.GetUTF16Text(NamesStart + Reader.ReadVarint());
-            L.Type  = static_cast<LightType>(Reader.ReadUInt32());
-            L.Unk1C = Reader.ReadBool();
+            L.Unk00         = ReadBytesArray<16>(Reader);
+            L.Name          = Reader.GetUTF16Text(NamesStart + Reader.ReadVarint());
+            L.Type          = static_cast<LightType>(Reader.ReadUInt32());
+            L.Unk1C         = Reader.ReadBool();
             L.DiffuseColor  = ReadRGB(Reader);
             L.DiffusePower  = Reader.ReadFloat();
             L.SpecularColor = ReadRGB(Reader);
@@ -56,9 +60,9 @@ namespace Souls {
             L.Radius        = Reader.ReadFloat();
             L.Unk5C         = Reader.ReadInt32();
             Reader.Assert<int32_t>(0);
-            L.Unk64 = ReadBytesArray<4>(Reader);
-            L.Unk68 = Reader.ReadFloat();
-            L.ShadowColor = ReadRGBA(Reader);
+            L.Unk64                 = ReadBytesArray<4>(Reader);
+            L.Unk68                 = Reader.ReadFloat();
+            L.ShadowColor           = ReadRGBA(Reader);
             L.Unk70                 = Reader.ReadFloat();
             L.FlickerIntervalMin    = Reader.ReadFloat();
             L.FlickerIntervalMax    = Reader.ReadFloat();
@@ -69,9 +73,9 @@ namespace Souls {
             Reader.Assert<int32_t>(0);
             L.Unk90 = Reader.ReadFloat();
             Reader.Assert<int32_t>(0);
-            L.Unk98    = Reader.ReadFloat();
-            L.NearClip = Reader.ReadFloat();
-            L.UnkA0    = ReadBytesArray<4>(Reader);
+            L.Unk98     = Reader.ReadFloat();
+            L.NearClip  = Reader.ReadFloat();
+            L.UnkA0     = ReadBytesArray<4>(Reader);
             L.Sharpness = Reader.ReadFloat();
             Reader.Assert<int32_t>(0);
             L.UnkAC = Reader.ReadFloat();
@@ -116,9 +120,7 @@ namespace Souls {
             const int64_t NameOffset = Writer.Position() - NamesStart;
             NameOffsets.push_back(NameOffset);
             Writer.WriteUTF16Text(L.Name, true);
-            if (NameOffset % 0x10 != 0) {
-                Writer.Pad(static_cast<size_t>(0x10 - (NameOffset % 0x10)));
-            }
+            if (NameOffset % 0x10 != 0) { Writer.Pad(static_cast<size_t>(0x10 - (NameOffset % 0x10))); }
         }
         Writer.Fill<int32_t>("NamesLength", static_cast<int32_t>(Writer.Position() - NamesStart));
 

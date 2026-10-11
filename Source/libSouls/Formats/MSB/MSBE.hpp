@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/11/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -28,13 +32,13 @@ namespace Souls {
     class SOULS_API MSBE : public SoulsFile<MSBE> {
     public:
         /// @brief Tag for references to models.
-        using ModelList     = Msb::ModelList;
+        using ModelList = Msb::ModelList;
         /// @brief Tag for references to events.
-        using EventList     = Msb::EventList;
+        using EventList = Msb::EventList;
         /// @brief Tag for references to regions.
-        using RegionList    = Msb::RegionList;
+        using RegionList = Msb::RegionList;
         /// @brief Tag for references to parts.
-        using PartList      = Msb::PartList;
+        using PartList = Msb::PartList;
         /// @brief Tag for references to collision parts only.
         using CollisionList = Msb::CollisionList;
         struct PatrolInfoList {};  ///< just the patrol info events (a sublist of the events)
@@ -86,14 +90,14 @@ namespace Souls {
             /// @brief Reads the type-specific data.
             void ReadTypeData(BinaryReader& Reader) override {
                 if constexpr (WithData) {
-                    Msb::Detail::ReadVisitor V{Reader};
+                    Msb::Detail::ReadVisitor V {Reader};
                     static_cast<D*>(this)->Fields(V);
                 }
             }
             /// @brief Writes the type-specific data.
             void WriteTypeData(BinaryWriter& Writer) override {
                 if constexpr (WithData) {
-                    Msb::Detail::WriteVisitor V{Writer};
+                    Msb::Detail::WriteVisitor V {Writer};
                     static_cast<D*>(this)->Fields(V);
                 }
             }
@@ -101,7 +105,7 @@ namespace Souls {
             void GetNames(const Entries& Lists) override {
                 B::GetNames(Lists);
                 if constexpr (WithData) {
-                    Msb::Detail::NameVisitor<Entries> V{Lists};
+                    Msb::Detail::NameVisitor<Entries> V {Lists};
                     static_cast<D*>(this)->Fields(V);
                 }
             }
@@ -109,7 +113,7 @@ namespace Souls {
             void GetIndices(const Entries& Lists) override {
                 B::GetIndices(Lists);
                 if constexpr (WithData) {
-                    Msb::Detail::IndexVisitor<Entries> V{Lists};
+                    Msb::Detail::IndexVisitor<Entries> V {Lists};
                     static_cast<D*>(this)->Fields(V);
                 }
             }
@@ -123,7 +127,7 @@ namespace Souls {
             /// @brief How many parts use the model; recalculated when writing.
             int32_t InstanceCount = 0;
             /// @brief Unknown.
-            int32_t Unk1C         = 0;
+            int32_t Unk1C = 0;
 
             /// @brief The type number of this entry as stored in the file.
             virtual uint32_t Type() const = 0;
@@ -214,9 +218,9 @@ namespace Souls {
             /// @brief Identifies the event in event scripts.
             uint32_t EntityID = 0;
             /// @brief Unknown.
-            int32_t Unk14     = 0;
+            int32_t Unk14 = 0;
             /// @brief Unknown.
-            uint8_t UnkE0C    = 0;
+            uint8_t UnkE0C = 0;
             /// @brief Unknown.
             int32_t MapID = 0;
             /// @brief Unknown.
@@ -230,7 +234,7 @@ namespace Souls {
             int32_t FileID = -1;
 
             /// @brief The type number of this entry as stored in the file.
-            virtual uint32_t Type() const    = 0;
+            virtual uint32_t Type() const = 0;
             /// @brief Whether entries of this type have type-specific data.
             virtual bool HasTypeData() const = 0;
             /// @brief Reads the entry from its position in the file.
@@ -275,7 +279,8 @@ namespace Souls {
                 /// @brief Whether the treasure should be hidden by default.
                 uint8_t StartDisabled = 0;
                 Treasure() { Name = "Event: Treasure"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
@@ -295,9 +300,9 @@ namespace Souls {
             /// @brief An enemy spawner.
             struct Generator : EventImpl<Generator, 5> {
                 /// @brief Unknown.
-                uint8_t MaxNum   = 0;
+                uint8_t MaxNum = 0;
                 /// @brief Unknown.
-                int8_t GenType   = 0;
+                int8_t GenType = 0;
                 /// @brief Unknown.
                 int16_t LimitNum = 0;
                 /// @brief Unknown.
@@ -319,7 +324,8 @@ namespace Souls {
                 /// @brief Parts that will be respawned.
                 std::array<Msb::Ref<PartList>, 32> SpawnPartNames;
                 Generator() { Name = "Event: Generator"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(MaxNum);
@@ -348,13 +354,14 @@ namespace Souls {
                 /// @brief The part to be interacted with.
                 Msb::Ref<PartList> ObjActPartName;
                 /// @brief A row in ObjActParam.
-                int32_t ObjActID     = -1;
+                int32_t ObjActID = -1;
                 /// @brief Unknown.
-                uint8_t StateType    = 0;
+                uint8_t StateType = 0;
                 /// @brief Unknown.
                 uint32_t EventFlagID = 0;
                 ObjAct() { Name = "Event: ObjAct"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(ObjActEntityID);
@@ -373,7 +380,8 @@ namespace Souls {
                 /// @brief Unknown.
                 Msb::Ref<RegionList> NavmeshRegionName;
                 Navmesh() { Name = "Event: Navmesh"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(NavmeshRegionName);
@@ -400,7 +408,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT1C = 0;
                 PseudoMultiplayer() { Name = "Event: PseudoMultiplayer"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(HostEntityID);
@@ -420,11 +429,12 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t PlatoonIDScriptActivate = 0;
                 /// @brief Unknown.
-                int32_t State                   = 0;
+                int32_t State = 0;
                 /// @brief Unknown.
                 std::array<Msb::Ref<PartList>, 32> GroupPartNames;
                 PlatoonInfo() { Name = "Event: PlatoonInfo"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(PlatoonIDScriptActivate);
@@ -444,7 +454,8 @@ namespace Souls {
                 /// @brief Unknown.
                 std::array<Msb::Ref<RegionList, int16_t>, 64> WalkRegionNames;
                 PatrolInfo() { Name = "Event: PatrolInfo"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(PatrolType);
@@ -464,7 +475,8 @@ namespace Souls {
                 /// @brief Unknown.
                 Msb::Ref<PartList> MountPartName;
                 Mount() { Name = "Event: Mount"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(RiderPartName);
@@ -479,7 +491,8 @@ namespace Souls {
                 /// @brief A row in SignPuddleParam.
                 int32_t SignPuddleParamID = 0;
                 SignPool() { Name = "Event: SignPool"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(SignPartName);
@@ -499,7 +512,8 @@ namespace Souls {
                 /// @brief The region in which the retry point is active.
                 Msb::Ref<RegionList, int16_t> RetryRegionName;
                 RetryPoint() { Name = "Event: RetryPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(RetryPartName);
@@ -535,7 +549,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t EUnk28 = 0;
                 AreaTeam() { Name = "Event: AreaTeam"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EntityIDLeader);
@@ -626,7 +641,7 @@ namespace Souls {
         /// @brief A point or volume that triggers some sort of interaction.
         struct SOULS_API Region : Entry {
             /// @brief The shape of the region.
-            Msb::Shape Shape = Msb::Shapes::Point{};
+            Msb::Shape Shape = Msb::Shapes::Point {};
             /// @brief The location of the region.
             Vector3 Position;
             /// @brief The rotation of the region, in degrees.
@@ -634,7 +649,7 @@ namespace Souls {
             /// @brief Presumed ID for regions; unique per map, incremented per region.
             int32_t RegionID = 0;
             /// @brief Unknown.
-            int32_t Unk40    = 0;
+            int32_t Unk40 = 0;
             /// @brief Controls whether the region is active in different ceremonies.
             uint32_t MapStudioLayer = 0xFFFFFFFF;
             /// @brief Unknown.
@@ -646,7 +661,7 @@ namespace Souls {
             /// @brief Identifies the region in event scripts.
             uint32_t EntityID = 0;
             /// @brief Unknown.
-            uint8_t UnkE08    = 0;
+            uint8_t UnkE08 = 0;
             /// @brief Unknown.
             int32_t MapID = 0;
             /// @brief Unknown.
@@ -655,7 +670,7 @@ namespace Souls {
             int32_t UnkS0C = 0;
 
             /// @brief The type number of this entry as stored in the file.
-            virtual uint32_t Type() const    = 0;
+            virtual uint32_t Type() const = 0;
             /// @brief Whether entries of this type have type-specific data.
             virtual bool HasTypeData() const = 0;
             /// @brief Reads the entry from its position in the file.
@@ -690,7 +705,8 @@ namespace Souls {
                 /// @brief Not sure what this does.
                 int32_t Priority = 0;
                 InvasionPoint() { Name = "Region: InvasionPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(Priority);
@@ -700,7 +716,7 @@ namespace Souls {
             /// @brief Unknown.
             struct EnvironmentMapPoint : RegionImpl<EnvironmentMapPoint, 2> {
                 /// @brief Unknown.
-                float UnkT00   = 0;
+                float UnkT00 = 0;
                 /// @brief Unknown.
                 int32_t UnkT04 = 0;
                 /// @brief Unknown.
@@ -714,7 +730,7 @@ namespace Souls {
                 /// @brief Unknown.
                 float UnkT14 = 0;
                 /// @brief Unknown.
-                std::array<uint8_t, 4> UnkMapID{};
+                std::array<uint8_t, 4> UnkMapID {};
                 /// @brief Unknown.
                 int32_t UnkT20 = 0;
                 /// @brief Unknown.
@@ -726,7 +742,8 @@ namespace Souls {
                 /// @brief Unknown.
                 uint8_t UnkT2D = 0;
                 EnvironmentMapPoint() { Name = "Region: EnvironmentMapPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -760,7 +777,8 @@ namespace Souls {
                 /// @brief Unknown.
                 bool UnkT49 = false;
                 Sound() { Name = "Region: Sound"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(SoundType);
@@ -779,7 +797,8 @@ namespace Souls {
                 /// @brief If not 0, the effect is off until enabled by event scripts.
                 int32_t StartDisabled = 0;
                 SFX() { Name = "Region: SFX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EffectID);
@@ -796,7 +815,8 @@ namespace Souls {
                 /// @brief Unknown.
                 float UnkT08 = 0;
                 WindSFX() { Name = "Region: WindSFX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EffectID);
@@ -808,7 +828,8 @@ namespace Souls {
             /// @brief A point where the player can spawn into the map.
             struct SpawnPoint : RegionImpl<SpawnPoint, 8> {
                 SpawnPoint() { Name = "Region: SpawnPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(-1);
@@ -823,11 +844,11 @@ namespace Souls {
                 /// @brief Unknown; always 0 or 2.
                 int16_t UnkT02 = 0;
                 /// @brief Whether the message requires Seek Guidance to appear.
-                bool Hidden            = false;
+                bool Hidden = false;
                 /// @brief Unknown.
-                int32_t UnkT08         = 0;
+                int32_t UnkT08 = 0;
                 /// @brief Unknown.
-                int32_t MessageSfxID   = 0;
+                int32_t MessageSfxID = 0;
                 /// @brief Event flag required to be on for the message to appear.
                 uint32_t EnableEventFlagID = 0;
                 /// @brief ID of a character to render along with the message.
@@ -835,11 +856,12 @@ namespace Souls {
                 /// @brief NpcParam ID to use when rendering a character with the message.
                 int32_t NPCParamID = 0;
                 /// @brief Animation ID to use when rendering a character with the message.
-                int32_t AnimationID      = 0;
+                int32_t AnimationID = 0;
                 /// @brief Unknown.
                 int32_t CharaInitParamID = 0;
                 Message() { Name = "Region: Message"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(MessageID);
@@ -872,13 +894,13 @@ namespace Souls {
                 /// @brief Strength of direct light emitting from the EnvironmentMapPoint.
                 float PointLightMult = 0;
                 /// @brief Unknown.
-                int16_t UnkT2C       = 0;
+                int16_t UnkT2C = 0;
                 /// @brief Affects lighting with other fields when true; possibly normalizes light when false.
                 bool IsModifyLight = false;
                 /// @brief Unknown.
-                bool UnkT2F        = false;
+                bool UnkT2F = false;
                 /// @brief Unknown.
-                int16_t UnkT30     = 0;
+                int16_t UnkT30 = 0;
                 /// @brief Unknown.
                 bool UnkT32 = false;
                 /// @brief Unknown.
@@ -888,7 +910,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int16_t UnkT36 = 0;
                 EnvironmentMapEffectBox() { Name = "Region: EnvironmentMapEffectBox"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EnableDist);
@@ -919,9 +942,10 @@ namespace Souls {
             /// @brief Used to align different maps.
             struct Connection : RegionImpl<Connection, 21> {
                 /// @brief The map this connection targets.
-                std::array<int8_t, 4> TargetMapID{};
+                std::array<int8_t, 4> TargetMapID {};
                 Connection() { Name = "Region: Connection"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(TargetMapID);
@@ -932,7 +956,8 @@ namespace Souls {
             /// @brief Unknown.
             struct PatrolRoute22 : RegionImpl<PatrolRoute22, 22> {
                 PatrolRoute22() { Name = "Region: PatrolRoute22"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(-1);
@@ -943,7 +968,8 @@ namespace Souls {
             /// @brief Unknown.
             struct BuddySummonPoint : RegionImpl<BuddySummonPoint, 26> {
                 BuddySummonPoint() { Name = "Region: BuddySummonPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(16);
@@ -953,7 +979,8 @@ namespace Souls {
             /// @brief Unknown.
             struct DisableTumbleweed : RegionImpl<DisableTumbleweed, 27> {
                 DisableTumbleweed() { Name = "Region: DisableTumbleweed"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(-1);
@@ -976,7 +1003,8 @@ namespace Souls {
                 /// @brief Unknown.
                 float UnkT44 = 0;
                 MufflingBox() { Name = "Region: MufflingBox"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -998,7 +1026,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT00 = 0;
                 MufflingPortal() { Name = "Region: MufflingPortal"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1028,7 +1057,8 @@ namespace Souls {
                 /// @brief Unknown.
                 uint8_t UnkT0C = 0;
                 SoundRegion() { Name = "Region: SoundRegion"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1053,7 +1083,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT00 = 0;
                 PatrolRoute() { Name = "Region: PatrolRoute"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1065,7 +1096,7 @@ namespace Souls {
                 /// @brief A row in WorldMapPointParam.
                 int32_t WorldMapPointParamID = 0;
                 /// @brief Unknown.
-                int32_t UnkT04               = 0;
+                int32_t UnkT04 = 0;
                 /// @brief Unknown.
                 float UnkT08 = 0;
                 /// @brief Unknown.
@@ -1077,7 +1108,8 @@ namespace Souls {
                 /// @brief Unknown.
                 float UnkT18 = 0;
                 MapPoint() { Name = "Region: MapPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(WorldMapPointParamID);
@@ -1104,7 +1136,8 @@ namespace Souls {
                 /// @brief Unknown.
                 uint8_t UnkT0B = 0;
                 WeatherOverride() { Name = "Region: WeatherOverride"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(WeatherLotParamID);
@@ -1122,7 +1155,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT00 = 0;
                 AutoDrawGroupPoint() { Name = "Region: AutoDrawGroupPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1147,7 +1181,8 @@ namespace Souls {
                 /// @brief A row in HPEstusFlaskRecoveryParam / MPEstusFlaskRecoveryParam.
                 int32_t EstusFlaskRecoveryID = 0;
                 GroupDefeatReward() { Name = "Region: GroupDefeatReward"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1178,7 +1213,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT00 = 0;
                 Hitset() { Name = "Region: Hitset"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1190,7 +1226,8 @@ namespace Souls {
                 /// @brief Fast travel is disabled while this flag is off.
                 uint32_t EventFlagID = 0;
                 FastTravelRestriction() { Name = "Region: FastTravelRestriction"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(EventFlagID);
@@ -1201,7 +1238,8 @@ namespace Souls {
             /// @brief Unknown.
             struct WeatherCreateAssetPoint : RegionImpl<WeatherCreateAssetPoint, 42> {
                 WeatherCreateAssetPoint() { Name = "Region: WeatherCreateAssetPoint"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(0);
@@ -1213,9 +1251,10 @@ namespace Souls {
                 /// @brief A row in PlayRegionParam.
                 int32_t PlayRegionID = 0;
                 /// @brief Unknown.
-                int32_t UnkT04       = 0;
+                int32_t UnkT04 = 0;
                 PlayArea() { Name = "Region: PlayArea"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(PlayRegionID);
@@ -1233,9 +1272,10 @@ namespace Souls {
                 /// @brief How far the player moves upwards when activating it.
                 float JumpHeight = 0;
                 /// @brief Unknown.
-                int32_t UnkT04   = 0;
+                int32_t UnkT04 = 0;
                 MountJump() { Name = "Region: MountJump"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(JumpHeight);
@@ -1248,7 +1288,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT00 = 0;
                 Dummy() { Name = "Region: Dummy"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -1259,7 +1300,8 @@ namespace Souls {
             /// @brief Unknown.
             struct FallPreventionRemoval : RegionImpl<FallPreventionRemoval, 49> {
                 FallPreventionRemoval() { Name = "Region: FallPreventionRemoval"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
@@ -1269,7 +1311,8 @@ namespace Souls {
             /// @brief Unknown.
             struct NavmeshCutting : RegionImpl<NavmeshCutting, 50> {
                 NavmeshCutting() { Name = "Region: NavmeshCutting"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
@@ -1282,7 +1325,8 @@ namespace Souls {
                 ///        load.
                 int32_t TextID = 0;
                 MapNameOverride() { Name = "Region: MapNameOverride"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(TextID);
@@ -1293,7 +1337,8 @@ namespace Souls {
             /// @brief Unknown.
             struct MountJumpFall : RegionImpl<MountJumpFall, 52> {
                 MountJumpFall() { Name = "Region: MountJumpFall"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(-1);
@@ -1306,7 +1351,8 @@ namespace Souls {
                 /// @brief 1 forbids riding Torrent, 2 permits it.
                 uint32_t OverrideType = 1;
                 HorseRideOverride() { Name = "Region: HorseRideOverride"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(OverrideType);
@@ -1319,11 +1365,12 @@ namespace Souls {
                 /// @brief How far the player moves upwards when activating it.
                 float JumpHeight = 0;
                 /// @brief Unknown.
-                int32_t UnkT04   = 0;
+                int32_t UnkT04 = 0;
                 /// @brief Probably an event flag that enables it.
                 int32_t UnkT08 = 0;
                 LockedMountJump() { Name = "Region: LockedMountJump"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(JumpHeight);
@@ -1338,7 +1385,8 @@ namespace Souls {
                 /// @brief Probably an event flag that enables it.
                 int32_t UnkT08 = 0;
                 LockedMountJumpFall() { Name = "Region: LockedMountJumpFall"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.template Const<int32_t>(-1);
@@ -1354,7 +1402,8 @@ namespace Souls {
 
             /// @brief Unknown; probably some kind of version number.
             int32_t Version = 73;
-            /// @brief Previously points where players will appear when invading; not sure if they do anything in Sekiro.
+            /// @brief Previously points where players will appear when invading; not sure if they do anything in
+            /// Sekiro.
             std::vector<InvasionPoint> InvasionPoints;
             /// @brief Unknown.
             std::vector<EnvironmentMapPoint> EnvironmentMapPoints;
@@ -1573,11 +1622,11 @@ namespace Souls {
         /// @brief Unknown; holds the part's display and draw groups.
         struct UnkStruct1 {
             /// @brief Unknown.
-            std::array<uint32_t, 8> DisplayGroups{};
+            std::array<uint32_t, 8> DisplayGroups {};
             /// @brief Unknown.
-            std::array<uint32_t, 8> DrawGroups{};
+            std::array<uint32_t, 8> DrawGroups {};
             /// @brief Unknown.
-            std::array<uint32_t, 32> CollisionMask{};
+            std::array<uint32_t, 32> CollisionMask {};
             /// @brief Unknown.
             uint8_t Condition1 = 0;
             /// @brief Unknown.
@@ -1611,7 +1660,7 @@ namespace Souls {
             /// @brief Unknown.
             int32_t Condition = 0;
             /// @brief Unknown.
-            std::array<uint32_t, 8> DispGroups{};
+            std::array<uint32_t, 8> DispGroups {};
             /// @brief Unknown.
             int16_t Unk24 = 0;
             /// @brief Unknown.
@@ -1691,7 +1740,7 @@ namespace Souls {
         /// @brief Grass types used on a part (rows in GrassTypeParam).
         struct GrassConfig {
             /// @brief Rows in GrassTypeParam.
-            std::array<int32_t, 6> GrassParamIDs{};
+            std::array<int32_t, 6> GrassParamIDs {};
             /// @brief Unknown.
             int32_t Unk18 = 0;
             /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
@@ -1730,7 +1779,7 @@ namespace Souls {
         /// @brief Unknown; related to which map tile loads the part.
         struct TileLoadConfig {
             /// @brief Unknown.
-            std::array<uint8_t, 4> MapID{};
+            std::array<uint8_t, 4> MapID {};
             /// @brief Unknown.
             int32_t Unk04 = 0;
             /// @brief Unknown.
@@ -1794,24 +1843,24 @@ namespace Souls {
             /// @brief Rotation of the part.
             Vector3 Rotation;
             /// @brief Scale of the part; only works for map pieces and assets.
-            Vector3 Scale{1.f, 1.f, 1.f};
+            Vector3 Scale {1.f, 1.f, 1.f};
             /// @brief 0 never disables the part; 1 disables it in all released versions of the game; 2 and 3 are
             ///        unknown.
             uint32_t GameEditionDisable = 0;
             /// @brief Very speculative.
-            uint32_t MapStudioLayer     = 0;
+            uint32_t MapStudioLayer = 0;
             /// @brief Identifies the part in event scripts.
             uint32_t EntityID = 0;
             /// @brief If set, PartsDrawParamID is used; otherwise the asset's own param is.
             uint8_t IsUsePartsDrawParamID = 0;
             /// @brief A row in PartsDrawParam.
-            int16_t PartsDrawParamID     = 0;
+            int16_t PartsDrawParamID = 0;
             /// @brief Unknown.
             int8_t IsPointLightShadowSrc = 0;
             /// @brief Unknown.
-            uint8_t UnkE0B               = 0;
+            uint8_t UnkE0B = 0;
             /// @brief Unknown.
-            bool IsShadowSrc             = false;
+            bool IsShadowSrc = false;
             /// @brief Unknown.
             uint8_t IsStaticShadowSrc = 0;
             /// @brief Unknown.
@@ -1829,15 +1878,15 @@ namespace Souls {
             /// @brief Unknown.
             bool DrawOnlyReflectCam = false;
             /// @brief Unknown.
-            uint8_t EnableOnAboveShadow  = 0;
+            uint8_t EnableOnAboveShadow = 0;
             /// @brief Unknown.
             bool DisablePointLightEffect = false;
             /// @brief Unknown.
-            uint8_t UnkE17               = 0;
+            uint8_t UnkE17 = 0;
             /// @brief Unknown.
-            int32_t UnkE18               = 0;
+            int32_t UnkE18 = 0;
             /// @brief Allows multiple parts to be identified by the same entity ID.
-            std::array<uint32_t, 8> EntityGroupIDs{};
+            std::array<uint32_t, 8> EntityGroupIDs {};
             /// @brief Unknown.
             int16_t UnkE3C = 0;
             /// @brief Unknown.
@@ -1846,7 +1895,7 @@ namespace Souls {
             UnkStruct1 Unk1;
 
             /// @brief The type number of this entry as stored in the file.
-            virtual uint32_t Type() const   = 0;
+            virtual uint32_t Type() const = 0;
             /// @brief Which of the optional data blocks this part type has (a mask of PartBlocks).
             virtual unsigned Blocks() const = 0;
             /// @brief Reads the entry from its position in the file.
@@ -1854,7 +1903,7 @@ namespace Souls {
             /// @brief Writes the entry; ID is its position among the entries of the same type.
             void Write(BinaryWriter& Writer, int32_t ID);
             /// @brief Reads the type-specific data.
-            virtual void ReadTypeData(BinaryReader& Reader)  = 0;
+            virtual void ReadTypeData(BinaryReader& Reader) = 0;
             /// @brief Writes the type-specific data.
             virtual void WriteTypeData(BinaryWriter& Writer) = 0;
             /// @brief Reads or writes one of the optional blocks (see PartBlocks).
@@ -1883,23 +1932,32 @@ namespace Souls {
             template<typename V>
             void VisitBlock(unsigned Bit, V& Visitor) {
                 D& Self = *static_cast<D*>(this);
-                if constexpr (D::Block & HasUnk1) if (Bit == HasUnk1) Self.Unk1.Fields(Visitor);
-                if constexpr (D::Block & HasUnk2) if (Bit == HasUnk2) Self.Unk2.Fields(Visitor);
-                if constexpr (D::Block & HasGparam) if (Bit == HasGparam) Self.Gparam.Fields(Visitor);
-                if constexpr (D::Block & HasSceneGparam) if (Bit == HasSceneGparam) Self.SceneGparam.Fields(Visitor);
-                if constexpr (D::Block & HasGrass) if (Bit == HasGrass) Self.Grass.Fields(Visitor);
-                if constexpr (D::Block & HasUnk8) if (Bit == HasUnk8) Self.Unk8.Fields(Visitor);
-                if constexpr (D::Block & HasUnk9) if (Bit == HasUnk9) Self.Unk9.Fields(Visitor);
-                if constexpr (D::Block & HasTileLoad) if (Bit == HasTileLoad) Self.TileLoad.Fields(Visitor);
-                if constexpr (D::Block & HasUnk11) if (Bit == HasUnk11) Self.Unk11.Fields(Visitor);
+                if constexpr (D::Block & HasUnk1)
+                    if (Bit == HasUnk1) Self.Unk1.Fields(Visitor);
+                if constexpr (D::Block & HasUnk2)
+                    if (Bit == HasUnk2) Self.Unk2.Fields(Visitor);
+                if constexpr (D::Block & HasGparam)
+                    if (Bit == HasGparam) Self.Gparam.Fields(Visitor);
+                if constexpr (D::Block & HasSceneGparam)
+                    if (Bit == HasSceneGparam) Self.SceneGparam.Fields(Visitor);
+                if constexpr (D::Block & HasGrass)
+                    if (Bit == HasGrass) Self.Grass.Fields(Visitor);
+                if constexpr (D::Block & HasUnk8)
+                    if (Bit == HasUnk8) Self.Unk8.Fields(Visitor);
+                if constexpr (D::Block & HasUnk9)
+                    if (Bit == HasUnk9) Self.Unk9.Fields(Visitor);
+                if constexpr (D::Block & HasTileLoad)
+                    if (Bit == HasTileLoad) Self.TileLoad.Fields(Visitor);
+                if constexpr (D::Block & HasUnk11)
+                    if (Bit == HasUnk11) Self.Unk11.Fields(Visitor);
             }
             void ReadBlock(unsigned Block, BinaryReader& Reader) override {
-                Msb::Detail::ReadVisitor V{Reader};
+                Msb::Detail::ReadVisitor V {Reader};
                 VisitBlock(Block, V);
             }
             /// @brief Writes one of the optional data blocks.
             void WriteBlock(unsigned Block, BinaryWriter& Writer) override {
-                Msb::Detail::WriteVisitor V{Writer};
+                Msb::Detail::WriteVisitor V {Writer};
                 VisitBlock(Block, V);
             }
         };
@@ -1917,9 +1975,9 @@ namespace Souls {
             /// @brief A row in NpcParam that determines a variety of enemy properties.
             int32_t NPCParamID = -1;
             /// @brief The enemy's talk script (ESD).
-            int32_t TalkID    = -1;
+            int32_t TalkID = -1;
             /// @brief Unknown.
-            bool UnkT15       = false;
+            bool UnkT15 = false;
             /// @brief Unknown.
             int16_t PlatoonID = -1;
             /// @brief A row in CharaInitParam that determines a human's inventory and stats.
@@ -1935,13 +1993,13 @@ namespace Souls {
             /// @brief A row in ChrActivateConditionParam that affects when the enemy appears.
             int32_t ChrActivateCondParamID = 0;
             /// @brief Unknown.
-            int32_t UnkT34                 = 0;
+            int32_t UnkT34 = 0;
             /// @brief Unknown.
-            int32_t BackupEventAnimID      = -1;
+            int32_t BackupEventAnimID = -1;
             /// @brief Unknown.
-            int32_t UnkT3C                 = 0;
+            int32_t UnkT3C = 0;
             /// @brief Rows in SpEffectSetParam applied to the enemy.
-            std::array<int32_t, 4> SpEffectSetParamIDs{};
+            std::array<int32_t, 4> SpEffectSetParamIDs {};
             /// @brief Unknown.
             float UnkT84 = 0;
 
@@ -1986,7 +2044,8 @@ namespace Souls {
             /// @brief Fixed visual geometry; not used much in Elden Ring.
             struct MapPiece : PartImpl<MapPiece, 0> {
                 /// @brief Which optional data blocks this part type has (a mask of PartBlocks).
-                static constexpr unsigned Block = HasUnk1 | HasGparam | HasGrass | HasUnk8 | HasUnk9 | HasTileLoad | HasUnk11;
+                static constexpr unsigned Block =
+                  HasUnk1 | HasGparam | HasGrass | HasUnk8 | HasUnk9 | HasTileLoad | HasUnk11;
                 /// @brief Unknown.
                 GparamConfig Gparam;
                 /// @brief Unknown.
@@ -2000,7 +2059,8 @@ namespace Souls {
                 /// @brief Unknown.
                 UnkStruct11 Unk11;
                 MapPiece() { Name = "mXXXXXX_XXXX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
@@ -2024,7 +2084,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t Unk00 = 0;
                 Player() { Name = "c0000_XXXX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(Unk00);
@@ -2035,7 +2096,8 @@ namespace Souls {
             /// @brief Invisible but physical geometry.
             struct Collision : PartImpl<Collision, 5> {
                 /// @brief Which optional data blocks this part type has (a mask of PartBlocks).
-                static constexpr unsigned Block = HasUnk1 | HasUnk2 | HasGparam | HasSceneGparam | HasUnk8 | HasTileLoad | HasUnk11;
+                static constexpr unsigned Block =
+                  HasUnk1 | HasUnk2 | HasGparam | HasSceneGparam | HasUnk8 | HasTileLoad | HasUnk11;
                 /// @brief Unknown.
                 UnkStruct2 Unk2;
                 /// @brief Unknown.
@@ -2056,17 +2118,17 @@ namespace Souls {
                 /// @brief Unknown.
                 uint8_t UnkT02 = 0;
                 /// @brief Unknown.
-                bool UnkT03    = false;
+                bool UnkT03 = false;
                 /// @brief Unknown.
-                float UnkT04   = 0;
+                float UnkT04 = 0;
                 /// @brief Unknown.
                 int32_t UnkT06 = 0;
                 /// @brief Unknown.
-                float UnkT14   = 0;
+                float UnkT14 = 0;
                 /// @brief Location text to display when stepping onto this collision.
                 int32_t LocationTextID = 0;
                 /// @brief Unknown.
-                int32_t UnkT1C         = 0;
+                int32_t UnkT1C = 0;
                 /// @brief Used to determine invasion eligibility (PlayRegionParam).
                 int32_t PlayRegionID = 0;
                 /// @brief Unknown.
@@ -2095,7 +2157,8 @@ namespace Souls {
                 int16_t UnkT4E = 0;
 
                 Collision() { Name = "hXXXXXX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(HitFilterID);
@@ -2142,7 +2205,8 @@ namespace Souls {
                 /// @brief Unknown.
                 int32_t UnkT18 = 0;
                 DummyAsset() { Name = "AEGxxx_xxx_xxxx"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F.Pad(8);
@@ -2176,17 +2240,18 @@ namespace Souls {
                 /// @brief The collision part to attach to.
                 Msb::Ref<CollisionList> CollisionName;
                 /// @brief The map to load when on this collision.
-                std::array<uint8_t, 4> MapID{};
+                std::array<uint8_t, 4> MapID {};
                 /// @brief Unknown.
                 uint8_t UnkT08 = 0;
                 /// @brief Unknown.
-                bool UnkT09    = false;
+                bool UnkT09 = false;
                 /// @brief Unknown.
                 uint8_t UnkT0A = 0;
                 /// @brief Unknown.
-                bool UnkT0B    = false;
+                bool UnkT0B = false;
                 ConnectCollision() { Name = "hXXXXXX_XXXX"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(CollisionName);
@@ -2202,19 +2267,20 @@ namespace Souls {
             /// @brief A placed asset: Elden Ring's dynamic props and interactive things.
             struct Asset : PartImpl<Asset, 13> {
                 /// @brief Which optional data blocks this part type has (a mask of PartBlocks).
-                static constexpr unsigned Block = HasUnk1 | HasUnk2 | HasGparam | HasGrass | HasUnk8 | HasUnk9 | HasTileLoad | HasUnk11;
+                static constexpr unsigned Block =
+                  HasUnk1 | HasUnk2 | HasGparam | HasGrass | HasUnk8 | HasUnk9 | HasTileLoad | HasUnk11;
 
                 /// @brief Unknown.
                 struct AssetUnkStruct1 {
                     /// @brief Unknown.
                     int16_t Unk00 = 0;
                     /// @brief Unknown.
-                    bool Unk04    = false;
+                    bool Unk04 = false;
                     /// @brief Disables summoning and riding Torrent, but only when the asset isn't on a collision that
                     ///        does.
                     bool DisableTorrentAssetOnly = false;
                     /// @brief Unknown.
-                    int32_t Unk1C                = 0;
+                    int32_t Unk1C = 0;
                     /// @brief Unknown.
                     int16_t Unk24 = 0;
                     /// @brief Unknown.
@@ -2223,7 +2289,8 @@ namespace Souls {
                     int32_t Unk28 = 0;
                     /// @brief Unknown.
                     int32_t Unk2C = 0;
-                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                    /// references.
                     template<typename V>
                     void Fields(V& F) {
                         F(Unk00);
@@ -2250,7 +2317,7 @@ namespace Souls {
                     /// @brief Unknown.
                     int32_t Unk04 = 0;
                     /// @brief Unknown.
-                    float Unk14   = 0;
+                    float Unk14 = 0;
                     /// @brief Unknown.
                     uint8_t Unk1C = 0;
                     /// @brief Unknown.
@@ -2259,7 +2326,8 @@ namespace Souls {
                     uint8_t Unk1E = 0;
                     /// @brief Unknown.
                     uint8_t Unk1F = 0;
-                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                    /// references.
                     template<typename V>
                     void Fields(V& F) {
                         F(Unk00);
@@ -2281,7 +2349,7 @@ namespace Souls {
                     /// @brief Unknown.
                     int32_t Unk00 = 0;
                     /// @brief Unknown.
-                    float Unk04   = 0;
+                    float Unk04 = 0;
                     /// @brief Unknown.
                     uint8_t Unk09 = 0;
                     /// @brief Unknown.
@@ -2293,9 +2361,9 @@ namespace Souls {
                     /// @brief Unknown.
                     int16_t Unk0E = 0;
                     /// @brief Unknown.
-                    float Unk10   = 0;
+                    float Unk10 = 0;
                     /// @brief Disables the asset when this map is loaded.
-                    std::array<int8_t, 4> DisableWhenMapLoadedMapID{};
+                    std::array<int8_t, 4> DisableWhenMapLoadedMapID {};
                     /// @brief Unknown.
                     int32_t Unk18 = 0;
                     /// @brief Unknown.
@@ -2305,10 +2373,11 @@ namespace Souls {
                     /// @brief Unknown.
                     uint8_t Unk24 = 0;
                     /// @brief Unknown.
-                    bool Unk25    = false;
+                    bool Unk25 = false;
                     /// @brief Unknown.
                     int32_t Unk28 = 0;
-                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                    /// references.
                     template<typename V>
                     void Fields(V& F) {
                         F(Unk00);
@@ -2335,14 +2404,15 @@ namespace Souls {
                 /// @brief Unknown.
                 struct AssetUnkStruct4 {
                     /// @brief Unknown.
-                    bool Unk00    = false;
+                    bool Unk00 = false;
                     /// @brief Unknown.
                     uint8_t Unk01 = 0;
                     /// @brief Unknown.
                     uint8_t Unk02 = 0;
                     /// @brief Unknown.
-                    bool Unk03    = false;
-                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                    bool Unk03 = false;
+                    /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                    /// references.
                     template<typename V>
                     void Fields(V& F) {
                         F(Unk00);
@@ -2374,13 +2444,13 @@ namespace Souls {
                 /// @brief Unknown.
                 uint8_t UnkT10 = 0;
                 /// @brief Unknown.
-                bool UnkT11    = false;
+                bool UnkT11 = false;
                 /// @brief Unknown.
                 uint8_t UnkT12 = 0;
                 /// @brief Added to the model ID to pick the row in AssetModelSfxParam.
                 int16_t AssetSfxParamRelativeID = 0;
                 /// @brief Unknown.
-                int16_t UnkT1E                  = 0;
+                int16_t UnkT1E = 0;
                 /// @brief Unknown.
                 int32_t UnkT24 = 0;
                 /// @brief Unknown.
@@ -2392,7 +2462,7 @@ namespace Souls {
                 /// @brief Unknown.
                 std::array<Msb::Ref<PartList>, 6> UnkPartNames;
                 /// @brief Unknown.
-                bool UnkT50    = false;
+                bool UnkT50 = false;
                 /// @brief Unknown.
                 uint8_t UnkT51 = 0;
                 /// @brief Unknown.
@@ -2417,7 +2487,8 @@ namespace Souls {
                 AssetUnkStruct4 AssetUnk4;
 
                 Asset() { Name = "AEGxxx_xxx_xxxx"; }
-                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves references.
+                /// @brief Visits the type-specific fields in file order; the visitor reads, writes or resolves
+                /// references.
                 template<typename V>
                 void Fields(V& F) {
                     F(UnkT00);
@@ -2516,7 +2587,7 @@ namespace Souls {
         /// @brief Unknown, but related to muffling regions somehow.
         RouteParam Routes;
         /// @brief Unknown and unused.
-        EmptyParam Layers{73};
+        EmptyParam Layers {73};
         /// @brief Instances of actual things in the map.
         PartsParam Parts;
 

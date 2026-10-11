@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "Regulation.hpp"
 
@@ -19,9 +23,7 @@ namespace Souls::Regulation {
 
         void EncryptFile(std::span<const uint8_t> Key, const std::filesystem::path& Path, BND4& Bnd) {
             const std::vector<uint8_t> Encrypted = EncryptBytes(Key, Bnd);
-            if (Path.has_parent_path()) {
-                std::filesystem::create_directories(Path.parent_path());
-            }
+            if (Path.has_parent_path()) { std::filesystem::create_directories(Path.parent_path()); }
             BinaryWriter Writer(Path);
             Writer.WriteBytes(Encrypted);
             Writer.Finish();

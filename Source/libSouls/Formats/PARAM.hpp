@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -27,14 +31,14 @@ namespace Souls {
     public:
         /// @brief First set of format flags; highly speculative.
         enum class FormatFlags1 : uint8_t {
-            None           = 0,
-            Flag01         = 0b0000'0001,  ///< unknown
-            IntDataOffset  = 0b0000'0010,  ///< expanded header with a 32-bit data offset
-            LongDataOffset = 0b0000'0100,  ///< expanded header with a 64-bit data offset (and 64-bit row offsets)
-            Flag08         = 0b0000'1000,
-            Flag10         = 0b0001'0000,
-            Flag20         = 0b0010'0000,
-            Flag40         = 0b0100'0000,
+            None            = 0,
+            Flag01          = 0b0000'0001,  ///< unknown
+            IntDataOffset   = 0b0000'0010,  ///< expanded header with a 32-bit data offset
+            LongDataOffset  = 0b0000'0100,  ///< expanded header with a 64-bit data offset (and 64-bit row offsets)
+            Flag08          = 0b0000'1000,
+            Flag10          = 0b0001'0000,
+            Flag20          = 0b0010'0000,
+            Flag40          = 0b0100'0000,
             OffsetParamType = 0b1000'0000,  ///< param type string is stored separately, not fixed-width in the header
         };
 
@@ -82,7 +86,7 @@ namespace Souls {
         /// @brief Originally matched the paramdef for version 101, but since is always 0 or 0xFF.
         uint8_t ParamdefFormatVersion = 0;
         /// @brief Unknown.
-        int16_t Unk06                 = 0;
+        int16_t Unk06 = 0;
         /// @brief A revision of the row data structure.
         ///
         /// A paramdef only applies if this matches its data version.

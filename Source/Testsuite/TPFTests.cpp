@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -15,39 +19,39 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
-    namespace fs = std::filesystem;
+    namespace fs   = std::filesystem;
     using Platform = TPF::TPFPlatform;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
     // A small but real-looking DDS file: a DXT1 header with the given dimensions and mipmaps, and fake pixel data.
-    std::vector<uint8_t> MakeDDS(int Width, int Height, int Mips, DDS::DDSCAPS2 Caps2 = static_cast<DDS::DDSCAPS2>(0), size_t Pixels = 64) {
+    std::vector<uint8_t>
+    MakeDDS(int Width, int Height, int Mips, DDS::DDSCAPS2 Caps2 = static_cast<DDS::DDSCAPS2>(0), size_t Pixels = 64) {
         DDS Header;
-        Header.Width       = Width;
-        Header.Height      = Height;
-        Header.MipMapCount = Mips;
+        Header.Width         = Width;
+        Header.Height        = Height;
+        Header.MipMapCount   = Mips;
         Header.Pixels.Flags  = DDS::DDPF::FOURCC;
         Header.Pixels.FourCC = "DXT1";
         Header.Caps2         = Caps2;
         std::vector<uint8_t> Data(Pixels);
-        for (size_t I = 0; I < Data.size(); ++I) Data[I] = static_cast<uint8_t>(I * 7 + Width);
+        for (size_t I = 0; I < Data.size(); ++I)
+            Data[I] = static_cast<uint8_t>(I * 7 + Width);
         return Header.Write(Data);
     }
 
@@ -56,15 +60,16 @@ namespace {
         for (size_t I = 0; I < A.size(); ++I) {
             const auto& X = A[I];
             const auto& Y = B[I];
-            if (X.Name != Y.Name || X.Format != Y.Format || X.Type != Y.Type || X.Mipmaps != Y.Mipmaps || X.Flags1 != Y.Flags1 ||
-                X.Bytes != Y.Bytes || X.Header.has_value() != Y.Header.has_value() || X.Floats.has_value() != Y.Floats.has_value()) {
+            if (X.Name != Y.Name || X.Format != Y.Format || X.Type != Y.Type || X.Mipmaps != Y.Mipmaps ||
+                X.Flags1 != Y.Flags1 || X.Bytes != Y.Bytes || X.Header.has_value() != Y.Header.has_value() ||
+                X.Floats.has_value() != Y.Floats.has_value()) {
                 return false;
             }
             if (X.Header) {
                 const auto& H = *X.Header;
                 const auto& G = *Y.Header;
-                if (H.Width != G.Width || H.Height != G.Height || H.TextureCount != G.TextureCount || H.Unk1 != G.Unk1 ||
-                    H.Unk2 != G.Unk2 || H.DXGIFormat != G.DXGIFormat) {
+                if (H.Width != G.Width || H.Height != G.Height || H.TextureCount != G.TextureCount ||
+                    H.Unk1 != G.Unk1 || H.Unk2 != G.Unk2 || H.DXGIFormat != G.DXGIFormat) {
                     return false;
                 }
             }
@@ -77,21 +82,23 @@ namespace {
         const auto Bytes = MakeDDS(256, 128, 9);
         const DDS Header = DDS::Read(Bytes);
         CHECK(Header.Width == 256 && Header.Height == 128 && Header.MipMapCount == 9);
-        CHECK(Header.Pixels.FourCC == "DXT1" && Header.DataOffset() == 0x80 && !Header.IsCubemap() && !Header.IsVolume());
+        CHECK(Header.Pixels.FourCC == "DXT1" && Header.DataOffset() == 0x80 && !Header.IsCubemap() &&
+              !Header.IsVolume());
         CHECK(Bytes.size() == 0x80 + 64);
         CHECK(DDS::Read(MakeDDS(8, 8, 1, DDS::DDSCAPS2::CUBEMAP)).IsCubemap());
         CHECK(DDS::Read(MakeDDS(8, 8, 1, DDS::DDSCAPS2::VOLUME)).IsVolume());
 
         // The DX10 extension.
         DDS Extended;
-        Extended.Pixels.FourCC = "DX10";
-        Extended.DX10          = DDS::Header10{};
-        Extended.DX10->Format  = DDS::DXGIFormat::BC7_UNORM;
+        Extended.Pixels.FourCC   = "DX10";
+        Extended.DX10            = DDS::Header10 {};
+        Extended.DX10->Format    = DDS::DXGIFormat::BC7_UNORM;
         Extended.DX10->ArraySize = 6;
         const auto ExtendedBytes = Extended.Write(std::vector<uint8_t>(16, 0xAB));
         CHECK(ExtendedBytes.size() == 0x94 + 16);
         const DDS Back = DDS::Read(ExtendedBytes);
-        CHECK(Back.DataOffset() == 0x94 && Back.DX10 && Back.DX10->Format == DDS::DXGIFormat::BC7_UNORM && Back.DX10->ArraySize == 6);
+        CHECK(Back.DataOffset() == 0x94 && Back.DX10 && Back.DX10->Format == DDS::DXGIFormat::BC7_UNORM &&
+              Back.DX10->ArraySize == 6);
         CHECK(DDS::Read(Back.Write({})).DX10->Format == DDS::DXGIFormat::BC7_UNORM);
 
         CHECK(Throws([] { DDS::Read(std::vector<uint8_t>(0x80, 0)); }));
@@ -100,23 +107,27 @@ namespace {
 
     void TestSynthetic() {
         // A PC TPF in each name encoding.
-        for (const uint8_t Encoding : {uint8_t{0}, uint8_t{1}, uint8_t{2}}) {
+        for (const uint8_t Encoding : {uint8_t {0}, uint8_t {1}, uint8_t {2}}) {
             TPF Source;
             Source.Encoding = Encoding;
             Source.Flag2    = 3;
             Source.Textures.emplace_back("plain", 9, 0, MakeDDS(64, 64, 7));
             Source.Textures.emplace_back("cube", 5, 1, MakeDDS(32, 32, 1, DDS::DDSCAPS2::CUBEMAP, 200));
             Source.Textures.emplace_back("volume", 5, 0, MakeDDS(16, 16, 1, DDS::DDSCAPS2::VOLUME, 100));
-            Source.Textures.emplace_back("\xE3\x82\xBD" "name", 1, 0, MakeDDS(4, 4, 3, static_cast<DDS::DDSCAPS2>(0), 33));  // odd data size
-            Source.Textures[0].Floats = TPF::FloatStruct{42, {1.5f, -2.f, 0.25f}};
+            Source.Textures.emplace_back("\xE3\x82\xBD"
+                                         "name",
+                                         1,
+                                         0,
+                                         MakeDDS(4, 4, 3, static_cast<DDS::DDSCAPS2>(0), 33));  // odd data size
+            Source.Textures[0].Floats = TPF::FloatStruct {42, {1.5f, -2.f, 0.25f}};
 
-            CHECK(Source.Textures[0].Type == TPF::TexType::Texture && Source.Textures[1].Type == TPF::TexType::Cubemap &&
-                  Source.Textures[2].Type == TPF::TexType::Volume);
+            CHECK(Source.Textures[0].Type == TPF::TexType::Texture &&
+                  Source.Textures[1].Type == TPF::TexType::Cubemap && Source.Textures[2].Type == TPF::TexType::Volume);
             CHECK(Source.Textures[0].Mipmaps == 7 && Source.Textures[0].ToString() == "[9 Texture] plain");
 
             const auto Bytes = Source.Write();
             CHECK(TPF::Is(Bytes));
-            TPF Back = TPF::Read(Bytes);
+            TPF Back        = TPF::Read(Bytes);
             const bool Same = SameTextures(Source.Textures, Back.Textures) && Back.Platform == Platform::PC &&
                               Back.Encoding == Encoding && Back.Flag2 == 3;
             if (!Same) std::printf("  (encoding %d: textures differ)\n", Encoding);
@@ -142,7 +153,7 @@ namespace {
             CHECK(PackedBack.Write() == Packed);  // an unchanged file writes back as it was
 
             Tpf.DataAlignment = 16;
-            const auto Wide = Tpf.Write();
+            const auto Wide   = Tpf.Write();
             CHECK(TPF::Read(Wide).DataAlignment == 16 && Wide.size() > Padded.size());
             Tpf.DataAlignment = 0;
             CHECK(Throws([&] { Tpf.Write(); }));
@@ -153,7 +164,7 @@ namespace {
             TPF Tpf;
             Tpf.Textures.emplace_back("t", 0, 0, MakeDDS(8, 8, 2));
             Tpf.Textures[0].Bytes = MakeDDS(8, 8, 5, DDS::DDSCAPS2::CUBEMAP);
-            const TPF Back = TPF::Read(Tpf.Write());
+            const TPF Back        = TPF::Read(Tpf.Write());
             CHECK(Back.Textures[0].Type == TPF::TexType::Cubemap && Back.Textures[0].Mipmaps == 5);
         }
 
@@ -188,10 +199,10 @@ namespace {
                 return Tpf;
             };
             for (const Platform Target : {Platform::Xbox360, Platform::PS3, Platform::PS4, Platform::Xbone}) {
-                TPF Source = Make(Target);
+                TPF Source       = Make(Target);
                 const auto Bytes = Source.Write();
-                TPF Back = TPF::Read(Bytes);
-                const bool Same = Back.Platform == Target && SameTextures(Source.Textures, Back.Textures);
+                TPF Back         = TPF::Read(Bytes);
+                const bool Same  = Back.Platform == Target && SameTextures(Source.Textures, Back.Textures);
                 if (!Same) std::printf("  (platform %d: textures differ)\n", static_cast<int>(Target));
                 CHECK(Same);
                 CHECK(Back.Write() == Bytes);
@@ -200,9 +211,10 @@ namespace {
             }
 
             // PS3 with Flag2 == 0 leaves out the second unknown.
-            TPF NoUnk2 = Make(Platform::PS3);
+            TPF NoUnk2   = Make(Platform::PS3);
             NoUnk2.Flag2 = 0;
-            for (auto& Texture : NoUnk2.Textures) Texture.Header->Unk2 = 0;
+            for (auto& Texture : NoUnk2.Textures)
+                Texture.Header->Unk2 = 0;
             const TPF NoUnk2Back = TPF::Read(NoUnk2.Write());
             CHECK(SameTextures(NoUnk2.Textures, NoUnk2Back.Textures));
 
@@ -217,15 +229,16 @@ namespace {
             TPF Tpf;
             Tpf.Textures.emplace_back("t", 0, 0, MakeDDS(8, 8, 1));
             auto Bytes = Tpf.Write();
-            CHECK(!TPF::Is(std::vector<uint8_t>{'T', 'P', 'X', 0}) && !TPF::IsRead(std::vector<uint8_t>(64, 0xAB)).has_value());
+            CHECK(!TPF::Is(std::vector<uint8_t> {'T', 'P', 'X', 0}) &&
+                  !TPF::IsRead(std::vector<uint8_t>(64, 0xAB)).has_value());
             CHECK(Throws([&] { TPF::Read(std::vector<uint8_t>(64, 0xAB)); }));
             std::vector<uint8_t> Truncated(Bytes.begin(), Bytes.begin() + 0x20);
             CHECK(Throws([&] { TPF::Read(Truncated); }));
             std::vector<uint8_t> BadPlatform = Bytes;
-            BadPlatform[0xC] = 3;
+            BadPlatform[0xC]                 = 3;
             CHECK(Throws([&] { TPF::Read(BadPlatform); }));
             std::vector<uint8_t> BadCount = Bytes;
-            BadCount[0xB] = 0x7F;
+            BadCount[0xB]                 = 0x7F;
             CHECK(Throws([&] { TPF::Read(BadCount); }));
             CHECK(Throws([] { TPF::Texture("x", 0, 0, std::vector<uint8_t>(10)); }));  // not a DDS
 
@@ -239,7 +252,7 @@ namespace {
             TPF Tpf;
             Tpf.Textures.emplace_back("t", 0, 0, MakeDDS(8, 8, 1));
             Tpf.Compression = DCX::Type::DCX_DFLT_10000_44_9;
-            const TPF Back = TPF::Read(Tpf.Write());
+            const TPF Back  = TPF::Read(Tpf.Write());
             CHECK(Back.Compression == DCX::Type::DCX_DFLT_10000_44_9 && SameTextures(Tpf.Textures, Back.Textures));
         }
     }
@@ -251,7 +264,8 @@ namespace {
     std::vector<fs::path> Collect(const fs::path& Root, size_t Max) {
         std::vector<fs::path> Found;
         if (!fs::exists(Root)) return Found;
-        for (const auto& Entry : fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
+        for (const auto& Entry :
+             fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
             if (!Entry.is_regular_file()) continue;
             const std::string Name = Entry.path().filename().string();
             if (EndsWith(Name, ".tpf.dcx") || EndsWith(Name, ".tpf")) Found.push_back(Entry.path());
@@ -259,7 +273,8 @@ namespace {
         std::sort(Found.begin(), Found.end());
         const size_t Step = std::max<size_t>(1, Found.size() / std::max<size_t>(1, Max));
         std::vector<fs::path> Sampled;
-        for (size_t I = 0; I < Found.size(); I += Step) Sampled.push_back(Found[I]);
+        for (size_t I = 0; I < Found.size(); I += Step)
+            Sampled.push_back(Found[I]);
         return Sampled;
     }
 
@@ -281,7 +296,8 @@ namespace {
                 TPF Tpf = TPF::Read(Original);
                 ++Files;
                 if (const char* DumpDir = std::getenv("TPF_DUMP_DIR")) {
-                    BinaryWriter Out(fs::path(DumpDir) / (std::string(Label).substr(0, 4) + "_" + Path.filename().string() + ".orig"));
+                    BinaryWriter Out(fs::path(DumpDir) /
+                                     (std::string(Label).substr(0, 4) + "_" + Path.filename().string() + ".orig"));
                     Out.WriteBytes(Original);
                     Out.Finish();
                 }
@@ -295,16 +311,19 @@ namespace {
                         // Every PC texture is a real DDS whose data starts inside the file.
                         const DDS Header = Texture.ReadDDS();
                         ++FourCCs[Header.DX10 ? "DX10" : Header.Pixels.FourCC];
-                        if (Header.Width <= 0 || Header.Height <= 0 || static_cast<size_t>(Header.DataOffset()) > Texture.Bytes.size()) {
-                            std::printf("FAIL %s: texture %s has a bad DDS header\n", Path.string().c_str(), Texture.Name.c_str());
+                        if (Header.Width <= 0 || Header.Height <= 0 ||
+                            static_cast<size_t>(Header.DataOffset()) > Texture.Bytes.size()) {
+                            std::printf("FAIL %s: texture %s has a bad DDS header\n",
+                                        Path.string().c_str(),
+                                        Texture.Name.c_str());
                             ++Failed;
                         }
                     }
                 }
 
-                Tpf.Compression = DCX::Type::None;
+                Tpf.Compression      = DCX::Type::None;
                 const auto Rewritten = Tpf.Write();
-                const TPF Back = TPF::Read(Rewritten);
+                const TPF Back       = TPF::Read(Rewritten);
                 if (!SameTextures(Tpf.Textures, Back.Textures) || Back.Platform != Tpf.Platform) {
                     std::printf("FAIL %s: textures changed after a rewrite\n", Path.string().c_str());
                     ++Failed;
@@ -315,14 +334,22 @@ namespace {
                     static int Shown = 0;
                     if (Shown++ < 6) {
                         size_t At = 0;
-                        while (At < Rewritten.size() && At < Original.size() && Rewritten[At] == Original[At]) ++At;
-                        std::printf("  diff %s: first at 0x%zX, sizes orig 0x%zX rewritten 0x%zX, %zu textures, platform %d, flag2 %d\n",
-                                    Path.filename().string().c_str(), At, Original.size(), Rewritten.size(), Tpf.Textures.size(),
-                                    static_cast<int>(Tpf.Platform), Tpf.Flag2);
+                        while (At < Rewritten.size() && At < Original.size() && Rewritten[At] == Original[At])
+                            ++At;
+                        std::printf("  diff %s: first at 0x%zX, sizes orig 0x%zX rewritten 0x%zX, %zu textures, "
+                                    "platform %d, flag2 %d\n",
+                                    Path.filename().string().c_str(),
+                                    At,
+                                    Original.size(),
+                                    Rewritten.size(),
+                                    Tpf.Textures.size(),
+                                    static_cast<int>(Tpf.Platform),
+                                    Tpf.Flag2);
                         const std::vector<uint8_t>* Both[2] = {&Original, &Rewritten};
                         for (const auto* B : Both) {
                             std::printf("   ");
-                            for (size_t I = At >= 8 ? At - 8 : 0; I < At + 24 && I < B->size(); ++I) std::printf(" %02X", (*B)[I]);
+                            for (size_t I = At >= 8 ? At - 8 : 0; I < At + 24 && I < B->size(); ++I)
+                                std::printf(" %02X", (*B)[I]);
                             std::printf("\n");
                         }
                     }
@@ -332,12 +359,21 @@ namespace {
                 ++Failed;
             }
         }
-        std::printf("%s: %d TPFs, %d textures (%d cubemaps, %d volumes, %d with mipmaps), %d byte-identical rewrites, %d failures\n",
-                    Label, Files, Textures, Cubemaps, Volumes, WithMips, Identical, Failed);
+        std::printf("%s: %d TPFs, %d textures (%d cubemaps, %d volumes, %d with mipmaps), %d byte-identical rewrites, "
+                    "%d failures\n",
+                    Label,
+                    Files,
+                    Textures,
+                    Cubemaps,
+                    Volumes,
+                    WithMips,
+                    Identical,
+                    Failed);
         std::printf("  DDS formats:");
         for (const auto& [FourCC, Count] : FourCCs) {
             std::string Printable;
-            for (char C : FourCC) Printable += (C >= 32 && C < 127) ? C : '.';
+            for (char C : FourCC)
+                Printable += (C >= 32 && C < 127) ? C : '.';
             std::printf(" %s x%d", Printable.c_str(), Count);
         }
         std::printf("\n");
@@ -353,7 +389,8 @@ int RunTPFTests(size_t MaxFiles) {
 
     const fs::path Steam = "C:/Program Files (x86)/Steam/steamapps/common";
     if (fs::exists(Steam / "ELDEN RING/Game")) TestGame("Elden Ring", Steam / "ELDEN RING/Game", MaxFiles);
-    if (fs::exists(Steam / "DARK SOULS REMASTERED")) TestGame("Dark Souls Remastered", Steam / "DARK SOULS REMASTERED", MaxFiles);
+    if (fs::exists(Steam / "DARK SOULS REMASTERED"))
+        TestGame("Dark Souls Remastered", Steam / "DARK SOULS REMASTERED", MaxFiles);
 
     std::printf(Failures == 0 ? "TPF tests passed\n" : "TPF tests: %d failure(s)\n", Failures);
     return Failures;

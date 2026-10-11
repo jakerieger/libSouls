@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "NGP.hpp"
 
@@ -81,9 +85,7 @@ namespace Souls {
     }  // namespace
 
     bool NGP::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "NVG2";
     }
 
@@ -148,23 +150,19 @@ namespace Souls {
             M.Unk00 = Reader.ReadInt32();
             Reader.ReadInt32();  // length of this mesh (including child structs)
             M.Unk08 = Reader.ReadInt32();
-            if (Version == NGPVersion::Scholar) {
-                Reader.Assert<int32_t>(0);
-            }
-            M.BoundingBoxMin             = Reader.ReadVector3();
-            M.BoundingBoxMax             = Reader.ReadVector3();
-            const int32_t VertexCount    = Reader.ReadInt32();
-            const int16_t FaceCount      = Reader.ReadInt16();
-            const int16_t Count30        = Reader.ReadInt16();
-            M.Unk30                      = Reader.ReadInt16();
-            M.Unk32                      = Reader.ReadInt16();
+            if (Version == NGPVersion::Scholar) { Reader.Assert<int32_t>(0); }
+            M.BoundingBoxMin          = Reader.ReadVector3();
+            M.BoundingBoxMax          = Reader.ReadVector3();
+            const int32_t VertexCount = Reader.ReadInt32();
+            const int16_t FaceCount   = Reader.ReadInt16();
+            const int16_t Count30     = Reader.ReadInt16();
+            M.Unk30                   = Reader.ReadInt16();
+            M.Unk32                   = Reader.ReadInt16();
             Reader.Assert<uint8_t>(1);
             Reader.Assert<uint8_t>(0);
             Reader.Assert<uint8_t>(0);
             Reader.Assert<uint8_t>(0);
-            if (Version == NGPVersion::Scholar) {
-                Reader.Assert<int64_t>(0);
-            }
+            if (Version == NGPVersion::Scholar) { Reader.Assert<int64_t>(0); }
             const int64_t VerticesOffset = Reader.ReadVarint();
             const int64_t Offset48       = Reader.ReadVarint();
             const int64_t FacesOffset    = Reader.ReadVarint();
@@ -238,9 +236,7 @@ namespace Souls {
                 Writer.WriteInt32(M.Unk00);
                 Writer.Reserve<int32_t>("MeshLength");
                 Writer.WriteInt32(M.Unk08);
-                if (Version == NGPVersion::Scholar) {
-                    Writer.WriteInt32(0);
-                }
+                if (Version == NGPVersion::Scholar) { Writer.WriteInt32(0); }
                 Writer.WriteVector3(M.BoundingBoxMin);
                 Writer.WriteVector3(M.BoundingBoxMax);
                 Writer.WriteInt32(static_cast<int32_t>(M.Vertices.size()));
@@ -252,9 +248,7 @@ namespace Souls {
                 Writer.WriteByte(0);
                 Writer.WriteByte(0);
                 Writer.WriteByte(0);
-                if (Version == NGPVersion::Scholar) {
-                    Writer.WriteInt64(0);
-                }
+                if (Version == NGPVersion::Scholar) { Writer.WriteInt64(0); }
                 Writer.ReserveVarint("VerticesOffset");
                 Writer.ReserveVarint("Struct2sOffset");
                 Writer.ReserveVarint("FacesOffset");
@@ -307,9 +301,7 @@ namespace Souls {
             }
         };
 
-        if (Version == NGPVersion::Vanilla) {
-            WriteMeshes();
-        }
+        if (Version == NGPVersion::Vanilla) { WriteMeshes(); }
         Writer.Align(VarintSize(Writer));
         Writer.FillVarint("OffsetA", Writer.Position());
         for (const StructA& A : StructAs) {
@@ -338,8 +330,6 @@ namespace Souls {
         Writer.Align(VarintSize(Writer));
         Writer.FillVarint("OffsetD", Writer.Position());
         Writer.WriteArray(StructDs);
-        if (Version == NGPVersion::Scholar) {
-            WriteMeshes();
-        }
+        if (Version == NGPVersion::Scholar) { WriteMeshes(); }
     }
 }  // namespace Souls

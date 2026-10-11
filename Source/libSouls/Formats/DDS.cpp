@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "DDS.hpp"
 
@@ -21,7 +25,8 @@ namespace Souls {
         Result.PitchOrLinearSize = Reader.ReadInt32();
         Result.Depth             = Reader.ReadInt32();
         Result.MipMapCount       = Reader.ReadInt32();
-        for (int32_t& Value : Result.Reserved1) Value = Reader.ReadInt32();
+        for (int32_t& Value : Result.Reserved1)
+            Value = Reader.ReadInt32();
 
         Reader.Assert<int32_t>(32);  // pixel format size
         Result.Pixels.Flags       = static_cast<DDPF>(Reader.ReadUInt32());
@@ -40,12 +45,12 @@ namespace Souls {
 
         if (Result.Pixels.FourCC == "DX10") {
             Header10 Extension;
-            Extension.Format           = static_cast<DXGIFormat>(Reader.ReadUInt32());
+            Extension.Format            = static_cast<DXGIFormat>(Reader.ReadUInt32());
             Extension.ResourceDimension = static_cast<Dimension>(Reader.ReadUInt32());
-            Extension.MiscFlag         = static_cast<ResourceMisc>(Reader.ReadUInt32());
-            Extension.ArraySize        = Reader.ReadUInt32();
-            Extension.MiscFlags2       = static_cast<AlphaMode>(Reader.ReadUInt32());
-            Result.DX10                = Extension;
+            Extension.MiscFlag          = static_cast<ResourceMisc>(Reader.ReadUInt32());
+            Extension.ArraySize         = Reader.ReadUInt32();
+            Extension.MiscFlags2        = static_cast<AlphaMode>(Reader.ReadUInt32());
+            Result.DX10                 = Extension;
         }
         return Result;
     }
@@ -61,7 +66,8 @@ namespace Souls {
         Writer.WriteInt32(PitchOrLinearSize);
         Writer.WriteInt32(Depth);
         Writer.WriteInt32(MipMapCount);
-        for (const int32_t Value : Reserved1) Writer.WriteInt32(Value);
+        for (const int32_t Value : Reserved1)
+            Writer.WriteInt32(Value);
 
         Writer.WriteInt32(32);
         Writer.WriteUInt32(static_cast<uint32_t>(Pixels.Flags));
@@ -81,7 +87,7 @@ namespace Souls {
         Writer.WriteInt32(Reserved2);
 
         if (Pixels.FourCC == "DX10") {
-            const Header10 Extension = DX10.value_or(Header10{});
+            const Header10 Extension = DX10.value_or(Header10 {});
             Writer.WriteUInt32(static_cast<uint32_t>(Extension.Format));
             Writer.WriteUInt32(static_cast<uint32_t>(Extension.ResourceDimension));
             Writer.WriteUInt32(static_cast<uint32_t>(Extension.MiscFlag));

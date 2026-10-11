@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -35,7 +39,10 @@ namespace Souls {
 
             Goal() = default;
             /// @brief A goal with the given settings.
-            Goal(int32_t ID, std::string Name, bool BattleInterrupt, bool LogicInterrupt,
+            Goal(int32_t ID,
+                 std::string Name,
+                 bool BattleInterrupt,
+                 bool LogicInterrupt,
                  std::optional<std::string> LogicInterruptName = std::nullopt)
                 : ID(ID), Name(std::move(Name)), BattleInterrupt(BattleInterrupt), LogicInterrupt(LogicInterrupt),
                   LogicInterruptName(std::move(LogicInterruptName)) {}

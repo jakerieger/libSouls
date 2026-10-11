@@ -1,3 +1,11 @@
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
 /*
  * Exercises the C API from a C translation unit, which proves souls.h is valid C (no C++ leaks into it) and that the
  * functions behave through plain C calls. Returns the number of failed checks.
@@ -9,12 +17,12 @@
 
 static int failures = 0;
 
-#define CHECK(cond)                                                         \
-    do {                                                                    \
-        if (!(cond)) {                                                      \
-            printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #cond);         \
-            ++failures;                                                     \
-        }                                                                   \
+#define CHECK(cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(cond)) {                                                                                                 \
+            printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #cond);                                                     \
+            ++failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
 static void test_fmg(void) {
@@ -49,7 +57,7 @@ static void test_fmg(void) {
 
 static void test_binder(void) {
     const uint8_t hello[] = {'h', 'e', 'l', 'l', 'o'};
-    SoulsBinder* bnd = souls_binder_new(SOULS_BINDER_BND4);
+    SoulsBinder* bnd      = souls_binder_new(SOULS_BINDER_BND4);
     CHECK(bnd != NULL);
     CHECK(souls_binder_kind(bnd) == SOULS_BINDER_BND4);
     CHECK(souls_binder_set_compression(bnd, SOULS_DCX_NONE) == SOULS_OK);
@@ -85,14 +93,15 @@ static void test_binder(void) {
 static void test_dcx(void) {
     uint8_t raw[1000];
     size_t i;
-    for (i = 0; i < sizeof raw; ++i) raw[i] = (uint8_t)(i % 7);
+    for (i = 0; i < sizeof raw; ++i)
+        raw[i] = (uint8_t)(i % 7);
 
     SoulsBuffer packed = souls_dcx_compress(raw, sizeof raw, souls_dcx_default_type(SOULS_GAME_DARK_SOULS_3));
     CHECK(packed.data != NULL);
     CHECK(souls_dcx_is(packed.data, packed.size) == 1);
     CHECK(souls_dcx_is(raw, sizeof raw) == 0);
 
-    SoulsDcxType kind = SOULS_DCX_UNKNOWN;
+    SoulsDcxType kind    = SOULS_DCX_UNKNOWN;
     SoulsBuffer unpacked = souls_dcx_decompress(packed.data, packed.size, &kind);
     CHECK(unpacked.size == sizeof raw && memcmp(unpacked.data, raw, sizeof raw) == 0);
     CHECK(kind == SOULS_DCX_DCX_DFLT_10000_44_9);
@@ -105,7 +114,7 @@ static void test_dcx(void) {
 
 static void test_errors(void) {
     const uint8_t junk[] = {1, 2, 3, 4, 5, 6, 7, 8};
-    SoulsFMG* fmg = souls_fmg_read_memory(junk, sizeof junk);
+    SoulsFMG* fmg        = souls_fmg_read_memory(junk, sizeof junk);
     CHECK(fmg == NULL);
     CHECK(souls_last_error_code() != SOULS_OK);
     CHECK(strlen(souls_last_error()) > 0);

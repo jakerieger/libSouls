@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "DCX.hpp"
 #include <libSouls/Oodle26.hpp>
@@ -19,9 +23,7 @@ namespace Souls::DCX {
     namespace {
         // Reads Size bytes at an absolute position without moving the reader. Empty if out of range.
         std::string GetASCII(BinaryReader& Reader, int64_t Position, size_t Size) {
-            if (Position < 0 || Position + static_cast<int64_t>(Size) > Reader.Length()) {
-                return {};
-            }
+            if (Position < 0 || Position + static_cast<int64_t>(Size) > Reader.Length()) { return {}; }
             Reader.StepIn(Position);
             std::string Result = Reader.ReadString(Size);
             Reader.StepOut();
@@ -29,9 +31,7 @@ namespace Souls::DCX {
         }
 
         std::vector<uint8_t> GetBytes(BinaryReader& Reader, int64_t Position, int32_t Size) {
-            if (Size < 0) {
-                throw BinaryException("Negative chunk size in DCX");
-            }
+            if (Size < 0) { throw BinaryException("Negative chunk size in DCX"); }
             Reader.StepIn(Position);
             std::vector<uint8_t> Result = Reader.ReadBytes(static_cast<size_t>(Size));
             Reader.StepOut();
@@ -48,17 +48,15 @@ namespace Souls::DCX {
         }
 
         // Inflates the chunk table shared by DCP_EDGE and DCX_EDGE.
-        std::vector<uint8_t> ReadEdgeChunks(BinaryReader& Reader, int32_t ChunkCount, int64_t DataStart,
-                                            int32_t UncompressedSize) {
-            if (ChunkCount < 0) {
-                throw BinaryException("Negative chunk count in EDGE DCX");
-            }
+        std::vector<uint8_t>
+        ReadEdgeChunks(BinaryReader& Reader, int32_t ChunkCount, int64_t DataStart, int32_t UncompressedSize) {
+            if (ChunkCount < 0) { throw BinaryException("Negative chunk count in EDGE DCX"); }
             std::vector<uint8_t> Output;
             Output.reserve(static_cast<size_t>(std::max(UncompressedSize, 0)));
             for (int32_t I = 0; I < ChunkCount; ++I) {
                 Reader.Assert<int32_t>(0);
-                const int32_t Offset = Reader.ReadInt32();
-                const int32_t Size   = Reader.ReadInt32();
+                const int32_t Offset  = Reader.ReadInt32();
+                const int32_t Size    = Reader.ReadInt32();
                 const bool Compressed = Reader.Assert<int32_t>(0, 1) == 1;
 
                 const std::vector<uint8_t> Chunk = GetBytes(Reader, DataStart + Offset, Size);
@@ -130,9 +128,7 @@ namespace Souls::DCX {
             const int32_t ChunkCount = Br.ReadInt32();
             Br.Assert<int32_t>(0x100000);
 
-            if (EgdtSize != 0x20 + ChunkCount * 0x10) {
-                throw BinaryException("Unexpected EgdT size in EDGE DCX.");
-            }
+            if (EgdtSize != 0x20 + ChunkCount * 0x10) { throw BinaryException("Unexpected EgdT size in EDGE DCX."); }
 
             OutType = Type::DCP_EDGE;
             return ReadEdgeChunks(Br, ChunkCount, DataStart, UncompressedSize);
@@ -173,12 +169,8 @@ namespace Souls::DCX {
             const int32_t ChunkCount = Br.ReadInt32();
             Br.Assert<int32_t>(0x100000);
 
-            if (Unk14 != 0x50 + ChunkCount * 0x10) {
-                throw BinaryException("Unexpected unk1 value in EDGE DCX.");
-            }
-            if (EgdtSize != 0x24 + ChunkCount * 0x10) {
-                throw BinaryException("Unexpected EgdT size in EDGE DCX.");
-            }
+            if (Unk14 != 0x50 + ChunkCount * 0x10) { throw BinaryException("Unexpected unk1 value in EDGE DCX."); }
+            if (EgdtSize != 0x24 + ChunkCount * 0x10) { throw BinaryException("Unexpected EgdT size in EDGE DCX."); }
 
             OutType = Type::DCX_EDGE;
             return ReadEdgeChunks(Br, ChunkCount, DcaStart + DcaSize, UncompressedSize);
@@ -228,8 +220,8 @@ namespace Souls::DCX {
         }
 
         // Header shared by DCX_KRAK and DCX_ZSTD; returns {uncompressed size, compressed size}.
-        std::pair<uint32_t, uint32_t> ReadDCXHeaderModern(BinaryReader& Br, std::string_view Format, uint8_t& Level,
-                                                          uint8_t MinLevel, uint8_t MaxLevel) {
+        std::pair<uint32_t, uint32_t> ReadDCXHeaderModern(
+          BinaryReader& Br, std::string_view Format, uint8_t& Level, uint8_t MinLevel, uint8_t MaxLevel) {
             Br.AssertMagic("DCX\0"sv);
             Br.Assert<int32_t>(0x11000);
             Br.Assert<int32_t>(0x18);
@@ -261,7 +253,7 @@ namespace Souls::DCX {
         }
 
         std::vector<uint8_t> DecompressDCXKRAK(BinaryReader& Br, Type& OutType) {
-            uint8_t Level = 0;
+            uint8_t Level                                 = 0;
             const auto [UncompressedSize, CompressedSize] = ReadDCXHeaderModern(Br, "KRAK"sv, Level, 6, 9);
             if (Level == 6) {
                 OutType = Type::DCX_KRAK_6;
@@ -280,7 +272,7 @@ namespace Souls::DCX {
         }
 
         std::vector<uint8_t> DecompressDCXZSTD(BinaryReader& Br, Type& OutType) {
-            uint8_t Level = 0;
+            uint8_t Level                                 = 0;
             const auto [UncompressedSize, CompressedSize] = ReadDCXHeaderModern(Br, "ZSTD"sv, Level, 21, 21);
             OutType                                       = Type::DCX_ZSTD;
 
@@ -322,7 +314,8 @@ namespace Souls::DCX {
             constexpr size_t ChunkSize = 0x10000;
             const int32_t ChunkCount   = static_cast<int32_t>((Data.size() + ChunkSize - 1) / ChunkSize);
             // Uncompressed size of the final chunk: a full chunk when the data is an exact multiple.
-            const int32_t TrailingSize = Data.empty() ? 0 : static_cast<int32_t>(Data.size() - (ChunkCount - 1) * ChunkSize);
+            const int32_t TrailingSize =
+              Data.empty() ? 0 : static_cast<int32_t>(Data.size() - (ChunkCount - 1) * ChunkSize);
 
             Bw.WriteMagic("DCX\0"sv);
             Bw.WriteInt32(0x10000);
@@ -393,8 +386,9 @@ namespace Souls::DCX {
         }
 
         void CompressDCXDFLT(std::span<const uint8_t> Data, BinaryWriter& Bw, Type Compression) {
-            const int32_t Unk04 =
-              (Compression == Type::DCX_DFLT_10000_24_9 || Compression == Type::DCX_DFLT_10000_44_9) ? 0x10000 : 0x11000;
+            const int32_t Unk04 = (Compression == Type::DCX_DFLT_10000_24_9 || Compression == Type::DCX_DFLT_10000_44_9)
+                                    ? 0x10000
+                                    : 0x11000;
             const int32_t Unk10 = Compression == Type::DCX_DFLT_10000_24_9 ? 0x24 : 0x44;
             const int32_t Unk14 = Compression == Type::DCX_DFLT_10000_24_9 ? 0x2C : 0x4C;
             const uint8_t Level = Compression == Type::DCX_DFLT_11000_44_8 ? 8 : 9;
@@ -427,8 +421,11 @@ namespace Souls::DCX {
         }
 
         // Header and payload shared by DCX_KRAK and DCX_ZSTD.
-        void WriteDCXModern(BinaryWriter& Bw, size_t UncompressedSize, std::span<const uint8_t> Compressed,
-                            std::string_view Format, uint8_t Level) {
+        void WriteDCXModern(BinaryWriter& Bw,
+                            size_t UncompressedSize,
+                            std::span<const uint8_t> Compressed,
+                            std::string_view Format,
+                            uint8_t Level) {
             Bw.WriteMagic("DCX\0"sv);
             Bw.WriteInt32(0x11000);
             Bw.WriteInt32(0x18);
@@ -456,8 +453,10 @@ namespace Souls::DCX {
         void CompressDCXKRAK(std::span<const uint8_t> Data, BinaryWriter& Bw, Type Compression) {
             const uint8_t Level = Compression == Type::DCX_KRAK_6 ? 6 : 9;
             std::vector<uint8_t> Source(Data.begin(), Data.end());
-            const std::vector<uint8_t> Compressed = Oodle26::Compress(
-              Source, Oodle26::OodleLZCompressor::Kraken, static_cast<Oodle26::OodleLZCompressionLevel>(Level));
+            const std::vector<uint8_t> Compressed =
+              Oodle26::Compress(Source,
+                                Oodle26::OodleLZCompressor::Kraken,
+                                static_cast<Oodle26::OodleLZCompressionLevel>(Level));
             if (Compressed.empty() && !Data.empty()) {
                 throw BinaryException("Oodle compression failed (is the Oodle DLL available?)");
             }
@@ -466,9 +465,7 @@ namespace Souls::DCX {
 
         void CompressDCXZSTD(std::span<const uint8_t> Data, BinaryWriter& Bw) {
             const std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> Context(ZSTD_createCCtx(), &ZSTD_freeCCtx);
-            if (!Context) {
-                throw BinaryException("Failed to create Zstd context");
-            }
+            if (!Context) { throw BinaryException("Failed to create Zstd context"); }
             // Parameters match the files the games ship: level 21, no content size in the frame, 64 KiB window.
             ZSTD_CCtx_setParameter(Context.get(), ZSTD_c_compressionLevel, 21);
             ZSTD_CCtx_setParameter(Context.get(), ZSTD_c_contentSizeFlag, 0);
@@ -488,9 +485,7 @@ namespace Souls::DCX {
 
 #pragma region Detection
     bool Is(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = GetASCII(Reader, 0, 4);
         return Magic == "DCP\0"sv || Magic == "DCX\0"sv;
     }
@@ -508,7 +503,7 @@ namespace Souls::DCX {
 
 #pragma region Decompress
     std::vector<uint8_t> Decompress(BinaryReader& Reader, Type& OutType) {
-        Reader.Order = Endian::Big;
+        Reader.Order            = Endian::Big;
         const std::string Magic = GetASCII(Reader, 0, 4);
         if (Magic == "DCP\0"sv) {
             const std::string Format = GetASCII(Reader, 4, 4);

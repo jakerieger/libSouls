@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BinderHashTable.hpp"
 
@@ -38,22 +42,20 @@ namespace Souls::BinderHashTable {
                 break;
             }
         }
-        if (GroupCount == 0) {
-            throw BinaryException("Could not determine hash group count.");
-        }
+        if (GroupCount == 0) { throw BinaryException("Could not determine hash group count."); }
 
         std::vector<std::vector<PathHash>> HashLists(GroupCount);
         for (size_t I = 0; I < Files.size(); ++I) {
-            if (!Files[I].Name) {
-                throw BinaryException("Binder file " + std::to_string(I) + " has no name to hash");
-            }
-            const PathHash Entry{static_cast<int32_t>(I), Util::FromPathHash(*Files[I].Name)};
+            if (!Files[I].Name) { throw BinaryException("Binder file " + std::to_string(I) + " has no name to hash"); }
+            const PathHash Entry {static_cast<int32_t>(I), Util::FromPathHash(*Files[I].Name)};
             HashLists[Entry.Hash % GroupCount].push_back(Entry);
         }
 
         // Entries within a group are ordered by hash. Stable, so equal hashes keep file order.
         for (auto& List : HashLists) {
-            std::stable_sort(List.begin(), List.end(), [](const PathHash& A, const PathHash& B) { return A.Hash < B.Hash; });
+            std::stable_sort(List.begin(), List.end(), [](const PathHash& A, const PathHash& B) {
+                return A.Hash < B.Hash;
+            });
         }
 
         std::vector<HashGroup> Groups;

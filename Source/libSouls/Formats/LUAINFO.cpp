@@ -1,14 +1,16 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "LUAINFO.hpp"
 
 namespace Souls {
     bool LUAINFO::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "LUAI";
     }
 
@@ -44,9 +46,7 @@ namespace Souls {
                 const int64_t NameOffset          = Reader.ReadInt64();
                 const int64_t InterruptNameOffset = Reader.ReadInt64();
                 G.Name                            = Reader.GetUTF16Text(NameOffset);
-                if (InterruptNameOffset != 0) {
-                    G.LogicInterruptName = Reader.GetUTF16Text(InterruptNameOffset);
-                }
+                if (InterruptNameOffset != 0) { G.LogicInterruptName = Reader.GetUTF16Text(InterruptNameOffset); }
             } else {
                 const uint32_t NameOffset          = Reader.ReadUInt32();
                 const uint32_t InterruptNameOffset = Reader.ReadUInt32();
@@ -54,9 +54,7 @@ namespace Souls {
                 G.LogicInterrupt                   = Reader.ReadBool();
                 Reader.Assert<int16_t>(0);
                 G.Name = Reader.GetShiftJIS(NameOffset);
-                if (InterruptNameOffset != 0) {
-                    G.LogicInterruptName = Reader.GetShiftJIS(InterruptNameOffset);
-                }
+                if (InterruptNameOffset != 0) { G.LogicInterruptName = Reader.GetShiftJIS(InterruptNameOffset); }
             }
             Goals.push_back(std::move(G));
         }

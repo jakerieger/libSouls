@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -24,8 +28,8 @@ namespace Souls {
     /// Which alternative a field uses depends on its type: s8 -> int8_t, u8 -> uint8_t, s16 -> int16_t, u16 ->
     /// uint16_t, s32 and b32 -> int32_t, u32 -> uint32_t, f32 and angle32 -> float, f64 -> double, fixstr and fixstrW
     /// -> std::string (UTF-8), dummy8 -> std::vector<uint8_t> (or uint8_t for a bitfield).
-    using CellValue =
-      std::variant<int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, float, double, std::string, std::vector<uint8_t>>;
+    using CellValue = std::
+      variant<int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, float, double, std::string, std::vector<uint8_t>>;
 
     /// @brief Where each field of a PARAMDEF lives within a row's bytes, and how to read and write it.
     ///
@@ -126,7 +130,7 @@ namespace Souls {
 
         std::vector<FieldInfo> Fields;
         std::map<std::string, size_t, std::less<>> ByName;
-        size_t Size   = 0;
+        size_t Size    = 0;
         bool BigEndian = false;
     };
 

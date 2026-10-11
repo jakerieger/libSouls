@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MCG.hpp"
 
@@ -30,8 +34,8 @@ namespace Souls {
         Nodes.reserve(static_cast<size_t>(NodeCount));
         for (int32_t I = 0; I < NodeCount; ++I) {
             Node N;
-            const int32_t ConnectionCount = Reader.ReadInt32();
-            N.Position                    = Reader.ReadVector3();
+            const int32_t ConnectionCount   = Reader.ReadInt32();
+            N.Position                      = Reader.ReadVector3();
             const int32_t NodeIndicesOffset = Reader.ReadInt32();
             const int32_t EdgeIndicesOffset = Reader.ReadInt32();
             N.Unk18                         = Reader.ReadInt32();
@@ -46,17 +50,17 @@ namespace Souls {
         Edges.reserve(static_cast<size_t>(EdgeCount));
         for (int32_t I = 0; I < EdgeCount; ++I) {
             Edge E;
-            E.NodeIndexA              = Reader.ReadInt32();
-            const int32_t CountA      = Reader.ReadInt32();
-            const int32_t OffsetA     = Reader.ReadInt32();
-            E.NodeIndexB              = Reader.ReadInt32();
-            const int32_t CountB      = Reader.ReadInt32();
-            const int32_t OffsetB     = Reader.ReadInt32();
-            E.MCPRoomIndex            = Reader.ReadInt32();
-            E.MapID                   = Reader.ReadUInt32();
-            E.Unk20                   = Reader.ReadFloat();
-            E.UnkIndicesA             = GetInt32s(Reader, OffsetA, CountA);
-            E.UnkIndicesB             = GetInt32s(Reader, OffsetB, CountB);
+            E.NodeIndexA          = Reader.ReadInt32();
+            const int32_t CountA  = Reader.ReadInt32();
+            const int32_t OffsetA = Reader.ReadInt32();
+            E.NodeIndexB          = Reader.ReadInt32();
+            const int32_t CountB  = Reader.ReadInt32();
+            const int32_t OffsetB = Reader.ReadInt32();
+            E.MCPRoomIndex        = Reader.ReadInt32();
+            E.MapID               = Reader.ReadUInt32();
+            E.Unk20               = Reader.ReadFloat();
+            E.UnkIndicesA         = GetInt32s(Reader, OffsetA, CountA);
+            E.UnkIndicesB         = GetInt32s(Reader, OffsetB, CountB);
             Edges.push_back(std::move(E));
         }
     }

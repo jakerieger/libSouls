@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -27,9 +31,7 @@ int RunRealFileTests(size_t MaxFiles) {
 
     std::vector<fs::path> Files;
     for (const auto& Entry : fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
-        if (Entry.is_regular_file() && Entry.path().extension() == ".dcx") {
-            Files.push_back(Entry.path());
-        }
+        if (Entry.is_regular_file() && Entry.path().extension() == ".dcx") { Files.push_back(Entry.path()); }
     }
     std::sort(Files.begin(), Files.end());
 
@@ -44,18 +46,14 @@ int RunRealFileTests(size_t MaxFiles) {
             BinaryReader Reader(Path);
             std::vector<uint8_t> Original = Reader.ReadBytes(static_cast<size_t>(Reader.Length()));
 
-            DCX::Type Type = DCX::Type::Unknown;
+            DCX::Type Type  = DCX::Type::Unknown;
             const auto Data = DCX::Decompress(Original, Type);
             ++Histogram[Type];
-            if (Data.empty()) {
-                throw BinaryException("decompressed to nothing");
-            }
+            if (Data.empty()) { throw BinaryException("decompressed to nothing"); }
 
             // Recompress with the detected type, then decompress again.
             const auto Packed = DCX::Compress(Data, Type);
-            if (DCX::Decompress(Packed) != Data) {
-                throw BinaryException("recompressed data does not round-trip");
-            }
+            if (DCX::Decompress(Packed) != Data) { throw BinaryException("recompressed data does not round-trip"); }
             // The fixed headers (everything except the size fields) should match what the game wrote.
             if (Type != DCX::Type::DCX_EDGE && Original.size() >= 0x4C && Packed.size() >= 0x4C) {
                 auto Same = [&](size_t From, size_t To) {
@@ -74,7 +72,10 @@ int RunRealFileTests(size_t MaxFiles) {
     }
 
     std::printf("Real DCX files: %d sampled of %zu, %d failed, %d header mismatches\n",
-                Tested, Files.size(), Failures, HeaderMismatches);
+                Tested,
+                Files.size(),
+                Failures,
+                HeaderMismatches);
     for (const auto& [Type, Count] : Histogram) {
         std::printf("  type %d: %d\n", static_cast<int>(Type), Count);
     }

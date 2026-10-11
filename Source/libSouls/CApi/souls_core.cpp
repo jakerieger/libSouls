@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -38,13 +42,11 @@ namespace Souls::CApi {
             throw;
         } catch (const BinaryException& E) {
             const std::string Message = E.what();
-            const bool IsIo           = Message.rfind("Failed to open", 0) == 0 || Message.rfind("Failed to write", 0) == 0 ||
+            const bool IsIo = Message.rfind("Failed to open", 0) == 0 || Message.rfind("Failed to write", 0) == 0 ||
                               Message.rfind("Failed to create", 0) == 0;
             SetError(IsIo ? SOULS_ERR_IO : SOULS_ERR_PARSE, Message);
             return State().Status;
-        } catch (const NotFound& E) {
-            SetError(SOULS_ERR_NOT_FOUND, E.what());
-        } catch (const Unsupported& E) {
+        } catch (const NotFound& E) { SetError(SOULS_ERR_NOT_FOUND, E.what()); } catch (const Unsupported& E) {
             SetError(SOULS_ERR_UNSUPPORTED, E.what());
         } catch (const std::invalid_argument& E) {
             SetError(SOULS_ERR_INVALID_ARGUMENT, E.what());
@@ -54,9 +56,7 @@ namespace Souls::CApi {
             SetError(SOULS_ERR_IO, E.what());
         } catch (const std::ios_base::failure& E) {
             SetError(SOULS_ERR_IO, E.what());
-        } catch (const std::exception& E) {
-            SetError(SOULS_ERR_INTERNAL, E.what());
-        } catch (...) {
+        } catch (const std::exception& E) { SetError(SOULS_ERR_INTERNAL, E.what()); } catch (...) {
             SetError(SOULS_ERR_INTERNAL, "unknown error");
         }
         return State().Status;
@@ -67,24 +67,18 @@ namespace Souls::CApi {
     }
 
     std::filesystem::path PathFrom(const char* Utf8) {
-        if (!Utf8) {
-            ThrowInvalid("path is NULL");
-        }
+        if (!Utf8) { ThrowInvalid("path is NULL"); }
         return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(Utf8)));
     }
 
     std::span<const uint8_t> Bytes(const uint8_t* Data, size_t Size) {
-        if (!Data && Size != 0) {
-            ThrowInvalid("data is NULL");
-        }
+        if (!Data && Size != 0) { ThrowInvalid("data is NULL"); }
         return {Data, Size};
     }
 
     std::vector<uint8_t> ReadAllBytes(const std::filesystem::path& Path) {
         std::ifstream File(Path, std::ios::binary | std::ios::ate);
-        if (!File) {
-            throw BinaryException("Failed to open file for reading: " + Path.string());
-        }
+        if (!File) { throw BinaryException("Failed to open file for reading: " + Path.string()); }
         const std::streamsize Size = File.tellg();
         File.seekg(0);
         std::vector<uint8_t> Data(static_cast<size_t>(Size));
@@ -95,14 +89,10 @@ namespace Souls::CApi {
     }
 
     SoulsBuffer MakeBuffer(const uint8_t* Data, size_t Size) {
-        SoulsBuffer Result{nullptr, 0};
-        if (Size == 0) {
-            return Result;
-        }
+        SoulsBuffer Result {nullptr, 0};
+        if (Size == 0) { return Result; }
         Result.data = static_cast<uint8_t*>(std::malloc(Size));
-        if (!Result.data) {
-            throw std::bad_alloc();
-        }
+        if (!Result.data) { throw std::bad_alloc(); }
         std::memcpy(Result.data, Data, Size);
         Result.size = Size;
         return Result;
@@ -145,7 +135,7 @@ SOULS_C_API void souls_buffer_free(SoulsBuffer buffer) {
 }
 
 SOULS_C_API SoulsBuffer souls_read_file(const char* path) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(ReadAllBytes(PathFrom(path))); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(ReadAllBytes(PathFrom(path))); });
 }
 
 SOULS_C_API int souls_oodle_set_dll_path(const char* path) {
@@ -159,14 +149,22 @@ SOULS_C_API int souls_oodle_is_available(void) {
 SOULS_C_API SoulsDcxType souls_dcx_default_type(SoulsGame game) {
     return GuardValue(SOULS_DCX_UNKNOWN, [&] {
         switch (game) {
-            case SOULS_GAME_DEMONS_SOULS: return static_cast<SoulsDcxType>(DCX::DefaultType::DemonsSouls);
-            case SOULS_GAME_DARK_SOULS_1: return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls1);
-            case SOULS_GAME_DARK_SOULS_2: return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls2);
-            case SOULS_GAME_BLOODBORNE: return static_cast<SoulsDcxType>(DCX::DefaultType::Bloodborne);
-            case SOULS_GAME_DARK_SOULS_3: return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls3);
-            case SOULS_GAME_SEKIRO: return static_cast<SoulsDcxType>(DCX::DefaultType::Sekiro);
-            case SOULS_GAME_ELDEN_RING: return static_cast<SoulsDcxType>(DCX::DefaultType::EldenRing);
-            case SOULS_GAME_ARMORED_CORE_6: return static_cast<SoulsDcxType>(DCX::DefaultType::ArmoredCore6);
+            case SOULS_GAME_DEMONS_SOULS:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::DemonsSouls);
+            case SOULS_GAME_DARK_SOULS_1:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls1);
+            case SOULS_GAME_DARK_SOULS_2:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls2);
+            case SOULS_GAME_BLOODBORNE:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::Bloodborne);
+            case SOULS_GAME_DARK_SOULS_3:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::DarkSouls3);
+            case SOULS_GAME_SEKIRO:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::Sekiro);
+            case SOULS_GAME_ELDEN_RING:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::EldenRing);
+            case SOULS_GAME_ARMORED_CORE_6:
+                return static_cast<SoulsDcxType>(DCX::DefaultType::ArmoredCore6);
         }
         ThrowInvalid("invalid game");
     });
@@ -177,16 +175,15 @@ SOULS_C_API int souls_dcx_is(const uint8_t* data, size_t size) {
 }
 
 SOULS_C_API SoulsBuffer souls_dcx_decompress(const uint8_t* data, size_t size, SoulsDcxType* out_type) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
-        DCX::Type Kind = DCX::Type::Unknown;
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] {
+        DCX::Type Kind                    = DCX::Type::Unknown;
         const std::vector<uint8_t> Result = DCX::Decompress(Bytes(data, size), Kind);
-        if (out_type) {
-            *out_type = static_cast<SoulsDcxType>(static_cast<int>(Kind));
-        }
+        if (out_type) { *out_type = static_cast<SoulsDcxType>(static_cast<int>(Kind)); }
         return MakeBuffer(Result);
     });
 }
 
 SOULS_C_API SoulsBuffer souls_dcx_compress(const uint8_t* data, size_t size, SoulsDcxType type) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(DCX::Compress(Bytes(data, size), DcxFrom(type))); });
+    return GuardValue(SoulsBuffer {nullptr, 0},
+                      [&] { return MakeBuffer(DCX::Compress(Bytes(data, size), DcxFrom(type))); });
 }

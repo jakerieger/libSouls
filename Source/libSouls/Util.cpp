@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "Util.hpp"
 
@@ -29,17 +33,13 @@ namespace Souls::Util {
 
     std::string GetRealExtension(const std::filesystem::path& Path) {
         std::filesystem::path Name = Path.filename();
-        if (Name.extension() == ".dcx") {
-            Name = Name.stem();
-        }
+        if (Name.extension() == ".dcx") { Name = Name.stem(); }
         return Name.extension().string();
     }
 
     std::string GetRealFileName(const std::filesystem::path& Path) {
         std::filesystem::path Name = Path.filename();
-        if (Name.extension() == ".dcx") {
-            Name = Name.stem();
-        }
+        if (Name.extension() == ".dcx") { Name = Name.stem(); }
         return Name.stem().string();
     }
 
@@ -48,9 +48,7 @@ namespace Souls::Util {
         for (char& C : Hashable) {
             C = C == '\\' ? '/' : static_cast<char>(std::tolower(static_cast<unsigned char>(C)));
         }
-        if (Hashable.empty() || Hashable.front() != '/') {
-            Hashable.insert(Hashable.begin(), '/');
-        }
+        if (Hashable.empty() || Hashable.front() != '/') { Hashable.insert(Hashable.begin(), '/'); }
 
         uint32_t Hash = 0;
         for (const char C : Hashable) {
@@ -64,9 +62,7 @@ namespace Souls::Util {
         for (char& C : Hashable) {
             C = C == '\\' ? '/' : static_cast<char>(std::tolower(static_cast<unsigned char>(C)));
         }
-        if (Hashable.empty() || Hashable.front() != '/') {
-            Hashable.insert(Hashable.begin(), '/');
-        }
+        if (Hashable.empty() || Hashable.front() != '/') { Hashable.insert(Hashable.begin(), '/'); }
 
         uint64_t Hash = 0;
         for (const char C : Hashable) {
@@ -76,19 +72,11 @@ namespace Souls::Util {
     }
 
     bool IsPrime(uint32_t Candidate) {
-        if (Candidate < 2) {
-            return false;
-        }
-        if (Candidate == 2) {
-            return true;
-        }
-        if (Candidate % 2 == 0) {
-            return false;
-        }
+        if (Candidate < 2) { return false; }
+        if (Candidate == 2) { return true; }
+        if (Candidate % 2 == 0) { return false; }
         for (uint64_t I = 3; I * I <= Candidate; I += 2) {
-            if (Candidate % I == 0) {
-                return false;
-            }
+            if (Candidate % I == 0) { return false; }
         }
         return true;
     }
@@ -105,29 +93,23 @@ namespace Souls::Util {
 
     BinderTime BinderTimestampToDate(std::string_view Timestamp) {
         // Format: YY<month letter>D+<hour letter>M+  (two digits, a word char, digits, a word char, digits)
-        size_t Pos = 0;
-        auto Fail  = [] { throw BinaryException("Unrecognized timestamp format."); };
+        size_t Pos  = 0;
+        auto Fail   = [] { throw BinaryException("Unrecognized timestamp format."); };
         auto Digits = [&](size_t Min) {
             const size_t Start = Pos;
             while (Pos < Timestamp.size() && IsDigit(Timestamp[Pos])) {
                 ++Pos;
             }
-            if (Pos - Start < Min || Pos - Start > 9) {
-                Fail();
-            }
+            if (Pos - Start < Min || Pos - Start > 9) { Fail(); }
             return std::stoi(std::string(Timestamp.substr(Start, Pos - Start)));
         };
         auto Letter = [&] {
-            if (Pos >= Timestamp.size() || !IsWordChar(Timestamp[Pos])) {
-                Fail();
-            }
+            if (Pos >= Timestamp.size() || !IsWordChar(Timestamp[Pos])) { Fail(); }
             return Timestamp[Pos++];
         };
 
         // Upstream's regex is (\d\d)(\w)(\d+)(\w)(\d+); the letters encode month/hour as offsets from 'A'.
-        if (Digits(2) > 99 || Pos != 2) {
-            Fail();
-        }
+        if (Digits(2) > 99 || Pos != 2) { Fail(); }
         const int Year   = std::stoi(std::string(Timestamp.substr(0, 2))) + 2000;
         const int Month  = Letter() - 'A';
         const int Day    = Digits(1);
@@ -135,19 +117,20 @@ namespace Souls::Util {
         const int Minute = Digits(1);
 
         using namespace std::chrono;
-        const year_month_day Date{
-          std::chrono::year{Year}, std::chrono::month{static_cast<unsigned>(Month)}, std::chrono::day{static_cast<unsigned>(Day)}};
+        const year_month_day Date {std::chrono::year {Year},
+                                   std::chrono::month {static_cast<unsigned>(Month)},
+                                   std::chrono::day {static_cast<unsigned>(Day)}};
         if (!Date.ok() || Hour < 0 || Hour > 23 || Minute < 0 || Minute > 59) {
             throw BinaryException("Binder timestamp is not a valid date.");
         }
-        return sys_days{Date} + hours{Hour} + minutes{Minute};
+        return sys_days {Date} + hours {Hour} + minutes {Minute};
     }
 
     std::string DateToBinderTimestamp(BinderTime Time) {
         using namespace std::chrono;
         const sys_days Days = floor<days>(Time);
-        const year_month_day Date{Days};
-        const hh_mm_ss<minutes> Clock{Time - Days};
+        const year_month_day Date {Days};
+        const hh_mm_ss<minutes> Clock {Time - Days};
 
         const int Year = static_cast<int>(Date.year()) - 2000;
         if (Year < 0 || Year > 99) {
@@ -181,38 +164,28 @@ namespace Souls::Util {
         while (true) {
             const size_t End = Text.find(' ', Pos);
             const std::string Token(Text.substr(Pos, End == std::string_view::npos ? End : End - Pos));
-            size_t Used = 0;
+            size_t Used         = 0;
             unsigned long Value = 0;
             try {
                 Value = std::stoul(Token, &Used, 16);
-            } catch (const std::exception&) {
-                throw BinaryException("Invalid hex byte \"" + Token + "\"");
-            }
-            if (Used != Token.size() || Value > 0xFF) {
-                throw BinaryException("Invalid hex byte \"" + Token + "\"");
-            }
+            } catch (const std::exception&) { throw BinaryException("Invalid hex byte \"" + Token + "\""); }
+            if (Used != Token.size() || Value > 0xFF) { throw BinaryException("Invalid hex byte \"" + Token + "\""); }
             Bytes.push_back(static_cast<uint8_t>(Value));
-            if (End == std::string_view::npos) {
-                return Bytes;
-            }
+            if (End == std::string_view::npos) { return Bytes; }
             Pos = End + 1;
         }
     }
 
     std::vector<uint8_t> ReadZlib(BinaryReader& Reader, int CompressedSize) {
-        if (CompressedSize < 2) {
-            throw BinaryException("Zlib block is too small");
-        }
+        if (CompressedSize < 2) { throw BinaryException("Zlib block is too small"); }
         Reader.Assert<uint8_t>(0x78);
         Reader.Assert<uint8_t>(0x01, 0x5E, 0x9C, 0xDA);
         return InflateRaw(Reader.ReadBytes(static_cast<size_t>(CompressedSize - 2)));
     }
 
     std::vector<uint8_t> InflateRaw(std::span<const uint8_t> Compressed) {
-        z_stream Stream{};
-        if (inflateInit2(&Stream, -15) != Z_OK) {
-            throw BinaryException("Failed to initialize inflate");
-        }
+        z_stream Stream {};
+        if (inflateInit2(&Stream, -15) != Z_OK) { throw BinaryException("Failed to initialize inflate"); }
         Stream.next_in  = const_cast<Bytef*>(Compressed.data());
         Stream.avail_in = static_cast<uInt>(Compressed.size());
 
@@ -220,9 +193,7 @@ namespace Souls::Util {
         size_t Written = 0;
         int Result     = Z_OK;
         while (Result == Z_OK) {
-            if (Written == Output.size()) {
-                Output.resize(Output.size() * 2);
-            }
+            if (Written == Output.size()) { Output.resize(Output.size() * 2); }
             Stream.next_out  = Output.data() + Written;
             Stream.avail_out = static_cast<uInt>(Output.size() - Written);
             Result           = inflate(&Stream, Z_NO_FLUSH);
@@ -238,7 +209,7 @@ namespace Souls::Util {
     }
 
     std::vector<uint8_t> DeflateRaw(std::span<const uint8_t> Input, int Level) {
-        z_stream Stream{};
+        z_stream Stream {};
         if (deflateInit2(&Stream, Level, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY) != Z_OK) {
             throw BinaryException("Failed to initialize deflate");
         }
@@ -246,9 +217,9 @@ namespace Souls::Util {
         Stream.avail_in = static_cast<uInt>(Input.size());
 
         std::vector<uint8_t> Output(deflateBound(&Stream, static_cast<uLong>(Input.size())));
-        Stream.next_out  = Output.data();
-        Stream.avail_out = static_cast<uInt>(Output.size());
-        const int Result = deflate(&Stream, Z_FINISH);
+        Stream.next_out   = Output.data();
+        Stream.avail_out  = static_cast<uInt>(Output.size());
+        const int Result  = deflate(&Stream, Z_FINISH);
         const size_t Size = Output.size() - Stream.avail_out;
         deflateEnd(&Stream);
 

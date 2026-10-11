@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "ParamMetadata.hpp"
 
@@ -14,31 +18,35 @@ namespace Souls {
     namespace {
         std::string Lower(std::string_view Text) {
             std::string Result(Text);
-            std::transform(Result.begin(), Result.end(), Result.begin(), [](unsigned char C) { return static_cast<char>(std::tolower(C)); });
+            std::transform(Result.begin(), Result.end(), Result.begin(), [](unsigned char C) {
+                return static_cast<char>(std::tolower(C));
+            });
             return Result;
         }
 
         std::string ReadText(const std::filesystem::path& Path) {
             std::ifstream File(Path, std::ios::binary);
-            if (!File) {
-                throw BinaryException("Failed to open file for reading: " + Path.string());
-            }
+            if (!File) { throw BinaryException("Failed to open file for reading: " + Path.string()); }
             std::ostringstream Buffer;
             Buffer << File.rdbuf();
             std::string Text = Buffer.str();
-            if (Text.size() >= 3 && static_cast<uint8_t>(Text[0]) == 0xEF && static_cast<uint8_t>(Text[1]) == 0xBB && static_cast<uint8_t>(Text[2]) == 0xBF) {
+            if (Text.size() >= 3 && static_cast<uint8_t>(Text[0]) == 0xEF && static_cast<uint8_t>(Text[1]) == 0xBB &&
+                static_cast<uint8_t>(Text[2]) == 0xBF) {
                 Text.erase(0, 3);
             }
             return Text;
         }
 
         std::string_view Trim(std::string_view Text) {
-            while (!Text.empty() && std::isspace(static_cast<unsigned char>(Text.front()))) Text.remove_prefix(1);
-            while (!Text.empty() && std::isspace(static_cast<unsigned char>(Text.back()))) Text.remove_suffix(1);
+            while (!Text.empty() && std::isspace(static_cast<unsigned char>(Text.front())))
+                Text.remove_prefix(1);
+            while (!Text.empty() && std::isspace(static_cast<unsigned char>(Text.back())))
+                Text.remove_suffix(1);
             return Text;
         }
 
-        std::vector<std::filesystem::path> FilesWithExtension(const std::filesystem::path& Folder, std::string_view Extension) {
+        std::vector<std::filesystem::path> FilesWithExtension(const std::filesystem::path& Folder,
+                                                              std::string_view Extension) {
             if (!std::filesystem::is_directory(Folder)) {
                 throw BinaryException("The folder doesn't exist: " + Folder.string());
             }
@@ -56,40 +64,37 @@ namespace Souls {
 #pragma region ParamNameRepository
     void ParamNameRepository::Add(std::string_view ParamName, int32_t ID, std::string Name) {
         Table& T = Tables[Lower(ParamName)];
-        if (T.Name.empty()) {
-            T.Name = std::string(ParamName);
-        }
+        if (T.Name.empty()) { T.Name = std::string(ParamName); }
         T.Names[ID] = std::move(Name);
     }
 
     MetadataLoadResult ParamNameRepository::AddFile(const std::filesystem::path& File) {
         MetadataLoadResult Result;
         try {
-            const std::string Text = ReadText(File);
+            const std::string Text      = ReadText(File);
             const std::string ParamName = File.stem().string();
-            size_t Added = 0;
+            size_t Added                = 0;
             std::istringstream Lines(Text);
             std::string Line;
             while (std::getline(Lines, Line)) {
                 const std::string_view Trimmed = Trim(Line);
                 if (Trimmed.empty()) continue;
                 // "<ID> <name>"; a line with just an ID names the row with nothing.
-                const size_t Space = Trimmed.find_first_of(" \t");
+                const size_t Space            = Trimmed.find_first_of(" \t");
                 const std::string_view IdText = Space == std::string_view::npos ? Trimmed : Trimmed.substr(0, Space);
-                int32_t ID = 0;
-                const auto [End, Error] = std::from_chars(IdText.data(), IdText.data() + IdText.size(), ID);
+                int32_t ID                    = 0;
+                const auto [End, Error]       = std::from_chars(IdText.data(), IdText.data() + IdText.size(), ID);
                 if (Error != std::errc() || End != IdText.data() + IdText.size()) {
                     continue;  // not a row line (a comment or a header)
                 }
-                const std::string_view Name = Space == std::string_view::npos ? std::string_view() : Trim(Trimmed.substr(Space));
+                const std::string_view Name =
+                  Space == std::string_view::npos ? std::string_view() : Trim(Trimmed.substr(Space));
                 Add(ParamName, ID, std::string(Name));
                 ++Added;
             }
             Result.Files   = 1;
             Result.Entries = Added;
-        } catch (const std::exception& E) {
-            Result.Errors.push_back({File, E.what()});
-        }
+        } catch (const std::exception& E) { Result.Errors.push_back({File, E.what()}); }
         return Result;
     }
 
@@ -134,7 +139,8 @@ namespace Souls {
 
     std::vector<std::string> ParamNameRepository::ParamNames() const {
         std::vector<std::string> Result;
-        for (const auto& [Key, T] : Tables) Result.push_back(T.Name);
+        for (const auto& [Key, T] : Tables)
+            Result.push_back(T.Name);
         return Result;
     }
 #pragma endregion
@@ -152,9 +158,7 @@ namespace Souls {
             Result.Entries = Parsed.Entries.size();
             Add(std::move(Parsed));
             Result.Files = 1;
-        } catch (const std::exception& E) {
-            Result.Errors.push_back({File, E.what()});
-        }
+        } catch (const std::exception& E) { Result.Errors.push_back({File, E.what()}); }
         return Result;
     }
 
@@ -176,7 +180,8 @@ namespace Souls {
 
     std::vector<const PARAMTDF*> ParamEnumRepository::All() const {
         std::vector<const PARAMTDF*> Result;
-        for (const auto& [Key, E] : Enums) Result.push_back(&E);
+        for (const auto& [Key, E] : Enums)
+            Result.push_back(&E);
         return Result;
     }
 #pragma endregion

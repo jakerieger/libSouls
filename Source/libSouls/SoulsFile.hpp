@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -108,9 +112,7 @@ namespace Souls {
 #pragma region Is
         /// @brief Whether the data (after any DCX decompression) is this format.
         static bool Is(std::span<const uint8_t> Data) {
-            if (Data.empty()) {
-                return false;
-            }
+            if (Data.empty()) { return false; }
             BinaryReader Source(Data);
             return IsReader(Source);
         }
@@ -118,9 +120,7 @@ namespace Souls {
         /// @brief Whether the file on disk (after any DCX decompression) is this format.
         static bool Is(const std::filesystem::path& Path) {
             BinaryReader Source(Path);
-            if (Source.Length() == 0) {
-                return false;
-            }
+            if (Source.Length() == 0) { return false; }
             return IsReader(Source);
         }
 #pragma endregion
@@ -181,9 +181,7 @@ namespace Souls {
             T File;
             DCX::DecompressedReader Decompressed(Source);
             BinaryReader& Reader = Decompressed.Reader();
-            if (!AsBase(File).IsImpl(Reader)) {
-                return std::nullopt;
-            }
+            if (!AsBase(File).IsImpl(Reader)) { return std::nullopt; }
             Reader.Seek(0);
             File.Compression = Decompressed.Compression();
             AsBase(File).ReadImpl(Reader);

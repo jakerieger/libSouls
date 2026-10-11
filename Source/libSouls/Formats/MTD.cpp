@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MTD.hpp"
 
@@ -30,9 +34,7 @@ namespace Souls {
 
         std::string ReadMarkedString(BinaryReader& Reader, uint8_t Marker) {
             const int32_t Length = Reader.ReadInt32();
-            if (Length < 0) {
-                throw BinaryException("Negative MTD string length");
-            }
+            if (Length < 0) { throw BinaryException("Negative MTD string length"); }
             std::string Value = Reader.ReadShiftJIS(static_cast<size_t>(Length));
             AssertMarker(Reader, Marker);
             return Value;
@@ -51,7 +53,10 @@ namespace Souls {
             int64_t Start   = 0;
         };
 
-        Block ReadBlock(BinaryReader& Reader, std::optional<int32_t> Type, std::optional<int32_t> Version, std::optional<uint8_t> Marker) {
+        Block ReadBlock(BinaryReader& Reader,
+                        std::optional<int32_t> Type,
+                        std::optional<int32_t> Version,
+                        std::optional<uint8_t> Marker) {
             Reader.Assert<int32_t>(0);
             Reader.ReadUInt32();  // length
             Block B;
@@ -87,29 +92,42 @@ namespace Souls {
         }
 
         void FinishBlock(BinaryWriter& Writer, const Block& B) {
-            Writer.Fill<uint32_t>("Block" + std::to_string(B.Start), static_cast<uint32_t>(Writer.Position() - B.Start));
+            Writer.Fill<uint32_t>("Block" + std::to_string(B.Start),
+                                  static_cast<uint32_t>(Writer.Position() - B.Start));
         }
 
         const char* ParamTypeName(MTD::ParamType Type) {
             switch (Type) {
-                case MTD::ParamType::Bool: return "bool";
-                case MTD::ParamType::Int: return "int";
-                case MTD::ParamType::Int2: return "int2";
-                case MTD::ParamType::Float: return "float";
-                case MTD::ParamType::Float2: return "float2";
-                case MTD::ParamType::Float3: return "float3";
-                case MTD::ParamType::Float4: return "float4";
+                case MTD::ParamType::Bool:
+                    return "bool";
+                case MTD::ParamType::Int:
+                    return "int";
+                case MTD::ParamType::Int2:
+                    return "int2";
+                case MTD::ParamType::Float:
+                    return "float";
+                case MTD::ParamType::Float2:
+                    return "float2";
+                case MTD::ParamType::Float3:
+                    return "float3";
+                case MTD::ParamType::Float4:
+                    return "float4";
             }
             return "";
         }
 
         MTD::ParamType ParseParamType(std::string Name) {
-            std::transform(Name.begin(), Name.end(), Name.begin(), [](unsigned char C) { return static_cast<char>(std::tolower(C)); });
-            for (const auto Type : {MTD::ParamType::Bool, MTD::ParamType::Int, MTD::ParamType::Int2, MTD::ParamType::Float,
-                                    MTD::ParamType::Float2, MTD::ParamType::Float3, MTD::ParamType::Float4}) {
-                if (Name == ParamTypeName(Type)) {
-                    return Type;
-                }
+            std::transform(Name.begin(), Name.end(), Name.begin(), [](unsigned char C) {
+                return static_cast<char>(std::tolower(C));
+            });
+            for (const auto Type : {MTD::ParamType::Bool,
+                                    MTD::ParamType::Int,
+                                    MTD::ParamType::Int2,
+                                    MTD::ParamType::Float,
+                                    MTD::ParamType::Float2,
+                                    MTD::ParamType::Float3,
+                                    MTD::ParamType::Float4}) {
+                if (Name == ParamTypeName(Type)) { return Type; }
             }
             throw BinaryException("Unknown MTD param type: " + Name);
         }
@@ -117,20 +135,32 @@ namespace Souls {
 
     MTD::Param::Param(std::string Name, ParamType Type) : Name(std::move(Name)), Type(Type) {
         switch (Type) {
-            case ParamType::Bool: Value = false; break;
-            case ParamType::Float: Value = 0.f; break;
-            case ParamType::Float2: Value = std::vector<float>(2); break;
-            case ParamType::Float3: Value = std::vector<float>(3); break;
-            case ParamType::Float4: Value = std::vector<float>(4); break;
-            case ParamType::Int: Value = int32_t{0}; break;
-            case ParamType::Int2: Value = std::vector<int32_t>(2); break;
+            case ParamType::Bool:
+                Value = false;
+                break;
+            case ParamType::Float:
+                Value = 0.f;
+                break;
+            case ParamType::Float2:
+                Value = std::vector<float>(2);
+                break;
+            case ParamType::Float3:
+                Value = std::vector<float>(3);
+                break;
+            case ParamType::Float4:
+                Value = std::vector<float>(4);
+                break;
+            case ParamType::Int:
+                Value = int32_t {0};
+                break;
+            case ParamType::Int2:
+                Value = std::vector<int32_t>(2);
+                break;
         }
     }
 
     bool MTD::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 0x30) {
-            return false;
-        }
+        if (Reader.Length() < 0x30) { return false; }
         return Reader.GetASCII(0x2C, 4) == "MTD ";
     }
 
@@ -141,9 +171,7 @@ namespace Souls {
             ReadBlock(Reader, 1, 2, 0xB0);  // header
             {
                 const std::string Magic = ReadMarkedString(Reader, 0x34);
-                if (Magic != "MTD ") {
-                    throw BinaryException("Not an MTD: marked string was " + Magic);
-                }
+                if (Magic != "MTD ") { throw BinaryException("Not an MTD: marked string was " + Magic); }
                 Reader.Assert<int32_t>(1000);
             }
             AssertMarker(Reader, 0x01);
@@ -165,15 +193,29 @@ namespace Souls {
                         P.Type = ParseParamType(ReadMarkedString(Reader, 0x04));
                         Reader.Assert<int32_t>(1);
                         ReadBlock(Reader, std::nullopt, 1, std::nullopt);  // value
-                        Reader.ReadInt32();                                 // value count
+                        Reader.ReadInt32();                                // value count
                         switch (P.Type) {
-                            case ParamType::Int: P.Value = Reader.ReadInt32(); break;
-                            case ParamType::Int2: P.Value = Reader.ReadArray<int32_t>(2); break;
-                            case ParamType::Bool: P.Value = Reader.ReadBool(); break;
-                            case ParamType::Float: P.Value = Reader.ReadFloat(); break;
-                            case ParamType::Float2: P.Value = Reader.ReadArray<float>(2); break;
-                            case ParamType::Float3: P.Value = Reader.ReadArray<float>(3); break;
-                            case ParamType::Float4: P.Value = Reader.ReadArray<float>(4); break;
+                            case ParamType::Int:
+                                P.Value = Reader.ReadInt32();
+                                break;
+                            case ParamType::Int2:
+                                P.Value = Reader.ReadArray<int32_t>(2);
+                                break;
+                            case ParamType::Bool:
+                                P.Value = Reader.ReadBool();
+                                break;
+                            case ParamType::Float:
+                                P.Value = Reader.ReadFloat();
+                                break;
+                            case ParamType::Float2:
+                                P.Value = Reader.ReadArray<float>(2);
+                                break;
+                            case ParamType::Float3:
+                                P.Value = Reader.ReadArray<float>(3);
+                                break;
+                            case ParamType::Float4:
+                                P.Value = Reader.ReadArray<float>(4);
+                                break;
                         }
                         AssertMarker(Reader, 0x04);
                         Reader.Assert<int32_t>(0);
@@ -199,9 +241,9 @@ namespace Souls {
                         T.ShaderDataIndex = Reader.ReadInt32();
                         if (T.Extended) {
                             Reader.Assert<int32_t>(0xA3);
-                            T.Path                = ReadMarkedString(Reader, 0xBA);
+                            T.Path                   = ReadMarkedString(Reader, 0xBA);
                             const int32_t FloatCount = Reader.ReadInt32();
-                            T.UnkFloats           = Reader.ReadArray<float>(static_cast<size_t>(FloatCount));
+                            T.UnkFloats              = Reader.ReadArray<float>(static_cast<size_t>(FloatCount));
                         }
                         Textures.push_back(std::move(T));
                     }
@@ -217,7 +259,7 @@ namespace Souls {
     }
 
     void MTD::WriteImpl(BinaryWriter& Writer) {
-        Writer.Order = Endian::Little;
+        Writer.Order          = Endian::Little;
         const Block FileBlock = WriteBlock(Writer, 0, 3, 0x01);
         {
             const Block HeaderBlock = WriteBlock(Writer, 1, 2, 0xB0);
@@ -248,25 +290,63 @@ namespace Souls {
                             uint8_t ValueMarker    = 0xFF;
                             int32_t ValueCount     = -1;
                             switch (P.Type) {
-                                case ParamType::Bool: ValueBlockType = 0x1000; ValueMarker = 0xC0; ValueCount = 1; break;
-                                case ParamType::Int: ValueBlockType = 0x1001; ValueMarker = 0xC5; ValueCount = 1; break;
-                                case ParamType::Int2: ValueBlockType = 0x1001; ValueMarker = 0xC5; ValueCount = 2; break;
-                                case ParamType::Float: ValueBlockType = 0x1002; ValueMarker = 0xCA; ValueCount = 1; break;
-                                case ParamType::Float2: ValueBlockType = 0x1002; ValueMarker = 0xCA; ValueCount = 2; break;
-                                case ParamType::Float3: ValueBlockType = 0x1002; ValueMarker = 0xCA; ValueCount = 3; break;
-                                case ParamType::Float4: ValueBlockType = 0x1002; ValueMarker = 0xCA; ValueCount = 4; break;
+                                case ParamType::Bool:
+                                    ValueBlockType = 0x1000;
+                                    ValueMarker    = 0xC0;
+                                    ValueCount     = 1;
+                                    break;
+                                case ParamType::Int:
+                                    ValueBlockType = 0x1001;
+                                    ValueMarker    = 0xC5;
+                                    ValueCount     = 1;
+                                    break;
+                                case ParamType::Int2:
+                                    ValueBlockType = 0x1001;
+                                    ValueMarker    = 0xC5;
+                                    ValueCount     = 2;
+                                    break;
+                                case ParamType::Float:
+                                    ValueBlockType = 0x1002;
+                                    ValueMarker    = 0xCA;
+                                    ValueCount     = 1;
+                                    break;
+                                case ParamType::Float2:
+                                    ValueBlockType = 0x1002;
+                                    ValueMarker    = 0xCA;
+                                    ValueCount     = 2;
+                                    break;
+                                case ParamType::Float3:
+                                    ValueBlockType = 0x1002;
+                                    ValueMarker    = 0xCA;
+                                    ValueCount     = 3;
+                                    break;
+                                case ParamType::Float4:
+                                    ValueBlockType = 0x1002;
+                                    ValueMarker    = 0xCA;
+                                    ValueCount     = 4;
+                                    break;
                             }
                             const Block ValueBlock = WriteBlock(Writer, ValueBlockType, 1, ValueMarker);
                             {
                                 Writer.WriteInt32(ValueCount);
                                 switch (P.Type) {
-                                    case ParamType::Int: Writer.WriteInt32(std::get<int32_t>(P.Value)); break;
-                                    case ParamType::Int2: Writer.WriteArray(std::get<std::vector<int32_t>>(P.Value)); break;
-                                    case ParamType::Bool: Writer.WriteBool(std::get<bool>(P.Value)); break;
-                                    case ParamType::Float: Writer.WriteFloat(std::get<float>(P.Value)); break;
+                                    case ParamType::Int:
+                                        Writer.WriteInt32(std::get<int32_t>(P.Value));
+                                        break;
+                                    case ParamType::Int2:
+                                        Writer.WriteArray(std::get<std::vector<int32_t>>(P.Value));
+                                        break;
+                                    case ParamType::Bool:
+                                        Writer.WriteBool(std::get<bool>(P.Value));
+                                        break;
+                                    case ParamType::Float:
+                                        Writer.WriteFloat(std::get<float>(P.Value));
+                                        break;
                                     case ParamType::Float2:
                                     case ParamType::Float3:
-                                    case ParamType::Float4: Writer.WriteArray(std::get<std::vector<float>>(P.Value)); break;
+                                    case ParamType::Float4:
+                                        Writer.WriteArray(std::get<std::vector<float>>(P.Value));
+                                        break;
                                 }
                             }
                             FinishBlock(Writer, ValueBlock);

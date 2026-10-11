@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "PARAMDEF.hpp"
 
@@ -42,7 +46,7 @@ namespace Souls {
         T ParseNumber(const std::string& Text, const char* What) {
             std::string Trimmed = Trim(Text);
             if (!Trimmed.empty() && Trimmed.front() == '+') Trimmed.erase(Trimmed.begin());
-            T Value{};
+            T Value {};
             const auto Result = std::from_chars(Trimmed.data(), Trimmed.data() + Trimmed.size(), Value);
             if (Result.ec != std::errc() || Result.ptr != Trimmed.data() + Trimmed.size()) {
                 Fail(std::string("invalid ") + What + " \"" + Text + "\"");
@@ -87,8 +91,10 @@ namespace Souls {
                 case DefType::u16:
                 case DefType::s32:
                 case DefType::u32:
-                case DefType::b32: return true;
-                default: return false;
+                case DefType::b32:
+                    return true;
+                default:
+                    return false;
             }
         }
 #pragma endregion
@@ -139,24 +145,19 @@ namespace Souls {
         }
 
         EditorValue ParseVariableValue(const PARAMDEF& Def, DefType Type, const std::string& Text) {
-            if (!Def.VariableEditorValueTypes()) {
-                return ParseNumber<float>(Text, "value");
-            }
+            if (!Def.VariableEditorValueTypes()) { return ParseNumber<float>(Text, "value"); }
             if (IsIntegerLike(Type)) return ParseNumber<int32_t>(Text, "value");
             if (Type == DefType::f32 || Type == DefType::angle32) return ParseNumber<float>(Text, "value");
             if (Type == DefType::f64) return ParseNumber<double>(Text, "value");
-            return std::monostate{};
+            return std::monostate {};
         }
 
-        EditorValue ReadVariableValueOrDefault(const PARAMDEF& Def,
-                                               const pugi::xml_node& Node,
-                                               DefType Type,
-                                               const char* Name,
-                                               const EditorValue& Default) {
+        EditorValue ReadVariableValueOrDefault(
+          const PARAMDEF& Def, const pugi::xml_node& Node, DefType Type, const char* Name, const EditorValue& Default) {
             const auto Text = ChildText(Node, Name);
             if (Def.VariableEditorValueTypes() && !IsIntegerLike(Type) && Type != DefType::f32 &&
                 Type != DefType::angle32 && Type != DefType::f64) {
-                return std::monostate{};
+                return std::monostate {};
             }
             if (!Text) return Default;
             return ParseVariableValue(Def, Type, *Text);
@@ -199,18 +200,31 @@ namespace Souls {
             }
             Result.InternalName = InternalName;
 
-            Result.DisplayName = ChildText(Node, "DisplayName").value_or(Result.InternalName);
+            Result.DisplayName  = ChildText(Node, "DisplayName").value_or(Result.InternalName);
             Result.InternalType = ChildText(Node, "Enum").value_or(ParamUtil::DefTypeName(Result.DisplayType));
-            Result.Description = ChildText(Node, "Description");
-            Result.DisplayFormat = ChildText(Node, "DisplayFormat").value_or(ParamUtil::GetDefaultFormat(Result.DisplayType));
+            Result.Description  = ChildText(Node, "Description");
+            Result.DisplayFormat =
+              ChildText(Node, "DisplayFormat").value_or(ParamUtil::GetDefaultFormat(Result.DisplayType));
             if (const auto Flags = ChildText(Node, "EditFlags")) {
                 Result.EditorFlags = ParseEditFlags(*Flags);
             } else {
                 Result.EditorFlags = ParamUtil::GetDefaultEditFlags(Result.DisplayType);
             }
-            Result.Minimum   = ReadVariableValueOrDefault(Def, Node, Result.DisplayType, "Minimum", ParamUtil::GetDefaultMinimum(&Def, Result.DisplayType));
-            Result.Maximum   = ReadVariableValueOrDefault(Def, Node, Result.DisplayType, "Maximum", ParamUtil::GetDefaultMaximum(&Def, Result.DisplayType));
-            Result.Increment = ReadVariableValueOrDefault(Def, Node, Result.DisplayType, "Increment", ParamUtil::GetDefaultIncrement(&Def, Result.DisplayType));
+            Result.Minimum   = ReadVariableValueOrDefault(Def,
+                                                        Node,
+                                                        Result.DisplayType,
+                                                        "Minimum",
+                                                        ParamUtil::GetDefaultMinimum(&Def, Result.DisplayType));
+            Result.Maximum   = ReadVariableValueOrDefault(Def,
+                                                        Node,
+                                                        Result.DisplayType,
+                                                        "Maximum",
+                                                        ParamUtil::GetDefaultMaximum(&Def, Result.DisplayType));
+            Result.Increment = ReadVariableValueOrDefault(Def,
+                                                          Node,
+                                                          Result.DisplayType,
+                                                          "Increment",
+                                                          ParamUtil::GetDefaultIncrement(&Def, Result.DisplayType));
             if (const auto SortID = ChildText(Node, "SortID")) Result.SortID = ParseNumber<int32_t>(*SortID, "SortID");
 
             Result.UnkB8 = ChildText(Node, "UnkB8");
@@ -252,7 +266,10 @@ namespace Souls {
         }
 
         // Elements holding a value are left out when it's the default, to keep the files small.
-        void AddDefaultElement(pugi::xml_node Parent, const char* Name, const std::string& Value, const std::string& Default) {
+        void AddDefaultElement(pugi::xml_node Parent,
+                               const char* Name,
+                               const std::string& Value,
+                               const std::string& Default) {
             if (Value != Default) AddTextElement(Parent, Name, Value);
         }
 
@@ -282,7 +299,8 @@ namespace Souls {
                 } else if (Type == DefType::f32 || Type == DefType::angle32) {
                     if (AsFloat(Value) != AsFloat(Default)) AddTextElement(Parent, Name, FormatNumber(AsFloat(Value)));
                 } else if (Type == DefType::f64) {
-                    if (AsDouble(Value) != AsDouble(Default)) AddTextElement(Parent, Name, FormatNumber(AsDouble(Value)));
+                    if (AsDouble(Value) != AsDouble(Default))
+                        AddTextElement(Parent, Name, FormatNumber(AsDouble(Value)));
                 }
                 return;
             }
@@ -306,12 +324,32 @@ namespace Souls {
             AddDefaultElement(Node, "DisplayName", Field.DisplayName, Field.InternalName);
             AddDefaultElement(Node, "Enum", Field.InternalType, ParamUtil::DefTypeName(Field.DisplayType));
             AddOptionalElement(Node, "Description", Field.Description);
-            AddDefaultElement(Node, "DisplayFormat", Field.DisplayFormat, ParamUtil::GetDefaultFormat(Field.DisplayType));
-            AddDefaultElement(Node, "EditFlags", EditFlagsToString(Field.EditorFlags),
+            AddDefaultElement(Node,
+                              "DisplayFormat",
+                              Field.DisplayFormat,
+                              ParamUtil::GetDefaultFormat(Field.DisplayType));
+            AddDefaultElement(Node,
+                              "EditFlags",
+                              EditFlagsToString(Field.EditorFlags),
                               EditFlagsToString(ParamUtil::GetDefaultEditFlags(Field.DisplayType)));
-            AddValueElement(Node, Def, Field.DisplayType, "Minimum", Field.Minimum, ParamUtil::GetDefaultMinimum(&Def, Field.DisplayType));
-            AddValueElement(Node, Def, Field.DisplayType, "Maximum", Field.Maximum, ParamUtil::GetDefaultMaximum(&Def, Field.DisplayType));
-            AddValueElement(Node, Def, Field.DisplayType, "Increment", Field.Increment, ParamUtil::GetDefaultIncrement(&Def, Field.DisplayType));
+            AddValueElement(Node,
+                            Def,
+                            Field.DisplayType,
+                            "Minimum",
+                            Field.Minimum,
+                            ParamUtil::GetDefaultMinimum(&Def, Field.DisplayType));
+            AddValueElement(Node,
+                            Def,
+                            Field.DisplayType,
+                            "Maximum",
+                            Field.Maximum,
+                            ParamUtil::GetDefaultMaximum(&Def, Field.DisplayType));
+            AddValueElement(Node,
+                            Def,
+                            Field.DisplayType,
+                            "Increment",
+                            Field.Increment,
+                            ParamUtil::GetDefaultIncrement(&Def, Field.DisplayType));
             if (Field.SortID != 0) AddTextElement(Node, "SortID", std::to_string(Field.SortID));
 
             AddOptionalElement(Node, "UnkB8", Field.UnkB8);
@@ -324,11 +362,11 @@ namespace Souls {
                 throw BinaryException("PARAMDEF XML version " + std::to_string(XmlVersion) + " is not recognized");
             }
 
-            pugi::xml_node Declaration = Document.append_child(pugi::node_declaration);
+            pugi::xml_node Declaration               = Document.append_child(pugi::node_declaration);
             Declaration.append_attribute("version")  = "1.0";
             Declaration.append_attribute("encoding") = "utf-8";
 
-            pugi::xml_node Root = Document.append_child("PARAMDEF");
+            pugi::xml_node Root                 = Document.append_child("PARAMDEF");
             Root.append_attribute("XmlVersion") = XmlVersion;
             AddTextElement(Root, "ParamType", Def.ParamType);
             AddTextElement(Root, XmlVersion == 0 ? "Unk06" : "DataVersion", std::to_string(Def.DataVersion));
@@ -336,7 +374,7 @@ namespace Souls {
             AddTextElement(Root, "Unicode", Def.Unicode ? "True" : "False");
             AddTextElement(Root, XmlVersion == 0 ? "Version" : "FormatVersion", std::to_string(Def.FormatVersion));
 
-            int32_t Offset = 0;
+            int32_t Offset        = 0;
             pugi::xml_node Fields = Root.append_child("Fields");
             for (size_t I = 0; I < Def.Fields.size(); ++I) {
                 if (IncludeOffsets) {
@@ -366,18 +404,14 @@ namespace Souls {
     PARAMDEF PARAMDEF::FromXmlString(std::string_view Xml) {
         pugi::xml_document Document;
         const pugi::xml_parse_result Result = Document.load_buffer(Xml.data(), Xml.size());
-        if (!Result) {
-            throw BinaryException(std::string("Failed to parse PARAMDEF XML: ") + Result.description());
-        }
+        if (!Result) { throw BinaryException(std::string("Failed to parse PARAMDEF XML: ") + Result.description()); }
         return ReadDocument(Document);
     }
 
     void PARAMDEF::ToXml(const std::filesystem::path& Path, bool IncludeOffsets, int XmlVersion) const {
         pugi::xml_document Document;
         BuildDocument(Document, *this, IncludeOffsets, XmlVersion);
-        if (Path.has_parent_path()) {
-            std::filesystem::create_directories(Path.parent_path());
-        }
+        if (Path.has_parent_path()) { std::filesystem::create_directories(Path.parent_path()); }
         if (!Document.save_file(Path.c_str(), "  ", pugi::format_default, pugi::encoding_utf8)) {
             throw BinaryException("Failed to write PARAMDEF XML \"" + Path.string() + "\"");
         }

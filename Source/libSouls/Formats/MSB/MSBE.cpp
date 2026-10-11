@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MSBE.hpp"
 
@@ -134,13 +138,13 @@ namespace Souls {
     }
 
     void MSBE::Event::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
 
     void MSBE::Event::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
@@ -183,7 +187,7 @@ namespace Souls {
         UnkB                 = Reader.ReadArray<int16_t>(static_cast<size_t>(CountB));
         if (Msb::HasShapeData(Shape)) {
             Reader.Seek(Start + ShapeDataOffset);
-            Msb::Detail::ReadVisitor V{Reader};
+            Msb::Detail::ReadVisitor V {Reader};
             Msb::Detail::VisitShape(Shape, V);
         }
         Reader.Seek(Start + BaseDataOffset3);
@@ -234,7 +238,7 @@ namespace Souls {
         Writer.Align(8);
         if (Msb::HasShapeData(Shape)) {
             Writer.Fill<int64_t>("ShapeDataOffset", Writer.Position() - Start);
-            Msb::Detail::WriteVisitor V{Writer};
+            Msb::Detail::WriteVisitor V {Writer};
             Msb::Detail::VisitShape(Shape, V);
         } else {
             Writer.Fill<int64_t>("ShapeDataOffset", 0);
@@ -245,22 +249,18 @@ namespace Souls {
         Writer.WriteByte(UnkE08);
         Writer.Pad(7);
 
-        // The region types after DisableTumbleweed align their type data; the older ones align what follows it. (Checked
-        // against every map in the game.)
+        // The region types after DisableTumbleweed align their type data; the older ones align what follows it.
+        // (Checked against every map in the game.)
         const uint32_t T        = Type();
         const bool AlignsBefore = T > PointParam::DisableTumbleweed::TypeId && T != PointParam::Other::TypeId;
-        if (AlignsBefore) {
-            Writer.Align(8);
-        }
+        if (AlignsBefore) { Writer.Align(8); }
         if (HasTypeData()) {
             Writer.Fill<int64_t>("TypeDataOffset", Writer.Position() - Start);
             WriteTypeData(Writer);
         } else {
             Writer.Fill<int64_t>("TypeDataOffset", 0);
         }
-        if (!AlignsBefore) {
-            Writer.Align(8);
-        }
+        if (!AlignsBefore) { Writer.Align(8); }
         Writer.Fill<int64_t>("Unk4Offset", Writer.Position() - Start);
         Writer.WriteInt32(MapID);
         Writer.WriteInt32(UnkS04);
@@ -271,13 +271,13 @@ namespace Souls {
     }
 
     void MSBE::Region::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ActivationPartName);
         Msb::Detail::VisitShape(Shape, V);
     }
 
     void MSBE::Region::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ActivationPartName);
         Msb::Detail::VisitShape(Shape, V);
     }
@@ -315,8 +315,15 @@ namespace Souls {
     namespace {
         // The optional blocks in the order of their offsets in the part header.
         constexpr unsigned BlockOrder[] = {
-            MSBE::HasUnk1,  MSBE::HasUnk2, MSBE::HasGparam,   MSBE::HasSceneGparam, MSBE::HasGrass,
-            MSBE::HasUnk8, MSBE::HasUnk9, MSBE::HasTileLoad, MSBE::HasUnk11,
+          MSBE::HasUnk1,
+          MSBE::HasUnk2,
+          MSBE::HasGparam,
+          MSBE::HasSceneGparam,
+          MSBE::HasGrass,
+          MSBE::HasUnk8,
+          MSBE::HasUnk9,
+          MSBE::HasTileLoad,
+          MSBE::HasUnk11,
         };
     }  // namespace
 
@@ -359,8 +366,8 @@ namespace Souls {
         SibPath = Reader.ReadUTF16Text();
 
         Reader.Seek(Start + EntityDataOffset);
-        EntityID                = Reader.ReadUInt32();
-        IsUsePartsDrawParamID   = Reader.ReadByte();
+        EntityID              = Reader.ReadUInt32();
+        IsUsePartsDrawParamID = Reader.ReadByte();
         Reader.AssertPattern(3, 0);
         PartsDrawParamID        = Reader.ReadInt16();
         IsPointLightShadowSrc   = Reader.ReadSByte();
@@ -393,9 +400,16 @@ namespace Souls {
     }
 
     void MSBE::Part::Write(BinaryWriter& Writer, int32_t ID) {
-        static constexpr const char* BlockNames[] = {"UnkOffset1", "UnkOffset2", "GparamOffset", "SceneGparamOffset", "GrassOffset",
-                                                     "UnkOffset8", "UnkOffset9", "TileLoadOffset", "UnkOffset11"};
-        const int64_t Start = Writer.Position();
+        static constexpr const char* BlockNames[] = {"UnkOffset1",
+                                                     "UnkOffset2",
+                                                     "GparamOffset",
+                                                     "SceneGparamOffset",
+                                                     "GrassOffset",
+                                                     "UnkOffset8",
+                                                     "UnkOffset9",
+                                                     "TileLoadOffset",
+                                                     "UnkOffset11"};
+        const int64_t Start                       = Writer.Position();
         Writer.Reserve<int64_t>("NameOffset");
         Writer.WriteInt32(InstanceID);
         Writer.WriteUInt32(Type());
@@ -468,26 +482,27 @@ namespace Souls {
     }
 
     void MSBE::Part::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ModelName);
     }
 
     void MSBE::Part::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ModelName);
     }
 #pragma endregion
 
     bool MSBE::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == "MSB ";
     }
 
     namespace {
-        MSBE::Entries ListsOf(MSBE& Msb, const std::vector<MSBE::Model*>& Models, const std::vector<MSBE::Event*>& Events,
-                              const std::vector<MSBE::Region*>& Regions, const std::vector<MSBE::Part*>& Parts) {
+        MSBE::Entries ListsOf(MSBE& Msb,
+                              const std::vector<MSBE::Model*>& Models,
+                              const std::vector<MSBE::Event*>& Events,
+                              const std::vector<MSBE::Region*>& Regions,
+                              const std::vector<MSBE::Part*>& Parts) {
             MSBE::Entries Lists;
             Lists.Models  = Upcast<MSBE::Entry>(Models);
             Lists.Events  = Upcast<MSBE::Entry>(Events);
@@ -560,8 +575,9 @@ namespace Souls {
         const Entries Lists                   = ListsOf(*this, ModelPtrs, EventPtrs, RegionPtrs, PartPtrs);
 
         for (Model* M : ModelPtrs) {
-            M->InstanceCount = static_cast<int32_t>(
-                std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) { return P->ModelName.has_value() && *P->ModelName == M->Name; }));
+            M->InstanceCount = static_cast<int32_t>(std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) {
+                return P->ModelName.has_value() && *P->ModelName == M->Name;
+            }));
         }
         for (Event* E : EventPtrs) {
             E->GetIndices(Lists);

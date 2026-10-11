@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "PARAMTDF.hpp"
 
@@ -12,18 +16,17 @@ namespace Souls {
 
     static std::string Trim(std::string Text, char Quote) {
         const auto First = Text.find_first_not_of(Quote);
-        if (First == std::string::npos) {
-            return {};
-        }
+        if (First == std::string::npos) { return {}; }
         const auto Last = Text.find_last_not_of(Quote);
         return Text.substr(First, Last - First + 1);
     }
 
     template<typename T>
     static T ParseNumber(const std::string& Text) {
-        long long Parsed = 0;
+        long long Parsed        = 0;
         const auto [Ptr, Error] = std::from_chars(Text.data(), Text.data() + Text.size(), Parsed);
-        if (Error != std::errc{} || Ptr != Text.data() + Text.size() || Parsed < static_cast<long long>(std::numeric_limits<T>::min()) ||
+        if (Error != std::errc {} || Ptr != Text.data() + Text.size() ||
+            Parsed < static_cast<long long>(std::numeric_limits<T>::min()) ||
             Parsed > static_cast<long long>(std::numeric_limits<T>::max())) {
             throw BinaryException("Invalid TDF value: " + Text);
         }
@@ -37,8 +40,11 @@ namespace Souls {
             case DefType::s16:
             case DefType::u16:
             case DefType::s32:
-            case DefType::u32: Type = NewType; return;
-            default: throw std::invalid_argument("TDF type may only be s8, u8, s16, u16, s32, or u32.");
+            case DefType::u32:
+                Type = NewType;
+                return;
+            default:
+                throw std::invalid_argument("TDF type may only be s8, u8, s16, u16, s32, or u32.");
         }
     }
 
@@ -55,54 +61,54 @@ namespace Souls {
                 Current.push_back(C);
             }
         }
-        if (!Current.empty()) {
-            Lines.push_back(Current);
-        }
-        if (Lines.size() < 2) {
-            throw BinaryException("A TDF needs at least a name and a type.");
-        }
+        if (!Current.empty()) { Lines.push_back(Current); }
+        if (Lines.size() < 2) { throw BinaryException("A TDF needs at least a name and a type."); }
 
         Name = Trim(Lines[0], '"');
         SetType(ParamUtil::ParseDefType(Trim(Lines[1], '"')));
 
         for (size_t I = 2; I < Lines.size(); ++I) {
             const size_t Comma = Lines[I].find(',');
-            if (Comma == std::string::npos) {
-                throw BinaryException("Malformed TDF line: " + Lines[I]);
-            }
+            if (Comma == std::string::npos) { throw BinaryException("Malformed TDF line: " + Lines[I]); }
             const std::string NameText  = Lines[I].substr(0, Comma);
             const std::string ValueText = Trim(Lines[I].substr(Comma + 1), '"');
 
             Entry E;
             switch (Type) {
-                case DefType::s8: E.Val = ParseNumber<int8_t>(ValueText); break;
-                case DefType::u8: E.Val = ParseNumber<uint8_t>(ValueText); break;
-                case DefType::s16: E.Val = ParseNumber<int16_t>(ValueText); break;
-                case DefType::u16: E.Val = ParseNumber<uint16_t>(ValueText); break;
-                case DefType::s32: E.Val = ParseNumber<int32_t>(ValueText); break;
-                default: E.Val = ParseNumber<uint32_t>(ValueText); break;
+                case DefType::s8:
+                    E.Val = ParseNumber<int8_t>(ValueText);
+                    break;
+                case DefType::u8:
+                    E.Val = ParseNumber<uint8_t>(ValueText);
+                    break;
+                case DefType::s16:
+                    E.Val = ParseNumber<int16_t>(ValueText);
+                    break;
+                case DefType::u16:
+                    E.Val = ParseNumber<uint16_t>(ValueText);
+                    break;
+                case DefType::s32:
+                    E.Val = ParseNumber<int32_t>(ValueText);
+                    break;
+                default:
+                    E.Val = ParseNumber<uint32_t>(ValueText);
+                    break;
             }
-            if (!NameText.empty()) {
-                E.Name = Trim(NameText, '"');
-            }
+            if (!NameText.empty()) { E.Name = Trim(NameText, '"'); }
             Entries.push_back(std::move(E));
         }
     }
 
     std::optional<PARAMTDF::Value> PARAMTDF::FindValue(const std::string& EntryName) const {
         for (const Entry& E : Entries) {
-            if (E.Name && *E.Name == EntryName) {
-                return E.Val;
-            }
+            if (E.Name && *E.Name == EntryName) { return E.Val; }
         }
         return std::nullopt;
     }
 
     std::optional<std::string> PARAMTDF::FindName(const Value& Val) const {
         for (const Entry& E : Entries) {
-            if (E.Val == Val) {
-                return E.Name;
-            }
+            if (E.Val == Val) { return E.Name; }
         }
         return std::nullopt;
     }
@@ -112,9 +118,7 @@ namespace Souls {
         Out << '"' << Name << "\"\r\n";
         Out << '"' << ParamUtil::DefTypeName(Type) << "\"\r\n";
         for (const Entry& E : Entries) {
-            if (E.Name) {
-                Out << '"' << *E.Name << '"';
-            }
+            if (E.Name) { Out << '"' << *E.Name << '"'; }
             Out << ",\"";
             std::visit([&](auto V) { Out << static_cast<long long>(V); }, E.Val);
             Out << "\"\r\n";

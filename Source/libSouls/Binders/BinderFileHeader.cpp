@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BinderFileHeader.hpp"
 
@@ -28,43 +32,33 @@ namespace Souls {
         Reader.AssertPattern(3, 0);
 
         Header.CompressedSize = Reader.ReadInt32();
-        Header.DataOffset = HasLongOffsets(Format) ? Reader.ReadInt64() : static_cast<int64_t>(Reader.ReadUInt32());
+        Header.DataOffset     = HasLongOffsets(Format) ? Reader.ReadInt64() : static_cast<int64_t>(Reader.ReadUInt32());
 
-        if (HasIDs(Format)) {
-            Header.ID = Reader.ReadInt32();
-        }
+        if (HasIDs(Format)) { Header.ID = Reader.ReadInt32(); }
 
         if (HasNames(Format)) {
             const int32_t NameOffset = Reader.ReadInt32();
             Header.Name              = ReadNameAt(Reader, NameOffset, false);
         }
 
-        if (HasCompression(Format)) {
-            Header.UncompressedSize = Reader.ReadInt32();
-        }
+        if (HasCompression(Format)) { Header.UncompressedSize = Reader.ReadInt32(); }
 
         return Header;
     }
 
-    BinderFileHeader BinderFileHeader::ReadBinder4FileHeader(BinaryReader& Reader,
-                                                             Format Format,
-                                                             bool BitBigEndian,
-                                                             bool Unicode) {
+    BinderFileHeader
+    BinderFileHeader::ReadBinder4FileHeader(BinaryReader& Reader, Format Format, bool BitBigEndian, bool Unicode) {
         BinderFileHeader Header;
         Header.Flags = ReadFileFlags(Reader, BitBigEndian);
         Reader.AssertPattern(3, 0);
         Reader.Assert<int32_t>(-1);
 
         Header.CompressedSize = Reader.ReadInt64();
-        if (HasCompression(Format)) {
-            Header.UncompressedSize = Reader.ReadInt64();
-        }
+        if (HasCompression(Format)) { Header.UncompressedSize = Reader.ReadInt64(); }
 
         Header.DataOffset = HasLongOffsets(Format) ? Reader.ReadInt64() : static_cast<int64_t>(Reader.ReadUInt32());
 
-        if (HasIDs(Format)) {
-            Header.ID = Reader.ReadInt32();
-        }
+        if (HasIDs(Format)) { Header.ID = Reader.ReadInt32(); }
 
         if (HasNames(Format)) {
             const uint32_t NameOffset = Reader.ReadUInt32();
@@ -91,9 +85,9 @@ namespace Souls {
         Reader.StepOut();
 
         BinderFile File;
-        File.Flags = Flags;
-        File.ID    = ID;
-        File.Name  = Name;
+        File.Flags           = Flags;
+        File.ID              = ID;
+        File.Name            = Name;
         File.CompressionType = DCX::Type::Zlib;
         if (IsCompressed(Flags)) {
             File.Bytes = DCX::Decompress(Bytes, File.CompressionType);
@@ -103,10 +97,8 @@ namespace Souls {
         return File;
     }
 
-    void BinderFileHeader::WriteBinder3FileHeader(BinaryWriter& Writer,
-                                                  Format Format,
-                                                  bool BitBigEndian,
-                                                  int Index) const {
+    void
+    BinderFileHeader::WriteBinder3FileHeader(BinaryWriter& Writer, Format Format, bool BitBigEndian, int Index) const {
         WriteFileFlags(Writer, BitBigEndian, Flags);
         Writer.Pad(3);
 
@@ -118,31 +110,21 @@ namespace Souls {
             Writer.Reserve<uint32_t>(Key("FileDataOffset", Index));
         }
 
-        if (HasIDs(Format)) {
-            Writer.WriteInt32(ID);
-        }
+        if (HasIDs(Format)) { Writer.WriteInt32(ID); }
 
-        if (HasNames(Format)) {
-            Writer.Reserve<int32_t>(Key("FileNameOffset", Index));
-        }
+        if (HasNames(Format)) { Writer.Reserve<int32_t>(Key("FileNameOffset", Index)); }
 
-        if (HasCompression(Format)) {
-            Writer.Reserve<int32_t>(Key("FileUncompressedSize", Index));
-        }
+        if (HasCompression(Format)) { Writer.Reserve<int32_t>(Key("FileUncompressedSize", Index)); }
     }
 
-    void BinderFileHeader::WriteBinder4FileHeader(BinaryWriter& Writer,
-                                                  Format Format,
-                                                  bool BitBigEndian,
-                                                  int Index) const {
+    void
+    BinderFileHeader::WriteBinder4FileHeader(BinaryWriter& Writer, Format Format, bool BitBigEndian, int Index) const {
         WriteFileFlags(Writer, BitBigEndian, Flags);
         Writer.Pad(3);
         Writer.WriteInt32(-1);
 
         Writer.Reserve<int64_t>(Key("FileCompressedSize", Index));
-        if (HasCompression(Format)) {
-            Writer.Reserve<int64_t>(Key("FileUncompressedSize", Index));
-        }
+        if (HasCompression(Format)) { Writer.Reserve<int64_t>(Key("FileUncompressedSize", Index)); }
 
         if (HasLongOffsets(Format)) {
             Writer.Reserve<int64_t>(Key("FileDataOffset", Index));
@@ -150,13 +132,9 @@ namespace Souls {
             Writer.Reserve<uint32_t>(Key("FileDataOffset", Index));
         }
 
-        if (HasIDs(Format)) {
-            Writer.WriteInt32(ID);
-        }
+        if (HasIDs(Format)) { Writer.WriteInt32(ID); }
 
-        if (HasNames(Format)) {
-            Writer.Reserve<int32_t>(Key("FileNameOffset", Index));
-        }
+        if (HasNames(Format)) { Writer.Reserve<int32_t>(Key("FileNameOffset", Index)); }
 
         if (Format == Format::Names1) {
             Writer.WriteInt32(ID);
@@ -165,9 +143,7 @@ namespace Souls {
     }
 
     void BinderFileHeader::WriteFileData(BinaryWriter& Writer, const std::vector<uint8_t>& Bytes) {
-        if (!Bytes.empty()) {
-            Writer.Align(0x10);
-        }
+        if (!Bytes.empty()) { Writer.Align(0x10); }
 
         DataOffset       = Writer.Position();
         UncompressedSize = static_cast<int64_t>(Bytes.size());
@@ -220,9 +196,7 @@ namespace Souls {
     }
 
     void BinderFileHeader::WriteFileName(BinaryWriter& Writer, Format Format, bool Unicode, int Index) const {
-        if (!HasNames(Format)) {
-            return;
-        }
+        if (!HasNames(Format)) { return; }
         if (!Name) {
             throw BinaryException("Binder file " + std::to_string(Index) + " has no name, but the format requires one");
         }

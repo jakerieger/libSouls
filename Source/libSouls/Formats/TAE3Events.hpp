@@ -1,3 +1,11 @@
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
 /// @file
 /// @brief The event types of TAE3 files and the fields of each.
 ///
@@ -16,4407 +24,4819 @@ namespace Souls {
 
     /// @brief Determines the behavior of an event and what data it contains.
     enum class TAE3EventType : uint64_t {
-        JumpTable = 0,  ///< Event type 0.
-        Unk001 = 1,  ///< Event type 1.
-        Unk002 = 2,  ///< Event type 2.
-        Unk005 = 5,  ///< Event type 5.
-        Unk016 = 16,  ///< Event type 16.
-        Unk017 = 17,  ///< Event type 17.
-        Unk024 = 24,  ///< Event type 24.
-        SwitchWeapon1 = 32,  ///< Event type 32.
-        SwitchWeapon2 = 33,  ///< Event type 33.
-        Unk034 = 34,  ///< Event type 34.
-        Unk035 = 35,  ///< Event type 35.
-        Unk064 = 64,  ///< Event type 64.
-        Unk065 = 65,  ///< Event type 65.
-        CreateSpEffect1 = 66,  ///< Event type 66.
-        CreateSpEffect2 = 67,  ///< Event type 67.
-        PlayFFX = 96,  ///< Event type 96.
-        Unk110 = 110,  ///< Event type 110.
-        HitEffect = 112,  ///< Event type 112.
-        Unk113 = 113,  ///< Event type 113.
-        Unk114 = 114,  ///< Event type 114.
-        Unk115 = 115,  ///< Event type 115.
-        Unk116 = 116,  ///< Event type 116.
-        Unk117 = 117,  ///< Event type 117.
-        Unk118 = 118,  ///< Event type 118.
-        Unk119 = 119,  ///< Event type 119.
-        Unk120 = 120,  ///< Event type 120.
-        Unk121 = 121,  ///< Event type 121.
-        PlaySound1 = 128,  ///< Event type 128.
-        PlaySound2 = 129,  ///< Event type 129.
-        PlaySound3 = 130,  ///< Event type 130.
-        PlaySound4 = 131,  ///< Event type 131.
-        PlaySound5 = 132,  ///< Event type 132.
-        Unk136 = 136,  ///< Event type 136.
-        Unk137 = 137,  ///< Event type 137.
-        CreateDecal = 138,  ///< Event type 138.
-        Unk144 = 144,  ///< Event type 144.
-        Unk145 = 145,  ///< Event type 145.
-        Unk150 = 150,  ///< Event type 150.
-        Unk151 = 151,  ///< Event type 151.
-        Unk161 = 161,  ///< Event type 161.
-        Unk192 = 192,  ///< Event type 192.
-        FadeOut = 193,  ///< Event type 193.
-        Unk194 = 194,  ///< Event type 194.
-        Unk224 = 224,  ///< Event type 224.
-        DisableStaminaRegen = 225,  ///< Event type 225.
-        Unk226 = 226,  ///< Event type 226.
-        Unk227 = 227,  ///< Event type 227.
-        RagdollReviveTime = 228,  ///< Event type 228.
-        Unk229 = 229,  ///< Event type 229.
-        SetEventMessageID = 231,  ///< Event type 231.
-        Unk232 = 232,  ///< Event type 232.
-        ChangeDrawMask = 233,  ///< Event type 233.
-        RollDistanceReduction = 236,  ///< Event type 236.
-        CreateAISound = 237,  ///< Event type 237.
-        Unk300 = 300,  ///< Event type 300.
-        Unk301 = 301,  ///< Event type 301.
-        AddSpEffectDragonForm = 302,  ///< Event type 302.
-        PlayAnimation = 303,  ///< Event type 303.
-        BehaviorThing = 304,  ///< Event type 304.
-        Unk306 = 306,  ///< Event type 306.
-        CreateBehaviorPC = 307,  ///< Event type 307.
-        Unk308 = 308,  ///< Event type 308.
-        Unk310 = 310,  ///< Event type 310.
-        Unk311 = 311,  ///< Event type 311.
-        Unk312 = 312,  ///< Event type 312.
-        Unk317 = 317,  ///< Event type 317.
-        Unk320 = 320,  ///< Event type 320.
-        Unk330 = 330,  ///< Event type 330.
-        EffectDuringThrow = 331,  ///< Event type 331.
-        Unk332 = 332,  ///< Event type 332.
-        CreateSpEffect = 401,  ///< Event type 401.
-        Unk500 = 500,  ///< Event type 500.
-        Unk510 = 510,  ///< Event type 510.
-        Unk520 = 520,  ///< Event type 520.
-        KingOfTheStorm = 522,  ///< Event type 522.
-        Unk600 = 600,  ///< Event type 600.
-        Unk601 = 601,  ///< Event type 601.
-        DebugAnimSpeed = 603,  ///< Event type 603.
-        Unk605 = 605,  ///< Event type 605.
-        Unk606 = 606,  ///< Event type 606.
-        Unk700 = 700,  ///< Event type 700.
-        EnableTurningDirection = 703,  ///< Event type 703.
-        FacingAngleCorrection = 705,  ///< Event type 705.
-        Unk707 = 707,  ///< Event type 707.
-        HideWeapon = 710,  ///< Event type 710.
-        HideModelMask = 711,  ///< Event type 711.
-        DamageLevelModule = 712,  ///< Event type 712.
-        ModelMask = 713,  ///< Event type 713.
-        DamageLevelFunction = 714,  ///< Event type 714.
-        Unk715 = 715,  ///< Event type 715.
-        CultStart = 720,  ///< Event type 720.
-        Unk730 = 730,  ///< Event type 730.
-        Unk740 = 740,  ///< Event type 740.
-        IFrameState = 760,  ///< Event type 760.
-        BonePos = 770,  ///< Event type 770.
-        BoneFixOn1 = 771,  ///< Event type 771.
-        BoneFixOn2 = 772,  ///< Event type 772.
-        TurnLowerBody = 781,  ///< Event type 781.
-        Unk782 = 782,  ///< Event type 782.
+        JumpTable                   = 0,    ///< Event type 0.
+        Unk001                      = 1,    ///< Event type 1.
+        Unk002                      = 2,    ///< Event type 2.
+        Unk005                      = 5,    ///< Event type 5.
+        Unk016                      = 16,   ///< Event type 16.
+        Unk017                      = 17,   ///< Event type 17.
+        Unk024                      = 24,   ///< Event type 24.
+        SwitchWeapon1               = 32,   ///< Event type 32.
+        SwitchWeapon2               = 33,   ///< Event type 33.
+        Unk034                      = 34,   ///< Event type 34.
+        Unk035                      = 35,   ///< Event type 35.
+        Unk064                      = 64,   ///< Event type 64.
+        Unk065                      = 65,   ///< Event type 65.
+        CreateSpEffect1             = 66,   ///< Event type 66.
+        CreateSpEffect2             = 67,   ///< Event type 67.
+        PlayFFX                     = 96,   ///< Event type 96.
+        Unk110                      = 110,  ///< Event type 110.
+        HitEffect                   = 112,  ///< Event type 112.
+        Unk113                      = 113,  ///< Event type 113.
+        Unk114                      = 114,  ///< Event type 114.
+        Unk115                      = 115,  ///< Event type 115.
+        Unk116                      = 116,  ///< Event type 116.
+        Unk117                      = 117,  ///< Event type 117.
+        Unk118                      = 118,  ///< Event type 118.
+        Unk119                      = 119,  ///< Event type 119.
+        Unk120                      = 120,  ///< Event type 120.
+        Unk121                      = 121,  ///< Event type 121.
+        PlaySound1                  = 128,  ///< Event type 128.
+        PlaySound2                  = 129,  ///< Event type 129.
+        PlaySound3                  = 130,  ///< Event type 130.
+        PlaySound4                  = 131,  ///< Event type 131.
+        PlaySound5                  = 132,  ///< Event type 132.
+        Unk136                      = 136,  ///< Event type 136.
+        Unk137                      = 137,  ///< Event type 137.
+        CreateDecal                 = 138,  ///< Event type 138.
+        Unk144                      = 144,  ///< Event type 144.
+        Unk145                      = 145,  ///< Event type 145.
+        Unk150                      = 150,  ///< Event type 150.
+        Unk151                      = 151,  ///< Event type 151.
+        Unk161                      = 161,  ///< Event type 161.
+        Unk192                      = 192,  ///< Event type 192.
+        FadeOut                     = 193,  ///< Event type 193.
+        Unk194                      = 194,  ///< Event type 194.
+        Unk224                      = 224,  ///< Event type 224.
+        DisableStaminaRegen         = 225,  ///< Event type 225.
+        Unk226                      = 226,  ///< Event type 226.
+        Unk227                      = 227,  ///< Event type 227.
+        RagdollReviveTime           = 228,  ///< Event type 228.
+        Unk229                      = 229,  ///< Event type 229.
+        SetEventMessageID           = 231,  ///< Event type 231.
+        Unk232                      = 232,  ///< Event type 232.
+        ChangeDrawMask              = 233,  ///< Event type 233.
+        RollDistanceReduction       = 236,  ///< Event type 236.
+        CreateAISound               = 237,  ///< Event type 237.
+        Unk300                      = 300,  ///< Event type 300.
+        Unk301                      = 301,  ///< Event type 301.
+        AddSpEffectDragonForm       = 302,  ///< Event type 302.
+        PlayAnimation               = 303,  ///< Event type 303.
+        BehaviorThing               = 304,  ///< Event type 304.
+        Unk306                      = 306,  ///< Event type 306.
+        CreateBehaviorPC            = 307,  ///< Event type 307.
+        Unk308                      = 308,  ///< Event type 308.
+        Unk310                      = 310,  ///< Event type 310.
+        Unk311                      = 311,  ///< Event type 311.
+        Unk312                      = 312,  ///< Event type 312.
+        Unk317                      = 317,  ///< Event type 317.
+        Unk320                      = 320,  ///< Event type 320.
+        Unk330                      = 330,  ///< Event type 330.
+        EffectDuringThrow           = 331,  ///< Event type 331.
+        Unk332                      = 332,  ///< Event type 332.
+        CreateSpEffect              = 401,  ///< Event type 401.
+        Unk500                      = 500,  ///< Event type 500.
+        Unk510                      = 510,  ///< Event type 510.
+        Unk520                      = 520,  ///< Event type 520.
+        KingOfTheStorm              = 522,  ///< Event type 522.
+        Unk600                      = 600,  ///< Event type 600.
+        Unk601                      = 601,  ///< Event type 601.
+        DebugAnimSpeed              = 603,  ///< Event type 603.
+        Unk605                      = 605,  ///< Event type 605.
+        Unk606                      = 606,  ///< Event type 606.
+        Unk700                      = 700,  ///< Event type 700.
+        EnableTurningDirection      = 703,  ///< Event type 703.
+        FacingAngleCorrection       = 705,  ///< Event type 705.
+        Unk707                      = 707,  ///< Event type 707.
+        HideWeapon                  = 710,  ///< Event type 710.
+        HideModelMask               = 711,  ///< Event type 711.
+        DamageLevelModule           = 712,  ///< Event type 712.
+        ModelMask                   = 713,  ///< Event type 713.
+        DamageLevelFunction         = 714,  ///< Event type 714.
+        Unk715                      = 715,  ///< Event type 715.
+        CultStart                   = 720,  ///< Event type 720.
+        Unk730                      = 730,  ///< Event type 730.
+        Unk740                      = 740,  ///< Event type 740.
+        IFrameState                 = 760,  ///< Event type 760.
+        BonePos                     = 770,  ///< Event type 770.
+        BoneFixOn1                  = 771,  ///< Event type 771.
+        BoneFixOn2                  = 772,  ///< Event type 772.
+        TurnLowerBody               = 781,  ///< Event type 781.
+        Unk782                      = 782,  ///< Event type 782.
         SpawnBulletByCultSacrifice1 = 785,  ///< Event type 785.
-        Unk786 = 786,  ///< Event type 786.
-        Unk790 = 790,  ///< Event type 790.
-        Unk791 = 791,  ///< Event type 791.
-        HitEffect2 = 792,  ///< Event type 792.
-        CultSacrifice1 = 793,  ///< Event type 793.
-        SacrificeEmpty = 794,  ///< Event type 794.
-        Toughness = 795,  ///< Event type 795.
-        BringCultMenu = 796,  ///< Event type 796.
-        CeremonyParamID = 797,  ///< Event type 797.
-        CultSingle = 798,  ///< Event type 798.
-        CultEmpty2 = 799,  ///< Event type 799.
-        Unk800 = 800,  ///< Event type 800.
-        Unk900 = 900,  ///< Event type 900.
+        Unk786                      = 786,  ///< Event type 786.
+        Unk790                      = 790,  ///< Event type 790.
+        Unk791                      = 791,  ///< Event type 791.
+        HitEffect2                  = 792,  ///< Event type 792.
+        CultSacrifice1              = 793,  ///< Event type 793.
+        SacrificeEmpty              = 794,  ///< Event type 794.
+        Toughness                   = 795,  ///< Event type 795.
+        BringCultMenu               = 796,  ///< Event type 796.
+        CeremonyParamID             = 797,  ///< Event type 797.
+        CultSingle                  = 798,  ///< Event type 798.
+        CultEmpty2                  = 799,  ///< Event type 799.
+        Unk800                      = 800,  ///< Event type 800.
+        Unk900                      = 900,  ///< Event type 900.
     };
 
     /// @brief One struct per event type, holding the fields that follow the event's header in the file.
     namespace TAE3Events {
 
-    /// @brief Event type 0 (JumpTable). General-purpose event that calls different functions based on the first field.
-    struct JumpTable {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::JumpTable;
-        /// @brief JumpTableID, as SoulsFormats names it (not documented upstream).
-        int32_t JumpTableID = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        int16_t Unk0C = {};
-        /// @brief Unknown.
-        int16_t Unk0E = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            JumpTableID = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadInt16();
-            Unk0E = Reader.ReadInt16();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(JumpTableID);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt16(Unk0C);
-            Writer.WriteInt16(Unk0E);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("JumpTableID", JumpTableID);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk0E", Unk0E);
-        }
-    };
-
-    /// @brief Event type 1 (Unk001).
-    struct Unk001 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk001;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Condition, as SoulsFormats names it (not documented upstream).
-        int32_t Condition = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-        /// @brief StateInfo, as SoulsFormats names it (not documented upstream).
-        int16_t StateInfo = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Condition = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            StateInfo = Reader.ReadInt16();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Condition);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteInt16(StateInfo);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Condition", Condition);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("StateInfo", StateInfo);
-        }
-    };
-
-    /// @brief Event type 2 (Unk002).
-    struct Unk002 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk002;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief ChrAsmStyle, as SoulsFormats names it (not documented upstream).
-        int32_t ChrAsmStyle = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-        /// @brief Unknown.
-        uint16_t Unk0E = {};
-        /// @brief Unknown.
-        uint16_t Unk10 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            ChrAsmStyle = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            Unk0E = Reader.ReadUInt16();
-            Unk10 = Reader.ReadUInt16();
-            Reader.Assert<int16_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(ChrAsmStyle);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteUInt16(Unk0E);
-            Writer.WriteUInt16(Unk10);
-            Writer.WriteInt16(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("ChrAsmStyle", ChrAsmStyle);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("Unk0E", Unk0E);
-            F("Unk10", Unk10);
-        }
-    };
-
-    /// @brief Event type 5 (Unk005).
-    struct Unk005 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk005;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-        }
-    };
-
-    /// @brief Event type 16 (Unk016).
-    struct Unk016 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk016;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            (void)Reader;
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            (void)Writer;
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 17 (Unk017).
-    struct Unk017 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk017;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 24 (Unk024).
-    struct Unk024 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk024;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        int32_t Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(Unk0C);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 32 (SwitchWeapon1).
-    struct SwitchWeapon1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::SwitchWeapon1;
-        /// @brief SwitchState, as SoulsFormats names it (not documented upstream).
-        int32_t SwitchState = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SwitchState = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SwitchState);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SwitchState", SwitchState);
-        }
-    };
-
-    /// @brief Event type 33 (SwitchWeapon2).
-    struct SwitchWeapon2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::SwitchWeapon2;
-        /// @brief SwitchState, as SoulsFormats names it (not documented upstream).
-        int32_t SwitchState = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SwitchState = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SwitchState);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SwitchState", SwitchState);
-        }
-    };
-
-    /// @brief Event type 34 (Unk034).
-    struct Unk034 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk034;
-        /// @brief State, as SoulsFormats names it (not documented upstream).
-        int32_t State = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            State = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(State);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("State", State);
-        }
-    };
-
-    /// @brief Event type 35 (Unk035).
-    struct Unk035 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk035;
-        /// @brief State, as SoulsFormats names it (not documented upstream).
-        int32_t State = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            State = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(State);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("State", State);
-        }
-    };
-
-    /// @brief Event type 64 (Unk064).
-    struct Unk064 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk064;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        uint8_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk09 = {};
-        /// @brief Unknown.
-        uint8_t Unk0A = {};
-        /// @brief Unknown.
-        uint8_t Unk0B = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadByte();
-            Unk09 = Reader.ReadByte();
-            Unk0A = Reader.ReadByte();
-            Unk0B = Reader.ReadByte();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteByte(Unk08);
-            Writer.WriteByte(Unk09);
-            Writer.WriteByte(Unk0A);
-            Writer.WriteByte(Unk0B);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-            F("Unk09", Unk09);
-            F("Unk0A", Unk0A);
-            F("Unk0B", Unk0B);
-        }
-    };
-
-    /// @brief Event type 65 (Unk065).
-    struct Unk065 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk065;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk05 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadByte();
-            Unk05 = Reader.ReadByte();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteByte(Unk04);
-            Writer.WriteByte(Unk05);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk05", Unk05);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 66 (CreateSpEffect1).
-    struct CreateSpEffect1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect1;
-        /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SpEffectID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SpEffectID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SpEffectID", SpEffectID);
-        }
-    };
-
-    /// @brief Event type 67 (CreateSpEffect2).
-    struct CreateSpEffect2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect2;
-        /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SpEffectID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SpEffectID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SpEffectID", SpEffectID);
-        }
-    };
-
-    /// @brief Event type 96 (PlayFFX).
-    struct PlayFFX {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlayFFX;
-        /// @brief FFXID, as SoulsFormats names it (not documented upstream).
-        int32_t FFXID = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief State0, as SoulsFormats names it (not documented upstream).
-        int8_t State0 = {};
-        /// @brief State1, as SoulsFormats names it (not documented upstream).
-        int8_t State1 = {};
-        /// @brief GhostFFXCondition, as SoulsFormats names it (not documented upstream).
-        int8_t GhostFFXCondition = {};
-        /// @brief Unknown.
-        uint8_t Unk0F = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            FFXID = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            State0 = Reader.ReadSByte();
-            State1 = Reader.ReadSByte();
-            GhostFFXCondition = Reader.ReadSByte();
-            Unk0F = Reader.ReadByte();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(FFXID);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteSByte(State0);
-            Writer.WriteSByte(State1);
-            Writer.WriteSByte(GhostFFXCondition);
-            Writer.WriteByte(Unk0F);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("FFXID", FFXID);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("State0", State0);
-            F("State1", State1);
-            F("GhostFFXCondition", GhostFFXCondition);
-            F("Unk0F", Unk0F);
-        }
-    };
-
-    /// @brief Event type 110 (Unk110).
-    struct Unk110 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk110;
-        /// @brief ID, as SoulsFormats names it (not documented upstream).
-        int32_t ID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            ID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(ID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("ID", ID);
-        }
-    };
-
-    /// @brief Event type 112 (HitEffect).
-    struct HitEffect {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::HitEffect;
-        /// @brief Size, as SoulsFormats names it (not documented upstream).
-        int32_t Size = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Size = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Size);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Size", Size);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 113 (Unk113).
-    struct Unk113 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk113;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 114 (Unk114).
-    struct Unk114 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk114;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        int8_t Unk0D = {};
-        /// @brief Unknown.
-        int8_t Unk0E = {};
-        /// @brief Unknown.
-        uint8_t Unk0F = {};
-        /// @brief Unknown.
-        uint8_t Unk10 = {};
-        /// @brief Unknown.
-        uint8_t Unk11 = {};
-        /// @brief Unknown.
-        int16_t Unk12 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadSByte();
-            Unk0E = Reader.ReadSByte();
-            Unk0F = Reader.ReadByte();
-            Unk10 = Reader.ReadByte();
-            Unk11 = Reader.ReadByte();
-            Unk12 = Reader.ReadInt16();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteSByte(Unk0D);
-            Writer.WriteSByte(Unk0E);
-            Writer.WriteByte(Unk0F);
-            Writer.WriteByte(Unk10);
-            Writer.WriteByte(Unk11);
-            Writer.WriteInt16(Unk12);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("Unk0E", Unk0E);
-            F("Unk0F", Unk0F);
-            F("Unk10", Unk10);
-            F("Unk11", Unk11);
-            F("Unk12", Unk12);
-        }
-    };
-
-    /// @brief Event type 115 (Unk115).
-    struct Unk115 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk115;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-        /// @brief Unknown.
-        uint8_t Unk0E = {};
-        /// @brief Unknown.
-        uint8_t Unk0F = {};
-        /// @brief Unknown.
-        uint8_t Unk10 = {};
-        /// @brief Unknown.
-        uint8_t Unk11 = {};
-        /// @brief Unknown.
-        int16_t Unk12 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            Unk0E = Reader.ReadByte();
-            Unk0F = Reader.ReadByte();
-            Unk10 = Reader.ReadByte();
-            Unk11 = Reader.ReadByte();
-            Unk12 = Reader.ReadInt16();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteByte(Unk0E);
-            Writer.WriteByte(Unk0F);
-            Writer.WriteByte(Unk10);
-            Writer.WriteByte(Unk11);
-            Writer.WriteInt16(Unk12);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("Unk0E", Unk0E);
-            F("Unk0F", Unk0F);
-            F("Unk10", Unk10);
-            F("Unk11", Unk11);
-            F("Unk12", Unk12);
-        }
-    };
-
-    /// @brief Event type 116 (Unk116).
-    struct Unk116 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk116;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        int32_t Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(Unk0C);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 117 (Unk117).
-    struct Unk117 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk117;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-        /// @brief Unknown.
-        uint8_t Unk0E = {};
-        /// @brief Unknown.
-        uint8_t Unk0F = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            Unk0E = Reader.ReadByte();
-            Unk0F = Reader.ReadByte();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteByte(Unk0E);
-            Writer.WriteByte(Unk0F);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("Unk0E", Unk0E);
-            F("Unk0F", Unk0F);
-        }
-    };
-
-    /// @brief Event type 118 (Unk118).
-    struct Unk118 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk118;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        uint16_t Unk08 = {};
-        /// @brief Unknown.
-        uint16_t Unk0A = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadUInt16();
-            Unk0A = Reader.ReadUInt16();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteUInt16(Unk08);
-            Writer.WriteUInt16(Unk0A);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-            F("Unk0A", Unk0A);
-        }
-    };
-
-    /// @brief Event type 119 (Unk119).
-    struct Unk119 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk119;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 120 (Unk120).
-    struct Unk120 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk120;
-        /// @brief ChrType, as SoulsFormats names it (not documented upstream).
-        int32_t ChrType = {};
-        /// @brief FFXIDs, as SoulsFormats names it (not documented upstream).
-        std::vector<int32_t> FFXIDs = std::vector<int32_t>(11);
-        /// @brief Unknown.
-        int32_t Unk30 = {};
-        /// @brief Unknown.
-        int32_t Unk34 = {};
-        /// @brief Unknown.
-        uint8_t Unk38 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            ChrType = Reader.ReadInt32();
-            FFXIDs = Reader.ReadArray<int32_t>(11);
-            Unk30 = Reader.ReadInt32();
-            Unk34 = Reader.ReadInt32();
-            Unk38 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(ChrType);
-            Writer.WriteArray(FFXIDs);
-            Writer.WriteInt32(Unk30);
-            Writer.WriteInt32(Unk34);
-            Writer.WriteByte(Unk38);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("ChrType", ChrType);
-            F("FFXIDs", FFXIDs);
-            F("Unk30", Unk30);
-            F("Unk34", Unk34);
-            F("Unk38", Unk38);
-        }
-    };
-
-    /// @brief Event type 121 (Unk121).
-    struct Unk121 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk121;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk06 = {};
-        /// @brief Unknown.
-        uint8_t Unk07 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadByte();
-            Unk07 = Reader.ReadByte();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteByte(Unk06);
-            Writer.WriteByte(Unk07);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk07", Unk07);
-        }
-    };
-
-    /// @brief Event type 128 (PlaySound1).
-    struct PlaySound1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlaySound1;
-        /// @brief SoundType, as SoulsFormats names it (not documented upstream).
-        int32_t SoundType = {};
-        /// @brief SoundID, as SoulsFormats names it (not documented upstream).
-        int32_t SoundID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SoundType = Reader.ReadInt32();
-            SoundID = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SoundType);
-            Writer.WriteInt32(SoundID);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SoundType", SoundType);
-            F("SoundID", SoundID);
-        }
-    };
-
-    /// @brief Event type 129 (PlaySound2).
-    struct PlaySound2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlaySound2;
-        /// @brief SoundType, as SoulsFormats names it (not documented upstream).
-        int32_t SoundType = {};
-        /// @brief SoundID, as SoulsFormats names it (not documented upstream).
-        int32_t SoundID = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        int32_t Unk0C = {};
-        /// @brief Unknown.
-        int32_t Unk10 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SoundType = Reader.ReadInt32();
-            SoundID = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadInt32();
-            Unk10 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SoundType);
-            Writer.WriteInt32(SoundID);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(Unk0C);
-            Writer.WriteInt32(Unk10);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SoundType", SoundType);
-            F("SoundID", SoundID);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk10", Unk10);
-        }
-    };
-
-    /// @brief Event type 130 (PlaySound3).
-    struct PlaySound3 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlaySound3;
-        /// @brief SoundType, as SoulsFormats names it (not documented upstream).
-        int32_t SoundType = {};
-        /// @brief SoundID, as SoulsFormats names it (not documented upstream).
-        int32_t SoundID = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-        /// @brief Unknown.
-        float Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SoundType = Reader.ReadInt32();
-            SoundID = Reader.ReadInt32();
-            Unk08 = Reader.ReadFloat();
-            Unk0C = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SoundType);
-            Writer.WriteInt32(SoundID);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteFloat(Unk0C);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SoundType", SoundType);
-            F("SoundID", SoundID);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 131 (PlaySound4).
-    struct PlaySound4 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlaySound4;
-        /// @brief SoundType, as SoulsFormats names it (not documented upstream).
-        int32_t SoundType = {};
-        /// @brief SoundID, as SoulsFormats names it (not documented upstream).
-        int32_t SoundID = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SoundType = Reader.ReadInt32();
-            SoundID = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SoundType);
-            Writer.WriteInt32(SoundID);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SoundType", SoundType);
-            F("SoundID", SoundID);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 132 (PlaySound5).
-    struct PlaySound5 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlaySound5;
-        /// @brief SoundType, as SoulsFormats names it (not documented upstream).
-        int32_t SoundType = {};
-        /// @brief SoundID, as SoulsFormats names it (not documented upstream).
-        int32_t SoundID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SoundType = Reader.ReadInt32();
-            SoundID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SoundType);
-            Writer.WriteInt32(SoundID);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SoundType", SoundType);
-            F("SoundID", SoundID);
-        }
-    };
-
-    /// @brief Event type 137 (Unk137).
-    struct Unk137 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk137;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 138 (CreateDecal).
-    struct CreateDecal {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateDecal;
-        /// @brief DecalParamID, as SoulsFormats names it (not documented upstream).
-        int32_t DecalParamID = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            DecalParamID = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(DecalParamID);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("DecalParamID", DecalParamID);
-            F("Unk04", Unk04);
-        }
-    };
-
-    /// @brief Event type 144 (Unk144).
-    struct Unk144 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk144;
-        /// @brief Unknown.
-        uint16_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk02 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadUInt16();
-            Unk02 = Reader.ReadUInt16();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteUInt16(Unk00);
-            Writer.WriteUInt16(Unk02);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk02", Unk02);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 145 (Unk145).
-    struct Unk145 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk145;
-        /// @brief Unknown.
-        int16_t Unk00 = {};
-        /// @brief Condition, as SoulsFormats names it (not documented upstream).
-        int16_t Condition = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt16();
-            Condition = Reader.ReadInt16();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt16(Unk00);
-            Writer.WriteInt16(Condition);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Condition", Condition);
-        }
-    };
-
-    /// @brief Event type 150 (Unk150).
-    struct Unk150 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk150;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 151 (Unk151).
-    struct Unk151 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk151;
-        /// @brief DummyPointID, as SoulsFormats names it (not documented upstream).
-        int32_t DummyPointID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            DummyPointID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(DummyPointID);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("DummyPointID", DummyPointID);
-        }
-    };
-
-    /// @brief Event type 161 (Unk161).
-    struct Unk161 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk161;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 193 (FadeOut).
-    struct FadeOut {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::FadeOut;
-        /// @brief GhostVal1, as SoulsFormats names it (not documented upstream).
-        float GhostVal1 = {};
-        /// @brief GhostVal2, as SoulsFormats names it (not documented upstream).
-        float GhostVal2 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            GhostVal1 = Reader.ReadFloat();
-            GhostVal2 = Reader.ReadFloat();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(GhostVal1);
-            Writer.WriteFloat(GhostVal2);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("GhostVal1", GhostVal1);
-            F("GhostVal2", GhostVal2);
-        }
-    };
-
-    /// @brief Event type 194 (Unk194).
-    struct Unk194 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk194;
-        /// @brief Unknown.
-        uint16_t Unk00 = {};
-        /// @brief Unknown.
-        uint16_t Unk02 = {};
-        /// @brief Unknown.
-        uint16_t Unk04 = {};
-        /// @brief Unknown.
-        uint16_t Unk06 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadUInt16();
-            Unk02 = Reader.ReadUInt16();
-            Unk04 = Reader.ReadUInt16();
-            Unk06 = Reader.ReadUInt16();
-            Unk08 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteUInt16(Unk00);
-            Writer.WriteUInt16(Unk02);
-            Writer.WriteUInt16(Unk04);
-            Writer.WriteUInt16(Unk06);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk02", Unk02);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 224 (Unk224).
-    struct Unk224 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk224;
-        /// @brief Unknown.
-        float Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Unk04 = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(Unk04);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-        }
-    };
-
-    /// @brief Event type 225 (DisableStaminaRegen).
-    struct DisableStaminaRegen {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::DisableStaminaRegen;
-        /// @brief State, as SoulsFormats names it (not documented upstream).
-        uint8_t State = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            State = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(State);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("State", State);
-        }
-    };
-
-    /// @brief Event type 226 (Unk226).
-    struct Unk226 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk226;
-        /// @brief State, as SoulsFormats names it (not documented upstream).
-        uint8_t State = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            State = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(State);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("State", State);
-        }
-    };
-
-    /// @brief Event type 227 (Unk227).
-    struct Unk227 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk227;
-        /// @brief Mask, as SoulsFormats names it (not documented upstream).
-        int32_t Mask = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Mask = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Mask);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Mask", Mask);
-        }
-    };
-
-    /// @brief Event type 228 (RagdollReviveTime).
-    struct RagdollReviveTime {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::RagdollReviveTime;
-        /// @brief Unknown.
-        float Unk00 = {};
-        /// @brief ReviveTimer, as SoulsFormats names it (not documented upstream).
-        float ReviveTimer = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            ReviveTimer = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteFloat(ReviveTimer);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("ReviveTimer", ReviveTimer);
-        }
-    };
-
-    /// @brief Event type 229 (Unk229).
-    struct Unk229 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk229;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 231 (SetEventMessageID).
-    struct SetEventMessageID {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::SetEventMessageID;
-        /// @brief EventMessageID, as SoulsFormats names it (not documented upstream).
-        int32_t EventMessageID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            EventMessageID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(EventMessageID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("EventMessageID", EventMessageID);
-        }
-    };
-
-    /// @brief Event type 232 (Unk232).
-    struct Unk232 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk232;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-        /// @brief Unknown.
-        uint8_t Unk03 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Unk03 = Reader.ReadByte();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(Unk03);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-        }
-    };
-
-    /// @brief Event type 233 (ChangeDrawMask).
-    struct ChangeDrawMask {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::ChangeDrawMask;
-        /// @brief DrawMask, as SoulsFormats names it (not documented upstream).
-        std::vector<uint8_t> DrawMask = std::vector<uint8_t>(32);
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            DrawMask = Reader.ReadBytes(32);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBytes(DrawMask);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("DrawMask", DrawMask);
-        }
-    };
-
-    /// @brief Event type 236 (RollDistanceReduction).
-    struct RollDistanceReduction {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::RollDistanceReduction;
-        /// @brief Unknown.
-        float Unk00 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief RollType, as SoulsFormats names it (not documented upstream).
-        bool RollType = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Unk04 = Reader.ReadFloat();
-            RollType = Reader.ReadBool();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteBool(RollType);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("RollType", RollType);
-        }
-    };
-
-    /// @brief Event type 237 (CreateAISound).
-    struct CreateAISound {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateAISound;
-        /// @brief AISoundID, as SoulsFormats names it (not documented upstream).
-        int32_t AISoundID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            AISoundID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(AISoundID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("AISoundID", AISoundID);
-        }
-    };
-
-    /// @brief Event type 300 (Unk300).
-    struct Unk300 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk300;
-        /// @brief JumpTableID1, as SoulsFormats names it (not documented upstream).
-        int16_t JumpTableID1 = {};
-        /// @brief JumpTableID2, as SoulsFormats names it (not documented upstream).
-        int16_t JumpTableID2 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-        /// @brief Unknown.
-        int32_t Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            JumpTableID1 = Reader.ReadInt16();
-            JumpTableID2 = Reader.ReadInt16();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Unk0C = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt16(JumpTableID1);
-            Writer.WriteInt16(JumpTableID2);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteInt32(Unk0C);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("JumpTableID1", JumpTableID1);
-            F("JumpTableID2", JumpTableID2);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 301 (Unk301).
-    struct Unk301 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk301;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 302 (AddSpEffectDragonForm).
-    struct AddSpEffectDragonForm {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::AddSpEffectDragonForm;
-        /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SpEffectID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SpEffectID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SpEffectID", SpEffectID);
-        }
-    };
-
-    /// @brief Event type 303 (PlayAnimation).
-    struct PlayAnimation {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::PlayAnimation;
-        /// @brief AnimationID, as SoulsFormats names it (not documented upstream).
-        int32_t AnimationID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            AnimationID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(AnimationID);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("AnimationID", AnimationID);
-        }
-    };
-
-    /// @brief Event type 304 (BehaviorThing).
-    struct BehaviorThing {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::BehaviorThing;
-        /// @brief Unknown.
-        uint16_t Unk00 = {};
-        /// @brief Unknown.
-        int16_t Unk02 = {};
-        /// @brief BehaviorListID, as SoulsFormats names it (not documented upstream).
-        int32_t BehaviorListID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadUInt16();
-            Unk02 = Reader.ReadInt16();
-            BehaviorListID = Reader.ReadInt32();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteUInt16(Unk00);
-            Writer.WriteInt16(Unk02);
-            Writer.WriteInt32(BehaviorListID);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk02", Unk02);
-            F("BehaviorListID", BehaviorListID);
-        }
-    };
-
-    /// @brief Event type 307 (CreateBehaviorPC).
-    struct CreateBehaviorPC {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateBehaviorPC;
-        /// @brief Unknown.
-        int16_t Unk00 = {};
-        /// @brief Unknown.
-        int16_t Unk02 = {};
-        /// @brief Condition, as SoulsFormats names it (not documented upstream).
-        int32_t Condition = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt16();
-            Unk02 = Reader.ReadInt16();
-            Condition = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt16(Unk00);
-            Writer.WriteInt16(Unk02);
-            Writer.WriteInt32(Condition);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk02", Unk02);
-            F("Condition", Condition);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 308 (Unk308).
-    struct Unk308 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk308;
-        /// @brief Unknown.
-        float Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 310 (Unk310).
-    struct Unk310 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk310;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-        }
-    };
-
-    /// @brief Event type 311 (Unk311).
-    struct Unk311 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk311;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-        }
-    };
-
-    /// @brief Event type 312 (Unk312).
-    struct Unk312 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk312;
-        /// @brief BehaviorMask, as SoulsFormats names it (not documented upstream).
-        std::vector<uint8_t> BehaviorMask = std::vector<uint8_t>(32);
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            BehaviorMask = Reader.ReadBytes(32);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBytes(BehaviorMask);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("BehaviorMask", BehaviorMask);
-        }
-    };
-
-    /// @brief Event type 320 (Unk320).
-    struct Unk320 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk320;
-        /// @brief Unknown.
-        bool Unk00 = {};
-        /// @brief Unknown.
-        bool Unk01 = {};
-        /// @brief Unknown.
-        bool Unk02 = {};
-        /// @brief Unknown.
-        bool Unk03 = {};
-        /// @brief Unknown.
-        bool Unk04 = {};
-        /// @brief Unknown.
-        bool Unk05 = {};
-        /// @brief Unknown.
-        bool Unk06 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadBool();
-            Unk01 = Reader.ReadBool();
-            Unk02 = Reader.ReadBool();
-            Unk03 = Reader.ReadBool();
-            Unk04 = Reader.ReadBool();
-            Unk05 = Reader.ReadBool();
-            Unk06 = Reader.ReadBool();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBool(Unk00);
-            Writer.WriteBool(Unk01);
-            Writer.WriteBool(Unk02);
-            Writer.WriteBool(Unk03);
-            Writer.WriteBool(Unk04);
-            Writer.WriteBool(Unk05);
-            Writer.WriteBool(Unk06);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-            F("Unk04", Unk04);
-            F("Unk05", Unk05);
-            F("Unk06", Unk06);
-        }
-    };
-
-    /// @brief Event type 330 (Unk330).
-    struct Unk330 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk330;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 331 (EffectDuringThrow).
-    struct EffectDuringThrow {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::EffectDuringThrow;
-        /// @brief SpEffectID1, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID1 = {};
-        /// @brief SpEffectID2, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID2 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SpEffectID1 = Reader.ReadInt32();
-            SpEffectID2 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SpEffectID1);
-            Writer.WriteInt32(SpEffectID2);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SpEffectID1", SpEffectID1);
-            F("SpEffectID2", SpEffectID2);
-        }
-    };
-
-    /// @brief Event type 332 (Unk332).
-    struct Unk332 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk332;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 401 (CreateSpEffect).
-    struct CreateSpEffect {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect;
-        /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
-        int32_t SpEffectID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SpEffectID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SpEffectID);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SpEffectID", SpEffectID);
-        }
-    };
-
-    /// @brief Event type 500 (Unk500).
-    struct Unk500 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk500;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-        }
-    };
-
-    /// @brief Event type 510 (Unk510).
-    struct Unk510 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk510;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 520 (Unk520).
-    struct Unk520 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk520;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 522 (KingOfTheStorm).
-    struct KingOfTheStorm {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::KingOfTheStorm;
-        /// @brief Unknown.
-        float Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 600 (Unk600).
-    struct Unk600 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk600;
-        /// @brief Mask, as SoulsFormats names it (not documented upstream).
-        int32_t Mask = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Mask = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Mask);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Mask", Mask);
-        }
-    };
-
-    /// @brief Event type 601 (Unk601).
-    struct Unk601 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk601;
-        /// @brief StayAnimType, as SoulsFormats names it (not documented upstream).
-        int32_t StayAnimType = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            StayAnimType = Reader.ReadInt32();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(StayAnimType);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("StayAnimType", StayAnimType);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 603 (DebugAnimSpeed).
-    struct DebugAnimSpeed {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::DebugAnimSpeed;
-        /// @brief AnimSpeed, as SoulsFormats names it (not documented upstream).
-        uint32_t AnimSpeed = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            AnimSpeed = Reader.ReadUInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteUInt32(AnimSpeed);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("AnimSpeed", AnimSpeed);
-        }
-    };
-
-    /// @brief Event type 605 (Unk605).
-    struct Unk605 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk605;
-        /// @brief Unknown.
-        bool Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-        /// @brief Unknown.
-        uint8_t Unk03 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-        /// @brief Unknown.
-        float Unk0C = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadBool();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Unk03 = Reader.ReadByte();
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadFloat();
-            Unk0C = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBool(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(Unk03);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteFloat(Unk0C);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-        }
-    };
-
-    /// @brief Event type 606 (Unk606).
-    struct Unk606 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk606;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk06 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Unk04 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Unk06 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(Unk04);
-            Writer.WriteByte(0);
-            Writer.WriteByte(Unk06);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk06", Unk06);
-        }
-    };
-
-    /// @brief Event type 700 (Unk700).
-    struct Unk700 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk700;
-        /// @brief Unknown.
-        float Unk00 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-        /// @brief Unknown.
-        float Unk0C = {};
-        /// @brief Unknown.
-        int32_t Unk10 = {};
-        /// @brief Unknown.
-        int8_t Unk14 = {};
-        /// @brief Unknown.
-        float Unk18 = {};
-        /// @brief Unknown.
-        float Unk1C = {};
-        /// @brief Unknown.
-        float Unk20 = {};
-        /// @brief Unknown.
-        float Unk24 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Unk0C = Reader.ReadFloat();
-            Unk10 = Reader.ReadInt32();
-            Unk14 = Reader.ReadSByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Unk18 = Reader.ReadFloat();
-            Unk1C = Reader.ReadFloat();
-            Unk20 = Reader.ReadFloat();
-            Unk24 = Reader.ReadFloat();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteFloat(Unk0C);
-            Writer.WriteInt32(Unk10);
-            Writer.WriteSByte(Unk14);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteFloat(Unk18);
-            Writer.WriteFloat(Unk1C);
-            Writer.WriteFloat(Unk20);
-            Writer.WriteFloat(Unk24);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk10", Unk10);
-            F("Unk14", Unk14);
-            F("Unk18", Unk18);
-            F("Unk1C", Unk1C);
-            F("Unk20", Unk20);
-            F("Unk24", Unk24);
-        }
-    };
-
-    /// @brief Event type 703 (EnableTurningDirection).
-    struct EnableTurningDirection {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::EnableTurningDirection;
-        /// @brief State, as SoulsFormats names it (not documented upstream).
-        uint8_t State = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            State = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(State);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("State", State);
-        }
-    };
-
-    /// @brief Event type 705 (FacingAngleCorrection).
-    struct FacingAngleCorrection {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::FacingAngleCorrection;
-        /// @brief CorrectionRate, as SoulsFormats names it (not documented upstream).
-        float CorrectionRate = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            CorrectionRate = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(CorrectionRate);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("CorrectionRate", CorrectionRate);
-        }
-    };
-
-    /// @brief Event type 707 (Unk707).
-    struct Unk707 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk707;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 710 (HideWeapon).
-    struct HideWeapon {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::HideWeapon;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-        /// @brief Unknown.
-        uint8_t Unk03 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Unk03 = Reader.ReadByte();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(Unk03);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-        }
-    };
-
-    /// @brief Event type 711 (HideModelMask).
-    struct HideModelMask {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::HideModelMask;
-        /// @brief Mask, as SoulsFormats names it (not documented upstream).
-        std::vector<uint8_t> Mask = std::vector<uint8_t>(32);
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Mask = Reader.ReadBytes(32);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBytes(Mask);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Mask", Mask);
-        }
-    };
-
-    /// @brief Event type 712 (DamageLevelModule).
-    struct DamageLevelModule {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::DamageLevelModule;
-        /// @brief Mask, as SoulsFormats names it (not documented upstream).
-        std::vector<uint8_t> Mask = std::vector<uint8_t>(16);
-        /// @brief Unknown.
-        uint8_t Unk10 = {};
-        /// @brief Unknown.
-        uint8_t Unk11 = {};
-        /// @brief Unknown.
-        uint8_t Unk12 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Mask = Reader.ReadBytes(16);
-            Unk10 = Reader.ReadByte();
-            Unk11 = Reader.ReadByte();
-            Unk12 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBytes(Mask);
-            Writer.WriteByte(Unk10);
-            Writer.WriteByte(Unk11);
-            Writer.WriteByte(Unk12);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Mask", Mask);
-            F("Unk10", Unk10);
-            F("Unk11", Unk11);
-            F("Unk12", Unk12);
-        }
-    };
-
-    /// @brief Event type 713 (ModelMask).
-    struct ModelMask {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::ModelMask;
-        /// @brief Mask, as SoulsFormats names it (not documented upstream).
-        std::vector<uint8_t> Mask = std::vector<uint8_t>(32);
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Mask = Reader.ReadBytes(32);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteBytes(Mask);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Mask", Mask);
-        }
-    };
-
-    /// @brief Event type 714 (DamageLevelFunction).
-    struct DamageLevelFunction {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::DamageLevelFunction;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 715 (Unk715).
-    struct Unk715 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk715;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-        /// @brief Unknown.
-        uint8_t Unk03 = {};
-        /// @brief Unknown.
-        uint8_t Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk05 = {};
-        /// @brief Unknown.
-        uint8_t Unk06 = {};
-        /// @brief Unknown.
-        uint8_t Unk07 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Unk03 = Reader.ReadByte();
-            Unk04 = Reader.ReadByte();
-            Unk05 = Reader.ReadByte();
-            Unk06 = Reader.ReadByte();
-            Unk07 = Reader.ReadByte();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(Unk03);
-            Writer.WriteByte(Unk04);
-            Writer.WriteByte(Unk05);
-            Writer.WriteByte(Unk06);
-            Writer.WriteByte(Unk07);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-            F("Unk04", Unk04);
-            F("Unk05", Unk05);
-            F("Unk06", Unk06);
-            F("Unk07", Unk07);
-        }
-    };
-
-    /// @brief Event type 720 (CultStart).
-    struct CultStart {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CultStart;
-        /// @brief CultType, as SoulsFormats names it (not documented upstream).
-        uint8_t CultType = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            CultType = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(CultType);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("CultType", CultType);
-        }
-    };
-
-    /// @brief Event type 730 (Unk730).
-    struct Unk730 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk730;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-        }
-    };
-
-    /// @brief Event type 740 (Unk740).
-    struct Unk740 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk740;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 760 (IFrameState).
-    struct IFrameState {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::IFrameState;
-        /// @brief Unknown.
-        uint8_t Unk00 = {};
-        /// @brief Unknown.
-        uint8_t Unk01 = {};
-        /// @brief Unknown.
-        uint8_t Unk02 = {};
-        /// @brief Unknown.
-        uint8_t Unk03 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-        /// @brief Unknown.
-        float Unk0C = {};
-        /// @brief Unknown.
-        float Unk10 = {};
-        /// @brief Unknown.
-        float Unk14 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadByte();
-            Unk01 = Reader.ReadByte();
-            Unk02 = Reader.ReadByte();
-            Unk03 = Reader.ReadByte();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Unk0C = Reader.ReadFloat();
-            Unk10 = Reader.ReadFloat();
-            Unk14 = Reader.ReadFloat();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(Unk00);
-            Writer.WriteByte(Unk01);
-            Writer.WriteByte(Unk02);
-            Writer.WriteByte(Unk03);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteFloat(Unk0C);
-            Writer.WriteFloat(Unk10);
-            Writer.WriteFloat(Unk14);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk01", Unk01);
-            F("Unk02", Unk02);
-            F("Unk03", Unk03);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk10", Unk10);
-            F("Unk14", Unk14);
-        }
-    };
-
-    /// @brief Event type 770 (BonePos).
-    struct BonePos {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::BonePos;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteByte(Unk08);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 771 (BoneFixOn1).
-    struct BoneFixOn1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::BoneFixOn1;
-        /// @brief BoneID, as SoulsFormats names it (not documented upstream).
-        uint8_t BoneID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            BoneID = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(BoneID);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("BoneID", BoneID);
-        }
-    };
-
-    /// @brief Event type 772 (BoneFixOn2).
-    struct BoneFixOn2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::BoneFixOn2;
-        /// @brief Unknown.
-        int32_t Unk00 = {};
-        /// @brief Unknown.
-        float Unk04 = {};
-        /// @brief Unknown.
-        uint8_t Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt32();
-            Unk04 = Reader.ReadFloat();
-            Unk08 = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(Unk00);
-            Writer.WriteFloat(Unk04);
-            Writer.WriteByte(Unk08);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-        }
-    };
-
-    /// @brief Event type 781 (TurnLowerBody).
-    struct TurnLowerBody {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::TurnLowerBody;
-        /// @brief TurnState, as SoulsFormats names it (not documented upstream).
-        uint8_t TurnState = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            TurnState = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(TurnState);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("TurnState", TurnState);
-        }
-    };
-
-    /// @brief Event type 782 (Unk782).
-    struct Unk782 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk782;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 785 (SpawnBulletByCultSacrifice1).
-    struct SpawnBulletByCultSacrifice1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::SpawnBulletByCultSacrifice1;
-        /// @brief Unknown.
-        float Unk00 = {};
-        /// @brief DummyPointID, as SoulsFormats names it (not documented upstream).
-        int32_t DummyPointID = {};
-        /// @brief BulletID, as SoulsFormats names it (not documented upstream).
-        int32_t BulletID = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            DummyPointID = Reader.ReadInt32();
-            BulletID = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(DummyPointID);
-            Writer.WriteInt32(BulletID);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("DummyPointID", DummyPointID);
-            F("BulletID", BulletID);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-        }
-    };
-
-    /// @brief Event type 786 (Unk786).
-    struct Unk786 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk786;
-        /// @brief Unknown.
-        float Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 790 (Unk790).
-    struct Unk790 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk790;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 791 (Unk791).
-    struct Unk791 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk791;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 792 (HitEffect2).
-    struct HitEffect2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::HitEffect2;
-        /// @brief Unknown.
-        int16_t Unk00 = {};
-        /// @brief Unknown.
-        int32_t Unk04 = {};
-        /// @brief Unknown.
-        int32_t Unk08 = {};
-        /// @brief Unknown.
-        uint8_t Unk0C = {};
-        /// @brief Unknown.
-        uint8_t Unk0D = {};
-        /// @brief Unknown.
-        uint8_t Unk0E = {};
-        /// @brief Unknown.
-        uint8_t Unk0F = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadInt16();
-            Reader.Assert<int16_t>(0);
-            Unk04 = Reader.ReadInt32();
-            Unk08 = Reader.ReadInt32();
-            Unk0C = Reader.ReadByte();
-            Unk0D = Reader.ReadByte();
-            Unk0E = Reader.ReadByte();
-            Unk0F = Reader.ReadByte();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt16(Unk00);
-            Writer.WriteInt16(0);
-            Writer.WriteInt32(Unk04);
-            Writer.WriteInt32(Unk08);
-            Writer.WriteByte(Unk0C);
-            Writer.WriteByte(Unk0D);
-            Writer.WriteByte(Unk0E);
-            Writer.WriteByte(Unk0F);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-            F("Unk04", Unk04);
-            F("Unk08", Unk08);
-            F("Unk0C", Unk0C);
-            F("Unk0D", Unk0D);
-            F("Unk0E", Unk0E);
-            F("Unk0F", Unk0F);
-        }
-    };
-
-    /// @brief Event type 793 (CultSacrifice1).
-    struct CultSacrifice1 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CultSacrifice1;
-        /// @brief SacrificeValue, as SoulsFormats names it (not documented upstream).
-        int32_t SacrificeValue = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            SacrificeValue = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(SacrificeValue);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("SacrificeValue", SacrificeValue);
-        }
-    };
-
-    /// @brief Event type 794 (SacrificeEmpty).
-    struct SacrificeEmpty {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::SacrificeEmpty;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 795 (Toughness).
-    struct Toughness {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Toughness;
-        /// @brief ToughnessParamID, as SoulsFormats names it (not documented upstream).
-        uint8_t ToughnessParamID = {};
-        /// @brief IsToughnessEffective, as SoulsFormats names it (not documented upstream).
-        bool IsToughnessEffective = {};
-        /// @brief ToughnessRate, as SoulsFormats names it (not documented upstream).
-        float ToughnessRate = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            ToughnessParamID = Reader.ReadByte();
-            IsToughnessEffective = Reader.ReadBool();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            ToughnessRate = Reader.ReadFloat();
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(ToughnessParamID);
-            Writer.WriteBool(IsToughnessEffective);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteFloat(ToughnessRate);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("ToughnessParamID", ToughnessParamID);
-            F("IsToughnessEffective", IsToughnessEffective);
-            F("ToughnessRate", ToughnessRate);
-        }
-    };
-
-    /// @brief Event type 796 (BringCultMenu).
-    struct BringCultMenu {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::BringCultMenu;
-        /// @brief MenuType, as SoulsFormats names it (not documented upstream).
-        uint8_t MenuType = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            MenuType = Reader.ReadByte();
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<uint8_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteByte(MenuType);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteByte(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("MenuType", MenuType);
-        }
-    };
-
-    /// @brief Event type 797 (CeremonyParamID).
-    struct CeremonyParamID {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CeremonyParamID;
-        /// @brief ParamID, as SoulsFormats names it (not documented upstream).
-        int32_t ParamID = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            ParamID = Reader.ReadInt32();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(ParamID);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("ParamID", ParamID);
-        }
-    };
-
-    /// @brief Event type 798 (CultSingle).
-    struct CultSingle {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CultSingle;
-        /// @brief Unknown.
-        float Unk00 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Unk00 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(Unk00);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("Unk00", Unk00);
-        }
-    };
-
-    /// @brief Event type 799 (CultEmpty2).
-    struct CultEmpty2 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::CultEmpty2;
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            (void)F;
-        }
-    };
-
-    /// @brief Event type 800 (Unk800).
-    struct Unk800 {
-        /// @brief The event type this struct holds the data of.
-        static constexpr TAE3EventType Type = TAE3EventType::Unk800;
-        /// @brief MetersPerTick, as SoulsFormats names it (not documented upstream).
-        float MetersPerTick = {};
-        /// @brief MetersOnTurn, as SoulsFormats names it (not documented upstream).
-        float MetersOnTurn = {};
-        /// @brief Unknown.
-        float Unk08 = {};
-
-        /// @brief Reads the fields that follow the event's header.
-        void Read(BinaryReader& Reader) {
-            MetersPerTick = Reader.ReadFloat();
-            MetersOnTurn = Reader.ReadFloat();
-            Unk08 = Reader.ReadFloat();
-            Reader.Assert<int32_t>(0);
-        }
-
-        /// @brief Writes the fields that follow the event's header.
-        void Write(BinaryWriter& Writer) const {
-            Writer.WriteFloat(MetersPerTick);
-            Writer.WriteFloat(MetersOnTurn);
-            Writer.WriteFloat(Unk08);
-            Writer.WriteInt32(0);
-        }
-
-        /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
-        ///        fields by name.
-        template<typename V>
-        void Fields(V& F) {
-            F("MetersPerTick", MetersPerTick);
-            F("MetersOnTurn", MetersOnTurn);
-            F("Unk08", Unk08);
-        }
-    };
+        /// @brief Event type 0 (JumpTable). General-purpose event that calls different functions based on the first
+        /// field.
+        struct JumpTable {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::JumpTable;
+            /// @brief JumpTableID, as SoulsFormats names it (not documented upstream).
+            int32_t JumpTableID = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            int16_t Unk0C = {};
+            /// @brief Unknown.
+            int16_t Unk0E = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                JumpTableID = Reader.ReadInt32();
+                Unk04       = Reader.ReadInt32();
+                Unk08       = Reader.ReadInt32();
+                Unk0C       = Reader.ReadInt16();
+                Unk0E       = Reader.ReadInt16();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(JumpTableID);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt16(Unk0C);
+                Writer.WriteInt16(Unk0E);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("JumpTableID", JumpTableID);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk0E", Unk0E);
+            }
+        };
+
+        /// @brief Event type 1 (Unk001).
+        struct Unk001 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk001;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Condition, as SoulsFormats names it (not documented upstream).
+            int32_t Condition = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+            /// @brief StateInfo, as SoulsFormats names it (not documented upstream).
+            int16_t StateInfo = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00     = Reader.ReadInt32();
+                Unk04     = Reader.ReadInt32();
+                Condition = Reader.ReadInt32();
+                Unk0C     = Reader.ReadByte();
+                Unk0D     = Reader.ReadByte();
+                StateInfo = Reader.ReadInt16();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Condition);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteInt16(StateInfo);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Condition", Condition);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("StateInfo", StateInfo);
+            }
+        };
+
+        /// @brief Event type 2 (Unk002).
+        struct Unk002 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk002;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief ChrAsmStyle, as SoulsFormats names it (not documented upstream).
+            int32_t ChrAsmStyle = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+            /// @brief Unknown.
+            uint16_t Unk0E = {};
+            /// @brief Unknown.
+            uint16_t Unk10 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00       = Reader.ReadInt32();
+                Unk04       = Reader.ReadInt32();
+                ChrAsmStyle = Reader.ReadInt32();
+                Unk0C       = Reader.ReadByte();
+                Unk0D       = Reader.ReadByte();
+                Unk0E       = Reader.ReadUInt16();
+                Unk10       = Reader.ReadUInt16();
+                Reader.Assert<int16_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(ChrAsmStyle);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteUInt16(Unk0E);
+                Writer.WriteUInt16(Unk10);
+                Writer.WriteInt16(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("ChrAsmStyle", ChrAsmStyle);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("Unk0E", Unk0E);
+                F("Unk10", Unk10);
+            }
+        };
+
+        /// @brief Event type 5 (Unk005).
+        struct Unk005 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk005;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+            }
+        };
+
+        /// @brief Event type 16 (Unk016).
+        struct Unk016 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk016;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) { (void)Reader; }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const { (void)Writer; }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 17 (Unk017).
+        struct Unk017 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk017;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 24 (Unk024).
+        struct Unk024 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk024;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            int32_t Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(Unk0C);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 32 (SwitchWeapon1).
+        struct SwitchWeapon1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::SwitchWeapon1;
+            /// @brief SwitchState, as SoulsFormats names it (not documented upstream).
+            int32_t SwitchState = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SwitchState = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SwitchState);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SwitchState", SwitchState);
+            }
+        };
+
+        /// @brief Event type 33 (SwitchWeapon2).
+        struct SwitchWeapon2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::SwitchWeapon2;
+            /// @brief SwitchState, as SoulsFormats names it (not documented upstream).
+            int32_t SwitchState = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SwitchState = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SwitchState);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SwitchState", SwitchState);
+            }
+        };
+
+        /// @brief Event type 34 (Unk034).
+        struct Unk034 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk034;
+            /// @brief State, as SoulsFormats names it (not documented upstream).
+            int32_t State = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                State = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(State);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("State", State);
+            }
+        };
+
+        /// @brief Event type 35 (Unk035).
+        struct Unk035 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk035;
+            /// @brief State, as SoulsFormats names it (not documented upstream).
+            int32_t State = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                State = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(State);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("State", State);
+            }
+        };
+
+        /// @brief Event type 64 (Unk064).
+        struct Unk064 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk064;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            uint8_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk09 = {};
+            /// @brief Unknown.
+            uint8_t Unk0A = {};
+            /// @brief Unknown.
+            uint8_t Unk0B = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadByte();
+                Unk09 = Reader.ReadByte();
+                Unk0A = Reader.ReadByte();
+                Unk0B = Reader.ReadByte();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteByte(Unk08);
+                Writer.WriteByte(Unk09);
+                Writer.WriteByte(Unk0A);
+                Writer.WriteByte(Unk0B);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+                F("Unk09", Unk09);
+                F("Unk0A", Unk0A);
+                F("Unk0B", Unk0B);
+            }
+        };
+
+        /// @brief Event type 65 (Unk065).
+        struct Unk065 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk065;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk05 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadByte();
+                Unk05 = Reader.ReadByte();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteByte(Unk04);
+                Writer.WriteByte(Unk05);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk05", Unk05);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 66 (CreateSpEffect1).
+        struct CreateSpEffect1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect1;
+            /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SpEffectID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SpEffectID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SpEffectID", SpEffectID);
+            }
+        };
+
+        /// @brief Event type 67 (CreateSpEffect2).
+        struct CreateSpEffect2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect2;
+            /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SpEffectID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SpEffectID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SpEffectID", SpEffectID);
+            }
+        };
+
+        /// @brief Event type 96 (PlayFFX).
+        struct PlayFFX {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlayFFX;
+            /// @brief FFXID, as SoulsFormats names it (not documented upstream).
+            int32_t FFXID = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief State0, as SoulsFormats names it (not documented upstream).
+            int8_t State0 = {};
+            /// @brief State1, as SoulsFormats names it (not documented upstream).
+            int8_t State1 = {};
+            /// @brief GhostFFXCondition, as SoulsFormats names it (not documented upstream).
+            int8_t GhostFFXCondition = {};
+            /// @brief Unknown.
+            uint8_t Unk0F = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                FFXID             = Reader.ReadInt32();
+                Unk04             = Reader.ReadInt32();
+                Unk08             = Reader.ReadInt32();
+                State0            = Reader.ReadSByte();
+                State1            = Reader.ReadSByte();
+                GhostFFXCondition = Reader.ReadSByte();
+                Unk0F             = Reader.ReadByte();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(FFXID);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteSByte(State0);
+                Writer.WriteSByte(State1);
+                Writer.WriteSByte(GhostFFXCondition);
+                Writer.WriteByte(Unk0F);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("FFXID", FFXID);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("State0", State0);
+                F("State1", State1);
+                F("GhostFFXCondition", GhostFFXCondition);
+                F("Unk0F", Unk0F);
+            }
+        };
+
+        /// @brief Event type 110 (Unk110).
+        struct Unk110 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk110;
+            /// @brief ID, as SoulsFormats names it (not documented upstream).
+            int32_t ID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                ID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(ID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("ID", ID);
+            }
+        };
+
+        /// @brief Event type 112 (HitEffect).
+        struct HitEffect {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::HitEffect;
+            /// @brief Size, as SoulsFormats names it (not documented upstream).
+            int32_t Size = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Size  = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Size);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Size", Size);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 113 (Unk113).
+        struct Unk113 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk113;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 114 (Unk114).
+        struct Unk114 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk114;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            int8_t Unk0D = {};
+            /// @brief Unknown.
+            int8_t Unk0E = {};
+            /// @brief Unknown.
+            uint8_t Unk0F = {};
+            /// @brief Unknown.
+            uint8_t Unk10 = {};
+            /// @brief Unknown.
+            uint8_t Unk11 = {};
+            /// @brief Unknown.
+            int16_t Unk12 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadByte();
+                Unk0D = Reader.ReadSByte();
+                Unk0E = Reader.ReadSByte();
+                Unk0F = Reader.ReadByte();
+                Unk10 = Reader.ReadByte();
+                Unk11 = Reader.ReadByte();
+                Unk12 = Reader.ReadInt16();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteSByte(Unk0D);
+                Writer.WriteSByte(Unk0E);
+                Writer.WriteByte(Unk0F);
+                Writer.WriteByte(Unk10);
+                Writer.WriteByte(Unk11);
+                Writer.WriteInt16(Unk12);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("Unk0E", Unk0E);
+                F("Unk0F", Unk0F);
+                F("Unk10", Unk10);
+                F("Unk11", Unk11);
+                F("Unk12", Unk12);
+            }
+        };
+
+        /// @brief Event type 115 (Unk115).
+        struct Unk115 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk115;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+            /// @brief Unknown.
+            uint8_t Unk0E = {};
+            /// @brief Unknown.
+            uint8_t Unk0F = {};
+            /// @brief Unknown.
+            uint8_t Unk10 = {};
+            /// @brief Unknown.
+            uint8_t Unk11 = {};
+            /// @brief Unknown.
+            int16_t Unk12 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadByte();
+                Unk0D = Reader.ReadByte();
+                Unk0E = Reader.ReadByte();
+                Unk0F = Reader.ReadByte();
+                Unk10 = Reader.ReadByte();
+                Unk11 = Reader.ReadByte();
+                Unk12 = Reader.ReadInt16();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteByte(Unk0E);
+                Writer.WriteByte(Unk0F);
+                Writer.WriteByte(Unk10);
+                Writer.WriteByte(Unk11);
+                Writer.WriteInt16(Unk12);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("Unk0E", Unk0E);
+                F("Unk0F", Unk0F);
+                F("Unk10", Unk10);
+                F("Unk11", Unk11);
+                F("Unk12", Unk12);
+            }
+        };
+
+        /// @brief Event type 116 (Unk116).
+        struct Unk116 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk116;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            int32_t Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(Unk0C);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 117 (Unk117).
+        struct Unk117 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk117;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+            /// @brief Unknown.
+            uint8_t Unk0E = {};
+            /// @brief Unknown.
+            uint8_t Unk0F = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadByte();
+                Unk0D = Reader.ReadByte();
+                Unk0E = Reader.ReadByte();
+                Unk0F = Reader.ReadByte();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteByte(Unk0E);
+                Writer.WriteByte(Unk0F);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("Unk0E", Unk0E);
+                F("Unk0F", Unk0F);
+            }
+        };
+
+        /// @brief Event type 118 (Unk118).
+        struct Unk118 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk118;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            uint16_t Unk08 = {};
+            /// @brief Unknown.
+            uint16_t Unk0A = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadUInt16();
+                Unk0A = Reader.ReadUInt16();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteUInt16(Unk08);
+                Writer.WriteUInt16(Unk0A);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+                F("Unk0A", Unk0A);
+            }
+        };
+
+        /// @brief Event type 119 (Unk119).
+        struct Unk119 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk119;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 120 (Unk120).
+        struct Unk120 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk120;
+            /// @brief ChrType, as SoulsFormats names it (not documented upstream).
+            int32_t ChrType = {};
+            /// @brief FFXIDs, as SoulsFormats names it (not documented upstream).
+            std::vector<int32_t> FFXIDs = std::vector<int32_t>(11);
+            /// @brief Unknown.
+            int32_t Unk30 = {};
+            /// @brief Unknown.
+            int32_t Unk34 = {};
+            /// @brief Unknown.
+            uint8_t Unk38 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                ChrType = Reader.ReadInt32();
+                FFXIDs  = Reader.ReadArray<int32_t>(11);
+                Unk30   = Reader.ReadInt32();
+                Unk34   = Reader.ReadInt32();
+                Unk38   = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(ChrType);
+                Writer.WriteArray(FFXIDs);
+                Writer.WriteInt32(Unk30);
+                Writer.WriteInt32(Unk34);
+                Writer.WriteByte(Unk38);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("ChrType", ChrType);
+                F("FFXIDs", FFXIDs);
+                F("Unk30", Unk30);
+                F("Unk34", Unk34);
+                F("Unk38", Unk38);
+            }
+        };
+
+        /// @brief Event type 121 (Unk121).
+        struct Unk121 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk121;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk06 = {};
+            /// @brief Unknown.
+            uint8_t Unk07 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadByte();
+                Unk07 = Reader.ReadByte();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteByte(Unk06);
+                Writer.WriteByte(Unk07);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk07", Unk07);
+            }
+        };
+
+        /// @brief Event type 128 (PlaySound1).
+        struct PlaySound1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlaySound1;
+            /// @brief SoundType, as SoulsFormats names it (not documented upstream).
+            int32_t SoundType = {};
+            /// @brief SoundID, as SoulsFormats names it (not documented upstream).
+            int32_t SoundID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SoundType = Reader.ReadInt32();
+                SoundID   = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SoundType);
+                Writer.WriteInt32(SoundID);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SoundType", SoundType);
+                F("SoundID", SoundID);
+            }
+        };
+
+        /// @brief Event type 129 (PlaySound2).
+        struct PlaySound2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlaySound2;
+            /// @brief SoundType, as SoulsFormats names it (not documented upstream).
+            int32_t SoundType = {};
+            /// @brief SoundID, as SoulsFormats names it (not documented upstream).
+            int32_t SoundID = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            int32_t Unk0C = {};
+            /// @brief Unknown.
+            int32_t Unk10 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SoundType = Reader.ReadInt32();
+                SoundID   = Reader.ReadInt32();
+                Unk08     = Reader.ReadInt32();
+                Unk0C     = Reader.ReadInt32();
+                Unk10     = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SoundType);
+                Writer.WriteInt32(SoundID);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(Unk0C);
+                Writer.WriteInt32(Unk10);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SoundType", SoundType);
+                F("SoundID", SoundID);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk10", Unk10);
+            }
+        };
+
+        /// @brief Event type 130 (PlaySound3).
+        struct PlaySound3 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlaySound3;
+            /// @brief SoundType, as SoulsFormats names it (not documented upstream).
+            int32_t SoundType = {};
+            /// @brief SoundID, as SoulsFormats names it (not documented upstream).
+            int32_t SoundID = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+            /// @brief Unknown.
+            float Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SoundType = Reader.ReadInt32();
+                SoundID   = Reader.ReadInt32();
+                Unk08     = Reader.ReadFloat();
+                Unk0C     = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SoundType);
+                Writer.WriteInt32(SoundID);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteFloat(Unk0C);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SoundType", SoundType);
+                F("SoundID", SoundID);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 131 (PlaySound4).
+        struct PlaySound4 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlaySound4;
+            /// @brief SoundType, as SoulsFormats names it (not documented upstream).
+            int32_t SoundType = {};
+            /// @brief SoundID, as SoulsFormats names it (not documented upstream).
+            int32_t SoundID = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SoundType = Reader.ReadInt32();
+                SoundID   = Reader.ReadInt32();
+                Unk08     = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SoundType);
+                Writer.WriteInt32(SoundID);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SoundType", SoundType);
+                F("SoundID", SoundID);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 132 (PlaySound5).
+        struct PlaySound5 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlaySound5;
+            /// @brief SoundType, as SoulsFormats names it (not documented upstream).
+            int32_t SoundType = {};
+            /// @brief SoundID, as SoulsFormats names it (not documented upstream).
+            int32_t SoundID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SoundType = Reader.ReadInt32();
+                SoundID   = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SoundType);
+                Writer.WriteInt32(SoundID);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SoundType", SoundType);
+                F("SoundID", SoundID);
+            }
+        };
+
+        /// @brief Event type 137 (Unk137).
+        struct Unk137 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk137;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 138 (CreateDecal).
+        struct CreateDecal {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateDecal;
+            /// @brief DecalParamID, as SoulsFormats names it (not documented upstream).
+            int32_t DecalParamID = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                DecalParamID = Reader.ReadInt32();
+                Unk04        = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(DecalParamID);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("DecalParamID", DecalParamID);
+                F("Unk04", Unk04);
+            }
+        };
+
+        /// @brief Event type 144 (Unk144).
+        struct Unk144 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk144;
+            /// @brief Unknown.
+            uint16_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk02 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadUInt16();
+                Unk02 = Reader.ReadUInt16();
+                Unk04 = Reader.ReadFloat();
+                Unk08 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteUInt16(Unk00);
+                Writer.WriteUInt16(Unk02);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk02", Unk02);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 145 (Unk145).
+        struct Unk145 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk145;
+            /// @brief Unknown.
+            int16_t Unk00 = {};
+            /// @brief Condition, as SoulsFormats names it (not documented upstream).
+            int16_t Condition = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00     = Reader.ReadInt16();
+                Condition = Reader.ReadInt16();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt16(Unk00);
+                Writer.WriteInt16(Condition);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Condition", Condition);
+            }
+        };
+
+        /// @brief Event type 150 (Unk150).
+        struct Unk150 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk150;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 151 (Unk151).
+        struct Unk151 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk151;
+            /// @brief DummyPointID, as SoulsFormats names it (not documented upstream).
+            int32_t DummyPointID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                DummyPointID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(DummyPointID);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("DummyPointID", DummyPointID);
+            }
+        };
+
+        /// @brief Event type 161 (Unk161).
+        struct Unk161 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk161;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 193 (FadeOut).
+        struct FadeOut {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::FadeOut;
+            /// @brief GhostVal1, as SoulsFormats names it (not documented upstream).
+            float GhostVal1 = {};
+            /// @brief GhostVal2, as SoulsFormats names it (not documented upstream).
+            float GhostVal2 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                GhostVal1 = Reader.ReadFloat();
+                GhostVal2 = Reader.ReadFloat();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(GhostVal1);
+                Writer.WriteFloat(GhostVal2);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("GhostVal1", GhostVal1);
+                F("GhostVal2", GhostVal2);
+            }
+        };
+
+        /// @brief Event type 194 (Unk194).
+        struct Unk194 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk194;
+            /// @brief Unknown.
+            uint16_t Unk00 = {};
+            /// @brief Unknown.
+            uint16_t Unk02 = {};
+            /// @brief Unknown.
+            uint16_t Unk04 = {};
+            /// @brief Unknown.
+            uint16_t Unk06 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadUInt16();
+                Unk02 = Reader.ReadUInt16();
+                Unk04 = Reader.ReadUInt16();
+                Unk06 = Reader.ReadUInt16();
+                Unk08 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteUInt16(Unk00);
+                Writer.WriteUInt16(Unk02);
+                Writer.WriteUInt16(Unk04);
+                Writer.WriteUInt16(Unk06);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk02", Unk02);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 224 (Unk224).
+        struct Unk224 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk224;
+            /// @brief Unknown.
+            float Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Unk04 = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(Unk04);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+            }
+        };
+
+        /// @brief Event type 225 (DisableStaminaRegen).
+        struct DisableStaminaRegen {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::DisableStaminaRegen;
+            /// @brief State, as SoulsFormats names it (not documented upstream).
+            uint8_t State = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                State = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(State);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("State", State);
+            }
+        };
+
+        /// @brief Event type 226 (Unk226).
+        struct Unk226 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk226;
+            /// @brief State, as SoulsFormats names it (not documented upstream).
+            uint8_t State = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                State = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(State);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("State", State);
+            }
+        };
+
+        /// @brief Event type 227 (Unk227).
+        struct Unk227 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk227;
+            /// @brief Mask, as SoulsFormats names it (not documented upstream).
+            int32_t Mask = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Mask = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Mask);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Mask", Mask);
+            }
+        };
+
+        /// @brief Event type 228 (RagdollReviveTime).
+        struct RagdollReviveTime {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::RagdollReviveTime;
+            /// @brief Unknown.
+            float Unk00 = {};
+            /// @brief ReviveTimer, as SoulsFormats names it (not documented upstream).
+            float ReviveTimer = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00       = Reader.ReadFloat();
+                ReviveTimer = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteFloat(ReviveTimer);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("ReviveTimer", ReviveTimer);
+            }
+        };
+
+        /// @brief Event type 229 (Unk229).
+        struct Unk229 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk229;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 231 (SetEventMessageID).
+        struct SetEventMessageID {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::SetEventMessageID;
+            /// @brief EventMessageID, as SoulsFormats names it (not documented upstream).
+            int32_t EventMessageID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                EventMessageID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(EventMessageID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("EventMessageID", EventMessageID);
+            }
+        };
+
+        /// @brief Event type 232 (Unk232).
+        struct Unk232 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk232;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+            /// @brief Unknown.
+            uint8_t Unk03 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Unk03 = Reader.ReadByte();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(Unk03);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+            }
+        };
+
+        /// @brief Event type 233 (ChangeDrawMask).
+        struct ChangeDrawMask {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::ChangeDrawMask;
+            /// @brief DrawMask, as SoulsFormats names it (not documented upstream).
+            std::vector<uint8_t> DrawMask = std::vector<uint8_t>(32);
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) { DrawMask = Reader.ReadBytes(32); }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const { Writer.WriteBytes(DrawMask); }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("DrawMask", DrawMask);
+            }
+        };
+
+        /// @brief Event type 236 (RollDistanceReduction).
+        struct RollDistanceReduction {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::RollDistanceReduction;
+            /// @brief Unknown.
+            float Unk00 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief RollType, as SoulsFormats names it (not documented upstream).
+            bool RollType = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00    = Reader.ReadFloat();
+                Unk04    = Reader.ReadFloat();
+                RollType = Reader.ReadBool();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteBool(RollType);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("RollType", RollType);
+            }
+        };
+
+        /// @brief Event type 237 (CreateAISound).
+        struct CreateAISound {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateAISound;
+            /// @brief AISoundID, as SoulsFormats names it (not documented upstream).
+            int32_t AISoundID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                AISoundID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(AISoundID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("AISoundID", AISoundID);
+            }
+        };
+
+        /// @brief Event type 300 (Unk300).
+        struct Unk300 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk300;
+            /// @brief JumpTableID1, as SoulsFormats names it (not documented upstream).
+            int16_t JumpTableID1 = {};
+            /// @brief JumpTableID2, as SoulsFormats names it (not documented upstream).
+            int16_t JumpTableID2 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+            /// @brief Unknown.
+            int32_t Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                JumpTableID1 = Reader.ReadInt16();
+                JumpTableID2 = Reader.ReadInt16();
+                Unk04        = Reader.ReadFloat();
+                Unk08        = Reader.ReadFloat();
+                Unk0C        = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt16(JumpTableID1);
+                Writer.WriteInt16(JumpTableID2);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteInt32(Unk0C);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("JumpTableID1", JumpTableID1);
+                F("JumpTableID2", JumpTableID2);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 301 (Unk301).
+        struct Unk301 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk301;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 302 (AddSpEffectDragonForm).
+        struct AddSpEffectDragonForm {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::AddSpEffectDragonForm;
+            /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SpEffectID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SpEffectID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SpEffectID", SpEffectID);
+            }
+        };
+
+        /// @brief Event type 303 (PlayAnimation).
+        struct PlayAnimation {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::PlayAnimation;
+            /// @brief AnimationID, as SoulsFormats names it (not documented upstream).
+            int32_t AnimationID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                AnimationID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(AnimationID);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("AnimationID", AnimationID);
+            }
+        };
+
+        /// @brief Event type 304 (BehaviorThing).
+        struct BehaviorThing {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::BehaviorThing;
+            /// @brief Unknown.
+            uint16_t Unk00 = {};
+            /// @brief Unknown.
+            int16_t Unk02 = {};
+            /// @brief BehaviorListID, as SoulsFormats names it (not documented upstream).
+            int32_t BehaviorListID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00          = Reader.ReadUInt16();
+                Unk02          = Reader.ReadInt16();
+                BehaviorListID = Reader.ReadInt32();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteUInt16(Unk00);
+                Writer.WriteInt16(Unk02);
+                Writer.WriteInt32(BehaviorListID);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk02", Unk02);
+                F("BehaviorListID", BehaviorListID);
+            }
+        };
+
+        /// @brief Event type 307 (CreateBehaviorPC).
+        struct CreateBehaviorPC {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateBehaviorPC;
+            /// @brief Unknown.
+            int16_t Unk00 = {};
+            /// @brief Unknown.
+            int16_t Unk02 = {};
+            /// @brief Condition, as SoulsFormats names it (not documented upstream).
+            int32_t Condition = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00     = Reader.ReadInt16();
+                Unk02     = Reader.ReadInt16();
+                Condition = Reader.ReadInt32();
+                Unk08     = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt16(Unk00);
+                Writer.WriteInt16(Unk02);
+                Writer.WriteInt32(Condition);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk02", Unk02);
+                F("Condition", Condition);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 308 (Unk308).
+        struct Unk308 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk308;
+            /// @brief Unknown.
+            float Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 310 (Unk310).
+        struct Unk310 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk310;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+            }
+        };
+
+        /// @brief Event type 311 (Unk311).
+        struct Unk311 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk311;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+            }
+        };
+
+        /// @brief Event type 312 (Unk312).
+        struct Unk312 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk312;
+            /// @brief BehaviorMask, as SoulsFormats names it (not documented upstream).
+            std::vector<uint8_t> BehaviorMask = std::vector<uint8_t>(32);
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) { BehaviorMask = Reader.ReadBytes(32); }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const { Writer.WriteBytes(BehaviorMask); }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("BehaviorMask", BehaviorMask);
+            }
+        };
+
+        /// @brief Event type 320 (Unk320).
+        struct Unk320 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk320;
+            /// @brief Unknown.
+            bool Unk00 = {};
+            /// @brief Unknown.
+            bool Unk01 = {};
+            /// @brief Unknown.
+            bool Unk02 = {};
+            /// @brief Unknown.
+            bool Unk03 = {};
+            /// @brief Unknown.
+            bool Unk04 = {};
+            /// @brief Unknown.
+            bool Unk05 = {};
+            /// @brief Unknown.
+            bool Unk06 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadBool();
+                Unk01 = Reader.ReadBool();
+                Unk02 = Reader.ReadBool();
+                Unk03 = Reader.ReadBool();
+                Unk04 = Reader.ReadBool();
+                Unk05 = Reader.ReadBool();
+                Unk06 = Reader.ReadBool();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteBool(Unk00);
+                Writer.WriteBool(Unk01);
+                Writer.WriteBool(Unk02);
+                Writer.WriteBool(Unk03);
+                Writer.WriteBool(Unk04);
+                Writer.WriteBool(Unk05);
+                Writer.WriteBool(Unk06);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+                F("Unk04", Unk04);
+                F("Unk05", Unk05);
+                F("Unk06", Unk06);
+            }
+        };
+
+        /// @brief Event type 330 (Unk330).
+        struct Unk330 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk330;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 331 (EffectDuringThrow).
+        struct EffectDuringThrow {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::EffectDuringThrow;
+            /// @brief SpEffectID1, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID1 = {};
+            /// @brief SpEffectID2, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID2 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SpEffectID1 = Reader.ReadInt32();
+                SpEffectID2 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SpEffectID1);
+                Writer.WriteInt32(SpEffectID2);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SpEffectID1", SpEffectID1);
+                F("SpEffectID2", SpEffectID2);
+            }
+        };
+
+        /// @brief Event type 332 (Unk332).
+        struct Unk332 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk332;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 401 (CreateSpEffect).
+        struct CreateSpEffect {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CreateSpEffect;
+            /// @brief SpEffectID, as SoulsFormats names it (not documented upstream).
+            int32_t SpEffectID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SpEffectID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SpEffectID);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SpEffectID", SpEffectID);
+            }
+        };
+
+        /// @brief Event type 500 (Unk500).
+        struct Unk500 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk500;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+            }
+        };
+
+        /// @brief Event type 510 (Unk510).
+        struct Unk510 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk510;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 520 (Unk520).
+        struct Unk520 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk520;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 522 (KingOfTheStorm).
+        struct KingOfTheStorm {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::KingOfTheStorm;
+            /// @brief Unknown.
+            float Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 600 (Unk600).
+        struct Unk600 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk600;
+            /// @brief Mask, as SoulsFormats names it (not documented upstream).
+            int32_t Mask = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Mask = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Mask);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Mask", Mask);
+            }
+        };
+
+        /// @brief Event type 601 (Unk601).
+        struct Unk601 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk601;
+            /// @brief StayAnimType, as SoulsFormats names it (not documented upstream).
+            int32_t StayAnimType = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                StayAnimType = Reader.ReadInt32();
+                Unk04        = Reader.ReadFloat();
+                Unk08        = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(StayAnimType);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("StayAnimType", StayAnimType);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 603 (DebugAnimSpeed).
+        struct DebugAnimSpeed {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::DebugAnimSpeed;
+            /// @brief AnimSpeed, as SoulsFormats names it (not documented upstream).
+            uint32_t AnimSpeed = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                AnimSpeed = Reader.ReadUInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteUInt32(AnimSpeed);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("AnimSpeed", AnimSpeed);
+            }
+        };
+
+        /// @brief Event type 605 (Unk605).
+        struct Unk605 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk605;
+            /// @brief Unknown.
+            bool Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+            /// @brief Unknown.
+            uint8_t Unk03 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+            /// @brief Unknown.
+            float Unk0C = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadBool();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Unk03 = Reader.ReadByte();
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadFloat();
+                Unk0C = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteBool(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(Unk03);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteFloat(Unk0C);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+            }
+        };
+
+        /// @brief Event type 606 (Unk606).
+        struct Unk606 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk606;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk06 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Unk04 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Unk06 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(Unk04);
+                Writer.WriteByte(0);
+                Writer.WriteByte(Unk06);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk06", Unk06);
+            }
+        };
+
+        /// @brief Event type 700 (Unk700).
+        struct Unk700 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk700;
+            /// @brief Unknown.
+            float Unk00 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+            /// @brief Unknown.
+            float Unk0C = {};
+            /// @brief Unknown.
+            int32_t Unk10 = {};
+            /// @brief Unknown.
+            int8_t Unk14 = {};
+            /// @brief Unknown.
+            float Unk18 = {};
+            /// @brief Unknown.
+            float Unk1C = {};
+            /// @brief Unknown.
+            float Unk20 = {};
+            /// @brief Unknown.
+            float Unk24 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Unk04 = Reader.ReadFloat();
+                Unk08 = Reader.ReadFloat();
+                Unk0C = Reader.ReadFloat();
+                Unk10 = Reader.ReadInt32();
+                Unk14 = Reader.ReadSByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Unk18 = Reader.ReadFloat();
+                Unk1C = Reader.ReadFloat();
+                Unk20 = Reader.ReadFloat();
+                Unk24 = Reader.ReadFloat();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteFloat(Unk0C);
+                Writer.WriteInt32(Unk10);
+                Writer.WriteSByte(Unk14);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteFloat(Unk18);
+                Writer.WriteFloat(Unk1C);
+                Writer.WriteFloat(Unk20);
+                Writer.WriteFloat(Unk24);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk10", Unk10);
+                F("Unk14", Unk14);
+                F("Unk18", Unk18);
+                F("Unk1C", Unk1C);
+                F("Unk20", Unk20);
+                F("Unk24", Unk24);
+            }
+        };
+
+        /// @brief Event type 703 (EnableTurningDirection).
+        struct EnableTurningDirection {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::EnableTurningDirection;
+            /// @brief State, as SoulsFormats names it (not documented upstream).
+            uint8_t State = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                State = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(State);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("State", State);
+            }
+        };
+
+        /// @brief Event type 705 (FacingAngleCorrection).
+        struct FacingAngleCorrection {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::FacingAngleCorrection;
+            /// @brief CorrectionRate, as SoulsFormats names it (not documented upstream).
+            float CorrectionRate = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                CorrectionRate = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(CorrectionRate);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("CorrectionRate", CorrectionRate);
+            }
+        };
+
+        /// @brief Event type 707 (Unk707).
+        struct Unk707 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk707;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 710 (HideWeapon).
+        struct HideWeapon {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::HideWeapon;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+            /// @brief Unknown.
+            uint8_t Unk03 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Unk03 = Reader.ReadByte();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(Unk03);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+            }
+        };
+
+        /// @brief Event type 711 (HideModelMask).
+        struct HideModelMask {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::HideModelMask;
+            /// @brief Mask, as SoulsFormats names it (not documented upstream).
+            std::vector<uint8_t> Mask = std::vector<uint8_t>(32);
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) { Mask = Reader.ReadBytes(32); }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const { Writer.WriteBytes(Mask); }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Mask", Mask);
+            }
+        };
+
+        /// @brief Event type 712 (DamageLevelModule).
+        struct DamageLevelModule {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::DamageLevelModule;
+            /// @brief Mask, as SoulsFormats names it (not documented upstream).
+            std::vector<uint8_t> Mask = std::vector<uint8_t>(16);
+            /// @brief Unknown.
+            uint8_t Unk10 = {};
+            /// @brief Unknown.
+            uint8_t Unk11 = {};
+            /// @brief Unknown.
+            uint8_t Unk12 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Mask  = Reader.ReadBytes(16);
+                Unk10 = Reader.ReadByte();
+                Unk11 = Reader.ReadByte();
+                Unk12 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteBytes(Mask);
+                Writer.WriteByte(Unk10);
+                Writer.WriteByte(Unk11);
+                Writer.WriteByte(Unk12);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Mask", Mask);
+                F("Unk10", Unk10);
+                F("Unk11", Unk11);
+                F("Unk12", Unk12);
+            }
+        };
+
+        /// @brief Event type 713 (ModelMask).
+        struct ModelMask {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::ModelMask;
+            /// @brief Mask, as SoulsFormats names it (not documented upstream).
+            std::vector<uint8_t> Mask = std::vector<uint8_t>(32);
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) { Mask = Reader.ReadBytes(32); }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const { Writer.WriteBytes(Mask); }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Mask", Mask);
+            }
+        };
+
+        /// @brief Event type 714 (DamageLevelFunction).
+        struct DamageLevelFunction {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::DamageLevelFunction;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 715 (Unk715).
+        struct Unk715 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk715;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+            /// @brief Unknown.
+            uint8_t Unk03 = {};
+            /// @brief Unknown.
+            uint8_t Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk05 = {};
+            /// @brief Unknown.
+            uint8_t Unk06 = {};
+            /// @brief Unknown.
+            uint8_t Unk07 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Unk03 = Reader.ReadByte();
+                Unk04 = Reader.ReadByte();
+                Unk05 = Reader.ReadByte();
+                Unk06 = Reader.ReadByte();
+                Unk07 = Reader.ReadByte();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(Unk03);
+                Writer.WriteByte(Unk04);
+                Writer.WriteByte(Unk05);
+                Writer.WriteByte(Unk06);
+                Writer.WriteByte(Unk07);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+                F("Unk04", Unk04);
+                F("Unk05", Unk05);
+                F("Unk06", Unk06);
+                F("Unk07", Unk07);
+            }
+        };
+
+        /// @brief Event type 720 (CultStart).
+        struct CultStart {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CultStart;
+            /// @brief CultType, as SoulsFormats names it (not documented upstream).
+            uint8_t CultType = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                CultType = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(CultType);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("CultType", CultType);
+            }
+        };
+
+        /// @brief Event type 730 (Unk730).
+        struct Unk730 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk730;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+            }
+        };
+
+        /// @brief Event type 740 (Unk740).
+        struct Unk740 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk740;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 760 (IFrameState).
+        struct IFrameState {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::IFrameState;
+            /// @brief Unknown.
+            uint8_t Unk00 = {};
+            /// @brief Unknown.
+            uint8_t Unk01 = {};
+            /// @brief Unknown.
+            uint8_t Unk02 = {};
+            /// @brief Unknown.
+            uint8_t Unk03 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+            /// @brief Unknown.
+            float Unk0C = {};
+            /// @brief Unknown.
+            float Unk10 = {};
+            /// @brief Unknown.
+            float Unk14 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadByte();
+                Unk01 = Reader.ReadByte();
+                Unk02 = Reader.ReadByte();
+                Unk03 = Reader.ReadByte();
+                Unk04 = Reader.ReadFloat();
+                Unk08 = Reader.ReadFloat();
+                Unk0C = Reader.ReadFloat();
+                Unk10 = Reader.ReadFloat();
+                Unk14 = Reader.ReadFloat();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(Unk00);
+                Writer.WriteByte(Unk01);
+                Writer.WriteByte(Unk02);
+                Writer.WriteByte(Unk03);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteFloat(Unk0C);
+                Writer.WriteFloat(Unk10);
+                Writer.WriteFloat(Unk14);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk01", Unk01);
+                F("Unk02", Unk02);
+                F("Unk03", Unk03);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk10", Unk10);
+                F("Unk14", Unk14);
+            }
+        };
+
+        /// @brief Event type 770 (BonePos).
+        struct BonePos {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::BonePos;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadFloat();
+                Unk08 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteByte(Unk08);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 771 (BoneFixOn1).
+        struct BoneFixOn1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::BoneFixOn1;
+            /// @brief BoneID, as SoulsFormats names it (not documented upstream).
+            uint8_t BoneID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                BoneID = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(BoneID);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("BoneID", BoneID);
+            }
+        };
+
+        /// @brief Event type 772 (BoneFixOn2).
+        struct BoneFixOn2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::BoneFixOn2;
+            /// @brief Unknown.
+            int32_t Unk00 = {};
+            /// @brief Unknown.
+            float Unk04 = {};
+            /// @brief Unknown.
+            uint8_t Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt32();
+                Unk04 = Reader.ReadFloat();
+                Unk08 = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(Unk00);
+                Writer.WriteFloat(Unk04);
+                Writer.WriteByte(Unk08);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+            }
+        };
+
+        /// @brief Event type 781 (TurnLowerBody).
+        struct TurnLowerBody {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::TurnLowerBody;
+            /// @brief TurnState, as SoulsFormats names it (not documented upstream).
+            uint8_t TurnState = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                TurnState = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(TurnState);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("TurnState", TurnState);
+            }
+        };
+
+        /// @brief Event type 782 (Unk782).
+        struct Unk782 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk782;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 785 (SpawnBulletByCultSacrifice1).
+        struct SpawnBulletByCultSacrifice1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::SpawnBulletByCultSacrifice1;
+            /// @brief Unknown.
+            float Unk00 = {};
+            /// @brief DummyPointID, as SoulsFormats names it (not documented upstream).
+            int32_t DummyPointID = {};
+            /// @brief BulletID, as SoulsFormats names it (not documented upstream).
+            int32_t BulletID = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00        = Reader.ReadFloat();
+                DummyPointID = Reader.ReadInt32();
+                BulletID     = Reader.ReadInt32();
+                Unk0C        = Reader.ReadByte();
+                Unk0D        = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(DummyPointID);
+                Writer.WriteInt32(BulletID);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("DummyPointID", DummyPointID);
+                F("BulletID", BulletID);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+            }
+        };
+
+        /// @brief Event type 786 (Unk786).
+        struct Unk786 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk786;
+            /// @brief Unknown.
+            float Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 790 (Unk790).
+        struct Unk790 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk790;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 791 (Unk791).
+        struct Unk791 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk791;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 792 (HitEffect2).
+        struct HitEffect2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::HitEffect2;
+            /// @brief Unknown.
+            int16_t Unk00 = {};
+            /// @brief Unknown.
+            int32_t Unk04 = {};
+            /// @brief Unknown.
+            int32_t Unk08 = {};
+            /// @brief Unknown.
+            uint8_t Unk0C = {};
+            /// @brief Unknown.
+            uint8_t Unk0D = {};
+            /// @brief Unknown.
+            uint8_t Unk0E = {};
+            /// @brief Unknown.
+            uint8_t Unk0F = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadInt16();
+                Reader.Assert<int16_t>(0);
+                Unk04 = Reader.ReadInt32();
+                Unk08 = Reader.ReadInt32();
+                Unk0C = Reader.ReadByte();
+                Unk0D = Reader.ReadByte();
+                Unk0E = Reader.ReadByte();
+                Unk0F = Reader.ReadByte();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt16(Unk00);
+                Writer.WriteInt16(0);
+                Writer.WriteInt32(Unk04);
+                Writer.WriteInt32(Unk08);
+                Writer.WriteByte(Unk0C);
+                Writer.WriteByte(Unk0D);
+                Writer.WriteByte(Unk0E);
+                Writer.WriteByte(Unk0F);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+                F("Unk04", Unk04);
+                F("Unk08", Unk08);
+                F("Unk0C", Unk0C);
+                F("Unk0D", Unk0D);
+                F("Unk0E", Unk0E);
+                F("Unk0F", Unk0F);
+            }
+        };
+
+        /// @brief Event type 793 (CultSacrifice1).
+        struct CultSacrifice1 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CultSacrifice1;
+            /// @brief SacrificeValue, as SoulsFormats names it (not documented upstream).
+            int32_t SacrificeValue = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                SacrificeValue = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(SacrificeValue);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("SacrificeValue", SacrificeValue);
+            }
+        };
+
+        /// @brief Event type 794 (SacrificeEmpty).
+        struct SacrificeEmpty {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::SacrificeEmpty;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 795 (Toughness).
+        struct Toughness {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Toughness;
+            /// @brief ToughnessParamID, as SoulsFormats names it (not documented upstream).
+            uint8_t ToughnessParamID = {};
+            /// @brief IsToughnessEffective, as SoulsFormats names it (not documented upstream).
+            bool IsToughnessEffective = {};
+            /// @brief ToughnessRate, as SoulsFormats names it (not documented upstream).
+            float ToughnessRate = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                ToughnessParamID     = Reader.ReadByte();
+                IsToughnessEffective = Reader.ReadBool();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                ToughnessRate = Reader.ReadFloat();
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(ToughnessParamID);
+                Writer.WriteBool(IsToughnessEffective);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteFloat(ToughnessRate);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("ToughnessParamID", ToughnessParamID);
+                F("IsToughnessEffective", IsToughnessEffective);
+                F("ToughnessRate", ToughnessRate);
+            }
+        };
+
+        /// @brief Event type 796 (BringCultMenu).
+        struct BringCultMenu {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::BringCultMenu;
+            /// @brief MenuType, as SoulsFormats names it (not documented upstream).
+            uint8_t MenuType = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                MenuType = Reader.ReadByte();
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<uint8_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteByte(MenuType);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteByte(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("MenuType", MenuType);
+            }
+        };
+
+        /// @brief Event type 797 (CeremonyParamID).
+        struct CeremonyParamID {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CeremonyParamID;
+            /// @brief ParamID, as SoulsFormats names it (not documented upstream).
+            int32_t ParamID = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                ParamID = Reader.ReadInt32();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(ParamID);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("ParamID", ParamID);
+            }
+        };
+
+        /// @brief Event type 798 (CultSingle).
+        struct CultSingle {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CultSingle;
+            /// @brief Unknown.
+            float Unk00 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Unk00 = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(Unk00);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("Unk00", Unk00);
+            }
+        };
+
+        /// @brief Event type 799 (CultEmpty2).
+        struct CultEmpty2 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::CultEmpty2;
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                (void)F;
+            }
+        };
+
+        /// @brief Event type 800 (Unk800).
+        struct Unk800 {
+            /// @brief The event type this struct holds the data of.
+            static constexpr TAE3EventType Type = TAE3EventType::Unk800;
+            /// @brief MetersPerTick, as SoulsFormats names it (not documented upstream).
+            float MetersPerTick = {};
+            /// @brief MetersOnTurn, as SoulsFormats names it (not documented upstream).
+            float MetersOnTurn = {};
+            /// @brief Unknown.
+            float Unk08 = {};
+
+            /// @brief Reads the fields that follow the event's header.
+            void Read(BinaryReader& Reader) {
+                MetersPerTick = Reader.ReadFloat();
+                MetersOnTurn  = Reader.ReadFloat();
+                Unk08         = Reader.ReadFloat();
+                Reader.Assert<int32_t>(0);
+            }
+
+            /// @brief Writes the fields that follow the event's header.
+            void Write(BinaryWriter& Writer) const {
+                Writer.WriteFloat(MetersPerTick);
+                Writer.WriteFloat(MetersOnTurn);
+                Writer.WriteFloat(Unk08);
+                Writer.WriteInt32(0);
+            }
+
+            /// @brief Calls F(name, field) for every field, so generic code (such as the C API) can read and write
+            ///        fields by name.
+            template<typename V>
+            void Fields(V& F) {
+                F("MetersPerTick", MetersPerTick);
+                F("MetersOnTurn", MetersOnTurn);
+                F("Unk08", Unk08);
+            }
+        };
 
     }  // namespace TAE3Events
 
     /// @brief The data of an event, as the struct for its type.
-    using TAE3EventData = std::variant<
-        TAE3Events::JumpTable,
-        TAE3Events::Unk001,
-        TAE3Events::Unk002,
-        TAE3Events::Unk005,
-        TAE3Events::Unk016,
-        TAE3Events::Unk017,
-        TAE3Events::Unk024,
-        TAE3Events::SwitchWeapon1,
-        TAE3Events::SwitchWeapon2,
-        TAE3Events::Unk034,
-        TAE3Events::Unk035,
-        TAE3Events::Unk064,
-        TAE3Events::Unk065,
-        TAE3Events::CreateSpEffect1,
-        TAE3Events::CreateSpEffect2,
-        TAE3Events::PlayFFX,
-        TAE3Events::Unk110,
-        TAE3Events::HitEffect,
-        TAE3Events::Unk113,
-        TAE3Events::Unk114,
-        TAE3Events::Unk115,
-        TAE3Events::Unk116,
-        TAE3Events::Unk117,
-        TAE3Events::Unk118,
-        TAE3Events::Unk119,
-        TAE3Events::Unk120,
-        TAE3Events::Unk121,
-        TAE3Events::PlaySound1,
-        TAE3Events::PlaySound2,
-        TAE3Events::PlaySound3,
-        TAE3Events::PlaySound4,
-        TAE3Events::PlaySound5,
-        TAE3Events::Unk137,
-        TAE3Events::CreateDecal,
-        TAE3Events::Unk144,
-        TAE3Events::Unk145,
-        TAE3Events::Unk150,
-        TAE3Events::Unk151,
-        TAE3Events::Unk161,
-        TAE3Events::FadeOut,
-        TAE3Events::Unk194,
-        TAE3Events::Unk224,
-        TAE3Events::DisableStaminaRegen,
-        TAE3Events::Unk226,
-        TAE3Events::Unk227,
-        TAE3Events::RagdollReviveTime,
-        TAE3Events::Unk229,
-        TAE3Events::SetEventMessageID,
-        TAE3Events::Unk232,
-        TAE3Events::ChangeDrawMask,
-        TAE3Events::RollDistanceReduction,
-        TAE3Events::CreateAISound,
-        TAE3Events::Unk300,
-        TAE3Events::Unk301,
-        TAE3Events::AddSpEffectDragonForm,
-        TAE3Events::PlayAnimation,
-        TAE3Events::BehaviorThing,
-        TAE3Events::CreateBehaviorPC,
-        TAE3Events::Unk308,
-        TAE3Events::Unk310,
-        TAE3Events::Unk311,
-        TAE3Events::Unk312,
-        TAE3Events::Unk320,
-        TAE3Events::Unk330,
-        TAE3Events::EffectDuringThrow,
-        TAE3Events::Unk332,
-        TAE3Events::CreateSpEffect,
-        TAE3Events::Unk500,
-        TAE3Events::Unk510,
-        TAE3Events::Unk520,
-        TAE3Events::KingOfTheStorm,
-        TAE3Events::Unk600,
-        TAE3Events::Unk601,
-        TAE3Events::DebugAnimSpeed,
-        TAE3Events::Unk605,
-        TAE3Events::Unk606,
-        TAE3Events::Unk700,
-        TAE3Events::EnableTurningDirection,
-        TAE3Events::FacingAngleCorrection,
-        TAE3Events::Unk707,
-        TAE3Events::HideWeapon,
-        TAE3Events::HideModelMask,
-        TAE3Events::DamageLevelModule,
-        TAE3Events::ModelMask,
-        TAE3Events::DamageLevelFunction,
-        TAE3Events::Unk715,
-        TAE3Events::CultStart,
-        TAE3Events::Unk730,
-        TAE3Events::Unk740,
-        TAE3Events::IFrameState,
-        TAE3Events::BonePos,
-        TAE3Events::BoneFixOn1,
-        TAE3Events::BoneFixOn2,
-        TAE3Events::TurnLowerBody,
-        TAE3Events::Unk782,
-        TAE3Events::SpawnBulletByCultSacrifice1,
-        TAE3Events::Unk786,
-        TAE3Events::Unk790,
-        TAE3Events::Unk791,
-        TAE3Events::HitEffect2,
-        TAE3Events::CultSacrifice1,
-        TAE3Events::SacrificeEmpty,
-        TAE3Events::Toughness,
-        TAE3Events::BringCultMenu,
-        TAE3Events::CeremonyParamID,
-        TAE3Events::CultSingle,
-        TAE3Events::CultEmpty2,
-        TAE3Events::Unk800
-    >;
+    using TAE3EventData = std::variant<TAE3Events::JumpTable,
+                                       TAE3Events::Unk001,
+                                       TAE3Events::Unk002,
+                                       TAE3Events::Unk005,
+                                       TAE3Events::Unk016,
+                                       TAE3Events::Unk017,
+                                       TAE3Events::Unk024,
+                                       TAE3Events::SwitchWeapon1,
+                                       TAE3Events::SwitchWeapon2,
+                                       TAE3Events::Unk034,
+                                       TAE3Events::Unk035,
+                                       TAE3Events::Unk064,
+                                       TAE3Events::Unk065,
+                                       TAE3Events::CreateSpEffect1,
+                                       TAE3Events::CreateSpEffect2,
+                                       TAE3Events::PlayFFX,
+                                       TAE3Events::Unk110,
+                                       TAE3Events::HitEffect,
+                                       TAE3Events::Unk113,
+                                       TAE3Events::Unk114,
+                                       TAE3Events::Unk115,
+                                       TAE3Events::Unk116,
+                                       TAE3Events::Unk117,
+                                       TAE3Events::Unk118,
+                                       TAE3Events::Unk119,
+                                       TAE3Events::Unk120,
+                                       TAE3Events::Unk121,
+                                       TAE3Events::PlaySound1,
+                                       TAE3Events::PlaySound2,
+                                       TAE3Events::PlaySound3,
+                                       TAE3Events::PlaySound4,
+                                       TAE3Events::PlaySound5,
+                                       TAE3Events::Unk137,
+                                       TAE3Events::CreateDecal,
+                                       TAE3Events::Unk144,
+                                       TAE3Events::Unk145,
+                                       TAE3Events::Unk150,
+                                       TAE3Events::Unk151,
+                                       TAE3Events::Unk161,
+                                       TAE3Events::FadeOut,
+                                       TAE3Events::Unk194,
+                                       TAE3Events::Unk224,
+                                       TAE3Events::DisableStaminaRegen,
+                                       TAE3Events::Unk226,
+                                       TAE3Events::Unk227,
+                                       TAE3Events::RagdollReviveTime,
+                                       TAE3Events::Unk229,
+                                       TAE3Events::SetEventMessageID,
+                                       TAE3Events::Unk232,
+                                       TAE3Events::ChangeDrawMask,
+                                       TAE3Events::RollDistanceReduction,
+                                       TAE3Events::CreateAISound,
+                                       TAE3Events::Unk300,
+                                       TAE3Events::Unk301,
+                                       TAE3Events::AddSpEffectDragonForm,
+                                       TAE3Events::PlayAnimation,
+                                       TAE3Events::BehaviorThing,
+                                       TAE3Events::CreateBehaviorPC,
+                                       TAE3Events::Unk308,
+                                       TAE3Events::Unk310,
+                                       TAE3Events::Unk311,
+                                       TAE3Events::Unk312,
+                                       TAE3Events::Unk320,
+                                       TAE3Events::Unk330,
+                                       TAE3Events::EffectDuringThrow,
+                                       TAE3Events::Unk332,
+                                       TAE3Events::CreateSpEffect,
+                                       TAE3Events::Unk500,
+                                       TAE3Events::Unk510,
+                                       TAE3Events::Unk520,
+                                       TAE3Events::KingOfTheStorm,
+                                       TAE3Events::Unk600,
+                                       TAE3Events::Unk601,
+                                       TAE3Events::DebugAnimSpeed,
+                                       TAE3Events::Unk605,
+                                       TAE3Events::Unk606,
+                                       TAE3Events::Unk700,
+                                       TAE3Events::EnableTurningDirection,
+                                       TAE3Events::FacingAngleCorrection,
+                                       TAE3Events::Unk707,
+                                       TAE3Events::HideWeapon,
+                                       TAE3Events::HideModelMask,
+                                       TAE3Events::DamageLevelModule,
+                                       TAE3Events::ModelMask,
+                                       TAE3Events::DamageLevelFunction,
+                                       TAE3Events::Unk715,
+                                       TAE3Events::CultStart,
+                                       TAE3Events::Unk730,
+                                       TAE3Events::Unk740,
+                                       TAE3Events::IFrameState,
+                                       TAE3Events::BonePos,
+                                       TAE3Events::BoneFixOn1,
+                                       TAE3Events::BoneFixOn2,
+                                       TAE3Events::TurnLowerBody,
+                                       TAE3Events::Unk782,
+                                       TAE3Events::SpawnBulletByCultSacrifice1,
+                                       TAE3Events::Unk786,
+                                       TAE3Events::Unk790,
+                                       TAE3Events::Unk791,
+                                       TAE3Events::HitEffect2,
+                                       TAE3Events::CultSacrifice1,
+                                       TAE3Events::SacrificeEmpty,
+                                       TAE3Events::Toughness,
+                                       TAE3Events::BringCultMenu,
+                                       TAE3Events::CeremonyParamID,
+                                       TAE3Events::CultSingle,
+                                       TAE3Events::CultEmpty2,
+                                       TAE3Events::Unk800>;
 
     /// @brief Reads the fields of an event of the given type.
     inline TAE3EventData ReadTAE3EventData(TAE3EventType Type, BinaryReader& Reader) {
         switch (Type) {
-            case TAE3EventType::JumpTable: { TAE3Events::JumpTable Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk001: { TAE3Events::Unk001 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk002: { TAE3Events::Unk002 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk005: { TAE3Events::Unk005 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk016: { TAE3Events::Unk016 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk017: { TAE3Events::Unk017 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk024: { TAE3Events::Unk024 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::SwitchWeapon1: { TAE3Events::SwitchWeapon1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::SwitchWeapon2: { TAE3Events::SwitchWeapon2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk034: { TAE3Events::Unk034 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk035: { TAE3Events::Unk035 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk064: { TAE3Events::Unk064 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk065: { TAE3Events::Unk065 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateSpEffect1: { TAE3Events::CreateSpEffect1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateSpEffect2: { TAE3Events::CreateSpEffect2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlayFFX: { TAE3Events::PlayFFX Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk110: { TAE3Events::Unk110 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::HitEffect: { TAE3Events::HitEffect Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk113: { TAE3Events::Unk113 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk114: { TAE3Events::Unk114 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk115: { TAE3Events::Unk115 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk116: { TAE3Events::Unk116 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk117: { TAE3Events::Unk117 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk118: { TAE3Events::Unk118 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk119: { TAE3Events::Unk119 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk120: { TAE3Events::Unk120 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk121: { TAE3Events::Unk121 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlaySound1: { TAE3Events::PlaySound1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlaySound2: { TAE3Events::PlaySound2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlaySound3: { TAE3Events::PlaySound3 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlaySound4: { TAE3Events::PlaySound4 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlaySound5: { TAE3Events::PlaySound5 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk137: { TAE3Events::Unk137 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateDecal: { TAE3Events::CreateDecal Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk144: { TAE3Events::Unk144 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk145: { TAE3Events::Unk145 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk150: { TAE3Events::Unk150 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk151: { TAE3Events::Unk151 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk161: { TAE3Events::Unk161 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::FadeOut: { TAE3Events::FadeOut Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk194: { TAE3Events::Unk194 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk224: { TAE3Events::Unk224 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::DisableStaminaRegen: { TAE3Events::DisableStaminaRegen Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk226: { TAE3Events::Unk226 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk227: { TAE3Events::Unk227 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::RagdollReviveTime: { TAE3Events::RagdollReviveTime Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk229: { TAE3Events::Unk229 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::SetEventMessageID: { TAE3Events::SetEventMessageID Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk232: { TAE3Events::Unk232 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::ChangeDrawMask: { TAE3Events::ChangeDrawMask Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::RollDistanceReduction: { TAE3Events::RollDistanceReduction Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateAISound: { TAE3Events::CreateAISound Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk300: { TAE3Events::Unk300 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk301: { TAE3Events::Unk301 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::AddSpEffectDragonForm: { TAE3Events::AddSpEffectDragonForm Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::PlayAnimation: { TAE3Events::PlayAnimation Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::BehaviorThing: { TAE3Events::BehaviorThing Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateBehaviorPC: { TAE3Events::CreateBehaviorPC Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk308: { TAE3Events::Unk308 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk310: { TAE3Events::Unk310 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk311: { TAE3Events::Unk311 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk312: { TAE3Events::Unk312 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk320: { TAE3Events::Unk320 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk330: { TAE3Events::Unk330 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::EffectDuringThrow: { TAE3Events::EffectDuringThrow Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk332: { TAE3Events::Unk332 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CreateSpEffect: { TAE3Events::CreateSpEffect Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk500: { TAE3Events::Unk500 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk510: { TAE3Events::Unk510 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk520: { TAE3Events::Unk520 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::KingOfTheStorm: { TAE3Events::KingOfTheStorm Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk600: { TAE3Events::Unk600 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk601: { TAE3Events::Unk601 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::DebugAnimSpeed: { TAE3Events::DebugAnimSpeed Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk605: { TAE3Events::Unk605 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk606: { TAE3Events::Unk606 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk700: { TAE3Events::Unk700 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::EnableTurningDirection: { TAE3Events::EnableTurningDirection Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::FacingAngleCorrection: { TAE3Events::FacingAngleCorrection Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk707: { TAE3Events::Unk707 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::HideWeapon: { TAE3Events::HideWeapon Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::HideModelMask: { TAE3Events::HideModelMask Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::DamageLevelModule: { TAE3Events::DamageLevelModule Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::ModelMask: { TAE3Events::ModelMask Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::DamageLevelFunction: { TAE3Events::DamageLevelFunction Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk715: { TAE3Events::Unk715 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CultStart: { TAE3Events::CultStart Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk730: { TAE3Events::Unk730 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk740: { TAE3Events::Unk740 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::IFrameState: { TAE3Events::IFrameState Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::BonePos: { TAE3Events::BonePos Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::BoneFixOn1: { TAE3Events::BoneFixOn1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::BoneFixOn2: { TAE3Events::BoneFixOn2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::TurnLowerBody: { TAE3Events::TurnLowerBody Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk782: { TAE3Events::Unk782 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::SpawnBulletByCultSacrifice1: { TAE3Events::SpawnBulletByCultSacrifice1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk786: { TAE3Events::Unk786 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk790: { TAE3Events::Unk790 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk791: { TAE3Events::Unk791 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::HitEffect2: { TAE3Events::HitEffect2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CultSacrifice1: { TAE3Events::CultSacrifice1 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::SacrificeEmpty: { TAE3Events::SacrificeEmpty Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Toughness: { TAE3Events::Toughness Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::BringCultMenu: { TAE3Events::BringCultMenu Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CeremonyParamID: { TAE3Events::CeremonyParamID Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CultSingle: { TAE3Events::CultSingle Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::CultEmpty2: { TAE3Events::CultEmpty2 Value; Value.Read(Reader); return Value; }
-            case TAE3EventType::Unk800: { TAE3Events::Unk800 Value; Value.Read(Reader); return Value; }
-            default: throw BinaryException("Unsupported TAE event type " + std::to_string(static_cast<uint64_t>(Type)));
+            case TAE3EventType::JumpTable: {
+                TAE3Events::JumpTable Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk001: {
+                TAE3Events::Unk001 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk002: {
+                TAE3Events::Unk002 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk005: {
+                TAE3Events::Unk005 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk016: {
+                TAE3Events::Unk016 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk017: {
+                TAE3Events::Unk017 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk024: {
+                TAE3Events::Unk024 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::SwitchWeapon1: {
+                TAE3Events::SwitchWeapon1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::SwitchWeapon2: {
+                TAE3Events::SwitchWeapon2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk034: {
+                TAE3Events::Unk034 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk035: {
+                TAE3Events::Unk035 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk064: {
+                TAE3Events::Unk064 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk065: {
+                TAE3Events::Unk065 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateSpEffect1: {
+                TAE3Events::CreateSpEffect1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateSpEffect2: {
+                TAE3Events::CreateSpEffect2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlayFFX: {
+                TAE3Events::PlayFFX Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk110: {
+                TAE3Events::Unk110 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::HitEffect: {
+                TAE3Events::HitEffect Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk113: {
+                TAE3Events::Unk113 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk114: {
+                TAE3Events::Unk114 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk115: {
+                TAE3Events::Unk115 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk116: {
+                TAE3Events::Unk116 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk117: {
+                TAE3Events::Unk117 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk118: {
+                TAE3Events::Unk118 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk119: {
+                TAE3Events::Unk119 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk120: {
+                TAE3Events::Unk120 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk121: {
+                TAE3Events::Unk121 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlaySound1: {
+                TAE3Events::PlaySound1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlaySound2: {
+                TAE3Events::PlaySound2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlaySound3: {
+                TAE3Events::PlaySound3 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlaySound4: {
+                TAE3Events::PlaySound4 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlaySound5: {
+                TAE3Events::PlaySound5 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk137: {
+                TAE3Events::Unk137 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateDecal: {
+                TAE3Events::CreateDecal Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk144: {
+                TAE3Events::Unk144 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk145: {
+                TAE3Events::Unk145 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk150: {
+                TAE3Events::Unk150 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk151: {
+                TAE3Events::Unk151 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk161: {
+                TAE3Events::Unk161 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::FadeOut: {
+                TAE3Events::FadeOut Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk194: {
+                TAE3Events::Unk194 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk224: {
+                TAE3Events::Unk224 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::DisableStaminaRegen: {
+                TAE3Events::DisableStaminaRegen Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk226: {
+                TAE3Events::Unk226 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk227: {
+                TAE3Events::Unk227 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::RagdollReviveTime: {
+                TAE3Events::RagdollReviveTime Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk229: {
+                TAE3Events::Unk229 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::SetEventMessageID: {
+                TAE3Events::SetEventMessageID Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk232: {
+                TAE3Events::Unk232 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::ChangeDrawMask: {
+                TAE3Events::ChangeDrawMask Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::RollDistanceReduction: {
+                TAE3Events::RollDistanceReduction Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateAISound: {
+                TAE3Events::CreateAISound Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk300: {
+                TAE3Events::Unk300 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk301: {
+                TAE3Events::Unk301 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::AddSpEffectDragonForm: {
+                TAE3Events::AddSpEffectDragonForm Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::PlayAnimation: {
+                TAE3Events::PlayAnimation Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::BehaviorThing: {
+                TAE3Events::BehaviorThing Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateBehaviorPC: {
+                TAE3Events::CreateBehaviorPC Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk308: {
+                TAE3Events::Unk308 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk310: {
+                TAE3Events::Unk310 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk311: {
+                TAE3Events::Unk311 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk312: {
+                TAE3Events::Unk312 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk320: {
+                TAE3Events::Unk320 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk330: {
+                TAE3Events::Unk330 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::EffectDuringThrow: {
+                TAE3Events::EffectDuringThrow Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk332: {
+                TAE3Events::Unk332 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CreateSpEffect: {
+                TAE3Events::CreateSpEffect Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk500: {
+                TAE3Events::Unk500 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk510: {
+                TAE3Events::Unk510 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk520: {
+                TAE3Events::Unk520 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::KingOfTheStorm: {
+                TAE3Events::KingOfTheStorm Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk600: {
+                TAE3Events::Unk600 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk601: {
+                TAE3Events::Unk601 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::DebugAnimSpeed: {
+                TAE3Events::DebugAnimSpeed Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk605: {
+                TAE3Events::Unk605 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk606: {
+                TAE3Events::Unk606 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk700: {
+                TAE3Events::Unk700 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::EnableTurningDirection: {
+                TAE3Events::EnableTurningDirection Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::FacingAngleCorrection: {
+                TAE3Events::FacingAngleCorrection Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk707: {
+                TAE3Events::Unk707 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::HideWeapon: {
+                TAE3Events::HideWeapon Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::HideModelMask: {
+                TAE3Events::HideModelMask Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::DamageLevelModule: {
+                TAE3Events::DamageLevelModule Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::ModelMask: {
+                TAE3Events::ModelMask Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::DamageLevelFunction: {
+                TAE3Events::DamageLevelFunction Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk715: {
+                TAE3Events::Unk715 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CultStart: {
+                TAE3Events::CultStart Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk730: {
+                TAE3Events::Unk730 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk740: {
+                TAE3Events::Unk740 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::IFrameState: {
+                TAE3Events::IFrameState Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::BonePos: {
+                TAE3Events::BonePos Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::BoneFixOn1: {
+                TAE3Events::BoneFixOn1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::BoneFixOn2: {
+                TAE3Events::BoneFixOn2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::TurnLowerBody: {
+                TAE3Events::TurnLowerBody Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk782: {
+                TAE3Events::Unk782 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::SpawnBulletByCultSacrifice1: {
+                TAE3Events::SpawnBulletByCultSacrifice1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk786: {
+                TAE3Events::Unk786 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk790: {
+                TAE3Events::Unk790 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk791: {
+                TAE3Events::Unk791 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::HitEffect2: {
+                TAE3Events::HitEffect2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CultSacrifice1: {
+                TAE3Events::CultSacrifice1 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::SacrificeEmpty: {
+                TAE3Events::SacrificeEmpty Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Toughness: {
+                TAE3Events::Toughness Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::BringCultMenu: {
+                TAE3Events::BringCultMenu Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CeremonyParamID: {
+                TAE3Events::CeremonyParamID Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CultSingle: {
+                TAE3Events::CultSingle Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::CultEmpty2: {
+                TAE3Events::CultEmpty2 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            case TAE3EventType::Unk800: {
+                TAE3Events::Unk800 Value;
+                Value.Read(Reader);
+                return Value;
+            }
+            default:
+                throw BinaryException("Unsupported TAE event type " + std::to_string(static_cast<uint64_t>(Type)));
         }
     }
 
@@ -4432,346 +4852,562 @@ namespace Souls {
 
     /// @brief Every event type with a struct, in the order of the variant.
     inline const std::vector<TAE3EventType>& AllTAE3EventTypes() {
-        static const std::vector<TAE3EventType> Types = {
-            TAE3EventType::JumpTable,
-            TAE3EventType::Unk001,
-            TAE3EventType::Unk002,
-            TAE3EventType::Unk005,
-            TAE3EventType::Unk016,
-            TAE3EventType::Unk017,
-            TAE3EventType::Unk024,
-            TAE3EventType::SwitchWeapon1,
-            TAE3EventType::SwitchWeapon2,
-            TAE3EventType::Unk034,
-            TAE3EventType::Unk035,
-            TAE3EventType::Unk064,
-            TAE3EventType::Unk065,
-            TAE3EventType::CreateSpEffect1,
-            TAE3EventType::CreateSpEffect2,
-            TAE3EventType::PlayFFX,
-            TAE3EventType::Unk110,
-            TAE3EventType::HitEffect,
-            TAE3EventType::Unk113,
-            TAE3EventType::Unk114,
-            TAE3EventType::Unk115,
-            TAE3EventType::Unk116,
-            TAE3EventType::Unk117,
-            TAE3EventType::Unk118,
-            TAE3EventType::Unk119,
-            TAE3EventType::Unk120,
-            TAE3EventType::Unk121,
-            TAE3EventType::PlaySound1,
-            TAE3EventType::PlaySound2,
-            TAE3EventType::PlaySound3,
-            TAE3EventType::PlaySound4,
-            TAE3EventType::PlaySound5,
-            TAE3EventType::Unk137,
-            TAE3EventType::CreateDecal,
-            TAE3EventType::Unk144,
-            TAE3EventType::Unk145,
-            TAE3EventType::Unk150,
-            TAE3EventType::Unk151,
-            TAE3EventType::Unk161,
-            TAE3EventType::FadeOut,
-            TAE3EventType::Unk194,
-            TAE3EventType::Unk224,
-            TAE3EventType::DisableStaminaRegen,
-            TAE3EventType::Unk226,
-            TAE3EventType::Unk227,
-            TAE3EventType::RagdollReviveTime,
-            TAE3EventType::Unk229,
-            TAE3EventType::SetEventMessageID,
-            TAE3EventType::Unk232,
-            TAE3EventType::ChangeDrawMask,
-            TAE3EventType::RollDistanceReduction,
-            TAE3EventType::CreateAISound,
-            TAE3EventType::Unk300,
-            TAE3EventType::Unk301,
-            TAE3EventType::AddSpEffectDragonForm,
-            TAE3EventType::PlayAnimation,
-            TAE3EventType::BehaviorThing,
-            TAE3EventType::CreateBehaviorPC,
-            TAE3EventType::Unk308,
-            TAE3EventType::Unk310,
-            TAE3EventType::Unk311,
-            TAE3EventType::Unk312,
-            TAE3EventType::Unk320,
-            TAE3EventType::Unk330,
-            TAE3EventType::EffectDuringThrow,
-            TAE3EventType::Unk332,
-            TAE3EventType::CreateSpEffect,
-            TAE3EventType::Unk500,
-            TAE3EventType::Unk510,
-            TAE3EventType::Unk520,
-            TAE3EventType::KingOfTheStorm,
-            TAE3EventType::Unk600,
-            TAE3EventType::Unk601,
-            TAE3EventType::DebugAnimSpeed,
-            TAE3EventType::Unk605,
-            TAE3EventType::Unk606,
-            TAE3EventType::Unk700,
-            TAE3EventType::EnableTurningDirection,
-            TAE3EventType::FacingAngleCorrection,
-            TAE3EventType::Unk707,
-            TAE3EventType::HideWeapon,
-            TAE3EventType::HideModelMask,
-            TAE3EventType::DamageLevelModule,
-            TAE3EventType::ModelMask,
-            TAE3EventType::DamageLevelFunction,
-            TAE3EventType::Unk715,
-            TAE3EventType::CultStart,
-            TAE3EventType::Unk730,
-            TAE3EventType::Unk740,
-            TAE3EventType::IFrameState,
-            TAE3EventType::BonePos,
-            TAE3EventType::BoneFixOn1,
-            TAE3EventType::BoneFixOn2,
-            TAE3EventType::TurnLowerBody,
-            TAE3EventType::Unk782,
-            TAE3EventType::SpawnBulletByCultSacrifice1,
-            TAE3EventType::Unk786,
-            TAE3EventType::Unk790,
-            TAE3EventType::Unk791,
-            TAE3EventType::HitEffect2,
-            TAE3EventType::CultSacrifice1,
-            TAE3EventType::SacrificeEmpty,
-            TAE3EventType::Toughness,
-            TAE3EventType::BringCultMenu,
-            TAE3EventType::CeremonyParamID,
-            TAE3EventType::CultSingle,
-            TAE3EventType::CultEmpty2,
-            TAE3EventType::Unk800
-        };
+        static const std::vector<TAE3EventType> Types = {TAE3EventType::JumpTable,
+                                                         TAE3EventType::Unk001,
+                                                         TAE3EventType::Unk002,
+                                                         TAE3EventType::Unk005,
+                                                         TAE3EventType::Unk016,
+                                                         TAE3EventType::Unk017,
+                                                         TAE3EventType::Unk024,
+                                                         TAE3EventType::SwitchWeapon1,
+                                                         TAE3EventType::SwitchWeapon2,
+                                                         TAE3EventType::Unk034,
+                                                         TAE3EventType::Unk035,
+                                                         TAE3EventType::Unk064,
+                                                         TAE3EventType::Unk065,
+                                                         TAE3EventType::CreateSpEffect1,
+                                                         TAE3EventType::CreateSpEffect2,
+                                                         TAE3EventType::PlayFFX,
+                                                         TAE3EventType::Unk110,
+                                                         TAE3EventType::HitEffect,
+                                                         TAE3EventType::Unk113,
+                                                         TAE3EventType::Unk114,
+                                                         TAE3EventType::Unk115,
+                                                         TAE3EventType::Unk116,
+                                                         TAE3EventType::Unk117,
+                                                         TAE3EventType::Unk118,
+                                                         TAE3EventType::Unk119,
+                                                         TAE3EventType::Unk120,
+                                                         TAE3EventType::Unk121,
+                                                         TAE3EventType::PlaySound1,
+                                                         TAE3EventType::PlaySound2,
+                                                         TAE3EventType::PlaySound3,
+                                                         TAE3EventType::PlaySound4,
+                                                         TAE3EventType::PlaySound5,
+                                                         TAE3EventType::Unk137,
+                                                         TAE3EventType::CreateDecal,
+                                                         TAE3EventType::Unk144,
+                                                         TAE3EventType::Unk145,
+                                                         TAE3EventType::Unk150,
+                                                         TAE3EventType::Unk151,
+                                                         TAE3EventType::Unk161,
+                                                         TAE3EventType::FadeOut,
+                                                         TAE3EventType::Unk194,
+                                                         TAE3EventType::Unk224,
+                                                         TAE3EventType::DisableStaminaRegen,
+                                                         TAE3EventType::Unk226,
+                                                         TAE3EventType::Unk227,
+                                                         TAE3EventType::RagdollReviveTime,
+                                                         TAE3EventType::Unk229,
+                                                         TAE3EventType::SetEventMessageID,
+                                                         TAE3EventType::Unk232,
+                                                         TAE3EventType::ChangeDrawMask,
+                                                         TAE3EventType::RollDistanceReduction,
+                                                         TAE3EventType::CreateAISound,
+                                                         TAE3EventType::Unk300,
+                                                         TAE3EventType::Unk301,
+                                                         TAE3EventType::AddSpEffectDragonForm,
+                                                         TAE3EventType::PlayAnimation,
+                                                         TAE3EventType::BehaviorThing,
+                                                         TAE3EventType::CreateBehaviorPC,
+                                                         TAE3EventType::Unk308,
+                                                         TAE3EventType::Unk310,
+                                                         TAE3EventType::Unk311,
+                                                         TAE3EventType::Unk312,
+                                                         TAE3EventType::Unk320,
+                                                         TAE3EventType::Unk330,
+                                                         TAE3EventType::EffectDuringThrow,
+                                                         TAE3EventType::Unk332,
+                                                         TAE3EventType::CreateSpEffect,
+                                                         TAE3EventType::Unk500,
+                                                         TAE3EventType::Unk510,
+                                                         TAE3EventType::Unk520,
+                                                         TAE3EventType::KingOfTheStorm,
+                                                         TAE3EventType::Unk600,
+                                                         TAE3EventType::Unk601,
+                                                         TAE3EventType::DebugAnimSpeed,
+                                                         TAE3EventType::Unk605,
+                                                         TAE3EventType::Unk606,
+                                                         TAE3EventType::Unk700,
+                                                         TAE3EventType::EnableTurningDirection,
+                                                         TAE3EventType::FacingAngleCorrection,
+                                                         TAE3EventType::Unk707,
+                                                         TAE3EventType::HideWeapon,
+                                                         TAE3EventType::HideModelMask,
+                                                         TAE3EventType::DamageLevelModule,
+                                                         TAE3EventType::ModelMask,
+                                                         TAE3EventType::DamageLevelFunction,
+                                                         TAE3EventType::Unk715,
+                                                         TAE3EventType::CultStart,
+                                                         TAE3EventType::Unk730,
+                                                         TAE3EventType::Unk740,
+                                                         TAE3EventType::IFrameState,
+                                                         TAE3EventType::BonePos,
+                                                         TAE3EventType::BoneFixOn1,
+                                                         TAE3EventType::BoneFixOn2,
+                                                         TAE3EventType::TurnLowerBody,
+                                                         TAE3EventType::Unk782,
+                                                         TAE3EventType::SpawnBulletByCultSacrifice1,
+                                                         TAE3EventType::Unk786,
+                                                         TAE3EventType::Unk790,
+                                                         TAE3EventType::Unk791,
+                                                         TAE3EventType::HitEffect2,
+                                                         TAE3EventType::CultSacrifice1,
+                                                         TAE3EventType::SacrificeEmpty,
+                                                         TAE3EventType::Toughness,
+                                                         TAE3EventType::BringCultMenu,
+                                                         TAE3EventType::CeremonyParamID,
+                                                         TAE3EventType::CultSingle,
+                                                         TAE3EventType::CultEmpty2,
+                                                         TAE3EventType::Unk800};
         return Types;
     }
 
     /// @brief The name of an event type as written in the enum, or nullptr if it has no struct.
     inline const char* TAE3EventTypeName(TAE3EventType Type) {
         switch (Type) {
-            case TAE3EventType::JumpTable: return "JumpTable";
-            case TAE3EventType::Unk001: return "Unk001";
-            case TAE3EventType::Unk002: return "Unk002";
-            case TAE3EventType::Unk005: return "Unk005";
-            case TAE3EventType::Unk016: return "Unk016";
-            case TAE3EventType::Unk017: return "Unk017";
-            case TAE3EventType::Unk024: return "Unk024";
-            case TAE3EventType::SwitchWeapon1: return "SwitchWeapon1";
-            case TAE3EventType::SwitchWeapon2: return "SwitchWeapon2";
-            case TAE3EventType::Unk034: return "Unk034";
-            case TAE3EventType::Unk035: return "Unk035";
-            case TAE3EventType::Unk064: return "Unk064";
-            case TAE3EventType::Unk065: return "Unk065";
-            case TAE3EventType::CreateSpEffect1: return "CreateSpEffect1";
-            case TAE3EventType::CreateSpEffect2: return "CreateSpEffect2";
-            case TAE3EventType::PlayFFX: return "PlayFFX";
-            case TAE3EventType::Unk110: return "Unk110";
-            case TAE3EventType::HitEffect: return "HitEffect";
-            case TAE3EventType::Unk113: return "Unk113";
-            case TAE3EventType::Unk114: return "Unk114";
-            case TAE3EventType::Unk115: return "Unk115";
-            case TAE3EventType::Unk116: return "Unk116";
-            case TAE3EventType::Unk117: return "Unk117";
-            case TAE3EventType::Unk118: return "Unk118";
-            case TAE3EventType::Unk119: return "Unk119";
-            case TAE3EventType::Unk120: return "Unk120";
-            case TAE3EventType::Unk121: return "Unk121";
-            case TAE3EventType::PlaySound1: return "PlaySound1";
-            case TAE3EventType::PlaySound2: return "PlaySound2";
-            case TAE3EventType::PlaySound3: return "PlaySound3";
-            case TAE3EventType::PlaySound4: return "PlaySound4";
-            case TAE3EventType::PlaySound5: return "PlaySound5";
-            case TAE3EventType::Unk137: return "Unk137";
-            case TAE3EventType::CreateDecal: return "CreateDecal";
-            case TAE3EventType::Unk144: return "Unk144";
-            case TAE3EventType::Unk145: return "Unk145";
-            case TAE3EventType::Unk150: return "Unk150";
-            case TAE3EventType::Unk151: return "Unk151";
-            case TAE3EventType::Unk161: return "Unk161";
-            case TAE3EventType::FadeOut: return "FadeOut";
-            case TAE3EventType::Unk194: return "Unk194";
-            case TAE3EventType::Unk224: return "Unk224";
-            case TAE3EventType::DisableStaminaRegen: return "DisableStaminaRegen";
-            case TAE3EventType::Unk226: return "Unk226";
-            case TAE3EventType::Unk227: return "Unk227";
-            case TAE3EventType::RagdollReviveTime: return "RagdollReviveTime";
-            case TAE3EventType::Unk229: return "Unk229";
-            case TAE3EventType::SetEventMessageID: return "SetEventMessageID";
-            case TAE3EventType::Unk232: return "Unk232";
-            case TAE3EventType::ChangeDrawMask: return "ChangeDrawMask";
-            case TAE3EventType::RollDistanceReduction: return "RollDistanceReduction";
-            case TAE3EventType::CreateAISound: return "CreateAISound";
-            case TAE3EventType::Unk300: return "Unk300";
-            case TAE3EventType::Unk301: return "Unk301";
-            case TAE3EventType::AddSpEffectDragonForm: return "AddSpEffectDragonForm";
-            case TAE3EventType::PlayAnimation: return "PlayAnimation";
-            case TAE3EventType::BehaviorThing: return "BehaviorThing";
-            case TAE3EventType::CreateBehaviorPC: return "CreateBehaviorPC";
-            case TAE3EventType::Unk308: return "Unk308";
-            case TAE3EventType::Unk310: return "Unk310";
-            case TAE3EventType::Unk311: return "Unk311";
-            case TAE3EventType::Unk312: return "Unk312";
-            case TAE3EventType::Unk320: return "Unk320";
-            case TAE3EventType::Unk330: return "Unk330";
-            case TAE3EventType::EffectDuringThrow: return "EffectDuringThrow";
-            case TAE3EventType::Unk332: return "Unk332";
-            case TAE3EventType::CreateSpEffect: return "CreateSpEffect";
-            case TAE3EventType::Unk500: return "Unk500";
-            case TAE3EventType::Unk510: return "Unk510";
-            case TAE3EventType::Unk520: return "Unk520";
-            case TAE3EventType::KingOfTheStorm: return "KingOfTheStorm";
-            case TAE3EventType::Unk600: return "Unk600";
-            case TAE3EventType::Unk601: return "Unk601";
-            case TAE3EventType::DebugAnimSpeed: return "DebugAnimSpeed";
-            case TAE3EventType::Unk605: return "Unk605";
-            case TAE3EventType::Unk606: return "Unk606";
-            case TAE3EventType::Unk700: return "Unk700";
-            case TAE3EventType::EnableTurningDirection: return "EnableTurningDirection";
-            case TAE3EventType::FacingAngleCorrection: return "FacingAngleCorrection";
-            case TAE3EventType::Unk707: return "Unk707";
-            case TAE3EventType::HideWeapon: return "HideWeapon";
-            case TAE3EventType::HideModelMask: return "HideModelMask";
-            case TAE3EventType::DamageLevelModule: return "DamageLevelModule";
-            case TAE3EventType::ModelMask: return "ModelMask";
-            case TAE3EventType::DamageLevelFunction: return "DamageLevelFunction";
-            case TAE3EventType::Unk715: return "Unk715";
-            case TAE3EventType::CultStart: return "CultStart";
-            case TAE3EventType::Unk730: return "Unk730";
-            case TAE3EventType::Unk740: return "Unk740";
-            case TAE3EventType::IFrameState: return "IFrameState";
-            case TAE3EventType::BonePos: return "BonePos";
-            case TAE3EventType::BoneFixOn1: return "BoneFixOn1";
-            case TAE3EventType::BoneFixOn2: return "BoneFixOn2";
-            case TAE3EventType::TurnLowerBody: return "TurnLowerBody";
-            case TAE3EventType::Unk782: return "Unk782";
-            case TAE3EventType::SpawnBulletByCultSacrifice1: return "SpawnBulletByCultSacrifice1";
-            case TAE3EventType::Unk786: return "Unk786";
-            case TAE3EventType::Unk790: return "Unk790";
-            case TAE3EventType::Unk791: return "Unk791";
-            case TAE3EventType::HitEffect2: return "HitEffect2";
-            case TAE3EventType::CultSacrifice1: return "CultSacrifice1";
-            case TAE3EventType::SacrificeEmpty: return "SacrificeEmpty";
-            case TAE3EventType::Toughness: return "Toughness";
-            case TAE3EventType::BringCultMenu: return "BringCultMenu";
-            case TAE3EventType::CeremonyParamID: return "CeremonyParamID";
-            case TAE3EventType::CultSingle: return "CultSingle";
-            case TAE3EventType::CultEmpty2: return "CultEmpty2";
-            case TAE3EventType::Unk800: return "Unk800";
-            default: return nullptr;
+            case TAE3EventType::JumpTable:
+                return "JumpTable";
+            case TAE3EventType::Unk001:
+                return "Unk001";
+            case TAE3EventType::Unk002:
+                return "Unk002";
+            case TAE3EventType::Unk005:
+                return "Unk005";
+            case TAE3EventType::Unk016:
+                return "Unk016";
+            case TAE3EventType::Unk017:
+                return "Unk017";
+            case TAE3EventType::Unk024:
+                return "Unk024";
+            case TAE3EventType::SwitchWeapon1:
+                return "SwitchWeapon1";
+            case TAE3EventType::SwitchWeapon2:
+                return "SwitchWeapon2";
+            case TAE3EventType::Unk034:
+                return "Unk034";
+            case TAE3EventType::Unk035:
+                return "Unk035";
+            case TAE3EventType::Unk064:
+                return "Unk064";
+            case TAE3EventType::Unk065:
+                return "Unk065";
+            case TAE3EventType::CreateSpEffect1:
+                return "CreateSpEffect1";
+            case TAE3EventType::CreateSpEffect2:
+                return "CreateSpEffect2";
+            case TAE3EventType::PlayFFX:
+                return "PlayFFX";
+            case TAE3EventType::Unk110:
+                return "Unk110";
+            case TAE3EventType::HitEffect:
+                return "HitEffect";
+            case TAE3EventType::Unk113:
+                return "Unk113";
+            case TAE3EventType::Unk114:
+                return "Unk114";
+            case TAE3EventType::Unk115:
+                return "Unk115";
+            case TAE3EventType::Unk116:
+                return "Unk116";
+            case TAE3EventType::Unk117:
+                return "Unk117";
+            case TAE3EventType::Unk118:
+                return "Unk118";
+            case TAE3EventType::Unk119:
+                return "Unk119";
+            case TAE3EventType::Unk120:
+                return "Unk120";
+            case TAE3EventType::Unk121:
+                return "Unk121";
+            case TAE3EventType::PlaySound1:
+                return "PlaySound1";
+            case TAE3EventType::PlaySound2:
+                return "PlaySound2";
+            case TAE3EventType::PlaySound3:
+                return "PlaySound3";
+            case TAE3EventType::PlaySound4:
+                return "PlaySound4";
+            case TAE3EventType::PlaySound5:
+                return "PlaySound5";
+            case TAE3EventType::Unk137:
+                return "Unk137";
+            case TAE3EventType::CreateDecal:
+                return "CreateDecal";
+            case TAE3EventType::Unk144:
+                return "Unk144";
+            case TAE3EventType::Unk145:
+                return "Unk145";
+            case TAE3EventType::Unk150:
+                return "Unk150";
+            case TAE3EventType::Unk151:
+                return "Unk151";
+            case TAE3EventType::Unk161:
+                return "Unk161";
+            case TAE3EventType::FadeOut:
+                return "FadeOut";
+            case TAE3EventType::Unk194:
+                return "Unk194";
+            case TAE3EventType::Unk224:
+                return "Unk224";
+            case TAE3EventType::DisableStaminaRegen:
+                return "DisableStaminaRegen";
+            case TAE3EventType::Unk226:
+                return "Unk226";
+            case TAE3EventType::Unk227:
+                return "Unk227";
+            case TAE3EventType::RagdollReviveTime:
+                return "RagdollReviveTime";
+            case TAE3EventType::Unk229:
+                return "Unk229";
+            case TAE3EventType::SetEventMessageID:
+                return "SetEventMessageID";
+            case TAE3EventType::Unk232:
+                return "Unk232";
+            case TAE3EventType::ChangeDrawMask:
+                return "ChangeDrawMask";
+            case TAE3EventType::RollDistanceReduction:
+                return "RollDistanceReduction";
+            case TAE3EventType::CreateAISound:
+                return "CreateAISound";
+            case TAE3EventType::Unk300:
+                return "Unk300";
+            case TAE3EventType::Unk301:
+                return "Unk301";
+            case TAE3EventType::AddSpEffectDragonForm:
+                return "AddSpEffectDragonForm";
+            case TAE3EventType::PlayAnimation:
+                return "PlayAnimation";
+            case TAE3EventType::BehaviorThing:
+                return "BehaviorThing";
+            case TAE3EventType::CreateBehaviorPC:
+                return "CreateBehaviorPC";
+            case TAE3EventType::Unk308:
+                return "Unk308";
+            case TAE3EventType::Unk310:
+                return "Unk310";
+            case TAE3EventType::Unk311:
+                return "Unk311";
+            case TAE3EventType::Unk312:
+                return "Unk312";
+            case TAE3EventType::Unk320:
+                return "Unk320";
+            case TAE3EventType::Unk330:
+                return "Unk330";
+            case TAE3EventType::EffectDuringThrow:
+                return "EffectDuringThrow";
+            case TAE3EventType::Unk332:
+                return "Unk332";
+            case TAE3EventType::CreateSpEffect:
+                return "CreateSpEffect";
+            case TAE3EventType::Unk500:
+                return "Unk500";
+            case TAE3EventType::Unk510:
+                return "Unk510";
+            case TAE3EventType::Unk520:
+                return "Unk520";
+            case TAE3EventType::KingOfTheStorm:
+                return "KingOfTheStorm";
+            case TAE3EventType::Unk600:
+                return "Unk600";
+            case TAE3EventType::Unk601:
+                return "Unk601";
+            case TAE3EventType::DebugAnimSpeed:
+                return "DebugAnimSpeed";
+            case TAE3EventType::Unk605:
+                return "Unk605";
+            case TAE3EventType::Unk606:
+                return "Unk606";
+            case TAE3EventType::Unk700:
+                return "Unk700";
+            case TAE3EventType::EnableTurningDirection:
+                return "EnableTurningDirection";
+            case TAE3EventType::FacingAngleCorrection:
+                return "FacingAngleCorrection";
+            case TAE3EventType::Unk707:
+                return "Unk707";
+            case TAE3EventType::HideWeapon:
+                return "HideWeapon";
+            case TAE3EventType::HideModelMask:
+                return "HideModelMask";
+            case TAE3EventType::DamageLevelModule:
+                return "DamageLevelModule";
+            case TAE3EventType::ModelMask:
+                return "ModelMask";
+            case TAE3EventType::DamageLevelFunction:
+                return "DamageLevelFunction";
+            case TAE3EventType::Unk715:
+                return "Unk715";
+            case TAE3EventType::CultStart:
+                return "CultStart";
+            case TAE3EventType::Unk730:
+                return "Unk730";
+            case TAE3EventType::Unk740:
+                return "Unk740";
+            case TAE3EventType::IFrameState:
+                return "IFrameState";
+            case TAE3EventType::BonePos:
+                return "BonePos";
+            case TAE3EventType::BoneFixOn1:
+                return "BoneFixOn1";
+            case TAE3EventType::BoneFixOn2:
+                return "BoneFixOn2";
+            case TAE3EventType::TurnLowerBody:
+                return "TurnLowerBody";
+            case TAE3EventType::Unk782:
+                return "Unk782";
+            case TAE3EventType::SpawnBulletByCultSacrifice1:
+                return "SpawnBulletByCultSacrifice1";
+            case TAE3EventType::Unk786:
+                return "Unk786";
+            case TAE3EventType::Unk790:
+                return "Unk790";
+            case TAE3EventType::Unk791:
+                return "Unk791";
+            case TAE3EventType::HitEffect2:
+                return "HitEffect2";
+            case TAE3EventType::CultSacrifice1:
+                return "CultSacrifice1";
+            case TAE3EventType::SacrificeEmpty:
+                return "SacrificeEmpty";
+            case TAE3EventType::Toughness:
+                return "Toughness";
+            case TAE3EventType::BringCultMenu:
+                return "BringCultMenu";
+            case TAE3EventType::CeremonyParamID:
+                return "CeremonyParamID";
+            case TAE3EventType::CultSingle:
+                return "CultSingle";
+            case TAE3EventType::CultEmpty2:
+                return "CultEmpty2";
+            case TAE3EventType::Unk800:
+                return "Unk800";
+            default:
+                return nullptr;
         }
     }
 
     /// @brief Event data of the given type with every field at its default; throws for an unsupported type.
     inline TAE3EventData CreateTAE3EventData(TAE3EventType Type) {
         switch (Type) {
-            case TAE3EventType::JumpTable: return TAE3Events::JumpTable{};
-            case TAE3EventType::Unk001: return TAE3Events::Unk001{};
-            case TAE3EventType::Unk002: return TAE3Events::Unk002{};
-            case TAE3EventType::Unk005: return TAE3Events::Unk005{};
-            case TAE3EventType::Unk016: return TAE3Events::Unk016{};
-            case TAE3EventType::Unk017: return TAE3Events::Unk017{};
-            case TAE3EventType::Unk024: return TAE3Events::Unk024{};
-            case TAE3EventType::SwitchWeapon1: return TAE3Events::SwitchWeapon1{};
-            case TAE3EventType::SwitchWeapon2: return TAE3Events::SwitchWeapon2{};
-            case TAE3EventType::Unk034: return TAE3Events::Unk034{};
-            case TAE3EventType::Unk035: return TAE3Events::Unk035{};
-            case TAE3EventType::Unk064: return TAE3Events::Unk064{};
-            case TAE3EventType::Unk065: return TAE3Events::Unk065{};
-            case TAE3EventType::CreateSpEffect1: return TAE3Events::CreateSpEffect1{};
-            case TAE3EventType::CreateSpEffect2: return TAE3Events::CreateSpEffect2{};
-            case TAE3EventType::PlayFFX: return TAE3Events::PlayFFX{};
-            case TAE3EventType::Unk110: return TAE3Events::Unk110{};
-            case TAE3EventType::HitEffect: return TAE3Events::HitEffect{};
-            case TAE3EventType::Unk113: return TAE3Events::Unk113{};
-            case TAE3EventType::Unk114: return TAE3Events::Unk114{};
-            case TAE3EventType::Unk115: return TAE3Events::Unk115{};
-            case TAE3EventType::Unk116: return TAE3Events::Unk116{};
-            case TAE3EventType::Unk117: return TAE3Events::Unk117{};
-            case TAE3EventType::Unk118: return TAE3Events::Unk118{};
-            case TAE3EventType::Unk119: return TAE3Events::Unk119{};
-            case TAE3EventType::Unk120: return TAE3Events::Unk120{};
-            case TAE3EventType::Unk121: return TAE3Events::Unk121{};
-            case TAE3EventType::PlaySound1: return TAE3Events::PlaySound1{};
-            case TAE3EventType::PlaySound2: return TAE3Events::PlaySound2{};
-            case TAE3EventType::PlaySound3: return TAE3Events::PlaySound3{};
-            case TAE3EventType::PlaySound4: return TAE3Events::PlaySound4{};
-            case TAE3EventType::PlaySound5: return TAE3Events::PlaySound5{};
-            case TAE3EventType::Unk137: return TAE3Events::Unk137{};
-            case TAE3EventType::CreateDecal: return TAE3Events::CreateDecal{};
-            case TAE3EventType::Unk144: return TAE3Events::Unk144{};
-            case TAE3EventType::Unk145: return TAE3Events::Unk145{};
-            case TAE3EventType::Unk150: return TAE3Events::Unk150{};
-            case TAE3EventType::Unk151: return TAE3Events::Unk151{};
-            case TAE3EventType::Unk161: return TAE3Events::Unk161{};
-            case TAE3EventType::FadeOut: return TAE3Events::FadeOut{};
-            case TAE3EventType::Unk194: return TAE3Events::Unk194{};
-            case TAE3EventType::Unk224: return TAE3Events::Unk224{};
-            case TAE3EventType::DisableStaminaRegen: return TAE3Events::DisableStaminaRegen{};
-            case TAE3EventType::Unk226: return TAE3Events::Unk226{};
-            case TAE3EventType::Unk227: return TAE3Events::Unk227{};
-            case TAE3EventType::RagdollReviveTime: return TAE3Events::RagdollReviveTime{};
-            case TAE3EventType::Unk229: return TAE3Events::Unk229{};
-            case TAE3EventType::SetEventMessageID: return TAE3Events::SetEventMessageID{};
-            case TAE3EventType::Unk232: return TAE3Events::Unk232{};
-            case TAE3EventType::ChangeDrawMask: return TAE3Events::ChangeDrawMask{};
-            case TAE3EventType::RollDistanceReduction: return TAE3Events::RollDistanceReduction{};
-            case TAE3EventType::CreateAISound: return TAE3Events::CreateAISound{};
-            case TAE3EventType::Unk300: return TAE3Events::Unk300{};
-            case TAE3EventType::Unk301: return TAE3Events::Unk301{};
-            case TAE3EventType::AddSpEffectDragonForm: return TAE3Events::AddSpEffectDragonForm{};
-            case TAE3EventType::PlayAnimation: return TAE3Events::PlayAnimation{};
-            case TAE3EventType::BehaviorThing: return TAE3Events::BehaviorThing{};
-            case TAE3EventType::CreateBehaviorPC: return TAE3Events::CreateBehaviorPC{};
-            case TAE3EventType::Unk308: return TAE3Events::Unk308{};
-            case TAE3EventType::Unk310: return TAE3Events::Unk310{};
-            case TAE3EventType::Unk311: return TAE3Events::Unk311{};
-            case TAE3EventType::Unk312: return TAE3Events::Unk312{};
-            case TAE3EventType::Unk320: return TAE3Events::Unk320{};
-            case TAE3EventType::Unk330: return TAE3Events::Unk330{};
-            case TAE3EventType::EffectDuringThrow: return TAE3Events::EffectDuringThrow{};
-            case TAE3EventType::Unk332: return TAE3Events::Unk332{};
-            case TAE3EventType::CreateSpEffect: return TAE3Events::CreateSpEffect{};
-            case TAE3EventType::Unk500: return TAE3Events::Unk500{};
-            case TAE3EventType::Unk510: return TAE3Events::Unk510{};
-            case TAE3EventType::Unk520: return TAE3Events::Unk520{};
-            case TAE3EventType::KingOfTheStorm: return TAE3Events::KingOfTheStorm{};
-            case TAE3EventType::Unk600: return TAE3Events::Unk600{};
-            case TAE3EventType::Unk601: return TAE3Events::Unk601{};
-            case TAE3EventType::DebugAnimSpeed: return TAE3Events::DebugAnimSpeed{};
-            case TAE3EventType::Unk605: return TAE3Events::Unk605{};
-            case TAE3EventType::Unk606: return TAE3Events::Unk606{};
-            case TAE3EventType::Unk700: return TAE3Events::Unk700{};
-            case TAE3EventType::EnableTurningDirection: return TAE3Events::EnableTurningDirection{};
-            case TAE3EventType::FacingAngleCorrection: return TAE3Events::FacingAngleCorrection{};
-            case TAE3EventType::Unk707: return TAE3Events::Unk707{};
-            case TAE3EventType::HideWeapon: return TAE3Events::HideWeapon{};
-            case TAE3EventType::HideModelMask: return TAE3Events::HideModelMask{};
-            case TAE3EventType::DamageLevelModule: return TAE3Events::DamageLevelModule{};
-            case TAE3EventType::ModelMask: return TAE3Events::ModelMask{};
-            case TAE3EventType::DamageLevelFunction: return TAE3Events::DamageLevelFunction{};
-            case TAE3EventType::Unk715: return TAE3Events::Unk715{};
-            case TAE3EventType::CultStart: return TAE3Events::CultStart{};
-            case TAE3EventType::Unk730: return TAE3Events::Unk730{};
-            case TAE3EventType::Unk740: return TAE3Events::Unk740{};
-            case TAE3EventType::IFrameState: return TAE3Events::IFrameState{};
-            case TAE3EventType::BonePos: return TAE3Events::BonePos{};
-            case TAE3EventType::BoneFixOn1: return TAE3Events::BoneFixOn1{};
-            case TAE3EventType::BoneFixOn2: return TAE3Events::BoneFixOn2{};
-            case TAE3EventType::TurnLowerBody: return TAE3Events::TurnLowerBody{};
-            case TAE3EventType::Unk782: return TAE3Events::Unk782{};
-            case TAE3EventType::SpawnBulletByCultSacrifice1: return TAE3Events::SpawnBulletByCultSacrifice1{};
-            case TAE3EventType::Unk786: return TAE3Events::Unk786{};
-            case TAE3EventType::Unk790: return TAE3Events::Unk790{};
-            case TAE3EventType::Unk791: return TAE3Events::Unk791{};
-            case TAE3EventType::HitEffect2: return TAE3Events::HitEffect2{};
-            case TAE3EventType::CultSacrifice1: return TAE3Events::CultSacrifice1{};
-            case TAE3EventType::SacrificeEmpty: return TAE3Events::SacrificeEmpty{};
-            case TAE3EventType::Toughness: return TAE3Events::Toughness{};
-            case TAE3EventType::BringCultMenu: return TAE3Events::BringCultMenu{};
-            case TAE3EventType::CeremonyParamID: return TAE3Events::CeremonyParamID{};
-            case TAE3EventType::CultSingle: return TAE3Events::CultSingle{};
-            case TAE3EventType::CultEmpty2: return TAE3Events::CultEmpty2{};
-            case TAE3EventType::Unk800: return TAE3Events::Unk800{};
-            default: throw BinaryException("Unsupported TAE event type " + std::to_string(static_cast<uint64_t>(Type)));
+            case TAE3EventType::JumpTable:
+                return TAE3Events::JumpTable {};
+            case TAE3EventType::Unk001:
+                return TAE3Events::Unk001 {};
+            case TAE3EventType::Unk002:
+                return TAE3Events::Unk002 {};
+            case TAE3EventType::Unk005:
+                return TAE3Events::Unk005 {};
+            case TAE3EventType::Unk016:
+                return TAE3Events::Unk016 {};
+            case TAE3EventType::Unk017:
+                return TAE3Events::Unk017 {};
+            case TAE3EventType::Unk024:
+                return TAE3Events::Unk024 {};
+            case TAE3EventType::SwitchWeapon1:
+                return TAE3Events::SwitchWeapon1 {};
+            case TAE3EventType::SwitchWeapon2:
+                return TAE3Events::SwitchWeapon2 {};
+            case TAE3EventType::Unk034:
+                return TAE3Events::Unk034 {};
+            case TAE3EventType::Unk035:
+                return TAE3Events::Unk035 {};
+            case TAE3EventType::Unk064:
+                return TAE3Events::Unk064 {};
+            case TAE3EventType::Unk065:
+                return TAE3Events::Unk065 {};
+            case TAE3EventType::CreateSpEffect1:
+                return TAE3Events::CreateSpEffect1 {};
+            case TAE3EventType::CreateSpEffect2:
+                return TAE3Events::CreateSpEffect2 {};
+            case TAE3EventType::PlayFFX:
+                return TAE3Events::PlayFFX {};
+            case TAE3EventType::Unk110:
+                return TAE3Events::Unk110 {};
+            case TAE3EventType::HitEffect:
+                return TAE3Events::HitEffect {};
+            case TAE3EventType::Unk113:
+                return TAE3Events::Unk113 {};
+            case TAE3EventType::Unk114:
+                return TAE3Events::Unk114 {};
+            case TAE3EventType::Unk115:
+                return TAE3Events::Unk115 {};
+            case TAE3EventType::Unk116:
+                return TAE3Events::Unk116 {};
+            case TAE3EventType::Unk117:
+                return TAE3Events::Unk117 {};
+            case TAE3EventType::Unk118:
+                return TAE3Events::Unk118 {};
+            case TAE3EventType::Unk119:
+                return TAE3Events::Unk119 {};
+            case TAE3EventType::Unk120:
+                return TAE3Events::Unk120 {};
+            case TAE3EventType::Unk121:
+                return TAE3Events::Unk121 {};
+            case TAE3EventType::PlaySound1:
+                return TAE3Events::PlaySound1 {};
+            case TAE3EventType::PlaySound2:
+                return TAE3Events::PlaySound2 {};
+            case TAE3EventType::PlaySound3:
+                return TAE3Events::PlaySound3 {};
+            case TAE3EventType::PlaySound4:
+                return TAE3Events::PlaySound4 {};
+            case TAE3EventType::PlaySound5:
+                return TAE3Events::PlaySound5 {};
+            case TAE3EventType::Unk137:
+                return TAE3Events::Unk137 {};
+            case TAE3EventType::CreateDecal:
+                return TAE3Events::CreateDecal {};
+            case TAE3EventType::Unk144:
+                return TAE3Events::Unk144 {};
+            case TAE3EventType::Unk145:
+                return TAE3Events::Unk145 {};
+            case TAE3EventType::Unk150:
+                return TAE3Events::Unk150 {};
+            case TAE3EventType::Unk151:
+                return TAE3Events::Unk151 {};
+            case TAE3EventType::Unk161:
+                return TAE3Events::Unk161 {};
+            case TAE3EventType::FadeOut:
+                return TAE3Events::FadeOut {};
+            case TAE3EventType::Unk194:
+                return TAE3Events::Unk194 {};
+            case TAE3EventType::Unk224:
+                return TAE3Events::Unk224 {};
+            case TAE3EventType::DisableStaminaRegen:
+                return TAE3Events::DisableStaminaRegen {};
+            case TAE3EventType::Unk226:
+                return TAE3Events::Unk226 {};
+            case TAE3EventType::Unk227:
+                return TAE3Events::Unk227 {};
+            case TAE3EventType::RagdollReviveTime:
+                return TAE3Events::RagdollReviveTime {};
+            case TAE3EventType::Unk229:
+                return TAE3Events::Unk229 {};
+            case TAE3EventType::SetEventMessageID:
+                return TAE3Events::SetEventMessageID {};
+            case TAE3EventType::Unk232:
+                return TAE3Events::Unk232 {};
+            case TAE3EventType::ChangeDrawMask:
+                return TAE3Events::ChangeDrawMask {};
+            case TAE3EventType::RollDistanceReduction:
+                return TAE3Events::RollDistanceReduction {};
+            case TAE3EventType::CreateAISound:
+                return TAE3Events::CreateAISound {};
+            case TAE3EventType::Unk300:
+                return TAE3Events::Unk300 {};
+            case TAE3EventType::Unk301:
+                return TAE3Events::Unk301 {};
+            case TAE3EventType::AddSpEffectDragonForm:
+                return TAE3Events::AddSpEffectDragonForm {};
+            case TAE3EventType::PlayAnimation:
+                return TAE3Events::PlayAnimation {};
+            case TAE3EventType::BehaviorThing:
+                return TAE3Events::BehaviorThing {};
+            case TAE3EventType::CreateBehaviorPC:
+                return TAE3Events::CreateBehaviorPC {};
+            case TAE3EventType::Unk308:
+                return TAE3Events::Unk308 {};
+            case TAE3EventType::Unk310:
+                return TAE3Events::Unk310 {};
+            case TAE3EventType::Unk311:
+                return TAE3Events::Unk311 {};
+            case TAE3EventType::Unk312:
+                return TAE3Events::Unk312 {};
+            case TAE3EventType::Unk320:
+                return TAE3Events::Unk320 {};
+            case TAE3EventType::Unk330:
+                return TAE3Events::Unk330 {};
+            case TAE3EventType::EffectDuringThrow:
+                return TAE3Events::EffectDuringThrow {};
+            case TAE3EventType::Unk332:
+                return TAE3Events::Unk332 {};
+            case TAE3EventType::CreateSpEffect:
+                return TAE3Events::CreateSpEffect {};
+            case TAE3EventType::Unk500:
+                return TAE3Events::Unk500 {};
+            case TAE3EventType::Unk510:
+                return TAE3Events::Unk510 {};
+            case TAE3EventType::Unk520:
+                return TAE3Events::Unk520 {};
+            case TAE3EventType::KingOfTheStorm:
+                return TAE3Events::KingOfTheStorm {};
+            case TAE3EventType::Unk600:
+                return TAE3Events::Unk600 {};
+            case TAE3EventType::Unk601:
+                return TAE3Events::Unk601 {};
+            case TAE3EventType::DebugAnimSpeed:
+                return TAE3Events::DebugAnimSpeed {};
+            case TAE3EventType::Unk605:
+                return TAE3Events::Unk605 {};
+            case TAE3EventType::Unk606:
+                return TAE3Events::Unk606 {};
+            case TAE3EventType::Unk700:
+                return TAE3Events::Unk700 {};
+            case TAE3EventType::EnableTurningDirection:
+                return TAE3Events::EnableTurningDirection {};
+            case TAE3EventType::FacingAngleCorrection:
+                return TAE3Events::FacingAngleCorrection {};
+            case TAE3EventType::Unk707:
+                return TAE3Events::Unk707 {};
+            case TAE3EventType::HideWeapon:
+                return TAE3Events::HideWeapon {};
+            case TAE3EventType::HideModelMask:
+                return TAE3Events::HideModelMask {};
+            case TAE3EventType::DamageLevelModule:
+                return TAE3Events::DamageLevelModule {};
+            case TAE3EventType::ModelMask:
+                return TAE3Events::ModelMask {};
+            case TAE3EventType::DamageLevelFunction:
+                return TAE3Events::DamageLevelFunction {};
+            case TAE3EventType::Unk715:
+                return TAE3Events::Unk715 {};
+            case TAE3EventType::CultStart:
+                return TAE3Events::CultStart {};
+            case TAE3EventType::Unk730:
+                return TAE3Events::Unk730 {};
+            case TAE3EventType::Unk740:
+                return TAE3Events::Unk740 {};
+            case TAE3EventType::IFrameState:
+                return TAE3Events::IFrameState {};
+            case TAE3EventType::BonePos:
+                return TAE3Events::BonePos {};
+            case TAE3EventType::BoneFixOn1:
+                return TAE3Events::BoneFixOn1 {};
+            case TAE3EventType::BoneFixOn2:
+                return TAE3Events::BoneFixOn2 {};
+            case TAE3EventType::TurnLowerBody:
+                return TAE3Events::TurnLowerBody {};
+            case TAE3EventType::Unk782:
+                return TAE3Events::Unk782 {};
+            case TAE3EventType::SpawnBulletByCultSacrifice1:
+                return TAE3Events::SpawnBulletByCultSacrifice1 {};
+            case TAE3EventType::Unk786:
+                return TAE3Events::Unk786 {};
+            case TAE3EventType::Unk790:
+                return TAE3Events::Unk790 {};
+            case TAE3EventType::Unk791:
+                return TAE3Events::Unk791 {};
+            case TAE3EventType::HitEffect2:
+                return TAE3Events::HitEffect2 {};
+            case TAE3EventType::CultSacrifice1:
+                return TAE3Events::CultSacrifice1 {};
+            case TAE3EventType::SacrificeEmpty:
+                return TAE3Events::SacrificeEmpty {};
+            case TAE3EventType::Toughness:
+                return TAE3Events::Toughness {};
+            case TAE3EventType::BringCultMenu:
+                return TAE3Events::BringCultMenu {};
+            case TAE3EventType::CeremonyParamID:
+                return TAE3Events::CeremonyParamID {};
+            case TAE3EventType::CultSingle:
+                return TAE3Events::CultSingle {};
+            case TAE3EventType::CultEmpty2:
+                return TAE3Events::CultEmpty2 {};
+            case TAE3EventType::Unk800:
+                return TAE3Events::Unk800 {};
+            default:
+                throw BinaryException("Unsupported TAE event type " + std::to_string(static_cast<uint64_t>(Type)));
         }
     }
 

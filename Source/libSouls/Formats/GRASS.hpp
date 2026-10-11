@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -38,7 +42,7 @@ namespace Souls {
             /// @brief Index of last contained face, exclusive.
             int32_t EndFaceIndex = 0;
             /// @brief Unknown.
-            int32_t Unk10          = 0;
+            int32_t Unk10 = 0;
             /// @brief Space contained within the volume.
             BoundingBox Box;
         };
@@ -48,7 +52,7 @@ namespace Souls {
             /// @brief Position of the vertex, relative to the parent model.
             Vector3 Position;
             /// @brief Densities of the six possible grass types; usual range is 0 to 1 but higher is supported.
-            std::array<float, 6> GrassDensities{};
+            std::array<float, 6> GrassDensities {};
         };
 
         /// @brief A triangular patch of grass.

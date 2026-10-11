@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -49,7 +53,7 @@ namespace Souls {
         /// @brief Maximum width of a glyph; glyph widths are relative to this.
         int16_t FullWidth = 0;
         /// @brief Size of the font textures.
-        int16_t TexWidth  = 0;
+        int16_t TexWidth = 0;
         /// @brief Height of the font textures.
         int16_t TexHeight = 0;
         /// @brief Only meaningful in Demon's Souls and Dark Souls; always 0 or 0x20.

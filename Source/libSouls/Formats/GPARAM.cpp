@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "GPARAM.hpp"
 
@@ -12,8 +16,8 @@ namespace Souls {
         using ParamType = GPARAM::ParamType;
 
         struct Offsets {
-            int32_t GroupHeaders = 0, ParamHeaderOffsets = 0, ParamHeaders = 0, Values = 0, ValueIDs = 0, Unk2 = 0, Unk3 = 0,
-                    Unk3ValueIDs = 0, CommentOffsetsOffsets = 0, CommentOffsets = 0, Comments = 0;
+            int32_t GroupHeaders = 0, ParamHeaderOffsets = 0, ParamHeaders = 0, Values = 0, ValueIDs = 0, Unk2 = 0,
+                    Unk3 = 0, Unk3ValueIDs = 0, CommentOffsetsOffsets = 0, CommentOffsets = 0, Comments = 0;
         };
 
         std::string Idx(const char* Name, int64_t A) {
@@ -57,13 +61,23 @@ namespace Souls {
             Reader.StepIn(Offs.Values + ValuesOffset);
             for (int I = 0; I < ValueCount; ++I) {
                 switch (P.Type) {
-                    case ParamType::Byte: P.Values.emplace_back(Reader.ReadByte()); break;
-                    case ParamType::Short: P.Values.emplace_back(Reader.ReadInt16()); break;
+                    case ParamType::Byte:
+                        P.Values.emplace_back(Reader.ReadByte());
+                        break;
+                    case ParamType::Short:
+                        P.Values.emplace_back(Reader.ReadInt16());
+                        break;
                     case ParamType::IntA:
-                    case ParamType::IntB: P.Values.emplace_back(Reader.ReadInt32()); break;
+                    case ParamType::IntB:
+                        P.Values.emplace_back(Reader.ReadInt32());
+                        break;
                     case ParamType::BoolA:
-                    case ParamType::BoolB: P.Values.emplace_back(Reader.ReadBool()); break;
-                    case ParamType::Float: P.Values.emplace_back(Reader.ReadFloat()); break;
+                    case ParamType::BoolB:
+                        P.Values.emplace_back(Reader.ReadBool());
+                        break;
+                    case ParamType::Float:
+                        P.Values.emplace_back(Reader.ReadFloat());
+                        break;
                     case ParamType::Float2:
                         P.Values.emplace_back(Reader.ReadVector2());
                         Reader.Assert<int32_t>(0);
@@ -73,27 +87,26 @@ namespace Souls {
                         P.Values.emplace_back(Reader.ReadVector3());
                         Reader.Assert<int32_t>(0);
                         break;
-                    case ParamType::Float4: P.Values.emplace_back(Reader.ReadVector4()); break;
+                    case ParamType::Float4:
+                        P.Values.emplace_back(Reader.ReadVector4());
+                        break;
                     case ParamType::Byte4: {
                         std::array<uint8_t, 4> Bytes;
                         Reader.ReadInto(std::span<uint8_t>(Bytes));
                         P.Values.emplace_back(Bytes);
                         break;
                     }
-                    default: throw BinaryException("Unknown GPARAM param type");
+                    default:
+                        throw BinaryException("Unknown GPARAM param type");
                 }
             }
             Reader.StepOut();
 
             Reader.StepIn(Offs.ValueIDs + ValueIDsOffset);
-            if (Game == GPGame::Sekiro) {
-                P.UnkFloats = std::vector<float>();
-            }
+            if (Game == GPGame::Sekiro) { P.UnkFloats = std::vector<float>(); }
             for (int I = 0; I < ValueCount; ++I) {
                 P.ValueIDs.push_back(Reader.ReadInt32());
-                if (Game == GPGame::Sekiro) {
-                    P.UnkFloats->push_back(Reader.ReadFloat());
-                }
+                if (Game == GPGame::Sekiro) { P.UnkFloats->push_back(Reader.ReadFloat()); }
             }
             Reader.StepOut();
             Reader.StepOut();
@@ -102,13 +115,23 @@ namespace Souls {
 
         void WriteValue(BinaryWriter& Writer, ParamType Type, const GPARAM::ParamValue& Value) {
             switch (Type) {
-                case ParamType::Byte: Writer.WriteInt32(std::get<uint8_t>(Value)); break;
-                case ParamType::Short: Writer.WriteInt16(std::get<int16_t>(Value)); break;
+                case ParamType::Byte:
+                    Writer.WriteInt32(std::get<uint8_t>(Value));
+                    break;
+                case ParamType::Short:
+                    Writer.WriteInt16(std::get<int16_t>(Value));
+                    break;
                 case ParamType::IntA:
-                case ParamType::IntB: Writer.WriteInt32(std::get<int32_t>(Value)); break;
+                case ParamType::IntB:
+                    Writer.WriteInt32(std::get<int32_t>(Value));
+                    break;
                 case ParamType::BoolA:
-                case ParamType::BoolB: Writer.WriteBool(std::get<bool>(Value)); break;
-                case ParamType::Float: Writer.WriteFloat(std::get<float>(Value)); break;
+                case ParamType::BoolB:
+                    Writer.WriteBool(std::get<bool>(Value));
+                    break;
+                case ParamType::Float:
+                    Writer.WriteFloat(std::get<float>(Value));
+                    break;
                 case ParamType::Float2:
                     Writer.WriteVector2(std::get<Vector2>(Value));
                     Writer.WriteInt32(0);
@@ -118,9 +141,14 @@ namespace Souls {
                     Writer.WriteVector3(std::get<Vector3>(Value));
                     Writer.WriteInt32(0);
                     break;
-                case ParamType::Float4: Writer.WriteVector4(std::get<Vector4>(Value)); break;
-                case ParamType::Byte4: Writer.WriteBytes(std::get<std::array<uint8_t, 4>>(Value)); break;
-                default: throw BinaryException("Unknown GPARAM param type");
+                case ParamType::Float4:
+                    Writer.WriteVector4(std::get<Vector4>(Value));
+                    break;
+                case ParamType::Byte4:
+                    Writer.WriteBytes(std::get<std::array<uint8_t, 4>>(Value));
+                    break;
+                default:
+                    throw BinaryException("Unknown GPARAM param type");
             }
         }
     }  // namespace
@@ -136,22 +164,20 @@ namespace Souls {
     }
 
     bool GPARAM::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = Reader.GetASCII(0, 4);
         return Magic == "filt" || Magic == std::string("f\0i\0", 4);
     }
 
     void GPARAM::ReadImpl(BinaryReader& Reader) {
-        Reader.Order = Endian::Little;
+        Reader.Order            = Endian::Little;
         const std::string Magic = Reader.ReadString(4);
         if (Magic == std::string("f\0i\0", 4)) {
             Reader.AssertMagic(std::string_view("l\0t\0", 4));
         } else if (Magic != "filt") {
             throw BinaryException("Not a GPARAM: bad magic");
         }
-        Game  = static_cast<GPGame>(Reader.ReadUInt32());
+        Game = static_cast<GPGame>(Reader.ReadUInt32());
         Reader.Assert<uint8_t>(0);
         Unk0D = Reader.ReadBool();
         Reader.Assert<int16_t>(0);
@@ -174,9 +200,7 @@ namespace Souls {
             Offs.CommentOffsets        = Reader.ReadInt32();
             Offs.Comments              = Reader.ReadInt32();
         }
-        if (Game == GPGame::Sekiro) {
-            Unk50 = Reader.ReadFloat();
-        }
+        if (Game == GPGame::Sekiro) { Unk50 = Reader.ReadFloat(); }
 
         Groups.clear();
         Groups.reserve(static_cast<size_t>(GroupCount));
@@ -184,7 +208,7 @@ namespace Souls {
             Group G;
             const int32_t GroupHeaderOffset = Reader.ReadInt32();
             Reader.StepIn(Offs.GroupHeaders + GroupHeaderOffset);
-            const int32_t ParamCount              = Reader.ReadInt32();
+            const int32_t ParamCount               = Reader.ReadInt32();
             const int32_t ParamHeaderOffsetsOffset = Reader.ReadInt32();
             if (Game == GPGame::DarkSouls2) {
                 G.Name1 = Reader.ReadShiftJIS();
@@ -212,9 +236,7 @@ namespace Souls {
             U.GroupIndex             = Reader.ReadInt32();
             const int32_t Count      = Reader.ReadInt32();
             const uint32_t IDsOffset = Reader.ReadUInt32();
-            if (Game == GPGame::Sekiro) {
-                U.Unk0C = Reader.ReadInt32();
-            }
+            if (Game == GPGame::Sekiro) { U.Unk0C = Reader.ReadInt32(); }
             Reader.StepIn(static_cast<int64_t>(Offs.Unk3ValueIDs) + IDsOffset);
             U.ValueIDs = Reader.ReadArray<int32_t>(static_cast<size_t>(Count));
             Reader.StepOut();
@@ -223,7 +245,8 @@ namespace Souls {
 
         if (Game == GPGame::DarkSouls3 || Game == GPGame::Sekiro) {
             Reader.StepIn(Offs.CommentOffsetsOffsets);
-            const std::vector<int32_t> CommentOffsetsOffsets = Reader.ReadArray<int32_t>(static_cast<size_t>(GroupCount));
+            const std::vector<int32_t> CommentOffsetsOffsets =
+              Reader.ReadArray<int32_t>(static_cast<size_t>(GroupCount));
             Reader.StepOut();
             const int32_t CommentOffsetsLength = Offs.Comments - Offs.CommentOffsets;
             for (int32_t I = 0; I < GroupCount; ++I) {
@@ -231,12 +254,15 @@ namespace Souls {
                 if (I == GroupCount - 1) {
                     CommentCount = (CommentOffsetsLength - CommentOffsetsOffsets[static_cast<size_t>(I)]) / 4;
                 } else {
-                    CommentCount = (CommentOffsetsOffsets[static_cast<size_t>(I) + 1] - CommentOffsetsOffsets[static_cast<size_t>(I)]) / 4;
+                    CommentCount = (CommentOffsetsOffsets[static_cast<size_t>(I) + 1] -
+                                    CommentOffsetsOffsets[static_cast<size_t>(I)]) /
+                                   4;
                 }
                 Reader.Seek(Offs.CommentOffsets + CommentOffsetsOffsets[static_cast<size_t>(I)]);
                 for (int32_t J = 0; J < CommentCount; ++J) {
                     const int32_t CommentOffset = Reader.ReadInt32();
-                    Groups[static_cast<size_t>(I)].Comments.push_back(Reader.GetUTF16Text(Offs.Comments + CommentOffset));
+                    Groups[static_cast<size_t>(I)].Comments.push_back(
+                      Reader.GetUTF16Text(Offs.Comments + CommentOffset));
                 }
             }
         }
@@ -271,9 +297,7 @@ namespace Souls {
             Writer.Reserve<int32_t>("CommentOffsetsOffset");
             Writer.Reserve<int32_t>("CommentsOffset");
         }
-        if (Game == GPGame::Sekiro) {
-            Writer.WriteFloat(Unk50);
-        }
+        if (Game == GPGame::Sekiro) { Writer.WriteFloat(Unk50); }
         Writer.Fill<int32_t>("HeaderSize", static_cast<int32_t>(Writer.Position()));
 
         for (size_t I = 0; I < Groups.size(); ++I) {
@@ -284,7 +308,8 @@ namespace Souls {
         Writer.Fill<int32_t>("GroupHeadersOffset", GroupHeadersOffset);
         for (size_t I = 0; I < Groups.size(); ++I) {
             const Group& G = Groups[I];
-            Writer.Fill<int32_t>(Idx("GroupHeaderOffset", static_cast<int64_t>(I)), static_cast<int32_t>(Writer.Position()) - GroupHeadersOffset);
+            Writer.Fill<int32_t>(Idx("GroupHeaderOffset", static_cast<int64_t>(I)),
+                                 static_cast<int32_t>(Writer.Position()) - GroupHeadersOffset);
             Writer.WriteInt32(static_cast<int32_t>(G.Params.size()));
             Writer.Reserve<int32_t>(Idx("ParamHeaderOffsetsOffset", static_cast<int64_t>(I)));
             WriteNames(Writer, Game, G.Name1, G.Name2);
@@ -293,7 +318,8 @@ namespace Souls {
         const int32_t ParamHeaderOffsetsOffset = static_cast<int32_t>(Writer.Position());
         Writer.Fill<int32_t>("ParamHeaderOffsetsOffset", ParamHeaderOffsetsOffset);
         for (size_t I = 0; I < Groups.size(); ++I) {
-            Writer.Fill<int32_t>(Idx("ParamHeaderOffsetsOffset", static_cast<int64_t>(I)), static_cast<int32_t>(Writer.Position()) - ParamHeaderOffsetsOffset);
+            Writer.Fill<int32_t>(Idx("ParamHeaderOffsetsOffset", static_cast<int64_t>(I)),
+                                 static_cast<int32_t>(Writer.Position()) - ParamHeaderOffsetsOffset);
             for (size_t P = 0; P < Groups[I].Params.size(); ++P) {
                 Writer.Reserve<int32_t>(Idx("ParamHeaderOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)));
             }
@@ -304,7 +330,8 @@ namespace Souls {
         for (size_t I = 0; I < Groups.size(); ++I) {
             for (size_t P = 0; P < Groups[I].Params.size(); ++P) {
                 const Param& Pr = Groups[I].Params[P];
-                Writer.Fill<int32_t>(Idx("ParamHeaderOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)), static_cast<int32_t>(Writer.Position()) - ParamHeadersOffset);
+                Writer.Fill<int32_t>(Idx("ParamHeaderOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)),
+                                     static_cast<int32_t>(Writer.Position()) - ParamHeadersOffset);
                 Writer.Reserve<int32_t>(Idx("ValuesOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)));
                 Writer.Reserve<int32_t>(Idx("ValueIDsOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)));
                 Writer.WriteByte(static_cast<uint8_t>(Pr.Type));
@@ -320,7 +347,8 @@ namespace Souls {
         for (size_t I = 0; I < Groups.size(); ++I) {
             for (size_t P = 0; P < Groups[I].Params.size(); ++P) {
                 const Param& Pr = Groups[I].Params[P];
-                Writer.Fill<int32_t>(Idx("ValuesOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)), static_cast<int32_t>(Writer.Position()) - ValuesOffset);
+                Writer.Fill<int32_t>(Idx("ValuesOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)),
+                                     static_cast<int32_t>(Writer.Position()) - ValuesOffset);
                 for (const ParamValue& V : Pr.Values) {
                     WriteValue(Writer, Pr.Type, V);
                 }
@@ -333,12 +361,11 @@ namespace Souls {
         for (size_t I = 0; I < Groups.size(); ++I) {
             for (size_t P = 0; P < Groups[I].Params.size(); ++P) {
                 const Param& Pr = Groups[I].Params[P];
-                Writer.Fill<int32_t>(Idx("ValueIDsOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)), static_cast<int32_t>(Writer.Position()) - ValueIDsOffset);
+                Writer.Fill<int32_t>(Idx("ValueIDsOffset", static_cast<int64_t>(I), static_cast<int64_t>(P)),
+                                     static_cast<int32_t>(Writer.Position()) - ValueIDsOffset);
                 for (size_t V = 0; V < Pr.ValueIDs.size(); ++V) {
                     Writer.WriteInt32(Pr.ValueIDs[V]);
-                    if (Game == GPGame::Sekiro) {
-                        Writer.WriteFloat(Pr.UnkFloats.value().at(V));
-                    }
+                    if (Game == GPGame::Sekiro) { Writer.WriteFloat(Pr.UnkFloats.value().at(V)); }
                 }
             }
         }
@@ -350,9 +377,7 @@ namespace Souls {
             Writer.WriteInt32(Unk3s[I].GroupIndex);
             Writer.WriteInt32(static_cast<int32_t>(Unk3s[I].ValueIDs.size()));
             Writer.Reserve<int32_t>(Idx("Unk3ValueIDsOffset", static_cast<int64_t>(I)));
-            if (Game == GPGame::Sekiro) {
-                Writer.WriteInt32(Unk3s[I].Unk0C);
-            }
+            if (Game == GPGame::Sekiro) { Writer.WriteInt32(Unk3s[I].Unk0C); }
         }
         const int32_t Unk3ValuesOffset = static_cast<int32_t>(Writer.Position());
         Writer.Fill<int32_t>("Unk3ValuesOffset", Unk3ValuesOffset);
@@ -374,7 +399,8 @@ namespace Souls {
             const int32_t CommentOffsetsOffset = static_cast<int32_t>(Writer.Position());
             Writer.Fill<int32_t>("CommentOffsetsOffset", CommentOffsetsOffset);
             for (size_t I = 0; I < Groups.size(); ++I) {
-                Writer.Fill<int32_t>(Idx("CommentOffsetsOffset", static_cast<int64_t>(I)), static_cast<int32_t>(Writer.Position()) - CommentOffsetsOffset);
+                Writer.Fill<int32_t>(Idx("CommentOffsetsOffset", static_cast<int64_t>(I)),
+                                     static_cast<int32_t>(Writer.Position()) - CommentOffsetsOffset);
                 for (size_t C = 0; C < Groups[I].Comments.size(); ++C) {
                     Writer.Reserve<int32_t>(Idx("CommentOffset", static_cast<int64_t>(I), static_cast<int64_t>(C)));
                 }
@@ -383,7 +409,8 @@ namespace Souls {
             Writer.Fill<int32_t>("CommentsOffset", CommentsOffset);
             for (size_t I = 0; I < Groups.size(); ++I) {
                 for (size_t C = 0; C < Groups[I].Comments.size(); ++C) {
-                    Writer.Fill<int32_t>(Idx("CommentOffset", static_cast<int64_t>(I), static_cast<int64_t>(C)), static_cast<int32_t>(Writer.Position()) - CommentsOffset);
+                    Writer.Fill<int32_t>(Idx("CommentOffset", static_cast<int64_t>(I), static_cast<int64_t>(C)),
+                                         static_cast<int32_t>(Writer.Position()) - CommentsOffset);
                     Writer.WriteUTF16Text(Groups[I].Comments[C], true);
                     Writer.Align(4);
                 }

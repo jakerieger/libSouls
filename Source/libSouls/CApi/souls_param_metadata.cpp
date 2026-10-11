@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -40,7 +44,9 @@ namespace {
     }
 }  // namespace
 
-SOULS_C_API SoulsStatus souls_param_layout_field_info(const SoulsParamLayout* layout, size_t field, SoulsFieldInfo* out_info) {
+SOULS_C_API SoulsStatus souls_param_layout_field_info(const SoulsParamLayout* layout,
+                                                      size_t field,
+                                                      SoulsFieldInfo* out_info) {
     return Guard([&] {
         if (!out_info) ThrowInvalid("out_info is NULL");
         if (out_info->struct_size < sizeof(SoulsFieldInfo)) ThrowInvalid("struct_size is too small");
@@ -91,10 +97,14 @@ SOULS_C_API const char* souls_param_names_find(const SoulsParamNames* names, con
     });
 }
 
-SOULS_C_API int64_t souls_param_names_apply(const SoulsParamNames* names, SoulsParam* param, const char* param_name, int overwrite) {
+SOULS_C_API int64_t souls_param_names_apply(const SoulsParamNames* names,
+                                            SoulsParam* param,
+                                            const char* param_name,
+                                            int overwrite) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         return static_cast<int64_t>(
-            Require(names, "names is NULL").Repository.Apply(Require(param, "param is NULL").Value, NameArg(param_name), overwrite != 0));
+          Require(names, "names is NULL")
+            .Repository.Apply(Require(param, "param is NULL").Value, NameArg(param_name), overwrite != 0));
     });
 }
 
@@ -154,7 +164,8 @@ SOULS_C_API int64_t souls_param_enums_entry_value(const SoulsParamEnums* enums, 
     });
 }
 
-SOULS_C_API const char* souls_param_enums_entry_name(const SoulsParamEnums* enums, const char* enum_name, size_t entry) {
+SOULS_C_API const char*
+souls_param_enums_entry_name(const SoulsParamEnums* enums, const char* enum_name, size_t entry) {
     return GuardValue<const char*>(nullptr, [&]() -> const char* {
         const PARAMTDF& E = EnumOf(enums, enum_name);
         CheckIndex(entry, E.Entries.size(), "entry index out of range");
@@ -163,20 +174,22 @@ SOULS_C_API const char* souls_param_enums_entry_name(const SoulsParamEnums* enum
     });
 }
 
-SOULS_C_API const char* souls_param_enums_find_name(const SoulsParamEnums* enums, const char* enum_name, int64_t value) {
+SOULS_C_API const char*
+souls_param_enums_find_name(const SoulsParamEnums* enums, const char* enum_name, int64_t value) {
     return GuardValue<const char*>(nullptr, [&]() -> const char* {
         const PARAMTDF* E = Require(enums, "enums is NULL").Repository.Find(NameArg(enum_name));
         if (!E) return nullptr;
         for (const auto& Entry : E->Entries) {
-            if (ToInt64(Entry.Val) == value) {
-                return Entry.Name ? Entry.Name->c_str() : nullptr;
-            }
+            if (ToInt64(Entry.Val) == value) { return Entry.Name ? Entry.Name->c_str() : nullptr; }
         }
         return nullptr;
     });
 }
 
-SOULS_C_API SoulsStatus souls_param_enums_find_value(const SoulsParamEnums* enums, const char* enum_name, const char* entry_name, int64_t* out_value) {
+SOULS_C_API SoulsStatus souls_param_enums_find_value(const SoulsParamEnums* enums,
+                                                     const char* enum_name,
+                                                     const char* entry_name,
+                                                     int64_t* out_value) {
     return Guard([&] {
         if (!out_value) ThrowInvalid("out_value is NULL");
         const std::string Wanted = NameArg(entry_name);

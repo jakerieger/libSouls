@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "EDD.hpp"
 
@@ -11,7 +15,8 @@ namespace Souls {
         // Takes `Count` consecutive objects of size `ObjectSize` starting at Offset out of the map. Each object may
         // only be used once.
         template<typename T>
-        std::vector<T> GetUniqueOffsetList(int64_t Offset, int64_t Count, std::map<int64_t, T>& Offsets, int64_t ObjectSize) {
+        std::vector<T>
+        GetUniqueOffsetList(int64_t Offset, int64_t Count, std::map<int64_t, T>& Offsets, int64_t ObjectSize) {
             std::vector<T> Objects;
             for (int64_t I = 0; I < Count; ++I) {
                 const auto Found = Offsets.find(Offset);
@@ -35,9 +40,7 @@ namespace Souls {
     }  // namespace
 
     bool EDD::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         const std::string Magic = Reader.GetASCII(0, 4);
         return Magic == "fSSL" || Magic == "fsSL";
     }
@@ -45,9 +48,7 @@ namespace Souls {
     void EDD::ReadImpl(BinaryReader& Reader) {
         Reader.Order            = Endian::Little;
         const std::string Magic = Reader.ReadString(4);
-        if (Magic != "fSSL" && Magic != "fsSL") {
-            throw BinaryException("Not an EDD: bad magic");
-        }
+        if (Magic != "fSSL" && Magic != "fsSL") { throw BinaryException("Not an EDD: bad magic"); }
         LongFormat        = Magic == "fsSL";
         Reader.VarintLong = LongFormat;
 
@@ -99,9 +100,7 @@ namespace Souls {
         for (int32_t& Value : UnkB0) {
             Value = Reader.ReadInt32();
         }
-        if (LongFormat) {
-            Reader.Assert<int32_t>(0);
-        }
+        if (LongFormat) { Reader.Assert<int32_t>(0); }
         Reader.AssertVarint(LongFormat ? 0x58 : 0x34);
         Reader.AssertVarint(StringCount);
 
@@ -115,11 +114,11 @@ namespace Souls {
         FunctionSpecs.clear();
         for (int32_t I = 0; I < FunctionSpecCount; ++I) {
             FunctionSpec F;
-            F.ID                       = Reader.ReadInt32();
-            const int16_t NameIndex    = Reader.ReadInt16();
-            F.Unk06                    = Reader.ReadByte();
-            F.Unk07                    = Reader.ReadByte();
-            F.Name                     = StringAt(Strings, NameIndex);
+            F.ID                    = Reader.ReadInt32();
+            const int16_t NameIndex = Reader.ReadInt16();
+            F.Unk06                 = Reader.ReadByte();
+            F.Unk07                 = Reader.ReadByte();
+            F.Name                  = StringAt(Strings, NameIndex);
             FunctionSpecs.push_back(std::move(F));
         }
 
@@ -128,7 +127,7 @@ namespace Souls {
             const int64_t At = Reader.Position() - DataStart;
             Reader.AssertVarint(-1);
             Reader.AssertVarint(0);
-            Conditions[At] = ConditionDesc{};
+            Conditions[At] = ConditionDesc {};
         }
 
         CommandSpecs.clear();
@@ -149,22 +148,20 @@ namespace Souls {
             const int16_t NameIndex = Reader.ReadInt16();
             Reader.Assert<uint8_t>(1);
             Reader.Assert<uint8_t>(0xFF);
-            Commands[At] = CommandDesc{StringAt(Strings, NameIndex)};
+            Commands[At] = CommandDesc {StringAt(Strings, NameIndex)};
         }
 
         if (LongFormat) {
             // Data-start-aligned padding.
             const int64_t Offset = Reader.Position() - DataStart;
-            if (Offset % 8 > 0) {
-                Reader.Skip(8 - Offset % 8);
-            }
+            if (Offset % 8 > 0) { Reader.Skip(8 - Offset % 8); }
         }
 
         std::map<int64_t, PassCommandDesc> PassCommands;
         for (int32_t I = 0; I < PassCommandCount; ++I) {
-            const int64_t At            = Reader.Position() - DataStart;
-            const int32_t CommandOffset = Reader.ReadInt32();
-            const int32_t Count         = Reader.ReadInt32();
+            const int64_t At              = Reader.Position() - DataStart;
+            const int32_t CommandOffset   = Reader.ReadInt32();
+            const int32_t Count           = Reader.ReadInt32();
             PassCommands[At].PassCommands = GetUniqueOffsetList(CommandOffset, Count, Commands, CommandSize);
         }
 
@@ -172,19 +169,19 @@ namespace Souls {
         for (int32_t I = 0; I < StateCount; ++I) {
             const int64_t At = Reader.Position() - DataStart;
             StateDesc S;
-            S.ID                             = Reader.ReadVarint();
-            const int64_t NameIndexOffset    = Reader.ReadVarint();
+            S.ID                          = Reader.ReadVarint();
+            const int64_t NameIndexOffset = Reader.ReadVarint();
             Reader.AssertVarint(1);
-            const int64_t EntryOffset        = Reader.ReadVarint();
-            const int64_t EntryCountS        = Reader.ReadVarint();
-            const int64_t ExitOffset         = Reader.ReadVarint();
-            const int64_t ExitCountS         = Reader.ReadVarint();
-            const int64_t WhileOffset        = Reader.ReadVarint();
-            const int64_t WhileCountS        = Reader.ReadVarint();
-            const int64_t PassOffset         = Reader.ReadVarint();
-            const int64_t PassCountS         = Reader.ReadVarint();
-            const int64_t ConditionOffset    = Reader.ReadVarint();
-            const int64_t ConditionCountS    = Reader.ReadVarint();
+            const int64_t EntryOffset     = Reader.ReadVarint();
+            const int64_t EntryCountS     = Reader.ReadVarint();
+            const int64_t ExitOffset      = Reader.ReadVarint();
+            const int64_t ExitCountS      = Reader.ReadVarint();
+            const int64_t WhileOffset     = Reader.ReadVarint();
+            const int64_t WhileCountS     = Reader.ReadVarint();
+            const int64_t PassOffset      = Reader.ReadVarint();
+            const int64_t PassCountS      = Reader.ReadVarint();
+            const int64_t ConditionOffset = Reader.ReadVarint();
+            const int64_t ConditionCountS = Reader.ReadVarint();
             Reader.AssertVarint(-1);
             Reader.AssertVarint(0);
             S.Name          = StringAt(Strings, Reader.ReadAt<int16_t>(DataStart + NameIndexOffset));
@@ -199,9 +196,9 @@ namespace Souls {
         Machines.clear();
         for (int32_t I = 0; I < MachineCount; ++I) {
             MachineDesc M;
-            M.ID                    = Reader.ReadInt32();
-            const int16_t NameIndex = Reader.ReadInt16();
-            M.Unk06                 = Reader.ReadInt16();
+            M.ID                                    = Reader.ReadInt32();
+            const int16_t NameIndex                 = Reader.ReadInt16();
+            M.Unk06                                 = Reader.ReadInt16();
             const std::vector<int16_t> ParamIndices = Reader.ReadArray<int16_t>(8);
             Reader.AssertVarint(-1);
             Reader.AssertVarint(0);
@@ -212,9 +209,7 @@ namespace Souls {
             M.States                  = GetUniqueOffsetList(StateOffset, StateCountM, States, StateSize);
             M.Name                    = StringAt(Strings, NameIndex);
             for (size_t P = 0; P < 8; ++P) {
-                if (ParamIndices[P] >= 0) {
-                    M.ParamNames[P] = StringAt(Strings, ParamIndices[P]);
-                }
+                if (ParamIndices[P] >= 0) { M.ParamNames[P] = StringAt(Strings, ParamIndices[P]); }
             }
             Machines.push_back(std::move(M));
         }

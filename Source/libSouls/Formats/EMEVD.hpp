@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -29,7 +33,7 @@ namespace Souls {
             DarkSouls1BE,  ///< Dark Souls and Dark Souls II on PS3 and Xbox 360
             Bloodborne,    ///< and Dark Souls II: Scholar of the First Sin on all platforms
             DarkSouls3,
-            Sekiro,        ///< and Elden Ring
+            Sekiro,  ///< and Elden Ring
         };
 
         /// @brief Value type of an instruction argument.
@@ -61,7 +65,8 @@ namespace Souls {
             /// @brief An instruction with no arguments.
             Instruction(int32_t Bank, int32_t ID) : Bank(Bank), ID(ID) {}
             /// @brief An instruction with packed argument data.
-            Instruction(int32_t Bank, int32_t ID, std::vector<uint8_t> Args) : Bank(Bank), ID(ID), ArgData(std::move(Args)) {}
+            Instruction(int32_t Bank, int32_t ID, std::vector<uint8_t> Args)
+                : Bank(Bank), ID(ID), ArgData(std::move(Args)) {}
             /// @brief An instruction limited to some layers, with packed argument data.
             Instruction(int32_t Bank, int32_t ID, uint32_t LayerMask, std::vector<uint8_t> Args)
                 : Bank(Bank), ID(ID), ArgData(std::move(Args)), Layer(LayerMask) {}
@@ -109,7 +114,8 @@ namespace Souls {
 
             Event() = default;
             /// @brief An empty event with the given ID and rest behavior.
-            Event(int64_t ID, RestBehaviorType RestBehavior = RestBehaviorType::Default) : ID(ID), RestBehavior(RestBehavior) {}
+            Event(int64_t ID, RestBehaviorType RestBehavior = RestBehaviorType::Default)
+                : ID(ID), RestBehavior(RestBehavior) {}
         };
 
         /// @brief Determines the format the EMEVD will be written in.

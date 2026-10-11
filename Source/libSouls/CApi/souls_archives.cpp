@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -44,10 +48,14 @@ struct SoulsBdt {
 namespace {
     BHD5::Game ToGame(SoulsBhd5Game Game) {
         switch (Game) {
-            case SOULS_BHD5_DARK_SOULS_1: return BHD5::Game::DarkSouls1;
-            case SOULS_BHD5_DARK_SOULS_2: return BHD5::Game::DarkSouls2;
-            case SOULS_BHD5_DARK_SOULS_3: return BHD5::Game::DarkSouls3;
-            case SOULS_BHD5_ELDEN_RING: return BHD5::Game::EldenRing;
+            case SOULS_BHD5_DARK_SOULS_1:
+                return BHD5::Game::DarkSouls1;
+            case SOULS_BHD5_DARK_SOULS_2:
+                return BHD5::Game::DarkSouls2;
+            case SOULS_BHD5_DARK_SOULS_3:
+                return BHD5::Game::DarkSouls3;
+            case SOULS_BHD5_ELDEN_RING:
+                return BHD5::Game::EldenRing;
         }
         ThrowInvalid("invalid game");
     }
@@ -89,8 +97,8 @@ SOULS_C_API SoulsBinder* souls_bxf_read_files(SoulsBinderKind kind, const char* 
     });
 }
 
-SOULS_C_API SoulsBinder* souls_bxf_read_memory(SoulsBinderKind kind, const uint8_t* header, size_t header_size, const uint8_t* data,
-                                               size_t data_size) {
+SOULS_C_API SoulsBinder* souls_bxf_read_memory(
+  SoulsBinderKind kind, const uint8_t* header, size_t header_size, const uint8_t* data, size_t data_size) {
     return GuardValue<SoulsBinder*>(nullptr, [&]() -> SoulsBinder* {
         const auto H = Bytes(header, header_size);
         const auto D = Bytes(data, data_size);
@@ -186,7 +194,7 @@ SOULS_C_API int64_t souls_bxf_reader_find_file_name(const SoulsBxfReader* reader
 }
 
 SOULS_C_API SoulsBuffer souls_bxf_reader_read(SoulsBxfReader* reader, size_t index) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] {
         BXFReader& R = ReaderOf(reader);
         CheckIndex(index, R.FileCount(), "file index out of range");
         return MakeBuffer(R.ReadBytes(index));
@@ -209,13 +217,14 @@ SOULS_C_API uint64_t souls_path_hash64(const char* path) {
     });
 }
 
-SOULS_C_API SoulsBhd5* souls_bhd5_open(SoulsBhd5Game game, const char* header_path, const char* exe_path_or_null, const char* key_pem_or_null) {
+SOULS_C_API SoulsBhd5* souls_bhd5_open(SoulsBhd5Game game,
+                                       const char* header_path,
+                                       const char* exe_path_or_null,
+                                       const char* key_pem_or_null) {
     return GuardValue<SoulsBhd5*>(nullptr, [&] {
-        const BHD5::Game Format = ToGame(game);
+        const BHD5::Game Format         = ToGame(game);
         const std::vector<uint8_t> File = ReadAllBytes(PathFrom(header_path));
-        if (StartsWithBhd5(File)) {
-            return new SoulsBhd5(BHD5::Read(File, Format));
-        }
+        if (StartsWithBhd5(File)) { return new SoulsBhd5(BHD5::Read(File, Format)); }
 
         std::vector<std::string> Keys;
         if (key_pem_or_null) Keys.emplace_back(key_pem_or_null);
@@ -225,14 +234,13 @@ SOULS_C_API SoulsBhd5* souls_bhd5_open(SoulsBhd5Game game, const char* header_pa
             }
         }
         if (Keys.empty()) {
-            throw BinaryException("The header is encrypted and no RSA key was given; pass the game's exe or a PEM key.");
+            throw BinaryException(
+              "The header is encrypted and no RSA key was given; pass the game's exe or a PEM key.");
         }
         for (const std::string& Key : Keys) {
             try {
                 std::vector<uint8_t> Decrypted = Crypto::DecryptRsaBlocks(Key, File);
-                if (StartsWithBhd5(Decrypted)) {
-                    return new SoulsBhd5(BHD5::Read(Decrypted, Format));
-                }
+                if (StartsWithBhd5(Decrypted)) { return new SoulsBhd5(BHD5::Read(Decrypted, Format)); }
             } catch (const BinaryException&) {
                 // The wrong key can produce blocks the crypto library rejects; try the next.
             }
@@ -258,7 +266,9 @@ SOULS_C_API uint64_t souls_bhd5_file_hash(const SoulsBhd5* bhd5, size_t index) {
 }
 
 SOULS_C_API int64_t souls_bhd5_file_stored_size(const SoulsBhd5* bhd5, size_t index) {
-    return GuardValue<int64_t>(-1, [&] { return static_cast<int64_t>(Require(bhd5, "bhd5 is NULL").File(index).PaddedFileSize); });
+    return GuardValue<int64_t>(-1, [&] {
+        return static_cast<int64_t>(Require(bhd5, "bhd5 is NULL").File(index).PaddedFileSize);
+    });
 }
 
 SOULS_C_API int64_t souls_bhd5_file_unpacked_size(const SoulsBhd5* bhd5, size_t index) {
@@ -286,8 +296,9 @@ SOULS_C_API int64_t souls_bhd5_find_path(const SoulsBhd5* bhd5, const char* path
         if (!path) ThrowInvalid("path is NULL");
         const SoulsBhd5& B = Require(bhd5, "bhd5 is NULL");
         // Elden Ring names files with the 64-bit hash; the older games with the 32-bit one.
-        const uint64_t Hash = B.Header.Format == BHD5::Game::EldenRing ? Util::FromPathHash64(path) : Util::FromPathHash(path);
-        const auto Found    = B.ByHash.find(Hash);
+        const uint64_t Hash =
+          B.Header.Format == BHD5::Game::EldenRing ? Util::FromPathHash64(path) : Util::FromPathHash(path);
+        const auto Found = B.ByHash.find(Hash);
         return Found == B.ByHash.end() ? -1 : static_cast<int64_t>(Found->second);
     });
 }
@@ -305,7 +316,7 @@ SOULS_C_API void souls_bdt_free(SoulsBdt* bdt) {
 }
 
 SOULS_C_API SoulsBuffer souls_bhd5_extract(const SoulsBhd5* bhd5, SoulsBdt* bdt, size_t index) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] {
         const BHD5::FileHeader& File = Require(bhd5, "bhd5 is NULL").File(index);
         BinaryReader& Reader         = *Require(bdt, "bdt is NULL").Reader;
         return MakeBuffer(File.ReadFile(Reader));

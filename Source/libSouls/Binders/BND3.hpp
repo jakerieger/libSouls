@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -15,10 +19,11 @@ namespace Souls {
     /// @brief A BND3 binder: the container used by Demon's Souls through Dark Souls II.
     ///
     /// Files are decompressed when read and recompressed when written, per FileFlags::Compressed.
-    class SOULS_API BND3 : public SoulsFile<BND3>, public IBinder {
+    class SOULS_API BND3 : public SoulsFile<BND3>,
+                           public IBinder {
     public:
         /// @brief Whether multi-byte values are big-endian (as opposed to the *bit* order of the flag bytes).
-        bool BigEndian    = false;
+        bool BigEndian = false;
         /// @brief Unknown; usually false.
         bool BitBigEndian = false;
 

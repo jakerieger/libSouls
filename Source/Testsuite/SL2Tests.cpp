@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -21,23 +25,25 @@ namespace fs = std::filesystem;
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     std::vector<uint8_t> Pattern(size_t Size, uint8_t Seed) {
         std::vector<uint8_t> Bytes(Size);
-        for (size_t I = 0; I < Size; ++I) Bytes[I] = static_cast<uint8_t>(Seed + I * 7);
+        for (size_t I = 0; I < Size; ++I)
+            Bytes[I] = static_cast<uint8_t>(Seed + I * 7);
         return Bytes;
     }
 
     // Every game's save layout, on made-up data: written, read back, and rejected once damaged.
     void TestSynthetic() {
-        for (SL2::Game Game : {SL2::Game::DarkSouls2, SL2::Game::DarkSouls2Scholar, SL2::Game::DarkSouls3, SL2::Game::EldenRing}) {
+        for (SL2::Game Game :
+             {SL2::Game::DarkSouls2, SL2::Game::DarkSouls2Scholar, SL2::Game::DarkSouls3, SL2::Game::EldenRing}) {
             BND4 Save;
             Save.Files.emplace_back(Binder::FileFlags::Flag1, "USER_DATA000", Pattern(0x100, 1));
             Save.Files.emplace_back(Binder::FileFlags::Flag1, "USER_DATA001", Pattern(0x40, 9));
@@ -46,7 +52,8 @@ namespace {
 
             const std::vector<uint8_t> Written = SL2::Write(Save, Game);
             const BND4 Back                    = SL2::Read(Written, Game);
-            CHECK(Back.Files.size() == 2 && Back.Files[0].Bytes == Save.Files[0].Bytes && Back.Files[1].Bytes == Save.Files[1].Bytes);
+            CHECK(Back.Files.size() == 2 && Back.Files[0].Bytes == Save.Files[0].Bytes &&
+                  Back.Files[1].Bytes == Save.Files[1].Bytes);
             CHECK(Back.Files[1].Name == "USER_DATA001");
 
             // Each stored file is the MD5 of the rest, then (for the Dark Souls games) an IV and the ciphertext.
@@ -64,9 +71,7 @@ namespace {
             bool Threw = false;
             try {
                 SL2::DecodeFile(Damaged, Game);
-            } catch (const BinaryException&) {
-                Threw = true;
-            }
+            } catch (const BinaryException&) { Threw = true; }
             CHECK(Threw);
             if (Encrypted) {
                 const SL2::Game Other = Game == SL2::Game::DarkSouls3 ? SL2::Game::DarkSouls2 : SL2::Game::DarkSouls3;
@@ -76,9 +81,7 @@ namespace {
                 Threw = false;
                 try {
                     SL2::EncodeFile(Pattern(0x41, 0), Game);
-                } catch (const BinaryException&) {
-                    Threw = true;
-                }
+                } catch (const BinaryException&) { Threw = true; }
                 CHECK(Threw);
             }
         }
@@ -103,7 +106,7 @@ namespace {
             return;
         }
         std::ifstream File(Path, std::ios::binary);
-        const std::vector<uint8_t> Original{std::istreambuf_iterator<char>(File), std::istreambuf_iterator<char>()};
+        const std::vector<uint8_t> Original {std::istreambuf_iterator<char>(File), std::istreambuf_iterator<char>()};
 
         const BND4 Save = SL2::Read(Original, SL2::Game::EldenRing);
         std::printf("Elden Ring save: %zu files\n", Save.Files.size());
@@ -124,7 +127,8 @@ namespace {
         if (Binder) {
             size_t Size         = 0;
             const uint8_t* Data = souls_binder_file_bytes(Binder, 0, &Size);
-            CHECK(Data && Size == Save.Files[0].Bytes.size() && std::memcmp(Data, Save.Files[0].Bytes.data(), Size) == 0);
+            CHECK(Data && Size == Save.Files[0].Bytes.size() &&
+                  std::memcmp(Data, Save.Files[0].Bytes.data(), Size) == 0);
             SoulsBuffer Again = souls_save_write_memory(SOULS_SAVE_ELDEN_RING, Binder);
             CHECK(Again.size == Original.size() && std::memcmp(Again.data, Original.data(), Again.size) == 0);
             souls_buffer_free(Again);
@@ -132,7 +136,8 @@ namespace {
         }
         std::vector<uint8_t> Damaged = Original;
         Damaged[Damaged.size() / 2] ^= 0xFF;
-        CHECK(souls_save_read_memory(SOULS_SAVE_ELDEN_RING, Damaged.data(), Damaged.size()) == nullptr && souls_last_error_code() == SOULS_ERR_PARSE);
+        CHECK(souls_save_read_memory(SOULS_SAVE_ELDEN_RING, Damaged.data(), Damaged.size()) == nullptr &&
+              souls_last_error_code() == SOULS_ERR_PARSE);
         CHECK(souls_save_read_memory(static_cast<SoulsSaveKind>(99), Original.data(), Original.size()) == nullptr);
     }
 }  // namespace

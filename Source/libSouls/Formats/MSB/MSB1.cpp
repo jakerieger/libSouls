@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MSB1.hpp"
 
@@ -36,9 +40,7 @@ namespace Souls {
         using Msb::Detail::ReambiguateName;
 
         void RequireNonZero(int32_t Offset, const char* What) {
-            if (Offset == 0) {
-                throw BinaryException(std::string(What) + " must not be 0.");
-            }
+            if (Offset == 0) { throw BinaryException(std::string(What) + " must not be 0."); }
         }
 
         // Reads a param's header and entries; returns the order the entries were read in. TypeOffset is where the
@@ -48,14 +50,13 @@ namespace Souls {
             Reader.Assert<int32_t>(0);
             const int32_t NameOffset  = Reader.ReadInt32();
             const int32_t OffsetCount = Reader.ReadInt32();
-            if (OffsetCount < 1) {
-                throw BinaryException("Invalid MSB param entry count");
-            }
+            if (OffsetCount < 1) { throw BinaryException("Invalid MSB param entry count"); }
             const std::vector<int32_t> EntryOffsets = Reader.ReadArray<int32_t>(static_cast<size_t>(OffsetCount - 1));
             const int32_t NextParamOffset           = Reader.ReadInt32();
             const std::string Name                  = Reader.GetCString(NameOffset);
             if (Name != ParamT::ParamName) {
-                throw BinaryException(std::string("Expected param \"") + ParamT::ParamName + "\", got param \"" + Name + "\"");
+                throw BinaryException(std::string("Expected param \"") + ParamT::ParamName + "\", got param \"" + Name +
+                                      "\"");
             }
 
             typename ParamT::FileOrder Order;
@@ -104,7 +105,7 @@ namespace Souls {
 
 #pragma region Models
     void MSB1::Model::Read(BinaryReader& Reader) {
-        const int64_t Start = Reader.Position();
+        const int64_t Start      = Reader.Position();
         const int32_t NameOffset = Reader.ReadInt32();
         Reader.Assert<uint32_t>(Type());
         Reader.ReadInt32();  // ID
@@ -145,12 +146,12 @@ namespace Souls {
         const int32_t NameOffset = Reader.ReadInt32();
         Reader.Assert<int32_t>(0);
         Reader.ReadInt32();  // ID
-        const auto ShapeKind = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
-        Position             = Reader.ReadVector3();
-        Rotation             = Reader.ReadVector3();
-        const int32_t UnkOffsetA      = Reader.ReadInt32();
-        const int32_t UnkOffsetB      = Reader.ReadInt32();
-        const int32_t ShapeDataOffset = Reader.ReadInt32();
+        const auto ShapeKind           = static_cast<Msb::ShapeType>(Reader.ReadUInt32());
+        Position                       = Reader.ReadVector3();
+        Rotation                       = Reader.ReadVector3();
+        const int32_t UnkOffsetA       = Reader.ReadInt32();
+        const int32_t UnkOffsetB       = Reader.ReadInt32();
+        const int32_t ShapeDataOffset  = Reader.ReadInt32();
         const int32_t EntityDataOffset = Reader.ReadInt32();
         Reader.Assert<int32_t>(0);
         Shape = Msb::CreateShape(ShapeKind);
@@ -169,7 +170,7 @@ namespace Souls {
         Reader.Assert<int32_t>(0);
         if (Msb::HasShapeData(Shape)) {
             Reader.Seek(Start + ShapeDataOffset);
-            Msb::Detail::ReadVisitor V{Reader};
+            Msb::Detail::ReadVisitor V {Reader};
             Msb::Detail::VisitShape(Shape, V);
         }
         Reader.Seek(Start + EntityDataOffset);
@@ -199,7 +200,7 @@ namespace Souls {
         Writer.WriteInt32(0);
         if (Msb::HasShapeData(Shape)) {
             Writer.Fill<int32_t>("ShapeDataOffset", static_cast<int32_t>(Writer.Position() - Start));
-            Msb::Detail::WriteVisitor V{Writer};
+            Msb::Detail::WriteVisitor V {Writer};
             Msb::Detail::VisitShape(Shape, V);
         } else {
             Writer.Fill<int32_t>("ShapeDataOffset", 0);
@@ -256,13 +257,13 @@ namespace Souls {
     }
 
     void MSB1::Event::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
 
     void MSB1::Event::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(PartName);
         V(RegionName);
     }
@@ -295,24 +296,24 @@ namespace Souls {
         SibPath = Reader.ReadShiftJIS();
 
         Reader.Seek(Start + EntityDataOffset);
-        EntityID    = Reader.ReadInt32();
-        LightID     = Reader.ReadByte();
-        FogID       = Reader.ReadByte();
-        ScatterID   = Reader.ReadByte();
-        LensFlareID = Reader.ReadByte();
-        ShadowID    = Reader.ReadByte();
-        DofID       = Reader.ReadByte();
-        ToneMapID   = Reader.ReadByte();
+        EntityID      = Reader.ReadInt32();
+        LightID       = Reader.ReadByte();
+        FogID         = Reader.ReadByte();
+        ScatterID     = Reader.ReadByte();
+        LensFlareID   = Reader.ReadByte();
+        ShadowID      = Reader.ReadByte();
+        DofID         = Reader.ReadByte();
+        ToneMapID     = Reader.ReadByte();
         ToneCorrectID = Reader.ReadByte();
-        LanternID   = Reader.ReadByte();
-        LodParamID  = Reader.ReadByte();
+        LanternID     = Reader.ReadByte();
+        LodParamID    = Reader.ReadByte();
         Reader.Assert<uint8_t>(0);
-        IsShadowSrc        = Reader.ReadByte();
-        IsShadowDest       = Reader.ReadByte();
-        IsShadowOnly       = Reader.ReadByte();
-        DrawByReflectCam   = Reader.ReadByte();
-        DrawOnlyReflectCam = Reader.ReadByte();
-        UseDepthBiasFloat  = Reader.ReadByte();
+        IsShadowSrc             = Reader.ReadByte();
+        IsShadowDest            = Reader.ReadByte();
+        IsShadowOnly            = Reader.ReadByte();
+        DrawByReflectCam        = Reader.ReadByte();
+        DrawOnlyReflectCam      = Reader.ReadByte();
+        UseDepthBiasFloat       = Reader.ReadByte();
         DisablePointLightEffect = Reader.ReadByte();
         Reader.Assert<uint8_t>(0);
         Reader.Assert<uint8_t>(0);
@@ -375,12 +376,12 @@ namespace Souls {
     }
 
     void MSB1::Part::GetNames(const Entries& Lists) {
-        Msb::Detail::NameVisitor<Entries> V{Lists};
+        Msb::Detail::NameVisitor<Entries> V {Lists};
         V(ModelName);
     }
 
     void MSB1::Part::GetIndices(const Entries& Lists) {
-        Msb::Detail::IndexVisitor<Entries> V{Lists};
+        Msb::Detail::IndexVisitor<Entries> V {Lists};
         V(ModelName);
     }
 #pragma endregion
@@ -443,8 +444,9 @@ namespace Souls {
         }
 
         for (Model* M : ModelPtrs) {
-            M->InstanceCount = static_cast<int32_t>(
-                std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) { return P->ModelName.has_value() && *P->ModelName == M->Name; }));
+            M->InstanceCount = static_cast<int32_t>(std::count_if(PartPtrs.begin(), PartPtrs.end(), [&](const Part* P) {
+                return P->ModelName.has_value() && *P->ModelName == M->Name;
+            }));
         }
         for (Event* E : EventPtrs) {
             E->GetIndices(Lists);

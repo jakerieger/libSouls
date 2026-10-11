@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
@@ -84,7 +88,8 @@ int RunMSBETests(size_t MaxFiles) {
         if (Entry.path().extension() != ".bhd") continue;
         const std::vector<uint8_t> Encrypted = ReadAll(Entry.path());
         std::vector<std::string> Keys;
-        if (const fs::path Pem = TestPaths::BinderKeys() / "EldenRing_PC/Key" / (Entry.path().stem().string() + ".pem"); fs::exists(Pem)) {
+        if (const fs::path Pem = TestPaths::BinderKeys() / "EldenRing_PC/Key" / (Entry.path().stem().string() + ".pem");
+            fs::exists(Pem)) {
             const std::vector<uint8_t> Text = ReadAll(Pem);
             Keys.emplace_back(Text.begin(), Text.end());
         }
@@ -95,12 +100,12 @@ int RunMSBETests(size_t MaxFiles) {
                 if (Header.size() < 4 || std::memcmp(Header.data(), "BHD5", 4) != 0) continue;
                 const BHD5 Bhd = BHD5::Read(Header, BHD5::Game::EldenRing);
                 for (const auto& Bucket : Bhd.Buckets) {
-                    for (const auto& File : Bucket) ByHash.emplace(File.FileNameHash, Located{Data.size(), File});
+                    for (const auto& File : Bucket)
+                        ByHash.emplace(File.FileNameHash, Located {Data.size(), File});
                 }
                 Data.push_back(fs::path(Entry.path()).replace_extension(".bdt"));
                 break;
-            } catch (const std::exception&) {
-            }
+            } catch (const std::exception&) {}
         }
     }
     if (ByHash.empty()) {
@@ -113,18 +118,21 @@ int RunMSBETests(size_t MaxFiles) {
         const auto Found = ByHash.find(Util::FromPathHash64("/map/mapstudio/" + Name + ".msb.dcx"));
         // SOULS_MSBE_ONLY=<text> checks just the maps whose names contain the text.
         const char* Only = std::getenv("SOULS_MSBE_ONLY");
-        if (Found != ByHash.end() && (!Only || Name.find(Only) != std::string::npos)) Maps.emplace_back(Name, Found->second);
+        if (Found != ByHash.end() && (!Only || Name.find(Only) != std::string::npos))
+            Maps.emplace_back(Name, Found->second);
     }
     std::printf("%zu maps found in the archives\n", Maps.size());
     if (Maps.size() > MaxFiles) {
         std::vector<std::pair<std::string, Located>> Picked;
-        for (size_t I = 0; I < MaxFiles; ++I) Picked.push_back(Maps[I * Maps.size() / MaxFiles]);
+        for (size_t I = 0; I < MaxFiles; ++I)
+            Picked.push_back(Maps[I * Maps.size() / MaxFiles]);
         Maps = std::move(Picked);
     }
 
     int Failures = 0, Identical = 0;
     std::vector<std::unique_ptr<BinaryReader>> Readers;
-    for (const fs::path& P : Data) Readers.push_back(std::make_unique<BinaryReader>(P));
+    for (const fs::path& P : Data)
+        Readers.push_back(std::make_unique<BinaryReader>(P));
     for (const auto& [Name, Where] : Maps) {
         try {
             const std::vector<uint8_t> Bytes = DCX::Decompress(Where.File.ReadFile(*Readers[Where.Archive]));
@@ -136,11 +144,18 @@ int RunMSBETests(size_t MaxFiles) {
                 continue;
             }
             size_t At = 0;
-            while (At < Again.size() && At < Bytes.size() && Again[At] == Bytes[At]) ++At;
-            std::printf("  %s differs: first at 0x%zX, sizes %zu vs %zu\n", Name.c_str(), At, Bytes.size(), Again.size());
+            while (At < Again.size() && At < Bytes.size() && Again[At] == Bytes[At])
+                ++At;
+            std::printf("  %s differs: first at 0x%zX, sizes %zu vs %zu\n",
+                        Name.c_str(),
+                        At,
+                        Bytes.size(),
+                        Again.size());
             if (const char* Dump = std::getenv("SOULS_DUMP"); Dump && Failures == 0) {
-                std::ofstream(fs::path(Dump) / "MSBE_orig.bin", std::ios::binary).write(reinterpret_cast<const char*>(Bytes.data()), static_cast<std::streamsize>(Bytes.size()));
-                std::ofstream(fs::path(Dump) / "MSBE_new.bin", std::ios::binary).write(reinterpret_cast<const char*>(Again.data()), static_cast<std::streamsize>(Again.size()));
+                std::ofstream(fs::path(Dump) / "MSBE_orig.bin", std::ios::binary)
+                  .write(reinterpret_cast<const char*>(Bytes.data()), static_cast<std::streamsize>(Bytes.size()));
+                std::ofstream(fs::path(Dump) / "MSBE_new.bin", std::ios::binary)
+                  .write(reinterpret_cast<const char*>(Again.data()), static_cast<std::streamsize>(Again.size()));
             }
             ++Failures;
         } catch (const std::exception& E) {

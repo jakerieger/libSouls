@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -228,14 +232,16 @@ int RunBinderTests() {
         Big.BigEndian    = true;
         Big.BitBigEndian = true;
         Big.Unk18        = static_cast<int32_t>(0x80000000);
-        Big.Format = Format::BigEndian | Format::IDs | Format::Names1 | Format::Names2 | Format::LongOffsets | Format::Compression;
+        Big.Format =
+          Format::BigEndian | Format::IDs | Format::Names1 | Format::Names2 | Format::LongOffsets | Format::Compression;
         AddFiles(Big, true);
         RoundTrip("bnd3 big-endian", Big);
 
         BND3 Anonymous;
         Anonymous.Format = Format::Compression;
         AddFiles(Anonymous, false);
-        for (auto& File : Anonymous.Files) File.ID = -1;
+        for (auto& File : Anonymous.Files)
+            File.ID = -1;
         RoundTrip("bnd3 anonymous", Anonymous);
 
         BND3 Wrapped;
@@ -277,7 +283,8 @@ int RunBinderTests() {
         Bxf4Big.Unk04        = true;
         Bxf4Big.Format       = Format::BigEndian | Format::IDs | Format::Names1 | Format::Names2 | Format::LongOffsets;
         AddFiles(Bxf4Big, true);
-        for (auto& File : Bxf4Big.Files) File.Flags = FileFlags::Flag1;
+        for (auto& File : Bxf4Big.Files)
+            File.Flags = FileFlags::Flag1;
         RoundTripBxf("bxf4 big-endian", Bxf4Big);
 
         // The wrong half of a pair, or a different generation, is rejected.

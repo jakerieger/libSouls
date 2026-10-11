@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/9/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -39,20 +43,19 @@ namespace {
     }
 
     SoulsBinder* ReadAny(std::span<const uint8_t> Data) {
-        if (BND4::Is(Data)) {
-            return Wrap(BND4::Read(Data));
-        }
-        if (BND3::Is(Data)) {
-            return Wrap(BND3::Read(Data));
-        }
+        if (BND4::Is(Data)) { return Wrap(BND4::Read(Data)); }
+        if (BND3::Is(Data)) { return Wrap(BND3::Read(Data)); }
         throw BinaryException("The data is not a BND3 or BND4 binder.");
     }
 
     BND4 DecryptRegulation(SoulsGame Game, const std::filesystem::path& Path) {
         switch (Game) {
-            case SOULS_GAME_DARK_SOULS_3: return Regulation::DecryptDS3(Path);
-            case SOULS_GAME_ELDEN_RING: return Regulation::DecryptER(Path);
-            default: ThrowInvalid("regulation files are supported for Dark Souls III and Elden Ring");
+            case SOULS_GAME_DARK_SOULS_3:
+                return Regulation::DecryptDS3(Path);
+            case SOULS_GAME_ELDEN_RING:
+                return Regulation::DecryptER(Path);
+            default:
+                ThrowInvalid("regulation files are supported for Dark Souls III and Elden Ring");
         }
     }
 }  // namespace
@@ -104,7 +107,7 @@ SOULS_C_API SoulsStatus souls_binder_write_file(SoulsBinder* binder, const char*
 }
 
 SOULS_C_API SoulsBuffer souls_binder_write_memory(SoulsBinder* binder) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] {
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] {
         SoulsBinder& B = Require(binder, "binder is NULL");
         if (B.IsBxf()) throw Unsupported("Split binders are written with souls_bxf_write_memory.");
         return MakeBuffer(B.Bnd3 ? B.Bnd3->Write() : B.Bnd4->Write());
@@ -170,7 +173,8 @@ SOULS_C_API int64_t souls_binder_find_file_suffix(const SoulsBinder* binder, con
         const auto& Files = Require(binder, "binder is NULL").Base().Files;
         for (size_t I = 0; I < Files.size(); ++I) {
             const auto& Name = Files[I].Name;
-            if (Name && Name->size() >= Suffix.size() && Name->compare(Name->size() - Suffix.size(), Suffix.size(), Suffix) == 0) {
+            if (Name && Name->size() >= Suffix.size() &&
+                Name->compare(Name->size() - Suffix.size(), Suffix.size(), Suffix) == 0) {
                 return static_cast<int64_t>(I);
             }
         }
@@ -178,7 +182,10 @@ SOULS_C_API int64_t souls_binder_find_file_suffix(const SoulsBinder* binder, con
     });
 }
 
-SOULS_C_API SoulsStatus souls_binder_set_file_bytes(SoulsBinder* binder, size_t index, const uint8_t* data, size_t size) {
+SOULS_C_API SoulsStatus souls_binder_set_file_bytes(SoulsBinder* binder,
+                                                    size_t index,
+                                                    const uint8_t* data,
+                                                    size_t size) {
     return Guard([&] {
         const auto Span = Bytes(data, size);
         FileAt(binder, index).Bytes.assign(Span.begin(), Span.end());
@@ -201,8 +208,8 @@ SOULS_C_API SoulsStatus souls_binder_set_file_flags(SoulsBinder* binder, size_t 
     return Guard([&] { FileAt(binder, index).Flags = static_cast<Binder::FileFlags>(flags); });
 }
 
-SOULS_C_API int64_t souls_binder_add_file(SoulsBinder* binder, int32_t id, const char* name_or_null, uint8_t flags,
-                                          const uint8_t* data, size_t size) {
+SOULS_C_API int64_t souls_binder_add_file(
+  SoulsBinder* binder, int32_t id, const char* name_or_null, uint8_t flags, const uint8_t* data, size_t size) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         auto& Files     = Require(binder, "binder is NULL").Base().Files;
         const auto Span = Bytes(data, size);
@@ -233,9 +240,14 @@ SOULS_C_API SoulsStatus souls_regulation_encrypt(SoulsGame game, const char* pat
         SoulsBinder& B = Require(binder, "binder is NULL");
         if (!B.Bnd4) ThrowInvalid("regulation files are BND4 binders");
         switch (game) {
-            case SOULS_GAME_DARK_SOULS_3: Regulation::EncryptDS3(PathFrom(path), *B.Bnd4); break;
-            case SOULS_GAME_ELDEN_RING: Regulation::EncryptER(PathFrom(path), *B.Bnd4); break;
-            default: ThrowInvalid("regulation files are supported for Dark Souls III and Elden Ring");
+            case SOULS_GAME_DARK_SOULS_3:
+                Regulation::EncryptDS3(PathFrom(path), *B.Bnd4);
+                break;
+            case SOULS_GAME_ELDEN_RING:
+                Regulation::EncryptER(PathFrom(path), *B.Bnd4);
+                break;
+            default:
+                ThrowInvalid("regulation files are supported for Dark Souls III and Elden Ring");
         }
     });
 }
@@ -244,10 +256,14 @@ SOULS_C_API SoulsStatus souls_regulation_encrypt(SoulsGame game, const char* pat
 namespace {
     SL2::Game SaveGame(SoulsSaveKind Kind) {
         switch (Kind) {
-            case SOULS_SAVE_DARK_SOULS_2: return SL2::Game::DarkSouls2;
-            case SOULS_SAVE_DARK_SOULS_2_SCHOLAR: return SL2::Game::DarkSouls2Scholar;
-            case SOULS_SAVE_DARK_SOULS_3: return SL2::Game::DarkSouls3;
-            case SOULS_SAVE_ELDEN_RING: return SL2::Game::EldenRing;
+            case SOULS_SAVE_DARK_SOULS_2:
+                return SL2::Game::DarkSouls2;
+            case SOULS_SAVE_DARK_SOULS_2_SCHOLAR:
+                return SL2::Game::DarkSouls2Scholar;
+            case SOULS_SAVE_DARK_SOULS_3:
+                return SL2::Game::DarkSouls3;
+            case SOULS_SAVE_ELDEN_RING:
+                return SL2::Game::EldenRing;
         }
         ThrowInvalid("invalid save kind");
     }
@@ -272,6 +288,7 @@ SOULS_C_API SoulsStatus souls_save_write_file(SoulsSaveKind kind, const char* pa
 }
 
 SOULS_C_API SoulsBuffer souls_save_write_memory(SoulsSaveKind kind, const SoulsBinder* binder) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(SL2::Write(SaveBinder(binder), SaveGame(kind))); });
+    return GuardValue(SoulsBuffer {nullptr, 0},
+                      [&] { return MakeBuffer(SL2::Write(SaveBinder(binder), SaveGame(kind))); });
 }
 #pragma endregion

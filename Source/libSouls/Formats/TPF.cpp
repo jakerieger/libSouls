@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TPF.hpp"
 
@@ -27,14 +31,15 @@ namespace Souls {
             return Value == Platform::PS4 || Value == Platform::Xbone;
         }
 
-        TPF::Texture ReadTexture(BinaryReader& Reader, Platform Target, uint8_t Flag2, uint8_t Encoding, uint32_t& DataOffset) {
+        TPF::Texture
+        ReadTexture(BinaryReader& Reader, Platform Target, uint8_t Flag2, uint8_t Encoding, uint32_t& DataOffset) {
             TPF::Texture Result;
 
             const uint32_t FileOffset = Reader.ReadUInt32();
             const int32_t FileSize    = Reader.ReadInt32();
             DataOffset                = FileSize > 0 ? FileOffset : 0;  // 0 means "no data": satisfies any alignment
 
-            Result.Format = Reader.ReadByte();
+            Result.Format      = Reader.ReadByte();
             const uint8_t Type = Reader.ReadByte();
             if (Type > static_cast<uint8_t>(TPF::TexType::Volume)) {
                 throw BinaryException("Unknown TPF texture type " + std::to_string(Type));
@@ -52,9 +57,7 @@ namespace Souls {
                     Reader.Assert<int32_t>(0);
                 } else if (Target == Platform::PS3) {
                     Header.Unk1 = Reader.ReadInt32();
-                    if (Flag2 != 0) {
-                        Header.Unk2 = Reader.Assert<int32_t>(0, 0x69E0, 0xAAE4);
-                    }
+                    if (Flag2 != 0) { Header.Unk2 = Reader.Assert<int32_t>(0, 0x69E0, 0xAAE4); }
                 } else if (IsDXGIPlatform(Target)) {
                     Header.TextureCount = Reader.Assert<int32_t>(1, 6);
                     Header.Unk2         = Reader.Assert<int32_t>(0xD);
@@ -62,16 +65,14 @@ namespace Souls {
                 Result.Header = Header;
             }
 
-            const uint32_t NameOffset  = Reader.ReadUInt32();
-            const bool HasFloatStruct  = Reader.Assert<int32_t>(0, 1) == 1;
+            const uint32_t NameOffset = Reader.ReadUInt32();
+            const bool HasFloatStruct = Reader.Assert<int32_t>(0, 1) == 1;
 
-            if (IsDXGIPlatform(Target)) {
-                Result.Header->DXGIFormat = Reader.ReadInt32();
-            }
+            if (IsDXGIPlatform(Target)) { Result.Header->DXGIFormat = Reader.ReadInt32(); }
 
             if (HasFloatStruct) {
                 TPF::FloatStruct Floats;
-                Floats.Unk00        = Reader.ReadInt32();
+                Floats.Unk00         = Reader.ReadInt32();
                 const int32_t Length = Reader.ReadInt32();
                 if (Length < 0 || Length % 4 != 0 || Length > Reader.Remaining()) {
                     throw BinaryException("Unexpected FloatStruct length: " + std::to_string(Length));
@@ -111,7 +112,10 @@ namespace Souls {
         }
     }  // namespace
 
-    TPF::Texture::Texture(std::string TextureName, uint8_t TextureFormat, uint8_t TextureFlags1, std::vector<uint8_t> TextureBytes)
+    TPF::Texture::Texture(std::string TextureName,
+                          uint8_t TextureFormat,
+                          uint8_t TextureFlags1,
+                          std::vector<uint8_t> TextureBytes)
         : Name(std::move(TextureName)), Format(TextureFormat), Flags1(TextureFlags1), Bytes(std::move(TextureBytes)) {
         const DDS Header = ReadDDS();
         if (Header.IsCubemap()) {
@@ -130,11 +134,9 @@ namespace Souls {
     }
 
     bool TPF::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
-        return Reader.ReadAt<uint8_t>(0) == 'T' && Reader.ReadAt<uint8_t>(1) == 'P' && Reader.ReadAt<uint8_t>(2) == 'F' &&
-               Reader.ReadAt<uint8_t>(3) == 0;
+        if (Reader.Length() < 4) { return false; }
+        return Reader.ReadAt<uint8_t>(0) == 'T' && Reader.ReadAt<uint8_t>(1) == 'P' &&
+               Reader.ReadAt<uint8_t>(2) == 'F' && Reader.ReadAt<uint8_t>(3) == 0;
     }
 
     void TPF::ReadImpl(BinaryReader& Reader) {
@@ -170,13 +172,11 @@ namespace Souls {
                 Alignment /= 2;
             }
         }
-        DataAlignment = FileCount > 0 ? Alignment : uint8_t{4};
+        DataAlignment = FileCount > 0 ? Alignment : uint8_t {4};
     }
 
     void TPF::WriteImpl(BinaryWriter& Writer) {
-        if (DataAlignment == 0) {
-            throw BinaryException("TPF DataAlignment must be at least 1");
-        }
+        if (DataAlignment == 0) { throw BinaryException("TPF DataAlignment must be at least 1"); }
         Writer.Order = IsBigEndian(Platform) ? Endian::Big : Endian::Little;
         Writer.WriteMagic("TPF\0"sv);
         Writer.Reserve<int32_t>("DataSize");
@@ -191,8 +191,9 @@ namespace Souls {
 
             if (Platform == TPFPlatform::PC) {
                 const DDS Header = Current.ReadDDS();
-                Current.Type     = Header.IsCubemap() ? TexType::Cubemap : (Header.IsVolume() ? TexType::Volume : TexType::Texture);
-                Current.Mipmaps  = static_cast<uint8_t>(Header.MipMapCount);
+                Current.Type =
+                  Header.IsCubemap() ? TexType::Cubemap : (Header.IsVolume() ? TexType::Volume : TexType::Texture);
+                Current.Mipmaps = static_cast<uint8_t>(Header.MipMapCount);
             } else if (!Current.Header) {
                 throw BinaryException("Texture \"" + Current.Name + "\" needs a Header for a console TPF");
             }
@@ -214,9 +215,7 @@ namespace Souls {
                     Writer.WriteInt32(0);
                 } else if (Platform == TPFPlatform::PS3) {
                     Writer.WriteInt32(Header.Unk1);
-                    if (Flag2 != 0) {
-                        Writer.WriteInt32(Header.Unk2);
-                    }
+                    if (Flag2 != 0) { Writer.WriteInt32(Header.Unk2); }
                 } else if (IsDXGIPlatform(Platform)) {
                     Writer.WriteInt32(Header.TextureCount);
                     Writer.WriteInt32(Header.Unk2);
@@ -226,9 +225,7 @@ namespace Souls {
             Writer.Reserve<uint32_t>(Key("FileName", I));
             Writer.WriteInt32(Current.Floats ? 1 : 0);
 
-            if (IsDXGIPlatform(Platform)) {
-                Writer.WriteInt32(Current.Header->DXGIFormat);
-            }
+            if (IsDXGIPlatform(Platform)) { Writer.WriteInt32(Current.Header->DXGIFormat); }
 
             if (Current.Floats) {
                 Writer.WriteInt32(Current.Floats->Unk00);
@@ -249,9 +246,7 @@ namespace Souls {
         const int64_t DataStart = Writer.Position();
         for (size_t I = 0; I < Textures.size(); ++I) {
             // Padding for texture data varies wildly across games, so don't worry about this too much.
-            if (!Textures[I].Bytes.empty() && DataAlignment > 1) {
-                Writer.Align(DataAlignment);
-            }
+            if (!Textures[I].Bytes.empty() && DataAlignment > 1) { Writer.Align(DataAlignment); }
 
             Writer.Fill<uint32_t>(Key("FileData", I), static_cast<uint32_t>(Writer.Position()));
 

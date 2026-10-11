@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -48,15 +52,15 @@ namespace Souls {
             /// @brief The file's flags (bit 0 marks it as compressed).
             Binder::FileFlags Flags = Binder::FileFlags::Flag1;
             /// @brief The file's ID, or -1 if the binder doesn't store IDs.
-            int32_t ID              = -1;
+            int32_t ID = -1;
             std::optional<std::string> Name;  ///< UTF-8
             /// @brief Sizes as stored: CompressedSize is what the data file holds, UncompressedSize is -1 if the format
             ///        doesn't record it.
-            int64_t CompressedSize   = -1;
+            int64_t CompressedSize = -1;
             /// @brief The size after decompression, or -1 if the format doesn't record it.
             int64_t UncompressedSize = -1;
             /// @brief Where the file's data starts in the data file.
-            int64_t DataOffset       = -1;
+            int64_t DataOffset = -1;
 
             /// @brief Whether the file is stored compressed.
             bool IsCompressed() const { return Binder::IsCompressed(Flags); }
@@ -89,15 +93,15 @@ namespace Souls {
         /// @brief Which fields the file headers have.
         Binder::Format Format = Binder::Format::None;
         /// @brief Whether multi-byte values are big-endian.
-        bool BigEndian        = false;
+        bool BigEndian = false;
         /// @brief Whether the flag bits are in big-endian bit order.
-        bool BitBigEndian     = false;
+        bool BitBigEndian = false;
         /// @brief BXF4 only.
-        bool Unk04       = false;
+        bool Unk04 = false;
         /// @brief Unknown.
-        bool Unk05       = false;
+        bool Unk05 = false;
         /// @brief Whether names are UTF-16 (BXF4 only; BXF3 names are Shift-JIS).
-        bool Unicode     = false;
+        bool Unicode = false;
         /// @brief 4 if the header has a path hash table (BXF4 only).
         uint8_t Extended = 0;
 #pragma endregion

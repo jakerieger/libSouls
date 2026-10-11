@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -42,7 +46,7 @@ namespace Souls {
         /// @brief Extra metadata for the headerless textures of the console versions.
         struct SOULS_API TexHeader {
             /// @brief Width of the texture, in pixels.
-            int16_t Width  = 0;
+            int16_t Width = 0;
             /// @brief Height of the texture, in pixels.
             int16_t Height = 0;
             /// @brief 1 for normal textures or 6 for cubemaps (PS4 and Xbox One).
@@ -54,7 +58,7 @@ namespace Souls {
 
         /// @brief Unknown optional data some textures carry.
         struct SOULS_API FloatStruct {
-            int32_t Unk00 = 0;  ///< probably some kind of ID
+            int32_t Unk00 = 0;          ///< probably some kind of ID
             std::vector<float> Values;  ///< not confirmed to always be floats
         };
 
@@ -63,12 +67,12 @@ namespace Souls {
             /// @brief Should not include a path or extension.
             std::string Name = "Unnamed";
             /// @brief Indicates format of the texture.
-            uint8_t Format   = 0;
+            uint8_t Format = 0;
             /// @brief Whether this texture is a cubemap.
-            TexType Type     = TexType::Texture;
+            TexType Type = TexType::Texture;
             /// @brief Number of mipmap levels in this texture.
-            uint8_t Mipmaps  = 0;
-            uint8_t Flags1   = 0;  ///< 2 and 3 mean the data is compressed with DCP_EDGE (Demon's Souls and ACE:R)
+            uint8_t Mipmaps = 0;
+            uint8_t Flags1  = 0;  ///< 2 and 3 mean the data is compressed with DCP_EDGE (Demon's Souls and ACE:R)
             /// @brief The texture's data: a complete DDS file on PC.
             std::vector<uint8_t> Bytes;
             std::optional<TexHeader> Header;  ///< console platforms

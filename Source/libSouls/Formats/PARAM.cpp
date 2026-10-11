@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "PARAM.hpp"
 
@@ -50,9 +54,7 @@ namespace Souls {
 
     const PARAMDEF* PARAM::FindMatchingDef(std::span<const PARAMDEF> Defs) const {
         for (const PARAMDEF& Def : Defs) {
-            if (Matches(Def)) {
-                return &Def;
-            }
+            if (Matches(Def)) { return &Def; }
         }
         return nullptr;
     }
@@ -63,19 +65,15 @@ namespace Souls {
 
     bool PARAM::IsImpl(BinaryReader& Reader) {
         const int64_t Length = Reader.Length();
-        if (Length < 0x30) {
-            return false;
-        }
+        if (Length < 0x30) { return false; }
 
         const uint8_t Big = Reader.ReadAt<uint8_t>(0x2C);
-        if (Big != 0 && Big != 0xFF) {
-            return false;
-        }
+        if (Big != 0 && Big != 0xFF) { return false; }
         Reader.Order = Big == 0xFF ? Endian::Big : Endian::Little;
 
-        const auto Format1 = static_cast<FormatFlags1>(Reader.ReadAt<uint8_t>(0x2D));
-        const bool Expanded = HasIntDataStart(Format1) || HasLongDataStart(Format1);
-        const int64_t HeaderSize = Expanded ? 0x40 : 0x30;
+        const auto Format1          = static_cast<FormatFlags1>(Reader.ReadAt<uint8_t>(0x2D));
+        const bool Expanded         = HasIntDataStart(Format1) || HasLongDataStart(Format1);
+        const int64_t HeaderSize    = Expanded ? 0x40 : 0x30;
         const int64_t RowHeaderSize = HasLongDataStart(Format1) ? 0x18 : 0xC;
 
         // The strings offset in the header is too unreliable to check; only the row table has to fit.
@@ -85,7 +83,7 @@ namespace Souls {
 
     void PARAM::ReadImpl(BinaryReader& Reader) {
         Reader.Seek(0x2C);
-        BigEndian = Reader.Assert<uint8_t>(0, 0xFF) == 0xFF;
+        BigEndian             = Reader.Assert<uint8_t>(0, 0xFF) == 0xFF;
         Reader.Order          = BigEndian ? Endian::Big : Endian::Little;
         Format2D              = static_cast<FormatFlags1>(Reader.ReadByte());
         Format2E              = static_cast<FormatFlags2>(Reader.ReadByte());
@@ -100,9 +98,9 @@ namespace Souls {
         } else {
             Reader.ReadUInt16();  // data start
         }
-        Unk06                       = Reader.ReadInt16();
-        ParamdefDataVersion         = Reader.ReadInt16();
-        const uint16_t RowCount     = Reader.ReadUInt16();
+        Unk06                   = Reader.ReadInt16();
+        ParamdefDataVersion     = Reader.ReadInt16();
+        const uint16_t RowCount = Reader.ReadUInt16();
 
         ParamType.clear();
         if (Has(Format2D, FormatFlags1::OffsetParamType)) {
@@ -130,7 +128,7 @@ namespace Souls {
             Reader.Assert<int64_t>(0);
         }
 
-        const bool LongRows = HasLongDataStart(Format2D);
+        const bool LongRows         = HasLongDataStart(Format2D);
         const int64_t RowHeaderSize = LongRows ? 0x18 : 0xC;
         if (static_cast<int64_t>(RowCount) * RowHeaderSize > Reader.Remaining()) {
             throw BinaryException("PARAM row count " + std::to_string(RowCount) + " does not fit in the file");
@@ -145,7 +143,7 @@ namespace Souls {
         Rows.clear();
         Rows.reserve(RowCount);
         for (uint16_t I = 0; I < RowCount; ++I) {
-            RowHeader Header{};
+            RowHeader Header {};
             int64_t NameOffset;
             if (LongRows) {
                 Header.ID = Reader.ReadInt32();
@@ -161,9 +159,7 @@ namespace Souls {
             Row Result;
             Result.ID = Header.ID;
             if (NameOffset != 0) {
-                if (ActualStringsOffset == 0 || NameOffset < ActualStringsOffset) {
-                    ActualStringsOffset = NameOffset;
-                }
+                if (ActualStringsOffset == 0 || NameOffset < ActualStringsOffset) { ActualStringsOffset = NameOffset; }
 
                 Reader.StepIn(NameOffset);
                 if (Has(Format2E, FormatFlags2::UnicodeRowNames)) {
@@ -212,9 +208,7 @@ namespace Souls {
                                       std::to_string(RowSize) + ")");
             }
         }
-        if (Rows.size() > 0xFFFF) {
-            throw BinaryException("A PARAM can hold at most 65535 rows");
-        }
+        if (Rows.size() > 0xFFFF) { throw BinaryException("A PARAM can hold at most 65535 rows"); }
 
         const bool LongRows = HasLongDataStart(Format2D);
         Writer.Order        = BigEndian ? Endian::Big : Endian::Little;
@@ -263,9 +257,7 @@ namespace Souls {
         }
 
         // This is probably pretty stupid, but it's what the original files do.
-        if (Format2D == FormatFlags1::Flag01) {
-            Writer.Pad(0x20);
-        }
+        if (Format2D == FormatFlags1::Flag01) { Writer.Pad(0x20); }
 
         if (HasIntDataStart(Format2D)) {
             Writer.Fill<uint32_t>("DataStart", static_cast<uint32_t>(Writer.Position()));
@@ -287,9 +279,7 @@ namespace Souls {
         const bool NewLayout = Has(Format2D, FormatFlags1::OffsetParamType);
         // In the newer layout the header's strings offset is where the type string starts; in older files it's the end
         // of the file (filled in last). It's unreliable either way and the reader doesn't depend on it.
-        if (NewLayout) {
-            Writer.Fill<uint32_t>("StringsOffset", static_cast<uint32_t>(Writer.Position()));
-        }
+        if (NewLayout) { Writer.Fill<uint32_t>("StringsOffset", static_cast<uint32_t>(Writer.Position())); }
 
         if (Has(Format2D, FormatFlags1::OffsetParamType)) {
             Writer.Fill<int64_t>("ParamTypeOffset", Writer.Position());
@@ -323,12 +313,8 @@ namespace Souls {
         }
         // The game's files end with one more (empty) string terminator after the last name.
         const bool AnyNames = std::any_of(Rows.begin(), Rows.end(), [](const Row& R) { return R.Name.has_value(); });
-        if (AnyNames && Has(Format2E, FormatFlags2::UnicodeRowNames)) {
-            Writer.Pad(2);
-        }
+        if (AnyNames && Has(Format2E, FormatFlags2::UnicodeRowNames)) { Writer.Pad(2); }
 
-        if (!NewLayout) {
-            Writer.Fill<uint32_t>("StringsOffset", static_cast<uint32_t>(Writer.Position()));
-        }
+        if (!NewLayout) { Writer.Fill<uint32_t>("StringsOffset", static_cast<uint32_t>(Writer.Position())); }
     }
 }  // namespace Souls

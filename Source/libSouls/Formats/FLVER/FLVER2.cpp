@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "FLVER2.hpp"
 
@@ -102,7 +106,7 @@ namespace Souls {
                 while ((ID = Reader.ReadAt<int32_t>(Reader.Position())) != INT_MAX && ID != -1) {
                     List.Items.push_back(ReadGXItem(Reader, Header));
                 }
-                List.TerminatorID     = Reader.Assert<int32_t>(ID);
+                List.TerminatorID = Reader.Assert<int32_t>(ID);
                 Reader.Assert<int32_t>(100);
                 List.TerminatorLength = Reader.ReadInt32() - 0xC;
                 if (List.TerminatorLength < 0) throw BinaryException("Invalid GX terminator length");
@@ -114,7 +118,7 @@ namespace Souls {
         void WriteGXList(BinaryWriter& Writer, const FLVER2::FLVERHeader& Header, const FLVER2::GXList& List) {
             auto WriteItem = [&](const FLVER2::GXItem& Item) {
                 if (Header.Version <= 0x20010) {
-                    int32_t ID = 0;
+                    int32_t ID              = 0;
                     const auto [Ptr, Error] = std::from_chars(Item.ID.data(), Item.ID.data() + Item.ID.size(), ID);
                     if (Error != std::errc() || Ptr != Item.ID.data() + Item.ID.size()) {
                         throw BinaryException("For Dark Souls 2, GX IDs must be convertible to int.");
@@ -132,7 +136,8 @@ namespace Souls {
                 if (List.Items.empty()) throw BinaryException("A GX list for this version needs one item");
                 WriteItem(List.Items[0]);
             } else {
-                for (const FLVER2::GXItem& Item : List.Items) WriteItem(Item);
+                for (const FLVER2::GXItem& Item : List.Items)
+                    WriteItem(Item);
                 Writer.WriteInt32(List.TerminatorID);
                 Writer.WriteInt32(100);
                 Writer.WriteInt32(List.TerminatorLength + 0xC);
@@ -194,13 +199,16 @@ namespace Souls {
             return Raw;
         }
 
-        FLVER2::FaceSet ReadFaceSet(BinaryReader& Reader, const FLVER2::FLVERHeader& Header, int32_t HeaderIndexSize, int32_t DataOffset) {
+        FLVER2::FaceSet ReadFaceSet(BinaryReader& Reader,
+                                    const FLVER2::FLVERHeader& Header,
+                                    int32_t HeaderIndexSize,
+                                    int32_t DataOffset) {
             FLVER2::FaceSet Result;
-            Result.Flags         = static_cast<FLVER2::FaceSet::FSFlags>(Reader.ReadUInt32());
-            Result.TriangleStrip = Reader.ReadBool();
-            Result.CullBackfaces = Reader.ReadBool();
-            Result.Unk06         = Reader.ReadInt16();
-            const int32_t IndexCount   = Reader.ReadInt32();
+            Result.Flags                = static_cast<FLVER2::FaceSet::FSFlags>(Reader.ReadUInt32());
+            Result.TriangleStrip        = Reader.ReadBool();
+            Result.CullBackfaces        = Reader.ReadBool();
+            Result.Unk06                = Reader.ReadInt16();
+            const int32_t IndexCount    = Reader.ReadInt32();
             const int32_t IndicesOffset = Reader.ReadInt32();
 
             int32_t IndexSize = 0;
@@ -221,14 +229,16 @@ namespace Souls {
             if (IndexSize != 16 && IndexSize != 32) {
                 throw BinaryException("Unsupported index size: " + std::to_string(IndexSize));
             }
-            if (IndexCount < 0 || static_cast<int64_t>(IndexCount) * (IndexSize / 8) + DataOffset + IndicesOffset > Reader.Length()) {
+            if (IndexCount < 0 ||
+                static_cast<int64_t>(IndexCount) * (IndexSize / 8) + DataOffset + IndicesOffset > Reader.Length()) {
                 throw BinaryException("FLVER face set indices lie outside the file");
             }
 
             Reader.StepIn(static_cast<int64_t>(DataOffset) + IndicesOffset);
             Result.Indices.reserve(static_cast<size_t>(IndexCount));
             if (IndexSize == 16) {
-                for (const uint16_t Index : Reader.ReadArray<uint16_t>(static_cast<size_t>(IndexCount))) Result.Indices.push_back(Index);
+                for (const uint16_t Index : Reader.ReadArray<uint16_t>(static_cast<size_t>(IndexCount)))
+                    Result.Indices.push_back(Index);
             } else {
                 Result.Indices = Reader.ReadArray<int32_t>(static_cast<size_t>(IndexCount));
             }
@@ -257,7 +267,8 @@ namespace Souls {
                 Member.Semantic         = static_cast<LayoutSemantic>(Semantic);
                 if (std::string_view(LayoutTypeName(Member.Type)) == "Unknown" ||
                     std::string_view(LayoutSemanticName(Member.Semantic)) == "Unknown") {
-                    throw BinaryException("Unknown vertex layout member (type " + std::to_string(Type) + ", semantic " + std::to_string(Semantic) + ")");
+                    throw BinaryException("Unknown vertex layout member (type " + std::to_string(Type) + ", semantic " +
+                                          std::to_string(Semantic) + ")");
                 }
                 Member.Index = Reader.ReadInt32();
                 StructOffset += Member.Size();
@@ -302,7 +313,8 @@ namespace Souls {
         return 16;
     }
 
-    void FLVER2::FaceSet::AddFaceCounts(bool AllowPrimitiveRestarts, int32_t& TrueFaceCount, int32_t& TotalFaceCount) const {
+    void
+    FLVER2::FaceSet::AddFaceCounts(bool AllowPrimitiveRestarts, int32_t& TrueFaceCount, int32_t& TotalFaceCount) const {
         if (TriangleStrip) {
             for (size_t I = 0; I + 2 < Indices.size(); ++I) {
                 const int32_t A = Indices[I];
@@ -323,13 +335,15 @@ namespace Souls {
         std::vector<std::array<const Vertex*, 3>> Faces;
         if (FaceSets.empty()) return Faces;
 
-        const auto Found = std::find_if(FaceSets.begin(), FaceSets.end(), [&](const FaceSet& Set) { return Set.Flags == Flags; });
-        const FaceSet& Chosen = Found != FaceSets.end() ? *Found : FaceSets.front();
+        const auto Found =
+          std::find_if(FaceSets.begin(), FaceSets.end(), [&](const FaceSet& Set) { return Set.Flags == Flags; });
+        const FaceSet& Chosen              = Found != FaceSets.end() ? *Found : FaceSets.front();
         const std::vector<int32_t> Indices = Chosen.Triangulate(Vertices.size() < 0xFFFF);
         for (size_t I = 0; I + 2 < Indices.size(); I += 3) {
             const auto Index = [&](size_t Which) -> const Vertex* {
                 const int32_t V = Indices[I + Which];
-                if (V < 0 || static_cast<size_t>(V) >= Vertices.size()) throw BinaryException("Face index " + std::to_string(V) + " is out of range");
+                if (V < 0 || static_cast<size_t>(V) >= Vertices.size())
+                    throw BinaryException("Face index " + std::to_string(V) + " is out of range");
                 return &Vertices[static_cast<size_t>(V)];
             };
             Faces.push_back({Index(0), Index(1), Index(2)});
@@ -352,7 +366,7 @@ namespace Souls {
 
     void FLVER2::ReadImpl(BinaryReader& Reader) {
         Reader.Order = Endian::Little;
-        Header       = FLVERHeader{};
+        Header       = FLVERHeader {};
         Reader.AssertMagic("FLVER\0"sv);
         const std::string Endianness = Reader.ReadString(2);
         if (Endianness != "L\0"sv && Endianness != "B\0"sv) {
@@ -361,10 +375,21 @@ namespace Souls {
         Header.BigEndian = Endianness == "B\0"sv;
         Reader.Order     = Header.BigEndian ? Endian::Big : Endian::Little;
 
-        // Gundam Unicorn: 0x20005, 0x2000E. DS1: 0x2000B (PS3), 0x2000C, 0x2000D. DS2: 0x2000F, 0x20010 (0x20009 for some
-        // armor). BB and DS3: 0x20013, 0x20014. Sekiro: 0x2001A, and 0x20016 for a test character.
-        Header.Version = Reader.Assert<int32_t>(0x20005, 0x20007, 0x20009, 0x2000B, 0x2000C, 0x2000D, 0x2000E, 0x2000F,
-                                                0x20010, 0x20013, 0x20014, 0x20016, 0x2001A);
+        // Gundam Unicorn: 0x20005, 0x2000E. DS1: 0x2000B (PS3), 0x2000C, 0x2000D. DS2: 0x2000F, 0x20010 (0x20009 for
+        // some armor). BB and DS3: 0x20013, 0x20014. Sekiro: 0x2001A, and 0x20016 for a test character.
+        Header.Version = Reader.Assert<int32_t>(0x20005,
+                                                0x20007,
+                                                0x20009,
+                                                0x2000B,
+                                                0x2000C,
+                                                0x2000D,
+                                                0x2000E,
+                                                0x2000F,
+                                                0x20010,
+                                                0x20013,
+                                                0x20014,
+                                                0x20016,
+                                                0x2001A);
 
         const int32_t DataOffset = Reader.ReadInt32();
         Reader.ReadInt32();  // data length
@@ -387,9 +412,9 @@ namespace Souls {
 
         Header.Unk4C = Reader.ReadInt32();
 
-        const int32_t FaceSetCount     = Reader.ReadInt32();
+        const int32_t FaceSetCount      = Reader.ReadInt32();
         const int32_t BufferLayoutCount = Reader.ReadInt32();
-        const int32_t TextureCount     = Reader.ReadInt32();
+        const int32_t TextureCount      = Reader.ReadInt32();
 
         Header.Unk5C = Reader.ReadByte();
         Header.Unk5D = Reader.ReadByte();
@@ -398,7 +423,8 @@ namespace Souls {
         Reader.Assert<int32_t>(0);
         Reader.Assert<int32_t>(0);
         Header.Unk68 = Reader.Assert<int32_t>(0, 1, 2, 3, 4);
-        for (int I = 0; I < 5; ++I) Reader.Assert<int32_t>(0);
+        for (int I = 0; I < 5; ++I)
+            Reader.Assert<int32_t>(0);
 
         CheckCount("dummy", DummyCount, 0x40, Reader);
         CheckCount("material", MaterialCount, 0x20, Reader);
@@ -437,7 +463,7 @@ namespace Souls {
         RawMeshes.reserve(static_cast<size_t>(MeshCount));
         for (int32_t I = 0; I < MeshCount; ++I) {
             RawMesh Raw;
-            Mesh& Result = Raw.Value;
+            Mesh& Result   = Raw.Value;
             Result.Dynamic = Reader.Assert<uint8_t>(0, 1);
             Reader.AssertPattern(3, 0);
 
@@ -507,18 +533,20 @@ namespace Souls {
         SekiroUnk.reset();
         if (Header.Version >= 0x2001A) {
             SekiroUnkStruct Unk;
-            const int16_t Count1 = Reader.ReadInt16();
-            const int16_t Count2 = Reader.ReadInt16();
+            const int16_t Count1   = Reader.ReadInt16();
+            const int16_t Count2   = Reader.ReadInt16();
             const uint32_t Offset1 = Reader.ReadUInt32();
             const uint32_t Offset2 = Reader.ReadUInt32();
-            for (int I = 0; I < 5; ++I) Reader.Assert<int32_t>(0);
+            for (int I = 0; I < 5; ++I)
+                Reader.Assert<int32_t>(0);
 
             auto ReadMembers = [&](uint32_t Offset, int16_t Count, std::vector<SekiroUnkStruct::Member>& Members) {
                 CheckCount("Sekiro member", Count, 16, Reader);
                 Reader.StepIn(Offset);
                 for (int16_t I = 0; I < Count; ++I) {
                     SekiroUnkStruct::Member Member;
-                    for (int16_t& Value : Member.Unk00) Value = Reader.ReadInt16();
+                    for (int16_t& Value : Member.Unk00)
+                        Value = Reader.ReadInt16();
                     Member.Index = Reader.ReadInt32();
                     Reader.Assert<int32_t>(0);
                     Members.push_back(Member);
@@ -540,7 +568,8 @@ namespace Souls {
                 throw BinaryException("FLVER material refers to textures that don't exist");
             }
             for (int32_t I = Raw.TextureIndex; I < Raw.TextureIndex + Raw.TextureCount; ++I) {
-                if (TextureUsed[static_cast<size_t>(I)]) throw BinaryException("Texture already taken: " + std::to_string(I));
+                if (TextureUsed[static_cast<size_t>(I)])
+                    throw BinaryException("Texture already taken: " + std::to_string(I));
                 TextureUsed[static_cast<size_t>(I)] = true;
                 Raw.Value.Textures.push_back(Textures[static_cast<size_t>(I)]);
             }
@@ -559,7 +588,8 @@ namespace Souls {
             Mesh& Result = Raw.Value;
 
             for (const int32_t Index : Raw.FaceSetIndices) {
-                if (Index < 0 || static_cast<size_t>(Index) >= FaceSets.size() || FaceSetUsed[static_cast<size_t>(Index)]) {
+                if (Index < 0 || static_cast<size_t>(Index) >= FaceSets.size() ||
+                    FaceSetUsed[static_cast<size_t>(Index)]) {
                     throw BinaryException("Face set not found or already taken: " + std::to_string(Index));
                 }
                 FaceSetUsed[static_cast<size_t>(Index)] = true;
@@ -568,7 +598,8 @@ namespace Souls {
 
             std::vector<const RawVertexBuffer*> MeshBuffers;
             for (const int32_t Index : Raw.VertexBufferIndices) {
-                if (Index < 0 || static_cast<size_t>(Index) >= VertexBuffers.size() || BufferUsed[static_cast<size_t>(Index)]) {
+                if (Index < 0 || static_cast<size_t>(Index) >= VertexBuffers.size() ||
+                    BufferUsed[static_cast<size_t>(Index)]) {
                     throw BinaryException("Vertex buffer not found or already taken: " + std::to_string(Index));
                 }
                 BufferUsed[static_cast<size_t>(Index)] = true;
@@ -614,13 +645,15 @@ namespace Souls {
                     throw BinaryException("A mesh's vertex buffers disagree on the vertex count");
                 }
                 const int64_t Start = static_cast<int64_t>(DataOffset) + Buffer->BufferOffset;
-                if (Buffer->BufferOffset < 0 || Start + static_cast<int64_t>(VertexCount) * Buffer->VertexSize > Reader.Length()) {
+                if (Buffer->BufferOffset < 0 ||
+                    Start + static_cast<int64_t>(VertexCount) * Buffer->VertexSize > Reader.Length()) {
                     throw BinaryException("FLVER vertex buffer lies outside the file");
                 }
 
                 Reader.StepIn(Start);
                 const float UVFactor = UVFactorFor(Header.Version);
-                for (Vertex& Item : Result.Vertices) Item.Read(Reader, Layout, UVFactor);
+                for (Vertex& Item : Result.Vertices)
+                    Item.Read(Reader, Layout, UVFactor);
                 Reader.StepOut();
             }
             Meshes.push_back(std::move(Result));
@@ -650,7 +683,8 @@ namespace Souls {
             TotalBuffers += static_cast<int32_t>(Item.VertexBuffers.size());
             TotalFaceSets += static_cast<int32_t>(Item.FaceSets.size());
         }
-        for (const Material& Item : Materials) TotalTextures += static_cast<int32_t>(Item.Textures.size());
+        for (const Material& Item : Materials)
+            TotalTextures += static_cast<int32_t>(Item.Textures.size());
         Writer.WriteInt32(TotalBuffers);
         Writer.WriteVector3(Header.BoundingBoxMin);
         Writer.WriteVector3(Header.BoundingBoxMax);
@@ -658,7 +692,8 @@ namespace Souls {
         int32_t TrueFaceCount = 0, TotalFaceCount = 0;
         for (const Mesh& Item : Meshes) {
             const bool AllowPrimitiveRestarts = Item.Vertices.size() < 0xFFFF;
-            for (const FaceSet& Set : Item.FaceSets) Set.AddFaceCounts(AllowPrimitiveRestarts, TrueFaceCount, TotalFaceCount);
+            for (const FaceSet& Set : Item.FaceSets)
+                Set.AddFaceCounts(AllowPrimitiveRestarts, TrueFaceCount, TotalFaceCount);
         }
         Writer.WriteInt32(TrueFaceCount);
         Writer.WriteInt32(TotalFaceCount);
@@ -668,7 +703,8 @@ namespace Souls {
             VertexIndicesSize = 16;
             for (const Mesh& Item : Meshes) {
                 for (const FaceSet& Set : Item.FaceSets) {
-                    VertexIndicesSize = static_cast<uint8_t>(std::max<int32_t>(VertexIndicesSize, Set.GetVertexIndexSize()));
+                    VertexIndicesSize =
+                      static_cast<uint8_t>(std::max<int32_t>(VertexIndicesSize, Set.GetVertexIndexSize()));
                 }
             }
         }
@@ -692,9 +728,11 @@ namespace Souls {
         Writer.WriteInt32(0);
         Writer.WriteInt32(0);
         Writer.WriteInt32(Header.Unk68);
-        for (int I = 0; I < 5; ++I) Writer.WriteInt32(0);
+        for (int I = 0; I < 5; ++I)
+            Writer.WriteInt32(0);
 
-        for (const Dummy& Item : Dummies) Item.Write(Writer, Header.Version);
+        for (const Dummy& Item : Dummies)
+            Item.Write(Writer, Header.Version);
 
         // Materials.
         for (size_t I = 0; I < Materials.size(); ++I) {
@@ -709,7 +747,8 @@ namespace Souls {
             Writer.WriteInt32(0);
         }
 
-        for (size_t I = 0; I < Bones.size(); ++I) Bones[I].Write(Writer, static_cast<int>(I));
+        for (size_t I = 0; I < Bones.size(); ++I)
+            Bones[I].Write(Writer, static_cast<int>(I));
 
         // Meshes.
         for (size_t I = 0; I < Meshes.size(); ++I) {
@@ -790,7 +829,7 @@ namespace Souls {
         for (size_t I = 0; I < Materials.size(); ++I) {
             Writer.Fill<int32_t>(Key("TextureIndex", I), static_cast<int32_t>(TextureIndex));
             for (size_t J = 0; J < Materials[I].Textures.size(); ++J) {
-                const Texture& Item = Materials[I].Textures[J];
+                const Texture& Item     = Materials[I].Textures[J];
                 const std::string Index = std::to_string(TextureIndex + J);
                 Writer.Reserve<int32_t>("TexturePath" + Index);
                 Writer.Reserve<int32_t>("TextureType" + Index);
@@ -809,17 +848,19 @@ namespace Souls {
         }
 
         if (Header.Version >= 0x2001A) {
-            const SekiroUnkStruct Unk = SekiroUnk.value_or(SekiroUnkStruct{});
+            const SekiroUnkStruct Unk = SekiroUnk.value_or(SekiroUnkStruct {});
             Writer.WriteInt16(static_cast<int16_t>(Unk.Members1.size()));
             Writer.WriteInt16(static_cast<int16_t>(Unk.Members2.size()));
             Writer.Reserve<uint32_t>("SekiroUnkOffset1");
             Writer.Reserve<uint32_t>("SekiroUnkOffset2");
-            for (int I = 0; I < 5; ++I) Writer.WriteInt32(0);
+            for (int I = 0; I < 5; ++I)
+                Writer.WriteInt32(0);
 
             auto WriteMembers = [&](const char* OffsetName, const std::vector<SekiroUnkStruct::Member>& Members) {
                 Writer.Fill<uint32_t>(OffsetName, static_cast<uint32_t>(Writer.Position()));
                 for (const SekiroUnkStruct::Member& Member : Members) {
-                    for (const int16_t Value : Member.Unk00) Writer.WriteInt16(Value);
+                    for (const int16_t Value : Member.Unk00)
+                        Writer.WriteInt16(Value);
                     Writer.WriteInt32(Member.Index);
                     Writer.WriteInt32(0);
                 }
@@ -871,7 +912,8 @@ namespace Souls {
         FaceSetIndex = 0;
         for (size_t I = 0; I < Meshes.size(); ++I) {
             Writer.Fill<int32_t>(Key("MeshFaceSetIndices", I), static_cast<int32_t>(Writer.Position()));
-            for (size_t J = 0; J < Meshes[I].FaceSets.size(); ++J) Writer.WriteInt32(static_cast<int32_t>(FaceSetIndex + J));
+            for (size_t J = 0; J < Meshes[I].FaceSets.size(); ++J)
+                Writer.WriteInt32(static_cast<int32_t>(FaceSetIndex + J));
             FaceSetIndex += Meshes[I].FaceSets.size();
         }
 
@@ -879,7 +921,8 @@ namespace Souls {
         VertexBufferIndex = 0;
         for (size_t I = 0; I < Meshes.size(); ++I) {
             Writer.Fill<int32_t>(Key("MeshVertexBufferIndices", I), static_cast<int32_t>(Writer.Position()));
-            for (size_t J = 0; J < Meshes[I].VertexBuffers.size(); ++J) Writer.WriteInt32(static_cast<int32_t>(VertexBufferIndex + J));
+            for (size_t J = 0; J < Meshes[I].VertexBuffers.size(); ++J)
+                Writer.WriteInt32(static_cast<int32_t>(VertexBufferIndex + J));
             VertexBufferIndex += Meshes[I].VertexBuffers.size();
         }
 
@@ -921,7 +964,8 @@ namespace Souls {
         }
 
         Writer.Align(0x10);
-        for (size_t I = 0; I < Bones.size(); ++I) Bones[I].WriteStrings(Writer, Header.Unicode, static_cast<int>(I));
+        for (size_t I = 0; I < Bones.size(); ++I)
+            Bones[I].WriteStrings(Writer, Header.Unicode, static_cast<int>(I));
 
         const int64_t Alignment = Header.Version <= 0x2000E ? 0x20 : 0x10;
         Writer.Align(Alignment);
@@ -939,9 +983,11 @@ namespace Souls {
                 if (IndexSize == 0) IndexSize = Set.GetVertexIndexSize();
 
                 Writer.Align(Alignment);
-                Writer.Fill<int32_t>(Key("FaceSetVertices", FaceSetIndex + J), static_cast<int32_t>(Writer.Position()) - DataStart);
+                Writer.Fill<int32_t>(Key("FaceSetVertices", FaceSetIndex + J),
+                                     static_cast<int32_t>(Writer.Position()) - DataStart);
                 if (IndexSize == 16) {
-                    for (const int32_t Index : Set.Indices) Writer.WriteUInt16(static_cast<uint16_t>(Index));
+                    for (const int32_t Index : Set.Indices)
+                        Writer.WriteUInt16(static_cast<uint16_t>(Index));
                 } else if (IndexSize == 32) {
                     Writer.WriteArray(Set.Indices);
                 } else {
@@ -954,9 +1000,10 @@ namespace Souls {
             for (size_t J = 0; J < Item.VertexBuffers.size(); ++J) {
                 const LayoutMembers& Layout = BufferLayouts[static_cast<size_t>(Item.VertexBuffers[J].LayoutIndex)];
                 Writer.Align(Alignment);
-                Writer.Fill<int32_t>(Key("VertexBufferOffset", VertexBufferIndex + J), static_cast<int32_t>(Writer.Position()) - DataStart);
+                Writer.Fill<int32_t>(Key("VertexBufferOffset", VertexBufferIndex + J),
+                                     static_cast<int32_t>(Writer.Position()) - DataStart);
 
-                const float UVFactor = UVFactorFor(Header.Version);
+                const float UVFactor             = UVFactorFor(Header.Version);
                 Vertex::WriteCursor BufferCursor = Cursor;  // every vertex starts from the same place for this buffer
                 for (const Vertex& Vert : Item.Vertices) {
                     BufferCursor = Cursor;

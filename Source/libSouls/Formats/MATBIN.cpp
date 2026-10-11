@@ -1,14 +1,16 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "MATBIN.hpp"
 
 namespace Souls {
     bool MATBIN::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 4) {
-            return false;
-        }
+        if (Reader.Length() < 4) { return false; }
         return Reader.GetASCII(0, 4) == std::string("MAB\0", 4);
     }
 
@@ -16,9 +18,9 @@ namespace Souls {
         Reader.Order = Endian::Little;
         Reader.AssertMagic(std::string_view("MAB\0", 4));
         Reader.Assert<int32_t>(2);
-        ShaderPath                = Reader.GetUTF16Text(Reader.ReadInt64());
-        SourcePath                = Reader.GetUTF16Text(Reader.ReadInt64());
-        Key                       = Reader.ReadUInt32();
+        ShaderPath                 = Reader.GetUTF16Text(Reader.ReadInt64());
+        SourcePath                 = Reader.GetUTF16Text(Reader.ReadInt64());
+        Key                        = Reader.ReadUInt32();
         const int32_t ParamCount   = Reader.ReadInt32();
         const int32_t SamplerCount = Reader.ReadInt32();
         Reader.AssertPattern(0x14, 0);
@@ -35,17 +37,34 @@ namespace Souls {
 
             Reader.StepIn(ValueOffset);
             switch (P.Type) {
-                case ParamType::Bool: P.Value = Reader.ReadBool(); break;
-                case ParamType::Int: P.Value = Reader.ReadInt32(); break;
-                case ParamType::Int2: P.Value = Reader.ReadArray<int32_t>(2); break;
-                case ParamType::Float: P.Value = Reader.ReadFloat(); break;
-                case ParamType::Float2: P.Value = Reader.ReadArray<float>(2); break;
+                case ParamType::Bool:
+                    P.Value = Reader.ReadBool();
+                    break;
+                case ParamType::Int:
+                    P.Value = Reader.ReadInt32();
+                    break;
+                case ParamType::Int2:
+                    P.Value = Reader.ReadArray<int32_t>(2);
+                    break;
+                case ParamType::Float:
+                    P.Value = Reader.ReadFloat();
+                    break;
+                case ParamType::Float2:
+                    P.Value = Reader.ReadArray<float>(2);
+                    break;
                 // Colors using Float3 actually have five floats in the file; the extras seem to be useless and are
                 // discarded (they are always written back as 1).
-                case ParamType::Float3: P.Value = Reader.ReadArray<float>(3); break;
-                case ParamType::Float4: P.Value = Reader.ReadArray<float>(4); break;
-                case ParamType::Float5: P.Value = Reader.ReadArray<float>(5); break;
-                default: throw BinaryException("Unimplemented MATBIN value type");
+                case ParamType::Float3:
+                    P.Value = Reader.ReadArray<float>(3);
+                    break;
+                case ParamType::Float4:
+                    P.Value = Reader.ReadArray<float>(4);
+                    break;
+                case ParamType::Float5:
+                    P.Value = Reader.ReadArray<float>(5);
+                    break;
+                default:
+                    throw BinaryException("Unimplemented MATBIN value type");
             }
             Reader.StepOut();
             Params.push_back(std::move(P));
@@ -99,20 +118,32 @@ namespace Souls {
             Writer.WriteUTF16Text(P.Name, true);
             Writer.Fill<int64_t>("ParamValueOffset" + Index, Writer.Position());
             switch (P.Type) {
-                case ParamType::Bool: Writer.WriteBool(std::get<bool>(P.Value)); break;
-                case ParamType::Int: Writer.WriteInt32(std::get<int32_t>(P.Value)); break;
-                case ParamType::Int2: Writer.WriteArray(std::get<std::vector<int32_t>>(P.Value)); break;
-                case ParamType::Float: Writer.WriteFloat(std::get<float>(P.Value)); break;
+                case ParamType::Bool:
+                    Writer.WriteBool(std::get<bool>(P.Value));
+                    break;
+                case ParamType::Int:
+                    Writer.WriteInt32(std::get<int32_t>(P.Value));
+                    break;
+                case ParamType::Int2:
+                    Writer.WriteArray(std::get<std::vector<int32_t>>(P.Value));
+                    break;
+                case ParamType::Float:
+                    Writer.WriteFloat(std::get<float>(P.Value));
+                    break;
                 case ParamType::Float2:
                 case ParamType::Float4:
-                case ParamType::Float5: Writer.WriteArray(std::get<std::vector<float>>(P.Value)); break;
+                case ParamType::Float5:
+                    Writer.WriteArray(std::get<std::vector<float>>(P.Value));
+                    break;
                 case ParamType::Float3:
                     Writer.WriteArray(std::get<std::vector<float>>(P.Value));
-                    // Included on the slim chance that the extra floats do anything, since they are always 1 when present.
+                    // Included on the slim chance that the extra floats do anything, since they are always 1 when
+                    // present.
                     Writer.WriteFloat(1);
                     Writer.WriteFloat(1);
                     break;
-                default: throw BinaryException("Unimplemented MATBIN value type");
+                default:
+                    throw BinaryException("Unimplemented MATBIN value type");
             }
         }
         for (size_t I = 0; I < Samplers.size(); ++I) {

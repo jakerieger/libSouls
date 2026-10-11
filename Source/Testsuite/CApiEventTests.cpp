@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -16,12 +20,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     namespace fs = std::filesystem;
@@ -40,8 +44,8 @@ int TestCApiEmevdSynthetic() {
         CHECK(souls_emevd_set_event_rest_behavior(Emevd, 1, 9) == SOULS_ERR_INVALID_ARGUMENT);
 
         // Arguments: a uint32, a float and an int16 (packed with alignment, padded to 4 bytes).
-        const uint8_t Types[] = {SOULS_EMEVD_ARG_UINT32, SOULS_EMEVD_ARG_SINGLE, SOULS_EMEVD_ARG_INT16};
-        const double Values[] = {7000.0, 2.5, -3.0};
+        const uint8_t Types[]     = {SOULS_EMEVD_ARG_UINT32, SOULS_EMEVD_ARG_SINGLE, SOULS_EMEVD_ARG_INT16};
+        const double Values[]     = {7000.0, 2.5, -3.0};
         const int64_t Instruction = souls_emevd_add_instruction(Emevd, 1, 2000, 0, nullptr, 0);
         CHECK(Instruction == 0);
         CHECK(souls_emevd_pack_args(Emevd, 1, 0, Types, 3, Values) == SOULS_OK);
@@ -70,11 +74,13 @@ int TestCApiEmevdSynthetic() {
             CHECK(souls_emevd_parameter_count(Back, 1) == 1);
             int64_t Instruction2 = 9, Target = 9, Source = 9;
             int32_t Count = 0, Unk = 9;
-            CHECK(souls_emevd_parameter(Back, 1, 0, &Instruction2, &Target, &Source, &Count, &Unk) == SOULS_OK && Count == 4);
+            CHECK(souls_emevd_parameter(Back, 1, 0, &Instruction2, &Target, &Source, &Count, &Unk) == SOULS_OK &&
+                  Count == 4);
             CHECK(souls_emevd_unpack_args(Back, 1, 0, Types, 3, nullptr) == SOULS_ERR_INVALID_ARGUMENT);
             const uint8_t BadTypes[] = {99};
             CHECK(souls_emevd_unpack_args(Back, 1, 0, BadTypes, 1, Unpacked) == SOULS_ERR_INVALID_ARGUMENT);
-            CHECK(souls_emevd_remove_instruction(Back, 1, 0) == SOULS_OK && souls_emevd_instruction_count(Back, 1) == 1);
+            CHECK(souls_emevd_remove_instruction(Back, 1, 0) == SOULS_OK &&
+                  souls_emevd_instruction_count(Back, 1) == 1);
             CHECK(souls_emevd_remove_event(Back, 0) == SOULS_OK && souls_emevd_event_count(Back) == 1);
             CHECK(souls_emevd_event_id(Back, 5) == -1 && souls_last_error_code() == SOULS_ERR_INVALID_ARGUMENT);
             souls_emevd_free(Back);
@@ -88,8 +94,9 @@ int TestCApiEmevdSynthetic() {
 
 // A real Dark Souls Remastered event script: it writes back as it was, and instruction arguments pack and unpack.
 int TestCApiEmevdReal() {
-    Failures            = 0;
-    const fs::path Path = "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/event/m10_00_00_00.emevd.dcx";
+    Failures = 0;
+    const fs::path Path =
+      "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/event/m10_00_00_00.emevd.dcx";
     if (!fs::exists(Path)) {
         std::printf("Real EMEVD C API checks skipped (no Dark Souls Remastered install)\n");
         return TestSkipped;
@@ -112,7 +119,8 @@ int TestCApiEmevdReal() {
     souls_buffer_free(B);
     souls_buffer_free(Written);
 
-    // Reading the first instruction with 4-byte-multiple arguments as uint32s and packing them back gives the same bytes.
+    // Reading the first instruction with 4-byte-multiple arguments as uint32s and packing them back gives the same
+    // bytes.
     bool Checked = false;
     for (size_t E = 0; E < souls_emevd_event_count(Emevd) && !Checked; ++E) {
         for (size_t I = 0; I < souls_emevd_instruction_count(Emevd, E) && !Checked; ++I) {
@@ -136,7 +144,7 @@ int TestCApiEmevdReal() {
 }
 
 int TestCApiTae3() {
-    Failures = 0;
+    Failures       = 0;
     SoulsTae3* Tae = souls_tae3_new();
     CHECK(Tae != nullptr);
     if (!Tae) return Failures;
@@ -151,7 +159,8 @@ int TestCApiTae3() {
     const int64_t Anim = souls_tae3_add_animation(Tae, 5);
     CHECK(Anim == 0);
     for (size_t T = 0; T < Types; ++T) {
-        const int64_t Event = souls_tae3_add_event(Tae, 0, souls_tae3_type_number(T), static_cast<double>(T), static_cast<double>(T) + 1.0);
+        const int64_t Event =
+          souls_tae3_add_event(Tae, 0, souls_tae3_type_number(T), static_cast<double>(T), static_cast<double>(T) + 1.0);
         CHECK(Event == static_cast<int64_t>(T));
     }
     CHECK(souls_tae3_add_event(Tae, 0, -12345, 0, 1) == -1);
@@ -165,7 +174,8 @@ int TestCApiTae3() {
     double Value = 0;
     CHECK(souls_tae3_get_number(Tae, 0, static_cast<size_t>(Jump), "JumpTableID", &Value) == SOULS_OK && Value == 77);
     CHECK(souls_tae3_get_number(Tae, 0, static_cast<size_t>(Jump), "NoSuchField", &Value) == SOULS_ERR_UNSUPPORTED);
-    CHECK(souls_tae3_get_bytes(Tae, 0, static_cast<size_t>(Jump), "JumpTableID", nullptr, 0, nullptr) == SOULS_ERR_INVALID_ARGUMENT);
+    CHECK(souls_tae3_get_bytes(Tae, 0, static_cast<size_t>(Jump), "JumpTableID", nullptr, 0, nullptr) ==
+          SOULS_ERR_INVALID_ARGUMENT);
     CHECK(souls_tae3_field_count(Tae, 0, static_cast<size_t>(Jump)) == 5);
     CHECK(souls_tae3_field_kind(Tae, 0, static_cast<size_t>(Jump), 0) == SOULS_PROPERTY_INT);
 
@@ -189,7 +199,8 @@ int TestCApiTae3() {
         CHECK(souls_tae3_event_count(Back, 0) == Types + 1);
         CHECK(souls_tae3_group_count(Back, 0) == 1);
         double Again = 0;
-        CHECK(souls_tae3_get_number(Back, 0, static_cast<size_t>(Jump), "JumpTableID", &Again) == SOULS_OK && Again == 77);
+        CHECK(souls_tae3_get_number(Back, 0, static_cast<size_t>(Jump), "JumpTableID", &Again) == SOULS_OK &&
+              Again == 77);
         CHECK(std::fabs(souls_tae3_event_start(Back, 0, static_cast<size_t>(Jump)) - 0.5) < 1e-6);
         // Every event type survived the trip.
         size_t Same = 0;
@@ -220,7 +231,8 @@ int TestCApiTae3Raw() {
     CHECK(souls_tae3_add_animation(Tae, 3000) == 0);
 
     std::vector<uint8_t> Fields(32);
-    for (size_t I = 0; I < Fields.size(); ++I) Fields[I] = static_cast<uint8_t>(I + 1);
+    for (size_t I = 0; I < Fields.size(); ++I)
+        Fields[I] = static_cast<uint8_t>(I + 1);
     CHECK(souls_tae3_add_raw_event(Tae, 0, 129, 0.0, 1.5, Fields.data(), Fields.size()) == 0);
     CHECK(souls_tae3_add_raw_event(Tae, 0, 233, 0.5, 2.0, Fields.data(), 16) == 1);
 

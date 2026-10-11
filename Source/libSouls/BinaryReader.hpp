@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -108,17 +112,17 @@ namespace Souls {
             return Value;
         }
 
-        bool ReadBool();  ///< throws unless the byte is 0 or 1
-        uint8_t ReadByte() { return Read<uint8_t>(); }        ///< Reads an unsigned 8-bit integer.
-        int8_t ReadSByte() { return Read<int8_t>(); }         ///< Reads a signed 8-bit integer.
-        int16_t ReadInt16() { return Read<int16_t>(); }       ///< Reads a signed 16-bit integer.
-        uint16_t ReadUInt16() { return Read<uint16_t>(); }    ///< Reads an unsigned 16-bit integer.
-        int32_t ReadInt32() { return Read<int32_t>(); }       ///< Reads a signed 32-bit integer.
-        uint32_t ReadUInt32() { return Read<uint32_t>(); }    ///< Reads an unsigned 32-bit integer.
-        int64_t ReadInt64() { return Read<int64_t>(); }       ///< Reads a signed 64-bit integer.
-        uint64_t ReadUInt64() { return Read<uint64_t>(); }    ///< Reads an unsigned 64-bit integer.
-        float ReadFloat() { return Read<float>(); }           ///< Reads a 32-bit float.
-        double ReadDouble() { return Read<double>(); }        ///< Reads a 64-bit float.
+        bool ReadBool();                                    ///< throws unless the byte is 0 or 1
+        uint8_t ReadByte() { return Read<uint8_t>(); }      ///< Reads an unsigned 8-bit integer.
+        int8_t ReadSByte() { return Read<int8_t>(); }       ///< Reads a signed 8-bit integer.
+        int16_t ReadInt16() { return Read<int16_t>(); }     ///< Reads a signed 16-bit integer.
+        uint16_t ReadUInt16() { return Read<uint16_t>(); }  ///< Reads an unsigned 16-bit integer.
+        int32_t ReadInt32() { return Read<int32_t>(); }     ///< Reads a signed 32-bit integer.
+        uint32_t ReadUInt32() { return Read<uint32_t>(); }  ///< Reads an unsigned 32-bit integer.
+        int64_t ReadInt64() { return Read<int64_t>(); }     ///< Reads a signed 64-bit integer.
+        uint64_t ReadUInt64() { return Read<uint64_t>(); }  ///< Reads an unsigned 64-bit integer.
+        float ReadFloat() { return Read<float>(); }         ///< Reads a 32-bit float.
+        double ReadDouble() { return Read<double>(); }      ///< Reads a 64-bit float.
         /// @brief 32- or 64-bit signed value depending on VarintLong.
         int64_t ReadVarint();
 #pragma endregion
@@ -206,7 +210,7 @@ namespace Souls {
             const T Actual   = Read<T>();
             if (Actual != First && ((Actual != static_cast<T>(Others)) && ...)) {
                 ThrowAssert(At,
-                            Describe(First) + (std::string{} + ... + (", " + Describe(static_cast<T>(Others)))),
+                            Describe(First) + (std::string {} + ... + (", " + Describe(static_cast<T>(Others)))),
                             Describe(Actual));
             }
             return Actual;
@@ -219,7 +223,7 @@ namespace Souls {
             const int64_t Actual = ReadVarint();
             if (((Actual != static_cast<int64_t>(Allowed)) && ...)) {
                 ThrowAssert(At,
-                            (std::string{} + ... + (Describe(static_cast<int64_t>(Allowed)) + " ")),
+                            (std::string {} + ... + (Describe(static_cast<int64_t>(Allowed)) + " ")),
                             Describe(Actual));
             }
             return Actual;
@@ -246,7 +250,7 @@ namespace Souls {
             }
         }
 
-        std::vector<uint8_t> Storage;           ///< backing for the owned-buffer ctor
+        std::vector<uint8_t> Storage;            ///< backing for the owned-buffer ctor
         std::unique_ptr<std::streambuf> Buffer;  ///< memory-backed stream buffer, if any
         std::unique_ptr<std::istream> Owned;     ///< stream we created, if any
         std::istream* Stream = nullptr;          ///< what all reads go through

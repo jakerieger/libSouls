@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -60,9 +64,7 @@ namespace Souls::Msb::Detail {
                 }
             });
             static_assert(sizeof(T) > 0);
-            if (!Result) {
-                throw BinaryException("This entry type can't be added to this param");
-            }
+            if (!Result) { throw BinaryException("This entry type can't be added to this param"); }
             return *Result;
         }
 
@@ -97,9 +99,7 @@ namespace Souls::Msb::Detail {
             for (const auto& [ListNum, Position] : Order) {
                 size_t Current = 0;
                 Self().ForEachList([&](auto& List) {
-                    if (Current++ == ListNum) {
-                        Result.push_back(&List[Position]);
-                    }
+                    if (Current++ == ListNum) { Result.push_back(&List[Position]); }
                 });
             }
             return Result;

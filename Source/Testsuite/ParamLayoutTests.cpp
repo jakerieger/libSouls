@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -17,25 +21,23 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
-    namespace fs = std::filesystem;
+    namespace fs  = std::filesystem;
     using DefType = PARAMDEF::DefType;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -48,31 +50,31 @@ namespace {
         Def.FormatVersion = 104;
         Def.DataVersion   = 5;
         Def.ParamType     = "LAYOUT_TEST_ST";
-        auto Add = [&](DefType Type, const char* Name, int Bits = -1, int Length = 1) {
+        auto Add          = [&](DefType Type, const char* Name, int Bits = -1, int Length = 1) {
             PARAMDEF::Field Field(&Def, Type, Name);
             Field.BitSize     = Bits;
             Field.ArrayLength = Length;
             Def.Fields.push_back(Field);
         };
-        Add(DefType::s32, "id");                 // 0..3
-        Add(DefType::u8, "a", 3);                // byte 4, bits 0-2
-        Add(DefType::u8, "b", 5);                //         bits 3-7
-        Add(DefType::s8, "sgn", 4);              // byte 5, bits 0-3 (signed)
-        Add(DefType::u8, "c", 4);                //         bits 4-7
-        Add(DefType::u16, "d", 12);              // bytes 6-7, bits 0-11
-        Add(DefType::u16, "e", 4);               //            bits 12-15
-        Add(DefType::dummy8, "pad", -1, 3);      // 8..10
-        Add(DefType::dummy8, "spare", 2);        // byte 11, bits 0-1 (a dummy8 bitfield)
-        Add(DefType::f32, "scale");              // 12..15
-        Add(DefType::angle32, "turn");           // 16..19
-        Add(DefType::f64, "precise");            // 20..27
-        Add(DefType::fixstr, "label", -1, 8);    // 28..35
-        Add(DefType::fixstrW, "wide", -1, 4);    // 36..43
-        Add(DefType::b32, "enabled");            // 44..47
-        Add(DefType::u32, "big");                // 48..51
-        Add(DefType::s16, "small");              // 52..53
-        Add(DefType::u8, "tiny");                // 54
-        Def.Fields[0].Default = 7.0f;            // a default to check MakeRow with
+        Add(DefType::s32, "id");               // 0..3
+        Add(DefType::u8, "a", 3);              // byte 4, bits 0-2
+        Add(DefType::u8, "b", 5);              //         bits 3-7
+        Add(DefType::s8, "sgn", 4);            // byte 5, bits 0-3 (signed)
+        Add(DefType::u8, "c", 4);              //         bits 4-7
+        Add(DefType::u16, "d", 12);            // bytes 6-7, bits 0-11
+        Add(DefType::u16, "e", 4);             //            bits 12-15
+        Add(DefType::dummy8, "pad", -1, 3);    // 8..10
+        Add(DefType::dummy8, "spare", 2);      // byte 11, bits 0-1 (a dummy8 bitfield)
+        Add(DefType::f32, "scale");            // 12..15
+        Add(DefType::angle32, "turn");         // 16..19
+        Add(DefType::f64, "precise");          // 20..27
+        Add(DefType::fixstr, "label", -1, 8);  // 28..35
+        Add(DefType::fixstrW, "wide", -1, 4);  // 36..43
+        Add(DefType::b32, "enabled");          // 44..47
+        Add(DefType::u32, "big");              // 48..51
+        Add(DefType::s16, "small");            // 52..53
+        Add(DefType::u8, "tiny");              // 54
+        Def.Fields[0].Default = 7.0f;          // a default to check MakeRow with
         return Def;
     }
 
@@ -93,35 +95,39 @@ namespace {
         CHECK(Layout.Get<float>(Row, "scale") == 0.f && Layout.Get<std::string>(Row, "label").empty());
 
         // Every type, set and read back.
-        Layout.Set(Row, "id", int32_t{-123456});
-        Layout.Set(Row, "a", uint8_t{5});
-        Layout.Set(Row, "b", uint8_t{17});
-        Layout.Set(Row, "sgn", int8_t{-3});
-        Layout.Set(Row, "c", uint8_t{9});
-        Layout.Set(Row, "d", uint16_t{0xABC});
-        Layout.Set(Row, "e", uint16_t{0xD});
-        Layout.Set(Row, "pad", std::vector<uint8_t>{1, 2, 3});
-        Layout.Set(Row, "spare", uint8_t{2});
+        Layout.Set(Row, "id", int32_t {-123456});
+        Layout.Set(Row, "a", uint8_t {5});
+        Layout.Set(Row, "b", uint8_t {17});
+        Layout.Set(Row, "sgn", int8_t {-3});
+        Layout.Set(Row, "c", uint8_t {9});
+        Layout.Set(Row, "d", uint16_t {0xABC});
+        Layout.Set(Row, "e", uint16_t {0xD});
+        Layout.Set(Row, "pad", std::vector<uint8_t> {1, 2, 3});
+        Layout.Set(Row, "spare", uint8_t {2});
         Layout.Set(Row, "scale", 1.5f);
         Layout.Set(Row, "turn", -0.25f);
         Layout.Set(Row, "precise", 3.14159265358979);
         Layout.Set(Row, "label", std::string("hello"));
-        Layout.Set(Row, "wide", std::string("\xE3\x82\xBD" "ab"));
-        Layout.Set(Row, "enabled", int32_t{1});
-        Layout.Set(Row, "big", uint32_t{4000000000u});
-        Layout.Set(Row, "small", int16_t{-2});
-        Layout.Set(Row, "tiny", uint8_t{200});
+        Layout.Set(Row,
+                   "wide",
+                   std::string("\xE3\x82\xBD"
+                               "ab"));
+        Layout.Set(Row, "enabled", int32_t {1});
+        Layout.Set(Row, "big", uint32_t {4000000000u});
+        Layout.Set(Row, "small", int16_t {-2});
+        Layout.Set(Row, "tiny", uint8_t {200});
 
         CHECK(Layout.Get<int32_t>(Row, "id") == -123456);
         CHECK(Layout.Get<uint8_t>(Row, "a") == 5 && Layout.Get<uint8_t>(Row, "b") == 17);
         CHECK(Layout.Get<int8_t>(Row, "sgn") == -3 && Layout.Get<uint8_t>(Row, "c") == 9);
         CHECK(Layout.Get<uint16_t>(Row, "d") == 0xABC && Layout.Get<uint16_t>(Row, "e") == 0xD);
-        CHECK((Layout.Get<std::vector<uint8_t>>(Row, "pad") == std::vector<uint8_t>{1, 2, 3}));
+        CHECK((Layout.Get<std::vector<uint8_t>>(Row, "pad") == std::vector<uint8_t> {1, 2, 3}));
         CHECK(Layout.Get<uint8_t>(Row, "spare") == 2);
         CHECK(Layout.Get<float>(Row, "scale") == 1.5f && Layout.Get<float>(Row, "turn") == -0.25f);
         CHECK(Layout.Get<double>(Row, "precise") == 3.14159265358979);
         CHECK(Layout.Get<std::string>(Row, "label") == "hello");
-        CHECK(Layout.Get<std::string>(Row, "wide") == "\xE3\x82\xBD" "ab");
+        CHECK(Layout.Get<std::string>(Row, "wide") == "\xE3\x82\xBD"
+                                                      "ab");
         CHECK(Layout.Get<int32_t>(Row, "enabled") == 1 && Layout.Get<uint32_t>(Row, "big") == 4000000000u);
         CHECK(Layout.Get<int16_t>(Row, "small") == -2 && Layout.Get<uint8_t>(Row, "tiny") == 200);
 
@@ -133,13 +139,14 @@ namespace {
                   : (Row.Bytes[6] == (Packed & 0xFF) && Row.Bytes[7] == (Packed >> 8)));
         CHECK(Row.Bytes[8] == 1 && Row.Bytes[9] == 2 && Row.Bytes[10] == 3 && Row.Bytes[11] == 2);
         CHECK(Row.Bytes[28] == 'h' && Row.Bytes[33] == 0 && Row.Bytes[35] == 0);
-        CHECK(Big ? (Row.Bytes[48] == 0xEE && Row.Bytes[51] == 0x00) : (Row.Bytes[48] == 0x00 && Row.Bytes[51] == 0xEE));
+        CHECK(Big ? (Row.Bytes[48] == 0xEE && Row.Bytes[51] == 0x00)
+                  : (Row.Bytes[48] == 0x00 && Row.Bytes[51] == 0xEE));
 
         // Setting one bitfield leaves its neighbours alone.
-        Layout.Set(Row, "a", uint8_t{2});
+        Layout.Set(Row, "a", uint8_t {2});
         CHECK(Layout.Get<uint8_t>(Row, "a") == 2 && Layout.Get<uint8_t>(Row, "b") == 17);
-        Layout.Set(Row, "sgn", int8_t{7});
-        Layout.Set(Row, "sgn", int8_t{-8});
+        Layout.Set(Row, "sgn", int8_t {7});
+        Layout.Set(Row, "sgn", int8_t {-8});
         CHECK(Layout.Get<int8_t>(Row, "sgn") == -8 && Layout.Get<uint8_t>(Row, "c") == 9);
 
         // Conversions: numbers adapt to the field, out-of-range bits fall off like they would in the file.
@@ -148,7 +155,7 @@ namespace {
         Layout.SetNumber(Row, "scale", 2);
         Layout.SetNumber(Row, "precise", 0.5);
         CHECK(Layout.GetNumber(Row, "scale") == 2.0 && Layout.GetNumber(Row, "precise") == 0.5);
-        Layout.Set(Row, "a", uint8_t{0xFF});  // only 3 bits fit
+        Layout.Set(Row, "a", uint8_t {0xFF});  // only 3 bits fit
         CHECK(Layout.Get<uint8_t>(Row, "a") == 7 && Layout.Get<uint8_t>(Row, "b") == 17);
         Layout.Set(Row, "tiny", 3.9f);  // floats truncate into integer fields
         CHECK(Layout.Get<uint8_t>(Row, "tiny") == 3);
@@ -166,8 +173,8 @@ namespace {
         CHECK(Throws([&] { Layout.Get<float>(Row, "id"); }));
         CHECK(Throws([&] { Layout.Get(Row, "missing"); }));
         CHECK(Throws([&] { Layout.Set(Row, "id", std::string("text")); }));
-        CHECK(Throws([&] { Layout.Set(Row, "label", int32_t{1}); }));
-        CHECK(Throws([&] { Layout.Set(Row, "pad", std::vector<uint8_t>{1, 2}); }));
+        CHECK(Throws([&] { Layout.Set(Row, "label", int32_t {1}); }));
+        CHECK(Throws([&] { Layout.Set(Row, "pad", std::vector<uint8_t> {1, 2}); }));
         CHECK(Throws([&] { Layout.GetNumber(Row, "label"); }));
         CHECK(Throws([&] { Layout.Get(Row, 999); }));
         PARAM::Row Short = Row;
@@ -201,18 +208,18 @@ namespace {
         const PARAM Read = PARAM::Read(Param.Write());
         CHECK(Read.Matches(Def));
 
-        PARAMDEF OtherType = Def;
-        OtherType.ParamType = "SOMETHING_ELSE";
-        PARAMDEF OtherVersion = Def;
+        PARAMDEF OtherType       = Def;
+        OtherType.ParamType      = "SOMETHING_ELSE";
+        PARAMDEF OtherVersion    = Def;
         OtherVersion.DataVersion = 6;
-        PARAMDEF OtherSize = Def;
+        PARAMDEF OtherSize       = Def;
         OtherSize.Fields.pop_back();
         CHECK(!Read.Matches(OtherType) && !Read.Matches(OtherVersion) && !Read.Matches(OtherSize));
         CHECK(!ParamLayout::TryCreate(Read, OtherSize).has_value());
 
-        const std::vector<PARAMDEF> Candidates{OtherType, OtherVersion, OtherSize, Def};
+        const std::vector<PARAMDEF> Candidates {OtherType, OtherVersion, OtherSize, Def};
         CHECK(Read.FindMatchingDef(Candidates) == &Candidates[3]);
-        const std::vector<PARAMDEF> None{OtherType, OtherSize};
+        const std::vector<PARAMDEF> None {OtherType, OtherSize};
         CHECK(Read.FindMatchingDef(None) == nullptr);
 
         // An empty param has no row size to contradict, so only type and version count.
@@ -222,7 +229,7 @@ namespace {
         CHECK(Empty.Matches(Def) && Empty.Matches(OtherSize) && !Empty.Matches(OtherVersion));
 
         // Bad bitfields are caught when the layout is made.
-        PARAMDEF BadBits = Def;
+        PARAMDEF BadBits          = Def;
         BadBits.Fields[1].BitSize = 9;  // a u8 holds 8
         CHECK(Throws([&] { ParamLayout(BadBits, false); }));
         BadBits.Fields[1].BitSize = 0;
@@ -238,7 +245,8 @@ int RunParamLayoutTests() {
 
     // Dark Souls Remastered: apply its real paramdefs to its real params and read everything.
     const fs::path Root = "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED";
-    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") || !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
+    if (!fs::exists(Root / "paramdef/paramdef.paramdefbnd.dcx") ||
+        !fs::exists(Root / "param/GameParam/GameParam.parambnd.dcx")) {
         std::printf("Real layout checks skipped (Dark Souls Remastered not installed)\n");
     } else {
         try {
@@ -253,14 +261,18 @@ int RunParamLayoutTests() {
             std::optional<double> DaggerWeight;
             for (const BinderFile& File : ParamBnd.Files) {
                 if (!File.Name || !EndsWith(*File.Name, ".param")) continue;
-                PARAM Param = PARAM::Read(File.Bytes);
+                PARAM Param         = PARAM::Read(File.Bytes);
                 const PARAMDEF* Def = Param.FindMatchingDef(Defs);
                 if (!Def) {
                     ++Unmatched;
-                    std::printf("  no matching def for %s v%d (row size %lld, %zu defs)", Param.ParamType.c_str(),
-                                Param.ParamdefDataVersion, static_cast<long long>(Param.DetectedSize), Defs.size());
+                    std::printf("  no matching def for %s v%d (row size %lld, %zu defs)",
+                                Param.ParamType.c_str(),
+                                Param.ParamdefDataVersion,
+                                static_cast<long long>(Param.DetectedSize),
+                                Defs.size());
                     for (const PARAMDEF& D : Defs) {
-                        if (D.ParamType == Param.ParamType) std::printf(" [def v%d size %d]", D.DataVersion, D.GetRowSize());
+                        if (D.ParamType == Param.ParamType)
+                            std::printf(" [def v%d size %d]", D.DataVersion, D.GetRowSize());
                     }
                     std::printf("\n");
                     continue;
@@ -290,8 +302,10 @@ int RunParamLayoutTests() {
                         } else {
                             ++Changed;
                             if (!std::holds_alternative<std::string>(Value)) {
-                                std::printf("FAIL %s row %d field %s changed when written back\n", Param.ParamType.c_str(),
-                                            Row.ID, Layout.InternalName(I).c_str());
+                                std::printf("FAIL %s row %d field %s changed when written back\n",
+                                            Param.ParamType.c_str(),
+                                            Row.ID,
+                                            Layout.InternalName(I).c_str());
                                 ++Failures;
                             }
                             Row.Bytes = Before;
@@ -309,9 +323,17 @@ int RunParamLayoutTests() {
             }
             std::printf("Dark Souls Remastered: %d params with a def (%d without), %d rows, %d cells (%d strings), "
                         "%d non-finite floats, %d unchanged / %d changed on write-back\n",
-                        Params, Unmatched, Rows, Cells, Strings, NonFinite, Unchanged, Changed);
+                        Params,
+                        Unmatched,
+                        Rows,
+                        Cells,
+                        Strings,
+                        NonFinite,
+                        Unchanged,
+                        Changed);
             if (DaggerWeight) std::printf("  Dagger weight: %g\n", *DaggerWeight);
-            // The shipped defs for SP_EFFECT_PARAM_ST and CHARACTER_INIT_PARAM are an older data version than the params.
+            // The shipped defs for SP_EFFECT_PARAM_ST and CHARACTER_INIT_PARAM are an older data version than the
+            // params.
             CHECK(Params >= 39 && Rows > 10000 && Unmatched == 2);
             CHECK(NonFinite == 0);
             CHECK(DaggerWeight.has_value() && *DaggerWeight == 0.5);

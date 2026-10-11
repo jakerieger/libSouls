@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -84,16 +88,16 @@ namespace Souls {
         }
 
         void WriteBool(bool Value) { Write<uint8_t>(Value ? 1 : 0); }  ///< Writes a bool as one byte, 0 or 1.
-        void WriteByte(uint8_t Value) { Write(Value); }               ///< Writes an unsigned 8-bit integer.
-        void WriteSByte(int8_t Value) { Write(Value); }               ///< Writes a signed 8-bit integer.
-        void WriteInt16(int16_t Value) { Write(Value); }              ///< Writes a signed 16-bit integer.
-        void WriteUInt16(uint16_t Value) { Write(Value); }            ///< Writes an unsigned 16-bit integer.
-        void WriteInt32(int32_t Value) { Write(Value); }              ///< Writes a signed 32-bit integer.
-        void WriteUInt32(uint32_t Value) { Write(Value); }            ///< Writes an unsigned 32-bit integer.
-        void WriteInt64(int64_t Value) { Write(Value); }              ///< Writes a signed 64-bit integer.
-        void WriteUInt64(uint64_t Value) { Write(Value); }            ///< Writes an unsigned 64-bit integer.
-        void WriteFloat(float Value) { Write(Value); }                ///< Writes a 32-bit float.
-        void WriteDouble(double Value) { Write(Value); }              ///< Writes a 64-bit float.
+        void WriteByte(uint8_t Value) { Write(Value); }                ///< Writes an unsigned 8-bit integer.
+        void WriteSByte(int8_t Value) { Write(Value); }                ///< Writes a signed 8-bit integer.
+        void WriteInt16(int16_t Value) { Write(Value); }               ///< Writes a signed 16-bit integer.
+        void WriteUInt16(uint16_t Value) { Write(Value); }             ///< Writes an unsigned 16-bit integer.
+        void WriteInt32(int32_t Value) { Write(Value); }               ///< Writes a signed 32-bit integer.
+        void WriteUInt32(uint32_t Value) { Write(Value); }             ///< Writes an unsigned 32-bit integer.
+        void WriteInt64(int64_t Value) { Write(Value); }               ///< Writes a signed 64-bit integer.
+        void WriteUInt64(uint64_t Value) { Write(Value); }             ///< Writes an unsigned 64-bit integer.
+        void WriteFloat(float Value) { Write(Value); }                 ///< Writes a 32-bit float.
+        void WriteDouble(double Value) { Write(Value); }               ///< Writes a 64-bit float.
         /// @brief 32- or 64-bit signed value depending on VarintLong.
         ///
         /// Throws if it doesn't fit in 32 bits.

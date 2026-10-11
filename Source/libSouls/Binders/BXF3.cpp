@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BXF3.hpp"
 #include "BinderFileHeader.hpp"
@@ -18,9 +22,7 @@ namespace Souls {
         bool HasMagic(BinaryReader& Source, std::string_view Magic) {
             DCX::DecompressedReader Decompressed(Source);
             BinaryReader& Reader = Decompressed.Reader();
-            if (Reader.Length() < 4) {
-                return false;
-            }
+            if (Reader.Length() < 4) { return false; }
             return Reader.ReadAt<uint8_t>(0) == static_cast<uint8_t>(Magic[0]) &&
                    Reader.ReadAt<uint8_t>(1) == static_cast<uint8_t>(Magic[1]) &&
                    Reader.ReadAt<uint8_t>(2) == static_cast<uint8_t>(Magic[2]) &&
@@ -109,10 +111,18 @@ namespace Souls {
         Format  = Format::IDs | Format::Names1 | Format::Names2 | Format::Compression;
     }
 
-    bool BXF3::IsBHD(std::span<const uint8_t> Data) { return HasMagic(Data, "BHF3"sv); }
-    bool BXF3::IsBHD(const std::filesystem::path& Path) { return HasMagic(Path, "BHF3"sv); }
-    bool BXF3::IsBDT(std::span<const uint8_t> Data) { return HasMagic(Data, "BDF3"sv); }
-    bool BXF3::IsBDT(const std::filesystem::path& Path) { return HasMagic(Path, "BDF3"sv); }
+    bool BXF3::IsBHD(std::span<const uint8_t> Data) {
+        return HasMagic(Data, "BHF3"sv);
+    }
+    bool BXF3::IsBHD(const std::filesystem::path& Path) {
+        return HasMagic(Path, "BHF3"sv);
+    }
+    bool BXF3::IsBDT(std::span<const uint8_t> Data) {
+        return HasMagic(Data, "BDF3"sv);
+    }
+    bool BXF3::IsBDT(const std::filesystem::path& Path) {
+        return HasMagic(Path, "BDF3"sv);
+    }
 
     BXF3 BXF3::Read(BinaryReader& HeaderReader, BinaryReader& DataReader) {
         BXF3 Result;
@@ -161,9 +171,7 @@ namespace Souls {
 
     void BXF3::Write(const std::filesystem::path& HeaderPath, const std::filesystem::path& DataPath) {
         for (const auto* Path : {&HeaderPath, &DataPath}) {
-            if (Path->has_parent_path()) {
-                std::filesystem::create_directories(Path->parent_path());
-            }
+            if (Path->has_parent_path()) { std::filesystem::create_directories(Path->parent_path()); }
         }
         BinaryWriter HeaderWriter(HeaderPath, Endian::Little);
         BinaryWriter DataWriter(DataPath, Endian::Little);

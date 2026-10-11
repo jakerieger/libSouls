@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -81,7 +85,7 @@ SOULS_C_API SoulsStatus souls_emevd_write_file(SoulsEmevd* emevd, const char* pa
 }
 
 SOULS_C_API SoulsBuffer souls_emevd_write_memory(SoulsEmevd* emevd) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(File(emevd).Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(File(emevd).Write()); });
 }
 
 SOULS_C_API SoulsEmevdGame souls_emevd_game(const SoulsEmevd* emevd) {
@@ -167,7 +171,8 @@ SOULS_C_API int32_t souls_emevd_instruction_id(const SoulsEmevd* emevd, size_t e
     return GuardValue<int32_t>(-1, [&] { return InstructionAt(emevd, event, instruction).ID; });
 }
 
-SOULS_C_API const uint8_t* souls_emevd_instruction_args(const SoulsEmevd* emevd, size_t event, size_t instruction, size_t* out_size) {
+SOULS_C_API const uint8_t*
+souls_emevd_instruction_args(const SoulsEmevd* emevd, size_t event, size_t instruction, size_t* out_size) {
     return GuardValue<const uint8_t*>(nullptr, [&] {
         const auto& Args = InstructionAt(emevd, event, instruction).ArgData;
         if (out_size) *out_size = Args.size();
@@ -175,14 +180,16 @@ SOULS_C_API const uint8_t* souls_emevd_instruction_args(const SoulsEmevd* emevd,
     });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_set_instruction_args(SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* data, size_t size) {
+SOULS_C_API SoulsStatus souls_emevd_set_instruction_args(
+  SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* data, size_t size) {
     return Guard([&] {
         const auto Span = Bytes(data, size);
         InstructionAt(emevd, event, instruction).ArgData.assign(Span.begin(), Span.end());
     });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_set_instruction(SoulsEmevd* emevd, size_t event, size_t instruction, int32_t bank, int32_t id) {
+SOULS_C_API SoulsStatus
+souls_emevd_set_instruction(SoulsEmevd* emevd, size_t event, size_t instruction, int32_t bank, int32_t id) {
     return Guard([&] {
         auto& I = InstructionAt(emevd, event, instruction);
         I.Bank  = bank;
@@ -190,7 +197,8 @@ SOULS_C_API SoulsStatus souls_emevd_set_instruction(SoulsEmevd* emevd, size_t ev
     });
 }
 
-SOULS_C_API int souls_emevd_instruction_layer(const SoulsEmevd* emevd, size_t event, size_t instruction, uint32_t* out_layer) {
+SOULS_C_API int
+souls_emevd_instruction_layer(const SoulsEmevd* emevd, size_t event, size_t instruction, uint32_t* out_layer) {
     return GuardValue(0, [&] {
         const auto& Layer = InstructionAt(emevd, event, instruction).Layer;
         if (Layer && out_layer) *out_layer = *Layer;
@@ -198,7 +206,8 @@ SOULS_C_API int souls_emevd_instruction_layer(const SoulsEmevd* emevd, size_t ev
     });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_set_instruction_layer(SoulsEmevd* emevd, size_t event, size_t instruction, int has_layer, uint32_t layer) {
+SOULS_C_API SoulsStatus
+souls_emevd_set_instruction_layer(SoulsEmevd* emevd, size_t event, size_t instruction, int has_layer, uint32_t layer) {
     return Guard([&] {
         auto& Value = InstructionAt(emevd, event, instruction).Layer;
         if (has_layer) Value = layer;
@@ -206,7 +215,8 @@ SOULS_C_API SoulsStatus souls_emevd_set_instruction_layer(SoulsEmevd* emevd, siz
     });
 }
 
-SOULS_C_API int64_t souls_emevd_add_instruction(SoulsEmevd* emevd, size_t event, int32_t bank, int32_t id, const uint8_t* args, size_t args_size) {
+SOULS_C_API int64_t souls_emevd_add_instruction(
+  SoulsEmevd* emevd, size_t event, int32_t bank, int32_t id, const uint8_t* args, size_t args_size) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         const auto Span    = Bytes(args, args_size);
         auto& Instructions = EventAt(emevd, event).Instructions;
@@ -223,8 +233,12 @@ SOULS_C_API SoulsStatus souls_emevd_remove_instruction(SoulsEmevd* emevd, size_t
     });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_unpack_args(const SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* arg_types,
-                                                size_t arg_count, double* out_values) {
+SOULS_C_API SoulsStatus souls_emevd_unpack_args(const SoulsEmevd* emevd,
+                                                size_t event,
+                                                size_t instruction,
+                                                const uint8_t* arg_types,
+                                                size_t arg_count,
+                                                double* out_values) {
     return Guard([&] {
         if (!out_values && arg_count) ThrowInvalid("out_values is NULL");
         const auto Types  = ArgTypes(arg_types, arg_count);
@@ -235,7 +249,11 @@ SOULS_C_API SoulsStatus souls_emevd_unpack_args(const SoulsEmevd* emevd, size_t 
     });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_pack_args(SoulsEmevd* emevd, size_t event, size_t instruction, const uint8_t* arg_types, size_t arg_count,
+SOULS_C_API SoulsStatus souls_emevd_pack_args(SoulsEmevd* emevd,
+                                              size_t event,
+                                              size_t instruction,
+                                              const uint8_t* arg_types,
+                                              size_t arg_count,
                                               const double* values) {
     return Guard([&] {
         if (!values && arg_count) ThrowInvalid("values is NULL");
@@ -244,13 +262,27 @@ SOULS_C_API SoulsStatus souls_emevd_pack_args(SoulsEmevd* emevd, size_t event, s
         for (size_t I = 0; I < arg_count; ++I) {
             const double V = values[I];
             switch (Types[I]) {
-                case EMEVD::ArgType::Byte: Packed.emplace_back(static_cast<uint8_t>(V)); break;
-                case EMEVD::ArgType::UInt16: Packed.emplace_back(static_cast<uint16_t>(V)); break;
-                case EMEVD::ArgType::UInt32: Packed.emplace_back(static_cast<uint32_t>(V)); break;
-                case EMEVD::ArgType::SByte: Packed.emplace_back(static_cast<int8_t>(V)); break;
-                case EMEVD::ArgType::Int16: Packed.emplace_back(static_cast<int16_t>(V)); break;
-                case EMEVD::ArgType::Int32: Packed.emplace_back(static_cast<int32_t>(V)); break;
-                case EMEVD::ArgType::Single: Packed.emplace_back(static_cast<float>(V)); break;
+                case EMEVD::ArgType::Byte:
+                    Packed.emplace_back(static_cast<uint8_t>(V));
+                    break;
+                case EMEVD::ArgType::UInt16:
+                    Packed.emplace_back(static_cast<uint16_t>(V));
+                    break;
+                case EMEVD::ArgType::UInt32:
+                    Packed.emplace_back(static_cast<uint32_t>(V));
+                    break;
+                case EMEVD::ArgType::SByte:
+                    Packed.emplace_back(static_cast<int8_t>(V));
+                    break;
+                case EMEVD::ArgType::Int16:
+                    Packed.emplace_back(static_cast<int16_t>(V));
+                    break;
+                case EMEVD::ArgType::Int32:
+                    Packed.emplace_back(static_cast<int32_t>(V));
+                    break;
+                case EMEVD::ArgType::Single:
+                    Packed.emplace_back(static_cast<float>(V));
+                    break;
             }
         }
         InstructionAt(emevd, event, instruction).PackArgs(Packed, IsBigEndian(emevd));
@@ -263,8 +295,14 @@ SOULS_C_API size_t souls_emevd_parameter_count(const SoulsEmevd* emevd, size_t e
     return GuardValue<size_t>(0, [&] { return EventAt(emevd, event).Parameters.size(); });
 }
 
-SOULS_C_API SoulsStatus souls_emevd_parameter(const SoulsEmevd* emevd, size_t event, size_t parameter, int64_t* instruction_index,
-                                              int64_t* target_start_byte, int64_t* source_start_byte, int32_t* byte_count, int32_t* unk_id) {
+SOULS_C_API SoulsStatus souls_emevd_parameter(const SoulsEmevd* emevd,
+                                              size_t event,
+                                              size_t parameter,
+                                              int64_t* instruction_index,
+                                              int64_t* target_start_byte,
+                                              int64_t* source_start_byte,
+                                              int32_t* byte_count,
+                                              int32_t* unk_id) {
     return Guard([&] {
         const EMEVD::Parameter& P = ParameterAt(emevd, event, parameter);
         if (instruction_index) *instruction_index = P.InstructionIndex;
@@ -275,8 +313,13 @@ SOULS_C_API SoulsStatus souls_emevd_parameter(const SoulsEmevd* emevd, size_t ev
     });
 }
 
-SOULS_C_API int64_t souls_emevd_add_parameter(SoulsEmevd* emevd, size_t event, int64_t instruction_index, int64_t target_start_byte,
-                                              int64_t source_start_byte, int32_t byte_count, int32_t unk_id) {
+SOULS_C_API int64_t souls_emevd_add_parameter(SoulsEmevd* emevd,
+                                              size_t event,
+                                              int64_t instruction_index,
+                                              int64_t target_start_byte,
+                                              int64_t source_start_byte,
+                                              int32_t byte_count,
+                                              int32_t unk_id) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         auto& Parameters = EventAt(emevd, event).Parameters;
         EMEVD::Parameter P;

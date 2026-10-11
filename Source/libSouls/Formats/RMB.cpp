@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "RMB.hpp"
 
@@ -68,9 +72,7 @@ namespace Souls {
         }
 
         const auto WriteStates = [&](const std::vector<State>& States) -> int32_t {
-            if (States.empty()) {
-                return 0;
-            }
+            if (States.empty()) { return 0; }
             const int32_t Offset = static_cast<int32_t>(Writer.Position());
             for (const State& S : States) {
                 Writer.WriteInt16(S.Start);

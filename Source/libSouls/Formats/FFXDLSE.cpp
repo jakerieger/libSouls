@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "FFXDLSE.hpp"
 
@@ -35,9 +39,7 @@ namespace Souls {
     }
 
     void FFXDLSE::AddClassName(ClassNames& Names, std::string_view Name) {
-        if (std::find(Names.begin(), Names.end(), Name) == Names.end()) {
-            Names.emplace_back(Name);
-        }
+        if (std::find(Names.begin(), Names.end(), Name) == Names.end()) { Names.emplace_back(Name); }
     }
 
 #pragma region Serializable
@@ -81,7 +83,9 @@ namespace Souls {
         return Object.Value;
     }
 
-    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Int>::Write(BinaryWriter& Writer, const ClassNames& Names, int32_t Value) {
+    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Int>::Write(BinaryWriter& Writer,
+                                                                      const ClassNames& Names,
+                                                                      int32_t Value) {
         struct P : Serializable {
             int32_t Value = 0;
             const char* ClassName() const override { return Name; }
@@ -105,7 +109,9 @@ namespace Souls {
         return Object.Value;
     }
 
-    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Float>::Write(BinaryWriter& Writer, const ClassNames& Names, float Value) {
+    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Float>::Write(BinaryWriter& Writer,
+                                                                        const ClassNames& Names,
+                                                                        float Value) {
         struct P : Serializable {
             float Value = 0;
             const char* ClassName() const override { return Name; }
@@ -129,7 +135,9 @@ namespace Souls {
         return Object.Value;
     }
 
-    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Tick>::Write(BinaryWriter& Writer, const ClassNames& Names, float Value) {
+    void FFXDLSE::PrimitiveTraits<FFXDLSE::PrimitiveKind::Tick>::Write(BinaryWriter& Writer,
+                                                                       const ClassNames& Names,
+                                                                       float Value) {
         struct P : Serializable {
             float Value = 0;
             const char* ClassName() const override { return Name; }
@@ -261,25 +269,44 @@ namespace Souls {
     std::shared_ptr<FFXDLSE::Evaluatable> FFXDLSE::Evaluatable::ReadAny(BinaryReader& Reader, const ClassNames& Names) {
         const int32_t Opcode = Reader.ReadAt<int32_t>(Reader.Position() + 0xA);
         switch (Opcode) {
-            case 1: return ReadAs<EvaluatableConstant>(Reader, Names);
-            case 2: return ReadAs<Evaluatable2>(Reader, Names);
-            case 3: return ReadAs<Evaluatable3>(Reader, Names);
-            case 4: return ReadAs<EvaluatableCurrentTick>(Reader, Names);
-            case 5: return ReadAs<EvaluatableTotalTick>(Reader, Names);
-            case 8: return ReadAs<EvaluatableAnd>(Reader, Names);
-            case 9: return ReadAs<EvaluatableOr>(Reader, Names);
-            case 10: return ReadAs<EvaluatableGE>(Reader, Names);
-            case 11: return ReadAs<EvaluatableGT>(Reader, Names);
-            case 12: return ReadAs<EvaluatableLE>(Reader, Names);
-            case 13: return ReadAs<EvaluatableLT>(Reader, Names);
-            case 14: return ReadAs<EvaluatableEQ>(Reader, Names);
-            case 15: return ReadAs<EvaluatableNE>(Reader, Names);
-            case 20: return ReadAs<EvaluatableNot>(Reader, Names);
-            case 21: return ReadAs<EvaluatableChildExists>(Reader, Names);
-            case 22: return ReadAs<EvaluatableParentExists>(Reader, Names);
-            case 23: return ReadAs<EvaluatableDistanceFromCamera>(Reader, Names);
-            case 24: return ReadAs<EvaluatableEmittersStopped>(Reader, Names);
-            default: throw BinaryException("Unimplemented evaluatable opcode: " + std::to_string(Opcode));
+            case 1:
+                return ReadAs<EvaluatableConstant>(Reader, Names);
+            case 2:
+                return ReadAs<Evaluatable2>(Reader, Names);
+            case 3:
+                return ReadAs<Evaluatable3>(Reader, Names);
+            case 4:
+                return ReadAs<EvaluatableCurrentTick>(Reader, Names);
+            case 5:
+                return ReadAs<EvaluatableTotalTick>(Reader, Names);
+            case 8:
+                return ReadAs<EvaluatableAnd>(Reader, Names);
+            case 9:
+                return ReadAs<EvaluatableOr>(Reader, Names);
+            case 10:
+                return ReadAs<EvaluatableGE>(Reader, Names);
+            case 11:
+                return ReadAs<EvaluatableGT>(Reader, Names);
+            case 12:
+                return ReadAs<EvaluatableLE>(Reader, Names);
+            case 13:
+                return ReadAs<EvaluatableLT>(Reader, Names);
+            case 14:
+                return ReadAs<EvaluatableEQ>(Reader, Names);
+            case 15:
+                return ReadAs<EvaluatableNE>(Reader, Names);
+            case 20:
+                return ReadAs<EvaluatableNot>(Reader, Names);
+            case 21:
+                return ReadAs<EvaluatableChildExists>(Reader, Names);
+            case 22:
+                return ReadAs<EvaluatableParentExists>(Reader, Names);
+            case 23:
+                return ReadAs<EvaluatableDistanceFromCamera>(Reader, Names);
+            case 24:
+                return ReadAs<EvaluatableEmittersStopped>(Reader, Names);
+            default:
+                throw BinaryException("Unimplemented evaluatable opcode: " + std::to_string(Opcode));
         }
     }
 #pragma endregion
@@ -357,44 +384,82 @@ namespace Souls {
     std::shared_ptr<FFXDLSE::Param> FFXDLSE::Param::ReadAny(BinaryReader& Reader, const ClassNames& Names) {
         const int32_t Type = Reader.ReadAt<int32_t>(Reader.Position() + 0xA);
         switch (Type) {
-            case 1: return ReadAs<Param1>(Reader, Names);
-            case 2: return ReadAs<Param2>(Reader, Names);
-            case 5: return ReadAs<Param5>(Reader, Names);
-            case 6: return ReadAs<Param6>(Reader, Names);
-            case 7: return ReadAs<Param7>(Reader, Names);
-            case 9: return ReadAs<Param9>(Reader, Names);
-            case 11: return ReadAs<Param11>(Reader, Names);
-            case 12: return ReadAs<Param12>(Reader, Names);
-            case 13: return ReadAs<Param13>(Reader, Names);
-            case 15: return ReadAs<Param15>(Reader, Names);
-            case 17: return ReadAs<Param17>(Reader, Names);
-            case 18: return ReadAs<Param18>(Reader, Names);
-            case 19: return ReadAs<Param19>(Reader, Names);
-            case 20: return ReadAs<Param20>(Reader, Names);
-            case 21: return ReadAs<Param21>(Reader, Names);
-            case 37: return ReadAs<Param37>(Reader, Names);
-            case 38: return ReadAs<Param38>(Reader, Names);
-            case 40: return ReadAs<Param40>(Reader, Names);
-            case 41: return ReadAs<Param41>(Reader, Names);
-            case 44: return ReadAs<Param44>(Reader, Names);
-            case 45: return ReadAs<Param45>(Reader, Names);
-            case 46: return ReadAs<Param46>(Reader, Names);
-            case 47: return ReadAs<Param47>(Reader, Names);
-            case 59: return ReadAs<Param59>(Reader, Names);
-            case 60: return ReadAs<Param60>(Reader, Names);
-            case 66: return ReadAs<Param66>(Reader, Names);
-            case 68: return ReadAs<Param68>(Reader, Names);
-            case 69: return ReadAs<Param69>(Reader, Names);
-            case 70: return ReadAs<Param70>(Reader, Names);
-            case 71: return ReadAs<Param71>(Reader, Names);
-            case 79: return ReadAs<Param79>(Reader, Names);
-            case 81: return ReadAs<Param81>(Reader, Names);
-            case 82: return ReadAs<Param82>(Reader, Names);
-            case 83: return ReadAs<Param83>(Reader, Names);
-            case 84: return ReadAs<Param84>(Reader, Names);
-            case 85: return ReadAs<Param85>(Reader, Names);
-            case 87: return ReadAs<Param87>(Reader, Names);
-            default: throw BinaryException("Unimplemented param type: " + std::to_string(Type));
+            case 1:
+                return ReadAs<Param1>(Reader, Names);
+            case 2:
+                return ReadAs<Param2>(Reader, Names);
+            case 5:
+                return ReadAs<Param5>(Reader, Names);
+            case 6:
+                return ReadAs<Param6>(Reader, Names);
+            case 7:
+                return ReadAs<Param7>(Reader, Names);
+            case 9:
+                return ReadAs<Param9>(Reader, Names);
+            case 11:
+                return ReadAs<Param11>(Reader, Names);
+            case 12:
+                return ReadAs<Param12>(Reader, Names);
+            case 13:
+                return ReadAs<Param13>(Reader, Names);
+            case 15:
+                return ReadAs<Param15>(Reader, Names);
+            case 17:
+                return ReadAs<Param17>(Reader, Names);
+            case 18:
+                return ReadAs<Param18>(Reader, Names);
+            case 19:
+                return ReadAs<Param19>(Reader, Names);
+            case 20:
+                return ReadAs<Param20>(Reader, Names);
+            case 21:
+                return ReadAs<Param21>(Reader, Names);
+            case 37:
+                return ReadAs<Param37>(Reader, Names);
+            case 38:
+                return ReadAs<Param38>(Reader, Names);
+            case 40:
+                return ReadAs<Param40>(Reader, Names);
+            case 41:
+                return ReadAs<Param41>(Reader, Names);
+            case 44:
+                return ReadAs<Param44>(Reader, Names);
+            case 45:
+                return ReadAs<Param45>(Reader, Names);
+            case 46:
+                return ReadAs<Param46>(Reader, Names);
+            case 47:
+                return ReadAs<Param47>(Reader, Names);
+            case 59:
+                return ReadAs<Param59>(Reader, Names);
+            case 60:
+                return ReadAs<Param60>(Reader, Names);
+            case 66:
+                return ReadAs<Param66>(Reader, Names);
+            case 68:
+                return ReadAs<Param68>(Reader, Names);
+            case 69:
+                return ReadAs<Param69>(Reader, Names);
+            case 70:
+                return ReadAs<Param70>(Reader, Names);
+            case 71:
+                return ReadAs<Param71>(Reader, Names);
+            case 79:
+                return ReadAs<Param79>(Reader, Names);
+            case 81:
+                return ReadAs<Param81>(Reader, Names);
+            case 82:
+                return ReadAs<Param82>(Reader, Names);
+            case 83:
+                return ReadAs<Param83>(Reader, Names);
+            case 84:
+                return ReadAs<Param84>(Reader, Names);
+            case 85:
+                return ReadAs<Param85>(Reader, Names);
+            case 87:
+                return ReadAs<Param87>(Reader, Names);
+            default:
+                throw BinaryException("Unimplemented param type: " + std::to_string(Type));
         }
     }
 

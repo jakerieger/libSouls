@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestArchives.hpp"
 #include "TestResult.hpp"
@@ -19,12 +23,12 @@ using namespace Souls;
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     bool EndsWith(const std::string& Text, const std::string& Suffix) {
@@ -45,13 +49,18 @@ namespace {
             const std::vector<int64_t> Parents = Skeleton["parentIndices"].AsInts();
             CHECK(Parents[0] == -1);
             bool ParentsOk = true;
-            for (size_t I = 0; I < Parents.size(); ++I) ParentsOk &= Parents[I] >= -1 && Parents[I] < static_cast<int64_t>(I);
+            for (size_t I = 0; I < Parents.size(); ++I)
+                ParentsOk &= Parents[I] >= -1 && Parents[I] < static_cast<int64_t>(I);
             CHECK(ParentsOk);
             // A reference pose rotation is a unit quaternion.
             const std::vector<float> Rotation = Skeleton["referencePose"].At(0)["rotation"]["vec"].AsFloats();
-            const float Length = Rotation[0] * Rotation[0] + Rotation[1] * Rotation[1] + Rotation[2] * Rotation[2] + Rotation[3] * Rotation[3];
+            const float Length = Rotation[0] * Rotation[0] + Rotation[1] * Rotation[1] + Rotation[2] * Rotation[2] +
+                                 Rotation[3] * Rotation[3];
             CHECK(Rotation.size() == 4 && Length > 0.99f && Length < 1.01f);
-            std::printf("%s: skeleton \"%s\", %zu bones, root \"%s\"\n", Label.c_str(), Skeleton["name"].AsString().c_str(), Count,
+            std::printf("%s: skeleton \"%s\", %zu bones, root \"%s\"\n",
+                        Label.c_str(),
+                        Skeleton["name"].AsString().c_str(),
+                        Count,
                         Bones.At(0)["name"].AsString().c_str());
         }
     }
@@ -105,13 +114,15 @@ int RunHavokTests() {
                     if (Animation.Has("numFrames")) {
                         ++Spline;
                         const size_t Blocks = static_cast<size_t>(Animation["numBlocks"].AsInt());
-                        if (Animation["blockOffsets"].Size() != Blocks || Animation["data"].AsBytes().empty() || Tracks <= 0) ++Failed;
+                        if (Animation["blockOffsets"].Size() != Blocks || Animation["data"].AsBytes().empty() ||
+                            Tracks <= 0)
+                            ++Failed;
                     }
                 }
                 for (const Havok::Value& Binding : Anim.ObjectsOfType("hkaAnimationBinding")) {
                     const Havok::Value Animation = Binding["animation"].Deref();
-                    if (!Animation.IsValid() ||
-                        Binding["transformTrackToBoneIndices"].Size() != static_cast<size_t>(Animation["numberOfTransformTracks"].AsInt())) {
+                    if (!Animation.IsValid() || Binding["transformTrackToBoneIndices"].Size() !=
+                                                  static_cast<size_t>(Animation["numberOfTransformTracks"].AsInt())) {
                         ++Failed;
                     }
                 }
@@ -119,8 +130,12 @@ int RunHavokTests() {
                 if (Failed++ < 3) std::printf("  %s: %s\n", File.Name->c_str(), E.what());
             }
         }
-        std::printf("c0000_a00_hi: %zu animations read, %zu spline-compressed, %zu with problems\n", Read, Spline, Failed);
-        for (const auto& [Kind, Count] : Kinds) std::printf("  %s x%zu\n", Kind.c_str(), Count);
+        std::printf("c0000_a00_hi: %zu animations read, %zu spline-compressed, %zu with problems\n",
+                    Read,
+                    Spline,
+                    Failed);
+        for (const auto& [Kind, Count] : Kinds)
+            std::printf("  %s x%zu\n", Kind.c_str(), Count);
         CHECK(Read > 1000 && Failed == 0);
 
         // Without its compendium, an animation can't be read.
@@ -129,9 +144,7 @@ int RunHavokTests() {
                 bool Threw = false;
                 try {
                     Havok::Tagfile::Read(File.Bytes);
-                } catch (const BinaryException&) {
-                    Threw = true;
-                }
+                } catch (const BinaryException&) { Threw = true; }
                 CHECK(Threw);
                 break;
             }

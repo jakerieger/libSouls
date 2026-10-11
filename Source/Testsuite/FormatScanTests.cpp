@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 // Reads, rewrites and re-reads a sample of real files for every format that has some in the game installs. A format
 // passes when every sample reads, rewrites, and the rewrite reads and rewrites to the same bytes; byte-identical
@@ -70,12 +74,16 @@ namespace {
     const fs::path Steam = "C:/Program Files (x86)/Steam/steamapps/common";
 
     std::string Lower(std::string Text) {
-        std::transform(Text.begin(), Text.end(), Text.begin(), [](unsigned char C) { return static_cast<char>(std::tolower(C)); });
+        std::transform(Text.begin(), Text.end(), Text.begin(), [](unsigned char C) {
+            return static_cast<char>(std::tolower(C));
+        });
         return Text;
     }
 
     std::string StripDcx(const std::string& LowerName) {
-        return LowerName.size() > 4 && LowerName.compare(LowerName.size() - 4, 4, ".dcx") == 0 ? LowerName.substr(0, LowerName.size() - 4) : LowerName;
+        return LowerName.size() > 4 && LowerName.compare(LowerName.size() - 4, 4, ".dcx") == 0
+                 ? LowerName.substr(0, LowerName.size() - 4)
+                 : LowerName;
     }
 
     bool HasSuffix(const std::string& Text, const std::string& Suffix) {
@@ -119,7 +127,8 @@ namespace {
         if (All.size() <= Max) return All;
         std::vector<T> Out;
         const double Step = static_cast<double>(All.size()) / static_cast<double>(Max);
-        for (size_t I = 0; I < Max; ++I) Out.push_back(All[static_cast<size_t>(static_cast<double>(I) * Step)]);
+        for (size_t I = 0; I < Max; ++I)
+            Out.push_back(All[static_cast<size_t>(static_cast<double>(I) * Step)]);
         return Out;
     }
 
@@ -135,11 +144,15 @@ namespace {
         for (const char* Game : {"DARK SOULS REMASTERED", "ELDEN RING/Game", "DARK SOULS III/Game", "Sekiro"}) {
             const fs::path Root = Steam / Game;
             if (!fs::exists(Root)) continue;
-            if (!Where.Games.empty() && std::find(Where.Games.begin(), Where.Games.end(), std::string(Game)) == Where.Games.end()) continue;
+            if (!Where.Games.empty() &&
+                std::find(Where.Games.begin(), Where.Games.end(), std::string(Game)) == Where.Games.end())
+                continue;
 
             std::vector<fs::path> Loose, Binders;
             std::error_code Ec;
-            for (fs::recursive_directory_iterator It(Root, fs::directory_options::skip_permission_denied, Ec), End; It != End; It.increment(Ec)) {
+            for (fs::recursive_directory_iterator It(Root, fs::directory_options::skip_permission_denied, Ec), End;
+                 It != End;
+                 It.increment(Ec)) {
                 if (Ec) break;
                 if (!It->is_regular_file(Ec)) continue;
                 const std::string Name = It->path().filename().string();
@@ -149,9 +162,12 @@ namespace {
             std::sort(Loose.begin(), Loose.end());
             std::sort(Binders.begin(), Binders.end());
 
-            Loose.erase(std::remove_if(Loose.begin(), Loose.end(), [&](const fs::path& P) { return Ignored(Where, P.string()); }), Loose.end());
+            Loose.erase(
+              std::remove_if(Loose.begin(), Loose.end(), [&](const fs::path& P) { return Ignored(Where, P.string()); }),
+              Loose.end());
             for (const fs::path& Path : Spread(Loose, Max)) {
-                Samples.push_back({Path.string(), DCX::Is(ReadFile(Path)) ? DCX::Decompress(ReadFile(Path)) : ReadFile(Path)});
+                Samples.push_back(
+                  {Path.string(), DCX::Is(ReadFile(Path)) ? DCX::Decompress(ReadFile(Path)) : ReadFile(Path)});
             }
 
             size_t Inner = 0;
@@ -166,12 +182,12 @@ namespace {
                     }
                     for (BinderFile& File : Files) {
                         if (File.Name && MatchesAny(*File.Name, Where.Inner) && Inner < Max * 2) {
-                            Samples.push_back({Path.string() + "|" + *File.Name, DCX::Is(File.Bytes) ? DCX::Decompress(File.Bytes) : File.Bytes});
+                            Samples.push_back({Path.string() + "|" + *File.Name,
+                                               DCX::Is(File.Bytes) ? DCX::Decompress(File.Bytes) : File.Bytes});
                             ++Inner;
                         }
                     }
-                } catch (const std::exception&) {
-                }
+                } catch (const std::exception&) {}
             }
         }
         return Samples;
@@ -199,15 +215,17 @@ namespace {
         int Dumped = 0;
         std::vector<std::string> Notes;
         for (const Sample& S : Samples) {
-            const std::string Short = fs::path(S.Origin.substr(0, S.Origin.find('|'))).filename().string() +
-                                      (S.Origin.find('|') != std::string::npos ? S.Origin.substr(S.Origin.find('|')) : "");
+            const std::string Short =
+              fs::path(S.Origin.substr(0, S.Origin.find('|'))).filename().string() +
+              (S.Origin.find('|') != std::string::npos ? S.Origin.substr(S.Origin.find('|')) : "");
             try {
                 if (Opt.HasIs && !T::Is(S.Bytes)) {
                     {
-                    char Magic[32] = {};
-                    for (size_t I = 0; I < 8 && I < S.Bytes.size(); ++I) std::snprintf(Magic + I * 3, 4, "%02X ", S.Bytes[I]);
-                    throw std::runtime_error(std::string("not recognized by Is() (starts ") + Magic + ")");
-                }
+                        char Magic[32] = {};
+                        for (size_t I = 0; I < 8 && I < S.Bytes.size(); ++I)
+                            std::snprintf(Magic + I * 3, 4, "%02X ", S.Bytes[I]);
+                        throw std::runtime_error(std::string("not recognized by Is() (starts ") + Magic + ")");
+                    }
                 }
                 T Value = T::Read(S.Bytes);
                 ++Read;
@@ -219,11 +237,17 @@ namespace {
                     ++Identical;
                     continue;
                 }
-                if (const char* Dump = std::getenv("SOULS_DUMP"); Dump && Dumped < (std::getenv("SOULS_DUMP_COUNT") ? std::atoi(std::getenv("SOULS_DUMP_COUNT")) : 1)) {
+                if (const char* Dump = std::getenv("SOULS_DUMP");
+                    Dump &&
+                    Dumped < (std::getenv("SOULS_DUMP_COUNT") ? std::atoi(std::getenv("SOULS_DUMP_COUNT")) : 1)) {
                     const std::string Tag = Dumped == 0 ? "" : std::to_string(Dumped);
                     ++Dumped;
-                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_orig" + Tag + ".bin"), std::ios::binary).write(reinterpret_cast<const char*>(S.Bytes.data()), static_cast<std::streamsize>(S.Bytes.size()));
-                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_new" + Tag + ".bin"), std::ios::binary).write(reinterpret_cast<const char*>(Written.data()), static_cast<std::streamsize>(Written.size()));
+                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_orig" + Tag + ".bin"), std::ios::binary)
+                      .write(reinterpret_cast<const char*>(S.Bytes.data()),
+                             static_cast<std::streamsize>(S.Bytes.size()));
+                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_new" + Tag + ".bin"), std::ios::binary)
+                      .write(reinterpret_cast<const char*>(Written.data()),
+                             static_cast<std::streamsize>(Written.size()));
                 }
                 if (Opt.Canonical) {
                     if (Opt.Canonical(S.Bytes) != Opt.Canonical(Written)) {
@@ -232,29 +256,42 @@ namespace {
                     ++Equivalent;
                     continue;
                 }
-                T Again            = T::Read(Written);
-                Again.Compression  = DCX::Type::None;
+                T Again             = T::Read(Written);
+                Again.Compression   = DCX::Type::None;
                 const auto Written2 = Again.Write();
-                if (Written2 != Written) {
-                    throw std::runtime_error("rewrite is not stable");
-                }
+                if (Written2 != Written) { throw std::runtime_error("rewrite is not stable"); }
                 if (Notes.size() < 3) {
                     size_t At = 0;
-                    while (At < Written.size() && At < S.Bytes.size() && Written[At] == S.Bytes[At]) ++At;
+                    while (At < Written.size() && At < S.Bytes.size() && Written[At] == S.Bytes[At])
+                        ++At;
                     char Buffer[160];
-                    std::snprintf(Buffer, sizeof Buffer, "differs: first at 0x%zX, sizes %zu vs %zu", At, S.Bytes.size(), Written.size());
+                    std::snprintf(Buffer,
+                                  sizeof Buffer,
+                                  "differs: first at 0x%zX, sizes %zu vs %zu",
+                                  At,
+                                  S.Bytes.size(),
+                                  Written.size());
                     Notes.push_back(Short + " " + Buffer);
                 }
             } catch (const std::exception& E) {
                 ++Failed;
                 if (const char* Dump = std::getenv("SOULS_DUMP"); Dump && Failed == 1) {
-                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_fail.bin"), std::ios::binary).write(reinterpret_cast<const char*>(S.Bytes.data()), static_cast<std::streamsize>(S.Bytes.size()));
+                    std::ofstream(fs::path(Dump) / (std::string(Label) + "_fail.bin"), std::ios::binary)
+                      .write(reinterpret_cast<const char*>(S.Bytes.data()),
+                             static_cast<std::streamsize>(S.Bytes.size()));
                 }
                 if (Notes.size() < 20) Notes.push_back(Short + " FAILED: " + E.what());
             }
         }
-        std::printf("[%s] %zu samples: %d read, %d byte-identical, %d same meaning with another layout, %d failed\n", Label, Samples.size(), Read, Identical, Equivalent, Failed);
-        for (const std::string& Note : Notes) std::printf("    %s\n", Note.c_str());
+        std::printf("[%s] %zu samples: %d read, %d byte-identical, %d same meaning with another layout, %d failed\n",
+                    Label,
+                    Samples.size(),
+                    Read,
+                    Identical,
+                    Equivalent,
+                    Failed);
+        for (const std::string& Note : Notes)
+            std::printf("    %s\n", Note.c_str());
         return Failed;
     }
 
@@ -271,7 +308,9 @@ namespace {
         Registration R;
         R.Label = Label;
         R.Where = std::move(Where);
-        R.Run   = [Label = std::string(Label), Opt](const std::vector<Sample>& Samples) { return RunSamples<T>(Label.c_str(), Samples, Opt); };
+        R.Run   = [Label = std::string(Label), Opt](const std::vector<Sample>& Samples) {
+            return RunSamples<T>(Label.c_str(), Samples, Opt);
+        };
         if (Opt.Sniff) {
             R.Sniff = Opt.Sniff;
         } else if (Opt.HasIs) {
@@ -322,8 +361,7 @@ namespace {
             std::vector<std::string> ExeKeys;
             try {
                 ExeKeys = Crypto::FindRsaPublicKeys(ReadFile(Root / Game.Exe));
-            } catch (const std::exception&) {
-            }
+            } catch (const std::exception&) {}
             const fs::path KeyDir = TestPaths::BinderKeys() / Game.KeysDir / "Key";
 
             std::vector<fs::path> Headers;
@@ -352,8 +390,7 @@ namespace {
                             Header = std::move(Candidate);
                             break;
                         }
-                    } catch (const std::exception&) {
-                    }
+                    } catch (const std::exception&) {}
                 }
                 if (Header.empty()) {
                     std::printf("(%s: no key decrypts the header)\n", HeaderPath.filename().string().c_str());
@@ -367,18 +404,19 @@ namespace {
                     for (const auto& Bucket : Bhd.Buckets) {
                         for (const auto& File : Bucket) {
                             if (Read >= FilesPerHeader) break;
-                            if (File.PaddedFileSize <= 0 || File.PaddedFileSize > 24 * 1024 * 1024 || File.FileOffset + File.PaddedFileSize > Bdt.Length()) continue;
+                            if (File.PaddedFileSize <= 0 || File.PaddedFileSize > 24 * 1024 * 1024 ||
+                                File.FileOffset + File.PaddedFileSize > Bdt.Length())
+                                continue;
                             ++Read;
 
                             std::vector<uint8_t> Bytes;
                             try {
                                 Bytes = File.ReadFile(Bdt);
                                 if (DCX::Is(Bytes)) Bytes = DCX::Decompress(Bytes);
-                            } catch (const std::exception&) {
-                                continue;
-                            }
-                            const std::string Origin = std::string(Game.Dir).substr(0, 4) + ":" + HeaderPath.stem().string();
-                            const auto Wants         = [&](Registration* R) { return R->ArchiveSamples.size() < Max * 2; };
+                            } catch (const std::exception&) { continue; }
+                            const std::string Origin =
+                              std::string(Game.Dir).substr(0, 4) + ":" + HeaderPath.stem().string();
+                            const auto Wants = [&](Registration* R) { return R->ArchiveSamples.size() < Max * 2; };
 
                             if (Bytes.size() >= 4 && std::memcmp(Bytes.data(), "BND4", 4) == 0) {
                                 ++Binders;
@@ -386,23 +424,25 @@ namespace {
                                     BND4 Archive = BND4::Read(Bytes);
                                     for (BinderFile& Inner : Archive.Files) {
                                         if (!Inner.Name) continue;
-                                        if (std::getenv("SOULS_EXTS")) ++ExtCounts[fs::path(StripDcx(Lower(*Inner.Name))).extension().string()];
+                                        if (std::getenv("SOULS_EXTS"))
+                                            ++ExtCounts[fs::path(StripDcx(Lower(*Inner.Name))).extension().string()];
                                         for (Registration* R : Here) {
-                                            if (Wants(R) && !R->Where.Inner.empty() && MatchesAny(*Inner.Name, R->Where.Inner)) {
-                                                R->ArchiveSamples.push_back({Origin + "|" + *Inner.Name, DCX::Is(Inner.Bytes) ? DCX::Decompress(Inner.Bytes) : Inner.Bytes});
+                                            if (Wants(R) && !R->Where.Inner.empty() &&
+                                                MatchesAny(*Inner.Name, R->Where.Inner)) {
+                                                R->ArchiveSamples.push_back(
+                                                  {Origin + "|" + *Inner.Name,
+                                                   DCX::Is(Inner.Bytes) ? DCX::Decompress(Inner.Bytes) : Inner.Bytes});
                                             }
                                         }
                                     }
-                                } catch (const std::exception&) {
-                                }
+                                } catch (const std::exception&) {}
                             } else {
                                 for (Registration* R : Here) {
                                     if (Wants(R) && R->Sniff && Bytes.size() > 8) {
                                         bool Match = false;
                                         try {
                                             Match = R->Sniff(Bytes);
-                                        } catch (const std::exception&) {
-                                        }
+                                        } catch (const std::exception&) {}
                                         if (Match) {
                                             const std::string Where = Origin + "|" + std::to_string(File.FileNameHash);
                                             if (!Ignored(R->Where, Where)) R->ArchiveSamples.push_back({Where, Bytes});
@@ -413,13 +453,17 @@ namespace {
                             }
                         }
                     }
-                    std::printf("(%s: %zu files read, %zu binders)\n", HeaderPath.filename().string().c_str(), Read, Binders);
+                    std::printf("(%s: %zu files read, %zu binders)\n",
+                                HeaderPath.filename().string().c_str(),
+                                Read,
+                                Binders);
                 } catch (const std::exception& E) {
                     std::printf("(%s: %s)\n", HeaderPath.filename().string().c_str(), E.what());
                 }
             }
         }
-        for (const auto& [Ext, Count] : ExtCounts) std::printf("  inner %s x%d\n", Ext.c_str(), Count);
+        for (const auto& [Ext, Count] : ExtCounts)
+            std::printf("  inner %s x%d\n", Ext.c_str(), Count);
     }
 }  // namespace
 
@@ -431,60 +475,76 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
 
     std::vector<Registration> All;
     const Options Plain;
-    const Options NoIs{true, false};
-    const Options MatbinOptions{true, true, nullptr, ScanCanonical::Matbin};
-    const Options EsdOptions{true, true, nullptr, ScanCanonical::Esd};
-    const Options FxrOptions{true, true, nullptr, ScanCanonical::Fxr3};
+    const Options NoIs {true, false};
+    const Options MatbinOptions {true, true, nullptr, ScanCanonical::Matbin};
+    const Options EsdOptions {true, true, nullptr, ScanCanonical::Esd};
+    const Options FxrOptions {true, true, nullptr, ScanCanonical::Fxr3};
 
-    Register<LUAGNL>(All, "LUAGNL", Scan{{".luagnl"}, {".luabnd"}, {".luagnl"}}, NoIs);
-    Register<LUAINFO>(All, "LUAINFO", Scan{{".luainfo"}, {".luabnd"}, {".luainfo"}}, Plain);
-    Register<BTAB>(All, "BTAB", Scan{{".btab"}, {".btabbnd"}, {".btab"}}, NoIs);
-    Register<MCP>(All, "MCP", Scan{{".mcp"}, {}, {}}, NoIs);
-    Register<MCG>(All, "MCG", Scan{{".mcg"}, {}, {}}, NoIs);
-    Register<NVM>(All, "NVM", Scan{{".nvm"}, {".nvmbnd"}, {".nvm"}}, NoIs);
-    Register<CCM>(All, "CCM", Scan{{".ccm"}, {}, {}}, NoIs);
-    Register<ENFL>(All, "ENFL", Scan{{".entryfilelist"}, {}, {}}, Plain);
-    Register<EMEVD>(All, "EMEVD", Scan{{".emevd", ".evd"}, {}, {}}, Plain);
-    Register<EMELD>(All, "EMELD", Scan{{".emeld", ".eld"}, {}, {}}, Plain);
-    Register<BTL>(All, "BTL", Scan{{".btl"}, {".btlbnd"}, {".btl"}}, NoIs);
-    Register<BTPB>(All, "BTPB", Scan{{".btpb"}, {".btpbnd", ".btpbbnd"}, {".btpb"}}, NoIs);
-    Register<CLM2>(All, "CLM2", Scan{{".clm"}, {}, {".clm"}}, Plain);
-    Register<F2TR>(All, "F2TR", Scan{{".flver2tri"}, {}, {".flver2tri"}}, Plain);
-    Register<PMDCL>(All, "PMDCL", Scan{{".pmdcl"}, {}, {".pmdcl"}}, NoIs);
-    Register<RMB>(All, "RMB", Scan{{".rmb"}, {".rumblebnd"}, {".rmb"}}, NoIs);
-    Register<GRASS>(All, "GRASS", Scan{{".grass"}, {}, {".grass"}}, Plain);
-    Register<EDGE>(All, "EDGE", Scan{{".edge"}, {}, {".edge"}}, NoIs);
-    Register<MATBIN>(All, "MATBIN", Scan{{".matbin"}, {".matbinbnd"}, {".matbin"}}, MatbinOptions);
-    Register<MTD>(All, "MTD", Scan{{".mtd"}, {".mtdbnd"}, {".mtd"}}, Plain);
-    Register<ESD>(All, "ESD", Scan{{".esd"}, {".talkesdbnd", ".menuesdbnd", ".chresdbnd"}, {".esd"}}, EsdOptions);
-    Register<EDD>(All, "EDD", Scan{{".edd"}, {}, {".edd"}}, Options{false, true});
+    Register<LUAGNL>(All, "LUAGNL", Scan {{".luagnl"}, {".luabnd"}, {".luagnl"}}, NoIs);
+    Register<LUAINFO>(All, "LUAINFO", Scan {{".luainfo"}, {".luabnd"}, {".luainfo"}}, Plain);
+    Register<BTAB>(All, "BTAB", Scan {{".btab"}, {".btabbnd"}, {".btab"}}, NoIs);
+    Register<MCP>(All, "MCP", Scan {{".mcp"}, {}, {}}, NoIs);
+    Register<MCG>(All, "MCG", Scan {{".mcg"}, {}, {}}, NoIs);
+    Register<NVM>(All, "NVM", Scan {{".nvm"}, {".nvmbnd"}, {".nvm"}}, NoIs);
+    Register<CCM>(All, "CCM", Scan {{".ccm"}, {}, {}}, NoIs);
+    Register<ENFL>(All, "ENFL", Scan {{".entryfilelist"}, {}, {}}, Plain);
+    Register<EMEVD>(All, "EMEVD", Scan {{".emevd", ".evd"}, {}, {}}, Plain);
+    Register<EMELD>(All, "EMELD", Scan {{".emeld", ".eld"}, {}, {}}, Plain);
+    Register<BTL>(All, "BTL", Scan {{".btl"}, {".btlbnd"}, {".btl"}}, NoIs);
+    Register<BTPB>(All, "BTPB", Scan {{".btpb"}, {".btpbnd", ".btpbbnd"}, {".btpb"}}, NoIs);
+    Register<CLM2>(All, "CLM2", Scan {{".clm"}, {}, {".clm"}}, Plain);
+    Register<F2TR>(All, "F2TR", Scan {{".flver2tri"}, {}, {".flver2tri"}}, Plain);
+    Register<PMDCL>(All, "PMDCL", Scan {{".pmdcl"}, {}, {".pmdcl"}}, NoIs);
+    Register<RMB>(All, "RMB", Scan {{".rmb"}, {".rumblebnd"}, {".rmb"}}, NoIs);
+    Register<GRASS>(All, "GRASS", Scan {{".grass"}, {}, {".grass"}}, Plain);
+    Register<EDGE>(All, "EDGE", Scan {{".edge"}, {}, {".edge"}}, NoIs);
+    Register<MATBIN>(All, "MATBIN", Scan {{".matbin"}, {".matbinbnd"}, {".matbin"}}, MatbinOptions);
+    Register<MTD>(All, "MTD", Scan {{".mtd"}, {".mtdbnd"}, {".mtd"}}, Plain);
+    Register<ESD>(All, "ESD", Scan {{".esd"}, {".talkesdbnd", ".menuesdbnd", ".chresdbnd"}, {".esd"}}, EsdOptions);
+    Register<EDD>(All, "EDD", Scan {{".edd"}, {}, {".edd"}}, Options {false, true});
     // Elden Ring changed the GPARAM and NVA layouts; the Elden Ring variants aren't supported yet.
-    Register<GPARAM>(All, "GPARAM", Scan{{".gparam", ".fltparam"}, {".gparambnd"}, {".gparam", ".fltparam"}, {"DARK SOULS REMASTERED", "DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
-    Register<ACB>(All, "ACB", Scan{{".acb"}, {}, {".acb"}}, Plain);
-    Register<NGP>(All, "NGP", Scan{{".ngp"}, {}, {".ngp"}}, Plain);
-    Register<NVA>(All, "NVA", Scan{{".nva"}, {".nvabnd"}, {".nva"}, {"DARK SOULS REMASTERED", "DARK SOULS III/Game", "Sekiro"}, {}, true}, Plain);
-    Register<MSB1>(All, "MSB1", Scan{{".msb"}, {}, {}, {"DARK SOULS REMASTERED"}, {"m99_"}}, NoIs);
-    Register<DRB>(All, "DRB", Scan{{".drb"}, {}, {}, {"DARK SOULS REMASTERED"}}, Plain);
-    Register<MQB>(All, "MQB", Scan{{".mqb"}, {".remobnd"}, {".mqb"}}, Plain);
-    Register<FMB>(All, "FMB", Scan{{".expb"}, {}, {}}, Plain);
+    Register<GPARAM>(All,
+                     "GPARAM",
+                     Scan {{".gparam", ".fltparam"},
+                           {".gparambnd"},
+                           {".gparam", ".fltparam"},
+                           {"DARK SOULS REMASTERED", "DARK SOULS III/Game", "Sekiro"},
+                           {},
+                           true},
+                     Plain);
+    Register<ACB>(All, "ACB", Scan {{".acb"}, {}, {".acb"}}, Plain);
+    Register<NGP>(All, "NGP", Scan {{".ngp"}, {}, {".ngp"}}, Plain);
+    Register<NVA>(
+      All,
+      "NVA",
+      Scan {{".nva"}, {".nvabnd"}, {".nva"}, {"DARK SOULS REMASTERED", "DARK SOULS III/Game", "Sekiro"}, {}, true},
+      Plain);
+    Register<MSB1>(All, "MSB1", Scan {{".msb"}, {}, {}, {"DARK SOULS REMASTERED"}, {"m99_"}}, NoIs);
+    Register<DRB>(All, "DRB", Scan {{".drb"}, {}, {}, {"DARK SOULS REMASTERED"}}, Plain);
+    Register<MQB>(All, "MQB", Scan {{".mqb"}, {".remobnd"}, {".mqb"}}, Plain);
+    Register<FMB>(All, "FMB", Scan {{".expb"}, {}, {}}, Plain);
     // Packed games: files come out of the archives (their names aren't known, so unnamed files are sniffed).
     // Every 64-bit MSB starts "MSB "; the version of its first param (at 0x10) tells the games apart.
     const auto MsbVersion = [](int32_t Version) {
-        return Options{true, true, [Version](const std::vector<uint8_t>& Bytes) {
-            int32_t Found = 0;
-            if (Bytes.size() < 0x14 || std::memcmp(Bytes.data(), "MSB ", 4) != 0) return false;
-            std::memcpy(&Found, Bytes.data() + 0x10, 4);
-            return Found == Version;
-        }};
+        return Options {true, true, [Version](const std::vector<uint8_t>& Bytes) {
+                            int32_t Found = 0;
+                            if (Bytes.size() < 0x14 || std::memcmp(Bytes.data(), "MSB ", 4) != 0) return false;
+                            std::memcpy(&Found, Bytes.data() + 0x10, 4);
+                            return Found == Version;
+                        }};
     };
-    Register<MSBS>(All, "MSBS", Scan{{}, {}, {}, {"Sekiro"}, {}, true}, MsbVersion(35));
-    Register<MSB3>(All, "MSB3", Scan{{}, {}, {}, {"DARK SOULS III/Game"}, {}, true}, MsbVersion(3));
+    Register<MSBS>(All, "MSBS", Scan {{}, {}, {}, {"Sekiro"}, {}, true}, MsbVersion(35));
+    Register<MSB3>(All, "MSB3", Scan {{}, {}, {}, {"DARK SOULS III/Game"}, {}, true}, MsbVersion(3));
     // Elden Ring maps are only found with SOULS_SCAN_ER; the msbe suite tests all of them by name.
-    Register<MSBE>(All, "MSBE", Scan{{}, {}, {}, {"ELDEN RING/Game"}, {}, false}, MsbVersion(73));
+    Register<MSBE>(All, "MSBE", Scan {{}, {}, {}, {"ELDEN RING/Game"}, {}, false}, MsbVersion(73));
     // Sekiro and Elden Ring use TAE version 0x1000D, whose events are kept as raw bytes.
-    // Sekiro's 4105415867 isn't an animation TAE (it names OpeningMovie.mp4 through a layout upstream can't read either).
-    Register<TAE3>(All, "TAE3", Scan{{}, {}, {".tae"}, {"DARK SOULS III/Game", "Sekiro"}, {"|4105415867"}, true}, Plain);
-    Register<FXR3>(All, "FXR3", Scan{{}, {}, {".fxr"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, FxrOptions);
+    // Sekiro's 4105415867 isn't an animation TAE (it names OpeningMovie.mp4 through a layout upstream can't read
+    // either).
+    Register<TAE3>(All,
+                   "TAE3",
+                   Scan {{}, {}, {".tae"}, {"DARK SOULS III/Game", "Sekiro"}, {"|4105415867"}, true},
+                   Plain);
+    Register<FXR3>(All, "FXR3", Scan {{}, {}, {".fxr"}, {"DARK SOULS III/Game", "Sekiro"}, {}, true}, FxrOptions);
 
     std::vector<Registration*> Selected;
     for (Registration& R : All) {
@@ -506,7 +566,9 @@ int RunFormatScanTests(const std::string& Filter, size_t Max) {
         const bool ArchiveOnly = (R->Where.Archives && R->Where.Loose.empty() && R->Where.BinderExts.empty()) ||
                                  (std::getenv("SOULS_SCAN_ER") && std::string(std::getenv("SOULS_SCAN_ER")) == "only");
         std::vector<Sample> Samples = ArchiveOnly ? std::vector<Sample>() : Collect(R->Where, Max);
-        Samples.insert(Samples.end(), std::make_move_iterator(R->ArchiveSamples.begin()), std::make_move_iterator(R->ArchiveSamples.end()));
+        Samples.insert(Samples.end(),
+                       std::make_move_iterator(R->ArchiveSamples.begin()),
+                       std::make_move_iterator(R->ArchiveSamples.end()));
         Failures += R->Run(Samples);
     }
     std::printf(Failures == 0 ? "Format scan passed\n" : "Format scan: %d failure(s)\n", Failures);

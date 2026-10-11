@@ -37,10 +37,10 @@ add_executable(Testsuite
 target_link_libraries(Testsuite PRIVATE Souls)
 # Community data the tests use, from the Vendor submodules (Paramdex, BinderKeys).
 target_compile_definitions(Testsuite PRIVATE SOULS_VENDOR_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../../Vendor")
-if(MSVC)
+if (MSVC)
     # TAE3Events.hpp holds a huge variant of event types.
     target_compile_options(Testsuite PRIVATE /bigobj)
-endif()
+endif ()
 
 # One CTest entry per suite. Exit code 77 means "skipped" (no Oodle DLL / no game install).
 function(souls_add_test Name Suite)

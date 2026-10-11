@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -39,14 +43,15 @@ public:
             if (!fs::exists(Pem) || !fs::exists(Bhd)) continue;
             try {
                 const std::vector<uint8_t> KeyText = ReadAll(Pem);
-                const auto Header = Souls::Crypto::DecryptRsaBlocks(std::string(KeyText.begin(), KeyText.end()), ReadAll(Bhd));
+                const auto Header =
+                  Souls::Crypto::DecryptRsaBlocks(std::string(KeyText.begin(), KeyText.end()), ReadAll(Bhd));
                 const Souls::BHD5 Bhd5 = Souls::BHD5::Read(Header, Souls::BHD5::Game::EldenRing);
                 for (const auto& Bucket : Bhd5.Buckets) {
-                    for (const auto& File : Bucket) ByHash.emplace(File.FileNameHash, Located{Readers.size(), File});
+                    for (const auto& File : Bucket)
+                        ByHash.emplace(File.FileNameHash, Located {Readers.size(), File});
                 }
                 Readers.push_back(std::make_unique<Souls::BinaryReader>(Game / (std::string(Name) + ".bdt")));
-            } catch (const std::exception&) {
-            }
+            } catch (const std::exception&) {}
         }
     }
 

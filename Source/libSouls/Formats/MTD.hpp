@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -39,9 +43,26 @@ namespace Souls {
 
         /// @brief The blending mode of the material, used in value g_BlendMode.
         enum class BlendMode {
-            Normal = 0, TexEdge = 1, Blend = 2, Water = 3, Add = 4, Sub = 5, Mul = 6, AddMul = 7, SubMul = 8, WaterWave = 9,
-            LSNormal = 32, LSTexEdge = 33, LSBlend = 34, LSWater = 35, LSAdd = 36, LSSub = 37, LSMul = 38, LSAddMul = 39,
-            LSSubMul = 40, LSWaterWave = 41,
+            Normal      = 0,
+            TexEdge     = 1,
+            Blend       = 2,
+            Water       = 3,
+            Add         = 4,
+            Sub         = 5,
+            Mul         = 6,
+            AddMul      = 7,
+            SubMul      = 8,
+            WaterWave   = 9,
+            LSNormal    = 32,
+            LSTexEdge   = 33,
+            LSBlend     = 34,
+            LSWater     = 35,
+            LSAdd       = 36,
+            LSSub       = 37,
+            LSMul       = 38,
+            LSAddMul    = 39,
+            LSSubMul    = 40,
+            LSWaterWave = 41,
         };
 
         /// @brief The lighting type of a material, used in value g_LightingType.
@@ -58,13 +79,14 @@ namespace Souls {
             /// @brief The type of this value.
             ParamType Type = ParamType::Int;
             /// @brief The value itself.
-            ParamValue Value = int32_t{0};
+            ParamValue Value = int32_t {0};
 
             Param() = default;
             /// @brief Creates a param with the default (zero) value for the type.
             Param(std::string Name, ParamType Type);
             /// @brief A param with a name, type and value.
-            Param(std::string Name, ParamType Type, ParamValue Value) : Name(std::move(Name)), Type(Type), Value(std::move(Value)) {}
+            Param(std::string Name, ParamType Type, ParamValue Value)
+                : Name(std::move(Name)), Type(Type), Value(std::move(Value)) {}
         };
 
         /// @brief Texture types used by the material, filled in in each FLVER.

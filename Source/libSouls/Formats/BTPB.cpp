@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BTPB.hpp"
 
@@ -9,16 +13,16 @@ namespace Souls {
         const bool BigEndian = Reader.ReadAt<uint8_t>(0x10) != 0;
         Reader.Order         = BigEndian ? Endian::Big : Endian::Little;
 
-        const int32_t Unk00 = Reader.Assert<int32_t>(2, 3);
-        const int32_t Unk04 = Reader.Assert<int32_t>(0, 1);
+        const int32_t Unk00      = Reader.Assert<int32_t>(2, 3);
+        const int32_t Unk04      = Reader.Assert<int32_t>(0, 1);
         const int32_t GroupCount = Reader.ReadInt32();
         const int32_t DataLength = Reader.ReadInt32();
         Reader.Assert<uint8_t>(BigEndian ? 1 : 0);
         Reader.AssertPattern(3, 0);
         const int32_t GroupSize = Reader.Assert<int32_t>(0x40, 0x48, 0x98);
         const int32_t ProbeSize = Reader.Assert<int32_t>(0x1C, 0x48);
-        Unk1C = Reader.ReadVector3();
-        Unk28 = Reader.ReadVector3();
+        Unk1C                   = Reader.ReadVector3();
+        Unk28                   = Reader.ReadVector3();
         Reader.Assert<int64_t>(0);
 
         if (!BigEndian && Unk00 == 2 && Unk04 == 1 && GroupSize == 0x40 && ProbeSize == 0x1C) {
@@ -40,17 +44,17 @@ namespace Souls {
         Groups.reserve(static_cast<size_t>(GroupCount));
         for (int32_t I = 0; I < GroupCount; ++I) {
             Group G;
-            const int64_t NameOffset = Reader.ReadVarint();
-            G.Flags08                = Reader.ReadInt32();
-            const int32_t ProbeCount = Reader.ReadInt32();
-            G.Unk10                  = Reader.ReadInt32();
-            G.Unk14                  = Reader.ReadInt32();
-            G.Unk18                  = Reader.ReadInt32();
-            G.Unk1C                  = Reader.ReadFloat();
-            G.Unk20                  = Reader.ReadFloat();
-            G.Unk24                  = Reader.ReadFloat();
-            G.Unk28                  = Reader.ReadVector3();
-            G.Unk34                  = Reader.ReadVector3();
+            const int64_t NameOffset   = Reader.ReadVarint();
+            G.Flags08                  = Reader.ReadInt32();
+            const int32_t ProbeCount   = Reader.ReadInt32();
+            G.Unk10                    = Reader.ReadInt32();
+            G.Unk14                    = Reader.ReadInt32();
+            G.Unk18                    = Reader.ReadInt32();
+            G.Unk1C                    = Reader.ReadFloat();
+            G.Unk20                    = Reader.ReadFloat();
+            G.Unk24                    = Reader.ReadFloat();
+            G.Unk28                    = Reader.ReadVector3();
+            G.Unk34                    = Reader.ReadVector3();
             const int64_t ProbesOffset = Reader.ReadVarint();
             if (Version >= BTPBVersion::DarkSouls3) {
                 G.Unk48 = Reader.ReadFloat();
@@ -62,9 +66,7 @@ namespace Souls {
                 G.Unk96 = Reader.ReadByte();
                 Reader.Assert<uint8_t>(0);
             }
-            if ((G.Flags08 & 1) != 0) {
-                G.Name = Reader.GetUTF16Text(DataStart + NameOffset);
-            }
+            if ((G.Flags08 & 1) != 0) { G.Name = Reader.GetUTF16Text(DataStart + NameOffset); }
 
             Reader.StepIn(DataStart + ProbesOffset);
             for (int32_t P = 0; P < ProbeCount; ++P) {
@@ -90,17 +92,27 @@ namespace Souls {
             case BTPBVersion::DarkSouls2LE:
             case BTPBVersion::DarkSouls2BE:
                 BigEndian = Version == BTPBVersion::DarkSouls2BE;
-                Unk00 = 2; Unk04 = 1; GroupSize = 0x40; ProbeSize = 0x1C;
+                Unk00     = 2;
+                Unk04     = 1;
+                GroupSize = 0x40;
+                ProbeSize = 0x1C;
                 break;
             case BTPBVersion::Bloodborne:
                 BigEndian = false;
-                Unk00 = 2; Unk04 = 1; GroupSize = 0x48; ProbeSize = 0x48;
+                Unk00     = 2;
+                Unk04     = 1;
+                GroupSize = 0x48;
+                ProbeSize = 0x48;
                 break;
             case BTPBVersion::DarkSouls3:
                 BigEndian = false;
-                Unk00 = 3; Unk04 = 0; GroupSize = 0x98; ProbeSize = 0x48;
+                Unk00     = 3;
+                Unk04     = 0;
+                GroupSize = 0x98;
+                ProbeSize = 0x48;
                 break;
-            default: throw BinaryException("Write is not supported for this BTPB version.");
+            default:
+                throw BinaryException("Write is not supported for this BTPB version.");
         }
 
         Writer.Order      = BigEndian ? Endian::Big : Endian::Little;

@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -18,26 +22,24 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
     namespace fs = std::filesystem;
-    using LT = FLVER::LayoutType;
-    using LS = FLVER::LayoutSemantic;
+    using LT     = FLVER::LayoutType;
+    using LS     = FLVER::LayoutSemantic;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -51,20 +53,33 @@ namespace {
 
     // The vertex layouts of the common games.
     FLVER::LayoutMembers LayoutDS3() {
-        return {{LT::Float3, LS::Position},         {LT::Byte4B, LS::Normal},   {LT::Byte4B, LS::Tangent},
-                {LT::Byte4B, LS::BoneIndices},      {LT::Short4toFloat4A, LS::BoneWeights}, {LT::UV, LS::UV},
+        return {{LT::Float3, LS::Position},
+                {LT::Byte4B, LS::Normal},
+                {LT::Byte4B, LS::Tangent},
+                {LT::Byte4B, LS::BoneIndices},
+                {LT::Short4toFloat4A, LS::BoneWeights},
+                {LT::UV, LS::UV},
                 {LT::Byte4C, LS::VertexColor}};
     }
 
     FLVER::LayoutMembers LayoutDS1() {
-        return {{LT::Float3, LS::Position},  {LT::Byte4B, LS::Normal},  {LT::Byte4B, LS::Tangent},
-                {LT::Byte4B, LS::Bitangent}, {LT::Byte4C, LS::VertexColor}, {LT::Short2toFloat2, LS::UV},
-                {LT::Byte4B, LS::BoneIndices}, {LT::Byte4A, LS::BoneWeights}};
+        return {{LT::Float3, LS::Position},
+                {LT::Byte4B, LS::Normal},
+                {LT::Byte4B, LS::Tangent},
+                {LT::Byte4B, LS::Bitangent},
+                {LT::Byte4C, LS::VertexColor},
+                {LT::Short2toFloat2, LS::UV},
+                {LT::Byte4B, LS::BoneIndices},
+                {LT::Byte4A, LS::BoneWeights}};
     }
 
     // A two-buffer mesh: positions and normals in one buffer, UVs in the second.
     FLVER::LayoutMembers LayoutSplitA() {
-        return {{LT::Float3, LS::Position}, {LT::Byte4B, LS::Normal}, {LT::Byte4B, LS::Tangent}, {LT::Byte4B, LS::BoneIndices}, {LT::Byte4A, LS::BoneWeights}};
+        return {{LT::Float3, LS::Position},
+                {LT::Byte4B, LS::Normal},
+                {LT::Byte4B, LS::Tangent},
+                {LT::Byte4B, LS::BoneIndices},
+                {LT::Byte4A, LS::BoneWeights}};
     }
     FLVER::LayoutMembers LayoutSplitB() {
         return {{LT::UVPair, LS::UV}, {LT::Float4, LS::VertexColor}};
@@ -75,14 +90,17 @@ namespace {
         V.Position = {Seed * 0.5f, Seed * -0.25f + 1, static_cast<float>(Seed % 7)};
         // Values chosen to survive being squeezed into bytes and shorts exactly.
         const float Quantum = 1.f / 127.f;
-        V.Normal      = {(Seed % 20 - 10) * Quantum, (Seed % 13 - 6) * Quantum, 1.f};
-        V.NormalW     = 0;
-        V.BoneIndices = {Seed % 5, (Seed + 1) % 5, 0, 0};
-        V.BoneWeights = {64.f / 127.f, 63.f / 127.f, 0.f, 0.f};
-        for (size_t I = 0; I < UVs; ++I) V.UVs.push_back({(Seed + static_cast<int>(I)) / 8.f, (Seed * 3 % 16) / 16.f, 0.f});
-        for (size_t I = 0; I < Tangents; ++I) V.Tangents.push_back({1.f, 0.f, -Quantum * (Seed % 5), 1.f});
+        V.Normal            = {(Seed % 20 - 10) * Quantum, (Seed % 13 - 6) * Quantum, 1.f};
+        V.NormalW           = 0;
+        V.BoneIndices       = {Seed % 5, (Seed + 1) % 5, 0, 0};
+        V.BoneWeights       = {64.f / 127.f, 63.f / 127.f, 0.f, 0.f};
+        for (size_t I = 0; I < UVs; ++I)
+            V.UVs.push_back({(Seed + static_cast<int>(I)) / 8.f, (Seed * 3 % 16) / 16.f, 0.f});
+        for (size_t I = 0; I < Tangents; ++I)
+            V.Tangents.push_back({1.f, 0.f, -Quantum * (Seed % 5), 1.f});
         V.Bitangent = {0.f, 1.f, 0.f, 1.f};
-        for (size_t I = 0; I < Colors; ++I) V.Colors.push_back(FLVER::VertexColor(uint8_t{255}, uint8_t(Seed * 5 % 256), uint8_t(0), uint8_t(128)));
+        for (size_t I = 0; I < Colors; ++I)
+            V.Colors.push_back(FLVER::VertexColor(uint8_t {255}, uint8_t(Seed * 5 % 256), uint8_t(0), uint8_t(128)));
         return V;
     }
 
@@ -97,12 +115,12 @@ namespace {
         // Bones: a small chain.
         for (int I = 0; I < 5; ++I) {
             FLVER::Bone Bone;
-            Bone.Name                 = I == 0 ? "Master" : "Bone_" + std::to_string(I);
-            Bone.ParentIndex          = static_cast<int16_t>(I - 1);
-            Bone.ChildIndex           = static_cast<int16_t>(I < 4 ? I + 1 : -1);
-            Bone.Translation          = {0.f, 0.5f * I, 0.f};
-            Bone.Rotation             = {0.1f * I, 0.f, 0.2f};
-            Bone.BoundingBoxMax       = {1.f, 1.f, 1.f};
+            Bone.Name           = I == 0 ? "Master" : "Bone_" + std::to_string(I);
+            Bone.ParentIndex    = static_cast<int16_t>(I - 1);
+            Bone.ChildIndex     = static_cast<int16_t>(I < 4 ? I + 1 : -1);
+            Bone.Translation    = {0.f, 0.5f * I, 0.f};
+            Bone.Rotation       = {0.1f * I, 0.f, 0.2f};
+            Bone.BoundingBoxMax = {1.f, 1.f, 1.f};
             Model.Bones.push_back(Bone);
         }
 
@@ -135,16 +153,16 @@ namespace {
         Gx.Items.push_back({Version <= 0x20010 ? "1" : "GXMD", 100, {1, 2, 3, 4, 5, 6, 7, 8}});
         if (Version >= 0x20010) {
             Gx.Items.push_back({Version <= 0x20010 ? "2" : "GXFF", 100, {9, 9, 9, 9}});
-            Gx.TerminatorID = Version <= 0x20010 ? INT_MAX : -1;
+            Gx.TerminatorID     = Version <= 0x20010 ? INT_MAX : -1;
             Gx.TerminatorLength = 4;
         }
         Model.GXLists.push_back(Gx);
         Model.Materials[0].GXIndex = 0;
 
         // Meshes.
-        const bool Split = Version >= 0x20013;
-        Model.BufferLayouts = Split ? std::vector<FLVER::LayoutMembers>{LayoutDS3(), LayoutSplitA(), LayoutSplitB()}
-                                    : std::vector<FLVER::LayoutMembers>{LayoutDS1()};
+        const bool Split    = Version >= 0x20013;
+        Model.BufferLayouts = Split ? std::vector<FLVER::LayoutMembers> {LayoutDS3(), LayoutSplitA(), LayoutSplitB()}
+                                    : std::vector<FLVER::LayoutMembers> {LayoutDS1()};
 
         for (int M = 0; M < 3; ++M) {
             FLVER2::Mesh Mesh;
@@ -156,13 +174,15 @@ namespace {
 
             if (Split && M == 2) {
                 Mesh.VertexBuffers = {{1}, {2}};  // positions etc. in one buffer, UVs and colors in the other
-                for (size_t I = 0; I < Count; ++I) Mesh.Vertices.push_back(MakeVertex(static_cast<int>(I) + M, 2, 1, 1));
+                for (size_t I = 0; I < Count; ++I)
+                    Mesh.Vertices.push_back(MakeVertex(static_cast<int>(I) + M, 2, 1, 1));
             } else {
                 Mesh.VertexBuffers = {{0}};
-                const size_t UVs = Split ? 1 : 1;
-                for (size_t I = 0; I < Count; ++I) Mesh.Vertices.push_back(MakeVertex(static_cast<int>(I) + M, UVs, 1, 1));
+                const size_t UVs   = Split ? 1 : 1;
+                for (size_t I = 0; I < Count; ++I)
+                    Mesh.Vertices.push_back(MakeVertex(static_cast<int>(I) + M, UVs, 1, 1));
             }
-            if (M == 1) Mesh.BoundingBox = FLVER2::BoundingBoxes{{-1, -1, -1}, {1, 1, 1}, {0, 0, 0}};
+            if (M == 1) Mesh.BoundingBox = FLVER2::BoundingBoxes {{-1, -1, -1}, {1, 1, 1}, {0, 0, 0}};
 
             FLVER2::FaceSet Triangles;
             for (int I = 0; I + 2 < static_cast<int>(Count); ++I) {
@@ -171,7 +191,8 @@ namespace {
             FLVER2::FaceSet Strip;
             Strip.Flags         = FLVER2::FaceSet::FSFlags::LodLevel1;
             Strip.TriangleStrip = true;
-            for (int I = 0; I < static_cast<int>(Count); ++I) Strip.Indices.push_back(I);
+            for (int I = 0; I < static_cast<int>(Count); ++I)
+                Strip.Indices.push_back(I);
             Mesh.FaceSets = {Triangles, Strip};
             Model.Meshes.push_back(std::move(Mesh));
         }
@@ -186,29 +207,32 @@ namespace {
     }
 
     bool SameModelStructure(const FLVER2& A, const FLVER2& B) {
-        if (A.Dummies.size() != B.Dummies.size() || A.Materials.size() != B.Materials.size() || A.Bones.size() != B.Bones.size() ||
-            A.Meshes.size() != B.Meshes.size() || A.BufferLayouts.size() != B.BufferLayouts.size() || A.GXLists.size() != B.GXLists.size()) {
+        if (A.Dummies.size() != B.Dummies.size() || A.Materials.size() != B.Materials.size() ||
+            A.Bones.size() != B.Bones.size() || A.Meshes.size() != B.Meshes.size() ||
+            A.BufferLayouts.size() != B.BufferLayouts.size() || A.GXLists.size() != B.GXLists.size()) {
             return false;
         }
         for (size_t I = 0; I < A.Bones.size(); ++I) {
             const auto& X = A.Bones[I];
             const auto& Y = B.Bones[I];
-            if (X.Name != Y.Name || X.ParentIndex != Y.ParentIndex || X.ChildIndex != Y.ChildIndex || X.Translation != Y.Translation ||
-                X.Rotation != Y.Rotation || X.Scale != Y.Scale) {
+            if (X.Name != Y.Name || X.ParentIndex != Y.ParentIndex || X.ChildIndex != Y.ChildIndex ||
+                X.Translation != Y.Translation || X.Rotation != Y.Rotation || X.Scale != Y.Scale) {
                 return false;
             }
         }
         for (size_t I = 0; I < A.Dummies.size(); ++I) {
             const auto& X = A.Dummies[I];
             const auto& Y = B.Dummies[I];
-            if (X.Position != Y.Position || X.ReferenceID != Y.ReferenceID || X.Tint != Y.Tint || X.UseUpwardVector != Y.UseUpwardVector) {
+            if (X.Position != Y.Position || X.ReferenceID != Y.ReferenceID || X.Tint != Y.Tint ||
+                X.UseUpwardVector != Y.UseUpwardVector) {
                 return false;
             }
         }
         for (size_t I = 0; I < A.Materials.size(); ++I) {
             const auto& X = A.Materials[I];
             const auto& Y = B.Materials[I];
-            if (X.Name != Y.Name || X.MTD != Y.MTD || X.Flags != Y.Flags || X.GXIndex != Y.GXIndex || X.Textures.size() != Y.Textures.size()) {
+            if (X.Name != Y.Name || X.MTD != Y.MTD || X.Flags != Y.Flags || X.GXIndex != Y.GXIndex ||
+                X.Textures.size() != Y.Textures.size()) {
                 return false;
             }
             for (size_t T = 0; T < X.Textures.size(); ++T) {
@@ -221,9 +245,11 @@ namespace {
         for (size_t I = 0; I < A.Meshes.size(); ++I) {
             const auto& X = A.Meshes[I];
             const auto& Y = B.Meshes[I];
-            if (X.Dynamic != Y.Dynamic || X.MaterialIndex != Y.MaterialIndex || X.DefaultBoneIndex != Y.DefaultBoneIndex ||
-                X.BoneIndices != Y.BoneIndices || X.Vertices.size() != Y.Vertices.size() || X.FaceSets.size() != Y.FaceSets.size() ||
-                X.VertexBuffers.size() != Y.VertexBuffers.size() || X.BoundingBox.has_value() != Y.BoundingBox.has_value()) {
+            if (X.Dynamic != Y.Dynamic || X.MaterialIndex != Y.MaterialIndex ||
+                X.DefaultBoneIndex != Y.DefaultBoneIndex || X.BoneIndices != Y.BoneIndices ||
+                X.Vertices.size() != Y.Vertices.size() || X.FaceSets.size() != Y.FaceSets.size() ||
+                X.VertexBuffers.size() != Y.VertexBuffers.size() ||
+                X.BoundingBox.has_value() != Y.BoundingBox.has_value()) {
                 return false;
             }
             for (size_t F = 0; F < X.FaceSets.size(); ++F) {
@@ -251,7 +277,7 @@ namespace {
     void TestSynthetic() {
         for (const int32_t Version : {0x2000D, 0x20010, 0x20014, 0x2001A}) {
             try {
-                FLVER2 Source = MakeModel(Version);
+                FLVER2 Source    = MakeModel(Version);
                 const auto Bytes = Source.Write();
                 CHECK(FLVER2::Is(Bytes));
                 FLVER2 Back = FLVER2::Read(Bytes);
@@ -272,9 +298,9 @@ namespace {
 
         // Big-endian files.
         {
-            FLVER2 Source = MakeModel(0x2000D);
+            FLVER2 Source           = MakeModel(0x2000D);
             Source.Header.BigEndian = true;
-            const auto Bytes = Source.Write();
+            const auto Bytes        = Source.Write();
             CHECK(FLVER2::Is(Bytes) && Bytes[6] == 'B');
             FLVER2 Back = FLVER2::Read(Bytes);
             CHECK(Back.Header.BigEndian && SameModelStructure(Source, Back) && Back.Write() == Bytes);
@@ -285,7 +311,8 @@ namespace {
             FLVER2::FaceSet Strip;
             Strip.TriangleStrip = true;
             Strip.Indices       = {0, 1, 2, 3, 0xFFFF, 4, 5, 6, 6, 7};
-            CHECK((Strip.Triangulate(true) == std::vector<int32_t>{0, 1, 2, 3, 2, 1, 4, 5, 6}));  // flip, restart, degenerates dropped
+            CHECK((Strip.Triangulate(true) ==
+                   std::vector<int32_t> {0, 1, 2, 3, 2, 1, 4, 5, 6}));  // flip, restart, degenerates dropped
             CHECK(Strip.Triangulate(true, true).size() > Strip.Triangulate(true).size());
             int32_t True = 0, Total = 0;
             Strip.AddFaceCounts(true, True, Total);
@@ -298,7 +325,8 @@ namespace {
 
             const FLVER2 Model = MakeModel(0x20014);
             const auto Faces   = Model.Meshes[0].GetFaces();  // the plain triangle list, not the LOD strip
-            CHECK(Faces.size() == 6 && Faces[0][0] == &Model.Meshes[0].Vertices[0] && Faces[0][2] == &Model.Meshes[0].Vertices[2]);
+            CHECK(Faces.size() == 6 && Faces[0][0] == &Model.Meshes[0].Vertices[0] &&
+                  Faces[0][2] == &Model.Meshes[0].Vertices[2]);
             CHECK(!Model.Meshes[0].GetFaces(FLVER2::FaceSet::FSFlags::LodLevel1).empty());
         }
 
@@ -315,46 +343,49 @@ namespace {
         // Transforms and other small things.
         {
             FLVER::Bone Bone;
-            Bone.Translation = {1, 2, 3};
-            Bone.Scale       = {2, 2, 2};
+            Bone.Translation    = {1, 2, 3};
+            Bone.Scale          = {2, 2, 2};
             const Vector3 Moved = Bone.ComputeLocalTransform().Transform({1, 0, 0});
             CHECK(NearV3(Moved, {3, 2, 3}, 1e-5f));  // scaled to 2, then translated
             FLVER::Bone Rotated;
             Rotated.Rotation = {0, 3.14159265f / 2, 0};  // a quarter turn about Y
             CHECK(NearV3(Rotated.ComputeLocalTransform().Transform({1, 0, 0}), {0, 0, -1}, 1e-5f));
-            CHECK(FLVER::LayoutMember(LT::Float3, LS::Position).Size() == 12 && FLVER::LayoutMember(LT::EdgeCompressed, LS::Position).Size() == 1);
+            CHECK(FLVER::LayoutMember(LT::Float3, LS::Position).Size() == 12 &&
+                  FLVER::LayoutMember(LT::EdgeCompressed, LS::Position).Size() == 1);
             CHECK(FLVER::LayoutSize(LayoutDS3()) == 12 + 4 + 4 + 4 + 8 + 4 + 4);
             CHECK(FLVER::LayoutMember(LT::Float3, LS::Position).ToString() == "Float3: Position");
-            CHECK(FLVER::VertexColor(uint8_t{255}, uint8_t{0}, uint8_t{51}, uint8_t{255}).G == 51 / 255.f);
+            CHECK(FLVER::VertexColor(uint8_t {255}, uint8_t {0}, uint8_t {51}, uint8_t {255}).G == 51 / 255.f);
         }
 
         // Detection and bad input.
         {
             FLVER2 Model = MakeModel(0x20014);
-            auto Bytes = Model.Write();
-            CHECK(!FLVER2::Is(std::vector<uint8_t>{'F', 'L', 'V', 'E', 'R', 0, 'L', 0, 1, 0, 0, 0}));  // version too low
-            CHECK(!FLVER2::Is(std::vector<uint8_t>(64, 0x42)) && !FLVER2::IsRead(std::vector<uint8_t>(64, 0x42)).has_value());
+            auto Bytes   = Model.Write();
+            CHECK(
+              !FLVER2::Is(std::vector<uint8_t> {'F', 'L', 'V', 'E', 'R', 0, 'L', 0, 1, 0, 0, 0}));  // version too low
+            CHECK(!FLVER2::Is(std::vector<uint8_t>(64, 0x42)) &&
+                  !FLVER2::IsRead(std::vector<uint8_t>(64, 0x42)).has_value());
             CHECK(Throws([&] { FLVER2::Read(std::vector<uint8_t>(64, 0x42)); }));
             std::vector<uint8_t> Truncated(Bytes.begin(), Bytes.begin() + 0x100);
             CHECK(Throws([&] { FLVER2::Read(Truncated); }));
             std::vector<uint8_t> BadVersion = Bytes;
-            BadVersion[8] = 0x99;
+            BadVersion[8]                   = 0x99;
             CHECK(Throws([&] { FLVER2::Read(BadVersion); }));
             std::vector<uint8_t> BadCount = Bytes;
-            BadCount[0x1C] = 0xFF;
-            BadCount[0x1D] = 0xFF;
-            BadCount[0x1E] = 0xFF;
-            BadCount[0x1F] = 0x7F;
+            BadCount[0x1C]                = 0xFF;
+            BadCount[0x1D]                = 0xFF;
+            BadCount[0x1E]                = 0xFF;
+            BadCount[0x1F]                = 0x7F;
             CHECK(Throws([&] { FLVER2::Read(BadCount); }));
 
             // Writing mistakes.
-            FLVER2 BadLayout = MakeModel(0x20014);
+            FLVER2 BadLayout                                 = MakeModel(0x20014);
             BadLayout.Meshes[0].VertexBuffers[0].LayoutIndex = 99;
             CHECK(Throws([&] { BadLayout.Write(); }));
             FLVER2 MissingUV = MakeModel(0x20014);
             MissingUV.Meshes[1].Vertices[0].UVs.clear();
             CHECK(Throws([&] { MissingUV.Write(); }));
-            FLVER2 BadGX = MakeModel(0x20014);
+            FLVER2 BadGX               = MakeModel(0x20014);
             BadGX.Materials[0].GXIndex = 5;
             CHECK(Throws([&] { BadGX.Write(); }));
         }
@@ -374,10 +405,12 @@ namespace {
         return Text.size() >= Suffix.size() && Text.compare(Text.size() - Suffix.size(), Suffix.size(), Suffix) == 0;
     }
 
-    std::vector<fs::path> CollectBinders(const fs::path& Root, std::initializer_list<const char*> Suffixes, size_t Max) {
+    std::vector<fs::path>
+    CollectBinders(const fs::path& Root, std::initializer_list<const char*> Suffixes, size_t Max) {
         std::vector<fs::path> Found;
         if (!fs::exists(Root)) return Found;
-        for (const auto& Entry : fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
+        for (const auto& Entry :
+             fs::recursive_directory_iterator(Root, fs::directory_options::skip_permission_denied)) {
             if (!Entry.is_regular_file()) continue;
             const std::string Name = Entry.path().filename().string();
             for (const char* Suffix : Suffixes) {
@@ -390,7 +423,8 @@ namespace {
         std::sort(Found.begin(), Found.end());
         const size_t Step = std::max<size_t>(1, Found.size() / std::max<size_t>(1, Max));
         std::vector<fs::path> Sampled;
-        for (size_t I = 0; I < Found.size(); I += Step) Sampled.push_back(Found[I]);
+        for (size_t I = 0; I < Found.size(); I += Step)
+            Sampled.push_back(Found[I]);
         return Sampled;
     }
 
@@ -418,21 +452,24 @@ namespace {
             for (const auto& Set : Mesh.FaceSets) {
                 for (const int32_t Index : Set.Indices) {
                     // 0xFFFF restarts a strip; other indices have to name a vertex.
-                    if (!(Set.TriangleStrip && Index == 0xFFFF) && (Index < 0 || static_cast<size_t>(Index) >= Mesh.Vertices.size())) {
+                    if (!(Set.TriangleStrip && Index == 0xFFFF) &&
+                        (Index < 0 || static_cast<size_t>(Index) >= Mesh.Vertices.size())) {
                         Why = "mesh " + std::to_string(M) + " has a face index outside its vertices";
                         return false;
                     }
                 }
             }
             for (const auto& Vertex : Mesh.Vertices) {
-                if (!std::isfinite(Vertex.Position.X) || !std::isfinite(Vertex.Position.Y) || !std::isfinite(Vertex.Position.Z)) {
+                if (!std::isfinite(Vertex.Position.X) || !std::isfinite(Vertex.Position.Y) ||
+                    !std::isfinite(Vertex.Position.Z)) {
                     Why = "mesh " + std::to_string(M) + " has a non-finite position";
                     return false;
                 }
             }
         }
         for (const auto& Material : Model.Materials) {
-            if (Material.GXIndex != -1 && (Material.GXIndex < 0 || static_cast<size_t>(Material.GXIndex) >= Model.GXLists.size())) {
+            if (Material.GXIndex != -1 &&
+                (Material.GXIndex < 0 || static_cast<size_t>(Material.GXIndex) >= Model.GXLists.size())) {
                 Why = "bad GX index";
                 return false;
             }
@@ -470,21 +507,29 @@ namespace {
             } else {
                 const FLVER2 Back = FLVER2::Read(Rewritten);
                 if (!SameModelStructure(Model, Back)) {
-                    std::printf("FAIL %s: %s changed after a rewrite\n", Where.filename().string().c_str(), Name.c_str());
+                    std::printf("FAIL %s: %s changed after a rewrite\n",
+                                Where.filename().string().c_str(),
+                                Name.c_str());
                     ++Totals.Failed;
                 }
                 if (Totals.Different.size() < 6) {
                     size_t At = 0;
-                    while (At < Rewritten.size() && At < Bytes.size() && Rewritten[At] == Bytes[At]) ++At;
-                    Totals.Different.push_back(Where.filename().string() + " " + Name + " (v0x" + [&] {
-                        char Hex[16];
-                        std::snprintf(Hex, sizeof Hex, "%X", Model.Header.Version);
-                        return std::string(Hex);
-                    }() + ", first difference at 0x" + [&] {
-                        char Hex[32];
-                        std::snprintf(Hex, sizeof Hex, "%zX", At);
-                        return std::string(Hex);
-                    }() + ", sizes " + std::to_string(Bytes.size()) + " vs " + std::to_string(Rewritten.size()) + ")");
+                    while (At < Rewritten.size() && At < Bytes.size() && Rewritten[At] == Bytes[At])
+                        ++At;
+                    Totals.Different.push_back(
+                      Where.filename().string() + " " + Name + " (v0x" +
+                      [&] {
+                          char Hex[16];
+                          std::snprintf(Hex, sizeof Hex, "%X", Model.Header.Version);
+                          return std::string(Hex);
+                      }() +
+                      ", first difference at 0x" +
+                      [&] {
+                          char Hex[32];
+                          std::snprintf(Hex, sizeof Hex, "%zX", At);
+                          return std::string(Hex);
+                      }() +
+                      ", sizes " + std::to_string(Bytes.size()) + " vs " + std::to_string(Rewritten.size()) + ")");
                 }
             }
         } catch (const std::exception& E) {
@@ -511,13 +556,23 @@ namespace {
     }
 
     void Report(const char* Label, const Stats& Totals) {
-        std::printf("%s: %d binders, %d models (%d meshes, %d vertices, %d faces, %d bones), %d byte-identical rewrites, %d failures\n",
-                    Label, Totals.Binders, Totals.Models, Totals.Meshes, Totals.Vertices, Totals.Faces, Totals.Bones,
-                    Totals.Identical, Totals.Failed);
+        std::printf("%s: %d binders, %d models (%d meshes, %d vertices, %d faces, %d bones), %d byte-identical "
+                    "rewrites, %d failures\n",
+                    Label,
+                    Totals.Binders,
+                    Totals.Models,
+                    Totals.Meshes,
+                    Totals.Vertices,
+                    Totals.Faces,
+                    Totals.Bones,
+                    Totals.Identical,
+                    Totals.Failed);
         std::printf("  versions:");
-        for (const auto& [Version, Count] : Totals.Versions) std::printf(" 0x%X x%d", Version, Count);
+        for (const auto& [Version, Count] : Totals.Versions)
+            std::printf(" 0x%X x%d", Version, Count);
         std::printf("\n");
-        for (const std::string& Line : Totals.Different) std::printf("  differs: %s\n", Line.c_str());
+        for (const std::string& Line : Totals.Different)
+            std::printf("  differs: %s\n", Line.c_str());
         Failures += Totals.Failed;
     }
 }  // namespace

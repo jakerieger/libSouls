@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -16,12 +20,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     namespace fs = std::filesystem;
@@ -45,8 +49,8 @@ int TestCApiFlverReal() {
     for (size_t I = 0; I < souls_binder_file_count(Bnd) && !Model; ++I) {
         const char* Name = souls_binder_file_name(Bnd, I);
         if (!Name || std::strlen(Name) < 6 || std::strcmp(Name + std::strlen(Name) - 6, ".flver") != 0) continue;
-        size_t Size         = 0;
-        const uint8_t* Data = souls_binder_file_bytes(Bnd, I, &Size);
+        size_t Size           = 0;
+        const uint8_t* Data   = souls_binder_file_bytes(Bnd, I, &Size);
         SoulsFlver* Candidate = souls_flver_read_memory(Data, Size);
         if (Candidate && souls_flver_mesh_count(Candidate) > 0) Model = Candidate;
         else souls_flver_free(Candidate);
@@ -76,24 +80,30 @@ int TestCApiFlverReal() {
     CHECK(Vertices > 0);
     CHECK(souls_flver_attribute_components(SOULS_VERTEX_POSITION) == 3);
     CHECK(souls_flver_attribute_sets(Model, 0, SOULS_VERTEX_UV) >= 1);
-    CHECK(souls_flver_mesh_material(Model, 0) >= 0 && static_cast<size_t>(souls_flver_mesh_material(Model, 0)) < Materials);
+    CHECK(souls_flver_mesh_material(Model, 0) >= 0 &&
+          static_cast<size_t>(souls_flver_mesh_material(Model, 0)) < Materials);
 
     std::vector<float> Positions(Vertices * 3);
-    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), Positions.size()) == SOULS_OK);
+    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), Positions.size()) ==
+          SOULS_OK);
     std::vector<float> TooSmall(3);
-    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, TooSmall.data(), TooSmall.size()) == SOULS_ERR_INVALID_ARGUMENT);
+    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, TooSmall.data(), TooSmall.size()) ==
+          SOULS_ERR_INVALID_ARGUMENT);
     std::vector<float> Normals(Vertices * 3), Uvs(Vertices * 3), Weights(Vertices * 4);
     CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_NORMAL, 0, Normals.data(), Normals.size()) == SOULS_OK);
     CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_UV, 0, Uvs.data(), Uvs.size()) == SOULS_OK);
-    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_BONE_WEIGHTS, 0, Weights.data(), Weights.size()) == SOULS_OK);
-    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_BONE_INDICES, 0, Weights.data(), Weights.size()) == SOULS_ERR_INVALID_ARGUMENT);
+    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_BONE_WEIGHTS, 0, Weights.data(), Weights.size()) ==
+          SOULS_OK);
+    CHECK(souls_flver_read_vertex_floats(Model, 0, SOULS_VERTEX_BONE_INDICES, 0, Weights.data(), Weights.size()) ==
+          SOULS_ERR_INVALID_ARGUMENT);
     std::vector<int32_t> BoneIndices(Vertices * 4);
     CHECK(souls_flver_read_vertex_ints(Model, 0, BoneIndices.data(), BoneIndices.size()) == SOULS_OK);
 
     // Normals are unit length for (nearly) every vertex.
     size_t Unit = 0;
     for (size_t I = 0; I < Vertices; ++I) {
-        const float L = std::sqrt(Normals[I * 3] * Normals[I * 3] + Normals[I * 3 + 1] * Normals[I * 3 + 1] + Normals[I * 3 + 2] * Normals[I * 3 + 2]);
+        const float L = std::sqrt(Normals[I * 3] * Normals[I * 3] + Normals[I * 3 + 1] * Normals[I * 3 + 1] +
+                                  Normals[I * 3 + 2] * Normals[I * 3 + 2]);
         if (std::fabs(L - 1.f) < 0.05f) ++Unit;
     }
     CHECK(Unit * 10 > Vertices * 9);
@@ -105,13 +115,17 @@ int TestCApiFlverReal() {
     std::vector<int32_t> Faces(Indices);
     CHECK(souls_flver_read_face_set(Model, 0, 0, Faces.data(), Faces.size()) == SOULS_OK);
     bool InRange = true;
-    for (int32_t Index : Faces) InRange = InRange && Index >= 0 && static_cast<size_t>(Index) < Vertices;
+    for (int32_t Index : Faces)
+        InRange = InRange && Index >= 0 && static_cast<size_t>(Index) < Vertices;
     CHECK(InRange);
 
     // Move every vertex of the first mesh and read it back after a write.
-    for (size_t I = 0; I < Vertices; ++I) Positions[I * 3 + 1] += 1.f;
-    CHECK(souls_flver_write_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), Positions.size()) == SOULS_OK);
-    CHECK(souls_flver_write_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), 3) == SOULS_ERR_INVALID_ARGUMENT);
+    for (size_t I = 0; I < Vertices; ++I)
+        Positions[I * 3 + 1] += 1.f;
+    CHECK(souls_flver_write_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), Positions.size()) ==
+          SOULS_OK);
+    CHECK(souls_flver_write_vertex_floats(Model, 0, SOULS_VERTEX_POSITION, 0, Positions.data(), 3) ==
+          SOULS_ERR_INVALID_ARGUMENT);
     CHECK(souls_flver_set_bone_name(Model, 0, "RenamedRoot") == SOULS_OK);
 
     SoulsBuffer Edited = souls_flver_write_memory(Model);
@@ -121,7 +135,8 @@ int TestCApiFlverReal() {
     if (Back) {
         CHECK(souls_flver_vertex_count(Back, 0) == Vertices);
         std::vector<float> Again(Vertices * 3);
-        CHECK(souls_flver_read_vertex_floats(Back, 0, SOULS_VERTEX_POSITION, 0, Again.data(), Again.size()) == SOULS_OK);
+        CHECK(souls_flver_read_vertex_floats(Back, 0, SOULS_VERTEX_POSITION, 0, Again.data(), Again.size()) ==
+              SOULS_OK);
         CHECK(std::fabs(Again[1] - Positions[1]) < 0.001f);
         CHECK(std::strcmp(souls_flver_bone_name(Back, 0), "RenamedRoot") == 0);
 

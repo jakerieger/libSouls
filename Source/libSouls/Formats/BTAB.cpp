@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/8/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "BTAB.hpp"
 
@@ -28,9 +32,7 @@ namespace Souls {
             E.AtlasID                        = Reader.ReadInt32();
             E.UVOffset                       = Reader.ReadVector2();
             E.UVScale                        = Reader.ReadVector2();
-            if (Reader.VarintLong) {
-                Reader.Assert<int32_t>(0);
-            }
+            if (Reader.VarintLong) { Reader.Assert<int32_t>(0); }
             E.PartName     = Reader.GetUTF16Text(StringsStart + PartNameOffset);
             E.MaterialName = Reader.GetUTF16Text(StringsStart + MaterialNameOffset);
             Entries.push_back(std::move(E));
@@ -69,9 +71,7 @@ namespace Souls {
             Writer.WriteInt32(E.AtlasID);
             Writer.WriteVector2(E.UVOffset);
             Writer.WriteVector2(E.UVScale);
-            if (Writer.VarintLong) {
-                Writer.WriteInt32(0);
-            }
+            if (Writer.VarintLong) { Writer.WriteInt32(0); }
         }
     }
 }  // namespace Souls

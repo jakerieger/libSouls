@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include <libSouls/SoulsFile.hpp>
 
@@ -10,12 +14,12 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     // A minimal format: "TST1", big-endian count, then that many int32 values.
@@ -70,9 +74,7 @@ namespace {
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 }  // namespace
@@ -96,8 +98,11 @@ int RunSoulsFileTests() {
     }
 
     // Through each family of DCX compression: Compression is detected on read and reused on write.
-    for (const DCX::Type Type : {DCX::Type::DCP_DFLT, DCX::Type::DCX_DFLT_10000_44_9, DCX::Type::DCX_EDGE,
-                                 DCX::Type::DCX_KRAK_6, DCX::Type::DCX_ZSTD}) {
+    for (const DCX::Type Type : {DCX::Type::DCP_DFLT,
+                                 DCX::Type::DCX_DFLT_10000_44_9,
+                                 DCX::Type::DCX_EDGE,
+                                 DCX::Type::DCX_KRAK_6,
+                                 DCX::Type::DCX_ZSTD}) {
         const auto Bytes = Original.Write(Type);
         CHECK(TestFile::Is(Bytes));
         TestFile Back = TestFile::Read(Bytes);
@@ -108,7 +113,7 @@ int RunSoulsFileTests() {
 
     // IsRead / Is on things that aren't this format.
     {
-        const std::vector<uint8_t> Junk{'N', 'O', 'P', 'E', 1, 2, 3};
+        const std::vector<uint8_t> Junk {'N', 'O', 'P', 'E', 1, 2, 3};
         CHECK(!TestFile::Is(Junk));
         CHECK(!TestFile::Is(std::span<const uint8_t>()));
         CHECK(!TestFile::IsRead(Junk).has_value());
@@ -124,7 +129,7 @@ int RunSoulsFileTests() {
     {
         TestFile Bad;  // empty Values
         CHECK(Throws([&] { Bad.Write(); }));
-        TestFile Bad2 = Original;
+        TestFile Bad2  = Original;
         Bad2.Forbidden = nullptr;
         CHECK(Throws([&] { Bad2.Write(DCX::Type::DCX_ZSTD); }));
         std::exception_ptr Error;
@@ -145,7 +150,10 @@ int RunSoulsFileTests() {
         CHECK(TestFile::IsRead(Path).has_value());
 
         const fs::path Empty = Dir / "empty.bin";
-        { BinaryWriter W(Empty); W.Finish(); }
+        {
+            BinaryWriter W(Empty);
+            W.Finish();
+        }
         CHECK(!TestFile::Is(Empty));
         fs::remove_all(Dir);
     }

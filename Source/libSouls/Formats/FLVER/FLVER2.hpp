@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/8/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -44,7 +48,7 @@ namespace Souls {
             /// @brief Whether strings are UTF-16 (true) or Shift-JIS (false).
             bool Unicode = true;
             /// @brief Unknown.
-            bool Unk4A   = false;
+            bool Unk4A = false;
             /// @brief Unknown; I believe this is the primitive restart constant, but I'm not certain.
             int32_t Unk4C = 0;
             /// @brief Unknown.
@@ -62,17 +66,17 @@ namespace Souls {
             /// @brief The texture's path (often just a file name).
             std::string Path;
             /// @brief Unknown.
-            Vector2 Scale{1.f, 1.f};
+            Vector2 Scale {1.f, 1.f};
             /// @brief Unknown; observed values 0, 1, 2.
-            uint8_t Unk10  = 0;
+            uint8_t Unk10 = 0;
             /// @brief Unknown.
-            bool Unk11     = false;
+            bool Unk11 = false;
             /// @brief Unknown.
-            float Unk14    = 0;
+            float Unk14 = 0;
             /// @brief Unknown.
-            float Unk18    = 0;
+            float Unk18 = 0;
             /// @brief Unknown.
-            float Unk1C    = 0;
+            float Unk1C = 0;
 
             /// @brief "Type = Path".
             std::string ToString() const { return Type + " = " + Path; }
@@ -83,7 +87,7 @@ namespace Souls {
             /// @brief A number as text for Dark Souls II and earlier, four characters ("GXMD", ...) after.
             std::string ID = "0";
             /// @brief Unknown; typically 100.
-            int32_t Unk04  = 100;
+            int32_t Unk04 = 100;
             /// @brief Raw parameter data, usually just a bunch of floats.
             std::vector<uint8_t> Data;
         };
@@ -93,8 +97,9 @@ namespace Souls {
             /// @brief The items, in order.
             std::vector<GXItem> Items;
             /// @brief Value indicating the terminating item; typically int.MaxValue, sometimes -1.
-            int32_t TerminatorID     = INT_MAX;
-            /// @brief The length in bytes of the terminator data block; most likely not important, but varies in original files.
+            int32_t TerminatorID = INT_MAX;
+            /// @brief The length in bytes of the terminator data block; most likely not important, but varies in
+            /// original files.
             int32_t TerminatorLength = 0;
         };
 
@@ -111,7 +116,7 @@ namespace Souls {
             /// @brief Index into GXLists, or -1.
             int32_t GXIndex = -1;
             /// @brief Unknown; only used in Sekiro.
-            int32_t Unk18   = 0;
+            int32_t Unk18 = 0;
 
             /// @brief "Name | MTD".
             std::string ToString() const { return Name + " | " + MTD; }
@@ -135,12 +140,14 @@ namespace Souls {
             /// @brief Whether triangles can be seen through from behind.
             bool CullBackfaces = true;
             /// @brief Unknown.
-            int16_t Unk06      = 0;
+            int16_t Unk06 = 0;
             /// @brief Indices to vertices in a mesh.
             std::vector<int32_t> Indices;
 
             /// @brief Whether a flag is set.
-            bool HasFlag(FSFlags Flag) const { return (static_cast<uint32_t>(Flags) & static_cast<uint32_t>(Flag)) != 0; }
+            bool HasFlag(FSFlags Flag) const {
+                return (static_cast<uint32_t>(Flags) & static_cast<uint32_t>(Flag)) != 0;
+            }
 
             /// @brief The indices as plain triangles (three per face).
             ///
@@ -166,18 +173,19 @@ namespace Souls {
         /// @brief An optional bounding box for meshes added in DS2.
         struct SOULS_API BoundingBoxes {
             /// @brief Minimum extent of the mesh.
-            Vector3 Min{-FLT_MAX, -FLT_MAX, -FLT_MAX};
+            Vector3 Min {-FLT_MAX, -FLT_MAX, -FLT_MAX};
             /// @brief Maximum extent of the mesh.
-            Vector3 Max{FLT_MAX, FLT_MAX, FLT_MAX};
+            Vector3 Max {FLT_MAX, FLT_MAX, FLT_MAX};
             Vector3 Unk;  ///< Sekiro and later
         };
 
         /// @brief An individual chunk of a model.
         struct SOULS_API Mesh {
-            uint8_t Dynamic       = 0;  ///< 0 for static meshes, 1 for ones bound to bones
+            uint8_t Dynamic = 0;  ///< 0 for static meshes, 1 for ones bound to bones
             /// @brief Index of the material used by all triangles in this mesh.
             int32_t MaterialIndex = 0;
-            /// @brief Apparently does nothing. Usually points to a dummy bone named after the model, possibly just for labelling.
+            /// @brief Apparently does nothing. Usually points to a dummy bone named after the model, possibly just for
+            /// labelling.
             int32_t DefaultBoneIndex = -1;
             /// @brief Which bones the vertices' bone indices refer to.
             std::vector<int32_t> BoneIndices;
@@ -193,7 +201,8 @@ namespace Souls {
             /// @brief The triangles of the face set with the given flags (or the first one) as vertices.
             ///
             /// Pointers are into Vertices.
-            std::vector<std::array<const FLVER::Vertex*, 3>> GetFaces(FaceSet::FSFlags Flags = FaceSet::FSFlags::None) const;
+            std::vector<std::array<const FLVER::Vertex*, 3>>
+            GetFaces(FaceSet::FSFlags Flags = FaceSet::FSFlags::None) const;
         };
 
         /// @brief Unknown; only present in Sekiro.
@@ -201,7 +210,7 @@ namespace Souls {
             /// @brief Unknown.
             struct Member {
                 /// @brief Unknown; maybe bone indices? Length 4.
-                std::array<int16_t, 4> Unk00{};
+                std::array<int16_t, 4> Unk00 {};
                 /// @brief Unknown; seems to just count up from 0.
                 int32_t Index = 0;
             };

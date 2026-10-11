@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -80,12 +84,14 @@ namespace {
         switch (Attribute) {
             case SOULS_VERTEX_POSITION:
             case SOULS_VERTEX_NORMAL:
-            case SOULS_VERTEX_UV: return 3;
+            case SOULS_VERTEX_UV:
+                return 3;
             case SOULS_VERTEX_BONE_WEIGHTS:
             case SOULS_VERTEX_BONE_INDICES:
             case SOULS_VERTEX_TANGENT:
             case SOULS_VERTEX_BITANGENT:
-            case SOULS_VERTEX_COLOR: return 4;
+            case SOULS_VERTEX_COLOR:
+                return 4;
         }
         ThrowInvalid("invalid vertex attribute");
     }
@@ -93,10 +99,14 @@ namespace {
     size_t SetCount(const FLVER2::Mesh& Mesh, SoulsVertexAttribute Attribute) {
         if (Mesh.Vertices.empty()) return 0;
         switch (Attribute) {
-            case SOULS_VERTEX_UV: return Mesh.Vertices.front().UVs.size();
-            case SOULS_VERTEX_TANGENT: return Mesh.Vertices.front().Tangents.size();
-            case SOULS_VERTEX_COLOR: return Mesh.Vertices.front().Colors.size();
-            default: return 1;
+            case SOULS_VERTEX_UV:
+                return Mesh.Vertices.front().UVs.size();
+            case SOULS_VERTEX_TANGENT:
+                return Mesh.Vertices.front().Tangents.size();
+            case SOULS_VERTEX_COLOR:
+                return Mesh.Vertices.front().Colors.size();
+            default:
+                return 1;
         }
     }
 
@@ -126,7 +136,7 @@ SOULS_C_API SoulsStatus souls_flver_write_file(SoulsFlver* flver, const char* pa
 }
 
 SOULS_C_API SoulsBuffer souls_flver_write_memory(SoulsFlver* flver) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(Model(flver).Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(Model(flver).Write()); });
 }
 
 SOULS_C_API int32_t souls_flver_version(const SoulsFlver* flver) {
@@ -169,12 +179,14 @@ SOULS_C_API int32_t souls_flver_bone_parent(const SoulsFlver* flver, size_t bone
 
 SOULS_C_API SoulsStatus souls_flver_set_bone_parent(SoulsFlver* flver, size_t bone, int32_t parent) {
     return Guard([&] {
-        if (parent < -1 || parent >= static_cast<int32_t>(Model(flver).Bones.size())) ThrowInvalid("parent index out of range");
+        if (parent < -1 || parent >= static_cast<int32_t>(Model(flver).Bones.size()))
+            ThrowInvalid("parent index out of range");
         BoneAt(flver, bone).ParentIndex = static_cast<int16_t>(parent);
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_bone_transform(const SoulsFlver* flver, size_t bone, float translation[3], float rotation[3], float scale[3]) {
+SOULS_C_API SoulsStatus souls_flver_bone_transform(
+  const SoulsFlver* flver, size_t bone, float translation[3], float rotation[3], float scale[3]) {
     return Guard([&] {
         const FLVER::Bone& B = BoneAt(flver, bone);
         Out3(translation, B.Translation);
@@ -183,8 +195,8 @@ SOULS_C_API SoulsStatus souls_flver_bone_transform(const SoulsFlver* flver, size
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_set_bone_transform(SoulsFlver* flver, size_t bone, const float translation[3], const float rotation[3],
-                                                       const float scale[3]) {
+SOULS_C_API SoulsStatus souls_flver_set_bone_transform(
+  SoulsFlver* flver, size_t bone, const float translation[3], const float rotation[3], const float scale[3]) {
     return Guard([&] {
         FLVER::Bone& B = BoneAt(flver, bone);
         if (translation) B.Translation = In3(translation);
@@ -197,8 +209,14 @@ SOULS_C_API size_t souls_flver_dummy_count(const SoulsFlver* flver) {
     return GuardValue<size_t>(0, [&] { return Model(flver).Dummies.size(); });
 }
 
-SOULS_C_API SoulsStatus souls_flver_dummy(const SoulsFlver* flver, size_t dummy, float position[3], float forward[3], float upward[3],
-                                          int32_t* reference_id, int32_t* parent_bone, int32_t* attach_bone) {
+SOULS_C_API SoulsStatus souls_flver_dummy(const SoulsFlver* flver,
+                                          size_t dummy,
+                                          float position[3],
+                                          float forward[3],
+                                          float upward[3],
+                                          int32_t* reference_id,
+                                          int32_t* parent_bone,
+                                          int32_t* attach_bone) {
     return Guard([&] {
         const FLVER::Dummy& D = DummyAt(flver, dummy);
         Out3(position, D.Position);
@@ -210,8 +228,14 @@ SOULS_C_API SoulsStatus souls_flver_dummy(const SoulsFlver* flver, size_t dummy,
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_set_dummy(SoulsFlver* flver, size_t dummy, const float position[3], const float forward[3],
-                                              const float upward[3], int32_t reference_id, int32_t parent_bone, int32_t attach_bone) {
+SOULS_C_API SoulsStatus souls_flver_set_dummy(SoulsFlver* flver,
+                                              size_t dummy,
+                                              const float position[3],
+                                              const float forward[3],
+                                              const float upward[3],
+                                              int32_t reference_id,
+                                              int32_t parent_bone,
+                                              int32_t attach_bone) {
     return Guard([&] {
         FLVER::Dummy& D = DummyAt(flver, dummy);
         if (position) D.Position = In3(position);
@@ -257,7 +281,8 @@ SOULS_C_API const char* souls_flver_texture_path(const SoulsFlver* flver, size_t
     return GuardValue<const char*>(nullptr, [&] { return TextureAt(flver, material, texture).Path.c_str(); });
 }
 
-SOULS_C_API SoulsStatus souls_flver_set_texture(SoulsFlver* flver, size_t material, size_t texture, const char* type, const char* path) {
+SOULS_C_API SoulsStatus
+souls_flver_set_texture(SoulsFlver* flver, size_t material, size_t texture, const char* type, const char* path) {
     return Guard([&] {
         FLVER2::Texture& T = TextureAt(flver, material, texture);
         T.Type             = Text(type, "type is NULL");
@@ -296,7 +321,8 @@ SOULS_C_API int32_t souls_flver_mesh_material(const SoulsFlver* flver, size_t me
 
 SOULS_C_API SoulsStatus souls_flver_set_mesh_material(SoulsFlver* flver, size_t mesh, int32_t material) {
     return Guard([&] {
-        if (material < 0 || static_cast<size_t>(material) >= Model(flver).Materials.size()) ThrowInvalid("material index out of range");
+        if (material < 0 || static_cast<size_t>(material) >= Model(flver).Materials.size())
+            ThrowInvalid("material index out of range");
         MeshAt(flver, mesh).MaterialIndex = material;
     });
 }
@@ -305,17 +331,22 @@ SOULS_C_API int souls_flver_mesh_is_dynamic(const SoulsFlver* flver, size_t mesh
     return GuardValue(0, [&] { return MeshAt(flver, mesh).Dynamic != 0 ? 1 : 0; });
 }
 
-SOULS_C_API SoulsStatus souls_flver_mesh_bone_indices(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity, size_t* out_count) {
+SOULS_C_API SoulsStatus
+souls_flver_mesh_bone_indices(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity, size_t* out_count) {
     return Guard([&] {
         const auto& Indices = MeshAt(flver, mesh).BoneIndices;
         if (out_count) *out_count = Indices.size();
         if (out) {
-            for (size_t I = 0; I < Indices.size() && I < capacity; ++I) out[I] = Indices[I];
+            for (size_t I = 0; I < Indices.size() && I < capacity; ++I)
+                out[I] = Indices[I];
         }
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_set_mesh_bone_indices(SoulsFlver* flver, size_t mesh, const int32_t* indices, size_t count) {
+SOULS_C_API SoulsStatus souls_flver_set_mesh_bone_indices(SoulsFlver* flver,
+                                                          size_t mesh,
+                                                          const int32_t* indices,
+                                                          size_t count) {
     return Guard([&] {
         if (!indices && count) ThrowInvalid("indices is NULL");
         MeshAt(flver, mesh).BoneIndices.assign(indices, indices + count);
@@ -357,12 +388,13 @@ SOULS_C_API size_t souls_flver_attribute_components(SoulsVertexAttribute attribu
     return GuardValue<size_t>(0, [&] { return Components(attribute); });
 }
 
-SOULS_C_API SoulsStatus souls_flver_read_vertex_floats(const SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set,
-                                                       float* out, size_t capacity) {
+SOULS_C_API SoulsStatus souls_flver_read_vertex_floats(
+  const SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set, float* out, size_t capacity) {
     return Guard([&] {
         const FLVER2::Mesh& M = MeshAt(flver, mesh);
         const size_t N        = Components(attribute);
-        if (attribute == SOULS_VERTEX_BONE_INDICES) ThrowInvalid("bone indices are integers; use souls_flver_read_vertex_ints");
+        if (attribute == SOULS_VERTEX_BONE_INDICES)
+            ThrowInvalid("bone indices are integers; use souls_flver_read_vertex_ints");
         if (!out && !M.Vertices.empty()) ThrowInvalid("out is NULL");
         if (capacity < M.Vertices.size() * N) ThrowInvalid("out is too small");
         if (M.Vertices.empty()) return;
@@ -370,39 +402,63 @@ SOULS_C_API SoulsStatus souls_flver_read_vertex_floats(const SoulsFlver* flver, 
         size_t At = 0;
         for (const FLVER::Vertex& V : M.Vertices) {
             switch (attribute) {
-                case SOULS_VERTEX_POSITION: out[At++] = V.Position.X; out[At++] = V.Position.Y; out[At++] = V.Position.Z; break;
-                case SOULS_VERTEX_NORMAL: out[At++] = V.Normal.X; out[At++] = V.Normal.Y; out[At++] = V.Normal.Z; break;
+                case SOULS_VERTEX_POSITION:
+                    out[At++] = V.Position.X;
+                    out[At++] = V.Position.Y;
+                    out[At++] = V.Position.Z;
+                    break;
+                case SOULS_VERTEX_NORMAL:
+                    out[At++] = V.Normal.X;
+                    out[At++] = V.Normal.Y;
+                    out[At++] = V.Normal.Z;
+                    break;
                 case SOULS_VERTEX_BONE_WEIGHTS:
-                    for (float W : V.BoneWeights) out[At++] = W;
+                    for (float W : V.BoneWeights)
+                        out[At++] = W;
                     break;
                 case SOULS_VERTEX_UV: {
                     const Vector3& UV = V.UVs.at(set);
-                    out[At++] = UV.X; out[At++] = UV.Y; out[At++] = UV.Z;
+                    out[At++]         = UV.X;
+                    out[At++]         = UV.Y;
+                    out[At++]         = UV.Z;
                     break;
                 }
                 case SOULS_VERTEX_TANGENT: {
                     const Vector4& T = V.Tangents.at(set);
-                    out[At++] = T.X; out[At++] = T.Y; out[At++] = T.Z; out[At++] = T.W;
+                    out[At++]        = T.X;
+                    out[At++]        = T.Y;
+                    out[At++]        = T.Z;
+                    out[At++]        = T.W;
                     break;
                 }
-                case SOULS_VERTEX_BITANGENT: out[At++] = V.Bitangent.X; out[At++] = V.Bitangent.Y; out[At++] = V.Bitangent.Z; out[At++] = V.Bitangent.W; break;
+                case SOULS_VERTEX_BITANGENT:
+                    out[At++] = V.Bitangent.X;
+                    out[At++] = V.Bitangent.Y;
+                    out[At++] = V.Bitangent.Z;
+                    out[At++] = V.Bitangent.W;
+                    break;
                 case SOULS_VERTEX_COLOR: {
                     const FLVER::VertexColor& C = V.Colors.at(set);
-                    out[At++] = C.R; out[At++] = C.G; out[At++] = C.B; out[At++] = C.A;
+                    out[At++]                   = C.R;
+                    out[At++]                   = C.G;
+                    out[At++]                   = C.B;
+                    out[At++]                   = C.A;
                     break;
                 }
-                default: break;
+                default:
+                    break;
             }
         }
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_write_vertex_floats(SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set,
-                                                        const float* values, size_t count) {
+SOULS_C_API SoulsStatus souls_flver_write_vertex_floats(
+  SoulsFlver* flver, size_t mesh, SoulsVertexAttribute attribute, size_t set, const float* values, size_t count) {
     return Guard([&] {
         FLVER2::Mesh& M = MeshAt(flver, mesh);
         const size_t N  = Components(attribute);
-        if (attribute == SOULS_VERTEX_BONE_INDICES) ThrowInvalid("bone indices are integers; use souls_flver_write_vertex_ints");
+        if (attribute == SOULS_VERTEX_BONE_INDICES)
+            ThrowInvalid("bone indices are integers; use souls_flver_write_vertex_ints");
         if (count != M.Vertices.size() * N) ThrowInvalid("count must be vertex_count * components");
         if (!values && count) ThrowInvalid("values is NULL");
         if (M.Vertices.empty()) return;
@@ -410,41 +466,69 @@ SOULS_C_API SoulsStatus souls_flver_write_vertex_floats(SoulsFlver* flver, size_
         size_t At = 0;
         for (FLVER::Vertex& V : M.Vertices) {
             switch (attribute) {
-                case SOULS_VERTEX_POSITION: V.Position = Vector3(values[At], values[At + 1], values[At + 2]); At += 3; break;
-                case SOULS_VERTEX_NORMAL: V.Normal = Vector3(values[At], values[At + 1], values[At + 2]); At += 3; break;
-                case SOULS_VERTEX_BONE_WEIGHTS:
-                    for (float& W : V.BoneWeights) W = values[At++];
+                case SOULS_VERTEX_POSITION:
+                    V.Position = Vector3(values[At], values[At + 1], values[At + 2]);
+                    At += 3;
                     break;
-                case SOULS_VERTEX_UV: V.UVs.at(set) = Vector3(values[At], values[At + 1], values[At + 2]); At += 3; break;
-                case SOULS_VERTEX_TANGENT: V.Tangents.at(set) = Vector4(values[At], values[At + 1], values[At + 2], values[At + 3]); At += 4; break;
-                case SOULS_VERTEX_BITANGENT: V.Bitangent = Vector4(values[At], values[At + 1], values[At + 2], values[At + 3]); At += 4; break;
-                case SOULS_VERTEX_COLOR: V.Colors.at(set) = FLVER::VertexColor(values[At + 3], values[At], values[At + 1], values[At + 2]); At += 4; break;
-                default: break;
+                case SOULS_VERTEX_NORMAL:
+                    V.Normal = Vector3(values[At], values[At + 1], values[At + 2]);
+                    At += 3;
+                    break;
+                case SOULS_VERTEX_BONE_WEIGHTS:
+                    for (float& W : V.BoneWeights)
+                        W = values[At++];
+                    break;
+                case SOULS_VERTEX_UV:
+                    V.UVs.at(set) = Vector3(values[At], values[At + 1], values[At + 2]);
+                    At += 3;
+                    break;
+                case SOULS_VERTEX_TANGENT:
+                    V.Tangents.at(set) = Vector4(values[At], values[At + 1], values[At + 2], values[At + 3]);
+                    At += 4;
+                    break;
+                case SOULS_VERTEX_BITANGENT:
+                    V.Bitangent = Vector4(values[At], values[At + 1], values[At + 2], values[At + 3]);
+                    At += 4;
+                    break;
+                case SOULS_VERTEX_COLOR:
+                    V.Colors.at(set) = FLVER::VertexColor(values[At + 3], values[At], values[At + 1], values[At + 2]);
+                    At += 4;
+                    break;
+                default:
+                    break;
             }
         }
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_read_vertex_ints(const SoulsFlver* flver, size_t mesh, int32_t* out, size_t capacity) {
+SOULS_C_API SoulsStatus souls_flver_read_vertex_ints(const SoulsFlver* flver,
+                                                     size_t mesh,
+                                                     int32_t* out,
+                                                     size_t capacity) {
     return Guard([&] {
         const FLVER2::Mesh& M = MeshAt(flver, mesh);
         if (!out && !M.Vertices.empty()) ThrowInvalid("out is NULL");
         if (capacity < M.Vertices.size() * 4) ThrowInvalid("out is too small");
         size_t At = 0;
         for (const FLVER::Vertex& V : M.Vertices) {
-            for (int32_t Index : V.BoneIndices) out[At++] = Index;
+            for (int32_t Index : V.BoneIndices)
+                out[At++] = Index;
         }
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_write_vertex_ints(SoulsFlver* flver, size_t mesh, const int32_t* values, size_t count) {
+SOULS_C_API SoulsStatus souls_flver_write_vertex_ints(SoulsFlver* flver,
+                                                      size_t mesh,
+                                                      const int32_t* values,
+                                                      size_t count) {
     return Guard([&] {
         FLVER2::Mesh& M = MeshAt(flver, mesh);
         if (count != M.Vertices.size() * 4) ThrowInvalid("count must be vertex_count * 4");
         if (!values && count) ThrowInvalid("values is NULL");
         size_t At = 0;
         for (FLVER::Vertex& V : M.Vertices) {
-            for (int32_t& Index : V.BoneIndices) Index = values[At++];
+            for (int32_t& Index : V.BoneIndices)
+                Index = values[At++];
         }
     });
 }
@@ -465,22 +549,27 @@ SOULS_C_API size_t souls_flver_face_set_index_count(const SoulsFlver* flver, siz
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_read_face_set(const SoulsFlver* flver, size_t mesh, size_t face_set, int32_t* out, size_t capacity) {
+SOULS_C_API SoulsStatus
+souls_flver_read_face_set(const SoulsFlver* flver, size_t mesh, size_t face_set, int32_t* out, size_t capacity) {
     return Guard([&] {
-        const auto Triangles = FaceSetAt(flver, mesh, face_set).Triangulate(MeshAt(flver, mesh).Vertices.size() < 65535);
+        const auto Triangles =
+          FaceSetAt(flver, mesh, face_set).Triangulate(MeshAt(flver, mesh).Vertices.size() < 65535);
         if (!out && !Triangles.empty()) ThrowInvalid("out is NULL");
         if (capacity < Triangles.size()) ThrowInvalid("out is too small");
-        for (size_t I = 0; I < Triangles.size(); ++I) out[I] = Triangles[I];
+        for (size_t I = 0; I < Triangles.size(); ++I)
+            out[I] = Triangles[I];
     });
 }
 
-SOULS_C_API SoulsStatus souls_flver_write_face_set(SoulsFlver* flver, size_t mesh, size_t face_set, const int32_t* indices, size_t count) {
+SOULS_C_API SoulsStatus
+souls_flver_write_face_set(SoulsFlver* flver, size_t mesh, size_t face_set, const int32_t* indices, size_t count) {
     return Guard([&] {
         if (!indices && count) ThrowInvalid("indices is NULL");
         if (count % 3 != 0) ThrowInvalid("count must be a multiple of 3");
         const int32_t VertexCount = static_cast<int32_t>(MeshAt(flver, mesh).Vertices.size());
         for (size_t I = 0; I < count; ++I) {
-            if (indices[I] < 0 || indices[I] >= VertexCount) ThrowInvalid("an index is out of range for the mesh's vertices");
+            if (indices[I] < 0 || indices[I] >= VertexCount)
+                ThrowInvalid("an index is out of range for the mesh's vertices");
         }
         FLVER2::FaceSet& Set = FaceSetAt(flver, mesh, face_set);
         Set.Indices.assign(indices, indices + count);

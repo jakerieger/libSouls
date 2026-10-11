@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "TestResult.hpp"
 
@@ -18,26 +22,24 @@
 namespace {
     int Failures = 0;
 
-#define CHECK(Cond)                                                     \
-    do {                                                                \
-        if (!(Cond)) {                                                  \
-            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond); \
-            ++Failures;                                                 \
-        }                                                               \
+#define CHECK(Cond)                                                                                                    \
+    do {                                                                                                               \
+        if (!(Cond)) {                                                                                                 \
+            std::printf("FAIL %s:%d  %s\n", __FILE__, __LINE__, #Cond);                                                \
+            ++Failures;                                                                                                \
+        }                                                                                                              \
     } while (0)
 
     using namespace Souls;
     namespace fs = std::filesystem;
-    using F1 = PARAM::FormatFlags1;
-    using F2 = PARAM::FormatFlags2;
+    using F1     = PARAM::FormatFlags1;
+    using F2     = PARAM::FormatFlags2;
 
     template<typename F>
     bool Throws(F&& Fn) {
         try {
             Fn();
-        } catch (...) {
-            return true;
-        }
+        } catch (...) { return true; }
         return false;
     }
 
@@ -61,9 +63,12 @@ namespace {
         for (int I = 0; I < 5; ++I) {
             PARAM::Row Row;
             Row.ID = 100 + I * 10;
-            if (I % 2 == 0) Row.Name = I == 4 ? std::string("\xE3\x82\xBD\xE3\x82\xA6\xE3\x83\xAB row") : "Row " + std::to_string(I);
+            if (I % 2 == 0)
+                Row.Name =
+                  I == 4 ? std::string("\xE3\x82\xBD\xE3\x82\xA6\xE3\x83\xAB row") : "Row " + std::to_string(I);
             Row.Bytes.resize(12);
-            for (size_t B = 0; B < Row.Bytes.size(); ++B) Row.Bytes[B] = static_cast<uint8_t>(I * 16 + B);
+            for (size_t B = 0; B < Row.Bytes.size(); ++B)
+                Row.Bytes[B] = static_cast<uint8_t>(I * 16 + B);
             Param.Rows.push_back(std::move(Row));
         }
         return Param;
@@ -84,13 +89,15 @@ namespace {
                     const auto Bytes = Source.Write();
                     CHECK(PARAM::Is(Bytes));
 
-                    PARAM Back = PARAM::Read(Bytes);
+                    PARAM Back      = PARAM::Read(Bytes);
                     const bool Same = SameRows(Source.Rows, Back.Rows) && Back.ParamType == Source.ParamType &&
                                       Back.ParamdefDataVersion == 7 && Back.Format2D == Format1 &&
                                       Back.Format2E == Format2 && Back.BigEndian == Big && Back.DetectedSize == 12;
                     if (!Same) {
-                        std::printf("  (format 0x%02X/0x%02X big %d: contents differ)\n", static_cast<unsigned>(Format1),
-                                    static_cast<unsigned>(Format2), Big);
+                        std::printf("  (format 0x%02X/0x%02X big %d: contents differ)\n",
+                                    static_cast<unsigned>(Format1),
+                                    static_cast<unsigned>(Format2),
+                                    Big);
                     }
                     CHECK(Same);
                     CHECK(Back.Write() == Bytes);
@@ -125,7 +132,7 @@ namespace {
 
         // Row data can be edited and written back.
         {
-            PARAM Param = MakeParam(F1::None, F2::None, false);
+            PARAM Param               = MakeParam(F1::None, F2::None, false);
             Param.Find(110)->Bytes[0] = 0xEE;
             Param.Rows.push_back(PARAM::Row(999, "added", std::vector<uint8_t>(12, 0x42)));
             const PARAM Back = PARAM::Read(Param.Write());
@@ -151,18 +158,18 @@ namespace {
             std::vector<uint8_t> Truncated(Bytes.begin(), Bytes.begin() + 0x40);
             CHECK(Throws([&] { PARAM::Read(Truncated); }));
             std::vector<uint8_t> BadCount = Bytes;
-            BadCount[0x0A] = 0xFF;
-            BadCount[0x0B] = 0xFF;
+            BadCount[0x0A]                = 0xFF;
+            BadCount[0x0B]                = 0xFF;
             CHECK(Throws([&] { PARAM::Read(BadCount); }));
             CHECK(!PARAM::Is(BadCount));
         }
 
         // Through DCX.
         {
-            PARAM Param         = MakeParam(F1::LongDataOffset | F1::OffsetParamType, F2::UnicodeRowNames, false);
-            Param.Compression   = DCX::Type::DCX_DFLT_10000_44_9;
-            const auto Bytes    = Param.Write();
-            const PARAM Back    = PARAM::Read(Bytes);
+            PARAM Param       = MakeParam(F1::LongDataOffset | F1::OffsetParamType, F2::UnicodeRowNames, false);
+            Param.Compression = DCX::Type::DCX_DFLT_10000_44_9;
+            const auto Bytes  = Param.Write();
+            const PARAM Back  = PARAM::Read(Bytes);
             CHECK(Back.Compression == DCX::Type::DCX_DFLT_10000_44_9 && SameRows(Param.Rows, Back.Rows));
         }
     }
@@ -190,9 +197,12 @@ namespace {
             if (!File.Name || !EndsWith(*File.Name, ".param")) continue;
             try {
                 if (!PARAM::Is(File.Bytes)) {
-                    std::printf("FAIL %s: %s is not recognized as a PARAM (size 0x%zX):", Label, File.Name->c_str(),
+                    std::printf("FAIL %s: %s is not recognized as a PARAM (size 0x%zX):",
+                                Label,
+                                File.Name->c_str(),
                                 File.Bytes.size());
-                    for (size_t I = 0; I < 0x50 && I < File.Bytes.size(); ++I) std::printf(" %02X", File.Bytes[I]);
+                    for (size_t I = 0; I < 0x50 && I < File.Bytes.size(); ++I)
+                        std::printf(" %02X", File.Bytes[I]);
                     std::printf("\n");
                     ++Totals.Failed;
                     continue;
@@ -202,14 +212,19 @@ namespace {
                 Totals.Rows += static_cast<int>(Param.Rows.size());
 
                 char Key[64];
-                std::snprintf(Key, sizeof Key, "2D=0x%02X 2E=0x%02X %s", static_cast<unsigned>(Param.Format2D),
-                              static_cast<unsigned>(Param.Format2E), Param.BigEndian ? "big" : "little");
+                std::snprintf(Key,
+                              sizeof Key,
+                              "2D=0x%02X 2E=0x%02X %s",
+                              static_cast<unsigned>(Param.Format2D),
+                              static_cast<unsigned>(Param.Format2E),
+                              Param.BigEndian ? "big" : "little");
                 ++Totals.Formats[Key];
 
                 bool Uniform = true;
                 for (const auto& Row : Param.Rows) {
                     if (Row.Name) ++Totals.Named;
-                    if (static_cast<int64_t>(Row.Bytes.size()) != Param.DetectedSize && !Row.Bytes.empty()) Uniform = false;
+                    if (static_cast<int64_t>(Row.Bytes.size()) != Param.DetectedSize && !Row.Bytes.empty())
+                        Uniform = false;
                 }
                 if (!Uniform || Param.ParamType.empty()) {
                     std::printf("FAIL %s: %s has irregular rows or no type\n", Label, File.Name->c_str());
@@ -226,7 +241,7 @@ namespace {
                     B.WriteBytes(Rewritten);
                     B.Finish();
                 }
-                const PARAM Back     = PARAM::Read(Rewritten);
+                const PARAM Back = PARAM::Read(Rewritten);
                 if (!SameRows(Param.Rows, Back.Rows) || Back.ParamType != Param.ParamType) {
                     std::printf("FAIL %s: %s changed after a rewrite\n", Label, File.Name->c_str());
                     ++Totals.Failed;
@@ -237,14 +252,21 @@ namespace {
                     Totals.Different.push_back(*File.Name);
                     if (std::getenv("PARAM_DEBUG") && Totals.Different.size() <= 4) {
                         const auto& Original = File.Bytes;
-                        size_t At = 0;
-                        while (At < Rewritten.size() && At < Original.size() && Rewritten[At] == Original[At]) ++At;
-                        std::printf("  diff %s: first at 0x%zX, sizes orig 0x%zX rewritten 0x%zX, rows %zu, rowsize %lld\n",
-                                    File.Name->c_str(), At, Original.size(), Rewritten.size(), Param.Rows.size(),
-                                    static_cast<long long>(Param.DetectedSize));
+                        size_t At            = 0;
+                        while (At < Rewritten.size() && At < Original.size() && Rewritten[At] == Original[At])
+                            ++At;
+                        std::printf(
+                          "  diff %s: first at 0x%zX, sizes orig 0x%zX rewritten 0x%zX, rows %zu, rowsize %lld\n",
+                          File.Name->c_str(),
+                          At,
+                          Original.size(),
+                          Rewritten.size(),
+                          Param.Rows.size(),
+                          static_cast<long long>(Param.DetectedSize));
                         for (const auto* B : {&Original, &Rewritten}) {
                             std::printf("   ");
-                            for (size_t I = At >= 16 ? At - 16 : 0; I < At + 48 && I < B->size(); ++I) std::printf(" %02X", (*B)[I]);
+                            for (size_t I = At >= 16 ? At - 16 : 0; I < At + 48 && I < B->size(); ++I)
+                                std::printf(" %02X", (*B)[I]);
                             std::printf("\n");
                         }
                     }
@@ -257,9 +279,15 @@ namespace {
     }
 
     void Report(const char* Label, const Stats& Totals) {
-        std::printf("%s: %d params, %d rows (%d named), %d byte-identical rewrites, %d failures\n", Label, Totals.Params,
-                    Totals.Rows, Totals.Named, Totals.ByteIdentical, Totals.Failed);
-        for (const auto& [Format, Count] : Totals.Formats) std::printf("  %s: %d files\n", Format.c_str(), Count);
+        std::printf("%s: %d params, %d rows (%d named), %d byte-identical rewrites, %d failures\n",
+                    Label,
+                    Totals.Params,
+                    Totals.Rows,
+                    Totals.Named,
+                    Totals.ByteIdentical,
+                    Totals.Failed);
+        for (const auto& [Format, Count] : Totals.Formats)
+            std::printf("  %s: %d files\n", Format.c_str(), Count);
         for (size_t I = 0; I < Totals.Different.size() && I < 5; ++I) {
             std::printf("  differs from the original: %s\n", Totals.Different[I].c_str());
         }

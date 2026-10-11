@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/11/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "CApiCommon.hpp"
 
@@ -50,7 +54,9 @@ namespace {
         std::vector<std::pair<const char*, SoulsPropertyKind>> Found;
         void operator()(const char* Name, bool&) { Found.emplace_back(Name, SOULS_PROPERTY_INT); }
         template<std::integral T>
-        void operator()(const char* Name, T&) { Found.emplace_back(Name, SOULS_PROPERTY_INT); }
+        void operator()(const char* Name, T&) {
+            Found.emplace_back(Name, SOULS_PROPERTY_INT);
+        }
         void operator()(const char* Name, float&) { Found.emplace_back(Name, SOULS_PROPERTY_FLOAT); }
         void operator()(const char* Name, std::vector<uint8_t>&) { Found.emplace_back(Name, SOULS_PROPERTY_BYTES); }
         void operator()(const char* Name, std::vector<int32_t>&) { Found.emplace_back(Name, SOULS_PROPERTY_INT_ARRAY); }
@@ -62,16 +68,16 @@ namespace {
     struct Access {
         std::string_view Name;
         Op Mode;
-        bool Found    = false;
-        bool Mismatch = false;
-        double Number = 0;
-        uint8_t* BytesOut       = nullptr;
-        const uint8_t* BytesIn  = nullptr;
-        int64_t* IntsOut        = nullptr;
-        const int64_t* IntsIn   = nullptr;
-        size_t Capacity = 0;
-        size_t* Count   = nullptr;
-        size_t CountIn  = 0;
+        bool Found             = false;
+        bool Mismatch          = false;
+        double Number          = 0;
+        uint8_t* BytesOut      = nullptr;
+        const uint8_t* BytesIn = nullptr;
+        int64_t* IntsOut       = nullptr;
+        const int64_t* IntsIn  = nullptr;
+        size_t Capacity        = 0;
+        size_t* Count          = nullptr;
+        size_t CountIn         = 0;
 
         bool Hit(const char* Candidate) {
             if (Name != Candidate) return false;
@@ -105,10 +111,12 @@ namespace {
             if (!Hit(N)) return;
             if (Mode == Op::GetBytes) {
                 if (Count) *Count = Value.size();
-                for (size_t I = 0; BytesOut && I < Value.size() && I < Capacity; ++I) BytesOut[I] = Value[I];
+                for (size_t I = 0; BytesOut && I < Value.size() && I < Capacity; ++I)
+                    BytesOut[I] = Value[I];
             } else if (Mode == Op::SetBytes) {
                 if (CountIn != Value.size()) ThrowInvalid("the array length doesn't match the field");
-                for (size_t I = 0; I < CountIn; ++I) Value[I] = BytesIn[I];
+                for (size_t I = 0; I < CountIn; ++I)
+                    Value[I] = BytesIn[I];
             } else Mismatch = true;
         }
 
@@ -116,10 +124,12 @@ namespace {
             if (!Hit(N)) return;
             if (Mode == Op::GetInts) {
                 if (Count) *Count = Value.size();
-                for (size_t I = 0; IntsOut && I < Value.size() && I < Capacity; ++I) IntsOut[I] = Value[I];
+                for (size_t I = 0; IntsOut && I < Value.size() && I < Capacity; ++I)
+                    IntsOut[I] = Value[I];
             } else if (Mode == Op::SetInts) {
                 if (CountIn != Value.size()) ThrowInvalid("the array length doesn't match the field");
-                for (size_t I = 0; I < CountIn; ++I) Value[I] = static_cast<int32_t>(IntsIn[I]);
+                for (size_t I = 0; I < CountIn; ++I)
+                    Value[I] = static_cast<int32_t>(IntsIn[I]);
             } else Mismatch = true;
         }
     };
@@ -167,7 +177,7 @@ SOULS_C_API SoulsStatus souls_tae3_write_file(SoulsTae3* tae, const char* path) 
 }
 
 SOULS_C_API SoulsBuffer souls_tae3_write_memory(SoulsTae3* tae) {
-    return GuardValue(SoulsBuffer{nullptr, 0}, [&] { return MakeBuffer(File(tae).Write()); });
+    return GuardValue(SoulsBuffer {nullptr, 0}, [&] { return MakeBuffer(File(tae).Write()); });
 }
 
 SOULS_C_API int32_t souls_tae3_version(const SoulsTae3* tae) {
@@ -199,10 +209,10 @@ SOULS_C_API const char* souls_tae3_sib_name(const SoulsTae3* tae) {
 
 SOULS_C_API SoulsStatus souls_tae3_set_names(SoulsTae3* tae, const char* skeleton_name, const char* sib_name) {
     return Guard([&] {
-        TAE3& T         = File(tae);
-        T.SkeletonName  = NameArg(skeleton_name);
-        T.SibName       = NameArg(sib_name);
-        T.HasNames      = true;
+        TAE3& T        = File(tae);
+        T.SkeletonName = NameArg(skeleton_name);
+        T.SibName      = NameArg(sib_name);
+        T.HasNames     = true;
     });
 }
 
@@ -273,9 +283,12 @@ SOULS_C_API const char* souls_tae3_animation_file_name(const SoulsTae3* tae, siz
     return GuardValue<const char*>(nullptr, [&] { return AnimationAt(tae, animation).AnimFileName.c_str(); });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_animation_reference(SoulsTae3* tae, size_t animation, int is_reference, const char* file_name) {
+SOULS_C_API SoulsStatus souls_tae3_set_animation_reference(SoulsTae3* tae,
+                                                           size_t animation,
+                                                           int is_reference,
+                                                           const char* file_name) {
     return Guard([&] {
-        TAE3::Animation& A = AnimationAt(tae, animation);
+        TAE3::Animation& A  = AnimationAt(tae, animation);
         A.AnimFileReference = is_reference != 0;
         A.AnimFileName      = file_name ? file_name : "";
     });
@@ -295,7 +308,8 @@ SOULS_C_API double souls_tae3_event_end(const SoulsTae3* tae, size_t animation, 
     return GuardValue<double>(0, [&] { return static_cast<double>(EventAt(tae, animation, event).EndTime); });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_event_times(SoulsTae3* tae, size_t animation, size_t event, double start, double end) {
+SOULS_C_API SoulsStatus
+souls_tae3_set_event_times(SoulsTae3* tae, size_t animation, size_t event, double start, double end) {
     return Guard([&] {
         TAE3::Event& E = EventAt(tae, animation, event);
         E.StartTime    = static_cast<float>(start);
@@ -314,7 +328,8 @@ SOULS_C_API const char* souls_tae3_event_type_name(const SoulsTae3* tae, size_t 
     });
 }
 
-SOULS_C_API int64_t souls_tae3_add_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end) {
+SOULS_C_API int64_t
+souls_tae3_add_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         auto& Events = AnimationAt(tae, animation).Events;
         TAE3::Event E;
@@ -330,7 +345,8 @@ SOULS_C_API int souls_tae3_event_is_raw(const SoulsTae3* tae, size_t animation, 
     return GuardValue(0, [&] { return EventAt(tae, animation, event).IsRaw ? 1 : 0; });
 }
 
-SOULS_C_API const uint8_t* souls_tae3_event_raw_data(const SoulsTae3* tae, size_t animation, size_t event, size_t* out_size) {
+SOULS_C_API const uint8_t*
+souls_tae3_event_raw_data(const SoulsTae3* tae, size_t animation, size_t event, size_t* out_size) {
     return GuardValue<const uint8_t*>(nullptr, [&]() -> const uint8_t* {
         const TAE3::Event& E = EventAt(tae, animation, event);
         if (!E.IsRaw) throw Unsupported("The event is not raw.");
@@ -339,7 +355,8 @@ SOULS_C_API const uint8_t* souls_tae3_event_raw_data(const SoulsTae3* tae, size_
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_event_raw_data(SoulsTae3* tae, size_t animation, size_t event, const uint8_t* data, size_t size) {
+SOULS_C_API SoulsStatus
+souls_tae3_set_event_raw_data(SoulsTae3* tae, size_t animation, size_t event, const uint8_t* data, size_t size) {
     return Guard([&] {
         TAE3::Event& E = EventAt(tae, animation, event);
         if (!E.IsRaw) throw Unsupported("The event is not raw.");
@@ -348,8 +365,8 @@ SOULS_C_API SoulsStatus souls_tae3_set_event_raw_data(SoulsTae3* tae, size_t ani
     });
 }
 
-SOULS_C_API int64_t souls_tae3_add_raw_event(SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end,
-                                             const uint8_t* data, size_t size) {
+SOULS_C_API int64_t souls_tae3_add_raw_event(
+  SoulsTae3* tae, size_t animation, int64_t type_number, double start, double end, const uint8_t* data, size_t size) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         const auto Span = Bytes(data, size);
         auto& Events    = AnimationAt(tae, animation).Events;
@@ -386,7 +403,10 @@ SOULS_C_API const char* souls_tae3_field_name(const SoulsTae3* tae, size_t anima
     });
 }
 
-SOULS_C_API SoulsPropertyKind souls_tae3_field_kind(const SoulsTae3* tae, size_t animation, size_t event, size_t field) {
+SOULS_C_API SoulsPropertyKind souls_tae3_field_kind(const SoulsTae3* tae,
+                                                    size_t animation,
+                                                    size_t event,
+                                                    size_t field) {
     return GuardValue(SOULS_PROPERTY_INT, [&] {
         const Lister L = ListFields(tae, animation, event);
         CheckIndex(field, L.Found.size(), "field index out of range");
@@ -402,27 +422,34 @@ namespace {
     }
 }  // namespace
 
-SOULS_C_API SoulsStatus souls_tae3_get_number(const SoulsTae3* tae, size_t animation, size_t event, const char* field, double* out_value) {
+SOULS_C_API SoulsStatus
+souls_tae3_get_number(const SoulsTae3* tae, size_t animation, size_t event, const char* field, double* out_value) {
     return GuardField([&] {
         if (!out_value) ThrowInvalid("out_value is NULL");
-        Access A{NameArg(field), Op::GetNumber};
+        Access A {NameArg(field), Op::GetNumber};
         Apply(tae, animation, event, A);
         *out_value = A.Number;
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_number(SoulsTae3* tae, size_t animation, size_t event, const char* field, double value) {
+SOULS_C_API SoulsStatus
+souls_tae3_set_number(SoulsTae3* tae, size_t animation, size_t event, const char* field, double value) {
     return GuardField([&] {
-        Access A{NameArg(field), Op::SetNumber};
+        Access A {NameArg(field), Op::SetNumber};
         A.Number = value;
         Apply(tae, animation, event, A);
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_get_bytes(const SoulsTae3* tae, size_t animation, size_t event, const char* field, uint8_t* out, size_t capacity,
+SOULS_C_API SoulsStatus souls_tae3_get_bytes(const SoulsTae3* tae,
+                                             size_t animation,
+                                             size_t event,
+                                             const char* field,
+                                             uint8_t* out,
+                                             size_t capacity,
                                              size_t* out_count) {
     return GuardField([&] {
-        Access A{NameArg(field), Op::GetBytes};
+        Access A {NameArg(field), Op::GetBytes};
         A.BytesOut = out;
         A.Capacity = capacity;
         A.Count    = out_count;
@@ -430,20 +457,26 @@ SOULS_C_API SoulsStatus souls_tae3_get_bytes(const SoulsTae3* tae, size_t animat
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_bytes(SoulsTae3* tae, size_t animation, size_t event, const char* field, const uint8_t* data, size_t count) {
+SOULS_C_API SoulsStatus souls_tae3_set_bytes(
+  SoulsTae3* tae, size_t animation, size_t event, const char* field, const uint8_t* data, size_t count) {
     return GuardField([&] {
         if (!data && count) ThrowInvalid("data is NULL");
-        Access A{NameArg(field), Op::SetBytes};
+        Access A {NameArg(field), Op::SetBytes};
         A.BytesIn = data;
         A.CountIn = count;
         Apply(tae, animation, event, A);
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_get_int_array(const SoulsTae3* tae, size_t animation, size_t event, const char* field, int64_t* out,
-                                                 size_t capacity, size_t* out_count) {
+SOULS_C_API SoulsStatus souls_tae3_get_int_array(const SoulsTae3* tae,
+                                                 size_t animation,
+                                                 size_t event,
+                                                 const char* field,
+                                                 int64_t* out,
+                                                 size_t capacity,
+                                                 size_t* out_count) {
     return GuardField([&] {
-        Access A{NameArg(field), Op::GetInts};
+        Access A {NameArg(field), Op::GetInts};
         A.IntsOut  = out;
         A.Capacity = capacity;
         A.Count    = out_count;
@@ -451,10 +484,11 @@ SOULS_C_API SoulsStatus souls_tae3_get_int_array(const SoulsTae3* tae, size_t an
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_set_int_array(SoulsTae3* tae, size_t animation, size_t event, const char* field, const int64_t* values, size_t count) {
+SOULS_C_API SoulsStatus souls_tae3_set_int_array(
+  SoulsTae3* tae, size_t animation, size_t event, const char* field, const int64_t* values, size_t count) {
     return GuardField([&] {
         if (!values && count) ThrowInvalid("values is NULL");
-        Access A{NameArg(field), Op::SetInts};
+        Access A {NameArg(field), Op::SetInts};
         A.IntsIn  = values;
         A.CountIn = count;
         Apply(tae, animation, event, A);
@@ -475,22 +509,26 @@ SOULS_C_API int64_t souls_tae3_group_type(const SoulsTae3* tae, size_t animation
     });
 }
 
-SOULS_C_API SoulsStatus souls_tae3_group_indices(const SoulsTae3* tae, size_t animation, size_t group, int32_t* out, size_t capacity, size_t* out_count) {
+SOULS_C_API SoulsStatus souls_tae3_group_indices(
+  const SoulsTae3* tae, size_t animation, size_t group, int32_t* out, size_t capacity, size_t* out_count) {
     return Guard([&] {
         const auto& Groups = AnimationAt(tae, animation).EventGroups;
         CheckIndex(group, Groups.size(), "group index out of range");
         const auto& Indices = Groups[group].Indices;
         if (out_count) *out_count = Indices.size();
-        for (size_t I = 0; out && I < Indices.size() && I < capacity; ++I) out[I] = Indices[I];
+        for (size_t I = 0; out && I < Indices.size() && I < capacity; ++I)
+            out[I] = Indices[I];
     });
 }
 
-SOULS_C_API int64_t souls_tae3_add_group(SoulsTae3* tae, size_t animation, int64_t type_number, const int32_t* indices, size_t count) {
+SOULS_C_API int64_t
+souls_tae3_add_group(SoulsTae3* tae, size_t animation, int64_t type_number, const int32_t* indices, size_t count) {
     return GuardValue<int64_t>(-1, [&]() -> int64_t {
         if (!indices && count) ThrowInvalid("indices is NULL");
         auto& A = AnimationAt(tae, animation);
         for (size_t I = 0; I < count; ++I) {
-            if (indices[I] < 0 || static_cast<size_t>(indices[I]) >= A.Events.size()) ThrowInvalid("an index is not an event of the animation");
+            if (indices[I] < 0 || static_cast<size_t>(indices[I]) >= A.Events.size())
+                ThrowInvalid("an index is not an event of the animation");
         }
         TAE3::EventGroup G;
         G.Type = TypeFrom(type_number);

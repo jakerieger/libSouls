@@ -1,6 +1,10 @@
+// Copyright (C) 2026 Jake Rieger
 //
-// Created by Jake Rieger on 10/7/2026.
-//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #include "PARAMDEF.hpp"
 
@@ -21,28 +25,39 @@ namespace Souls {
     namespace ParamUtil {
         const char* DefTypeName(DefType Type) {
             switch (Type) {
-                case DefType::s8: return "s8";
-                case DefType::u8: return "u8";
-                case DefType::s16: return "s16";
-                case DefType::u16: return "u16";
-                case DefType::s32: return "s32";
-                case DefType::u32: return "u32";
-                case DefType::b32: return "b32";
-                case DefType::f32: return "f32";
-                case DefType::angle32: return "angle32";
-                case DefType::f64: return "f64";
-                case DefType::dummy8: return "dummy8";
-                case DefType::fixstr: return "fixstr";
-                case DefType::fixstrW: return "fixstrW";
+                case DefType::s8:
+                    return "s8";
+                case DefType::u8:
+                    return "u8";
+                case DefType::s16:
+                    return "s16";
+                case DefType::u16:
+                    return "u16";
+                case DefType::s32:
+                    return "s32";
+                case DefType::u32:
+                    return "u32";
+                case DefType::b32:
+                    return "b32";
+                case DefType::f32:
+                    return "f32";
+                case DefType::angle32:
+                    return "angle32";
+                case DefType::f64:
+                    return "f64";
+                case DefType::dummy8:
+                    return "dummy8";
+                case DefType::fixstr:
+                    return "fixstr";
+                case DefType::fixstrW:
+                    return "fixstrW";
             }
             throw BinaryException("Unknown PARAMDEF type");
         }
 
         DefType ParseDefType(const std::string& Name) {
             for (int I = static_cast<int>(DefType::s8); I <= static_cast<int>(DefType::fixstrW); ++I) {
-                if (Name == DefTypeName(static_cast<DefType>(I))) {
-                    return static_cast<DefType>(I);
-                }
+                if (Name == DefTypeName(static_cast<DefType>(I))) { return static_cast<DefType>(I); }
             }
             throw BinaryException("Unknown PARAMDEF field type \"" + Name + "\"");
         }
@@ -52,16 +67,20 @@ namespace Souls {
                 case DefType::s8:
                 case DefType::u8:
                 case DefType::dummy8:
-                case DefType::fixstr: return 1;
+                case DefType::fixstr:
+                    return 1;
                 case DefType::s16:
                 case DefType::u16:
-                case DefType::fixstrW: return 2;
+                case DefType::fixstrW:
+                    return 2;
                 case DefType::s32:
                 case DefType::u32:
                 case DefType::b32:
                 case DefType::f32:
-                case DefType::angle32: return 4;
-                case DefType::f64: return 8;
+                case DefType::angle32:
+                    return 4;
+                case DefType::f64:
+                    return 8;
             }
             throw BinaryException("Unknown PARAMDEF type");
         }
@@ -70,12 +89,16 @@ namespace Souls {
             switch (Type) {
                 case DefType::s8:
                 case DefType::u8:
-                case DefType::dummy8: return 8;
+                case DefType::dummy8:
+                    return 8;
                 case DefType::s16:
-                case DefType::u16: return 16;
+                case DefType::u16:
+                    return 16;
                 case DefType::s32:
-                case DefType::u32: return 32;
-                default: break;
+                case DefType::u32:
+                    return 32;
+                default:
+                    break;
             }
             throw BinaryException(std::string("Type ") + DefTypeName(Type) + " cannot be a bitfield");
         }
@@ -84,9 +107,12 @@ namespace Souls {
             switch (Type) {
                 case DefType::f32:
                 case DefType::angle32:
-                case DefType::f64: return "%f";
-                case DefType::dummy8: return "";
-                default: return "%d";
+                case DefType::f64:
+                    return "%f";
+                case DefType::dummy8:
+                    return "";
+                default:
+                    return "%d";
             }
         }
 
@@ -107,18 +133,20 @@ namespace Souls {
                     case DefType::u16:
                     case DefType::s32:
                     case DefType::u32:
-                    case DefType::b32: return true;
-                    default: return false;
+                    case DefType::b32:
+                        return true;
+                    default:
+                        return false;
                 }
             }
         }  // namespace
 
         EditorValue GetDefaultDefault(const PARAMDEF* Def, DefType Type) {
             if (Variable(Def)) {
-                if (IsIntegerLike(Type)) return int32_t{0};
+                if (IsIntegerLike(Type)) return int32_t {0};
                 if (Type == DefType::f32 || Type == DefType::angle32) return 0.f;
                 if (Type == DefType::f64) return 0.0;
-                return std::monostate{};
+                return std::monostate {};
             }
             return 0.f;
         }
@@ -126,78 +154,117 @@ namespace Souls {
         EditorValue GetDefaultMinimum(const PARAMDEF* Def, DefType Type) {
             if (Variable(Def)) {
                 switch (Type) {
-                    case DefType::s8: return int32_t{-128};
-                    case DefType::u8: return int32_t{0};
-                    case DefType::s16: return int32_t{-32768};
-                    case DefType::u16: return int32_t{0};
-                    case DefType::s32: return INT32_MIN;
-                    case DefType::u32: return int32_t{0};
-                    case DefType::b32: return int32_t{0};
+                    case DefType::s8:
+                        return int32_t {-128};
+                    case DefType::u8:
+                        return int32_t {0};
+                    case DefType::s16:
+                        return int32_t {-32768};
+                    case DefType::u16:
+                        return int32_t {0};
+                    case DefType::s32:
+                        return INT32_MIN;
+                    case DefType::u32:
+                        return int32_t {0};
+                    case DefType::b32:
+                        return int32_t {0};
                     case DefType::f32:
-                    case DefType::angle32: return -FLT_MAX;
-                    case DefType::f64: return -DBL_MAX;
-                    default: return std::monostate{};
+                    case DefType::angle32:
+                        return -FLT_MAX;
+                    case DefType::f64:
+                        return -DBL_MAX;
+                    default:
+                        return std::monostate {};
                 }
             }
             switch (Type) {
-                case DefType::s8: return -128.f;
-                case DefType::s16: return -32768.f;
-                case DefType::s32: return -2147483520.f;  // smallest float greater than int.MinValue
+                case DefType::s8:
+                    return -128.f;
+                case DefType::s16:
+                    return -32768.f;
+                case DefType::s32:
+                    return -2147483520.f;  // smallest float greater than int.MinValue
                 case DefType::f32:
                 case DefType::angle32:
-                case DefType::f64: return -FLT_MAX;
+                case DefType::f64:
+                    return -FLT_MAX;
                 case DefType::fixstr:
-                case DefType::fixstrW: return -1.f;
-                default: return 0.f;
+                case DefType::fixstrW:
+                    return -1.f;
+                default:
+                    return 0.f;
             }
         }
 
         EditorValue GetDefaultMaximum(const PARAMDEF* Def, DefType Type) {
             if (Variable(Def)) {
                 switch (Type) {
-                    case DefType::s8: return int32_t{127};
-                    case DefType::u8: return int32_t{255};
-                    case DefType::s16: return int32_t{32767};
-                    case DefType::u16: return int32_t{65535};
-                    case DefType::s32: return INT32_MAX;
-                    case DefType::u32: return INT32_MAX;  // yes, u32 uses a signed int too (usually)
-                    case DefType::b32: return int32_t{1};
+                    case DefType::s8:
+                        return int32_t {127};
+                    case DefType::u8:
+                        return int32_t {255};
+                    case DefType::s16:
+                        return int32_t {32767};
+                    case DefType::u16:
+                        return int32_t {65535};
+                    case DefType::s32:
+                        return INT32_MAX;
+                    case DefType::u32:
+                        return INT32_MAX;  // yes, u32 uses a signed int too (usually)
+                    case DefType::b32:
+                        return int32_t {1};
                     case DefType::f32:
-                    case DefType::angle32: return FLT_MAX;
-                    case DefType::f64: return DBL_MAX;
-                    default: return std::monostate{};
+                    case DefType::angle32:
+                        return FLT_MAX;
+                    case DefType::f64:
+                        return DBL_MAX;
+                    default:
+                        return std::monostate {};
                 }
             }
             switch (Type) {
-                case DefType::s8: return 127.f;
-                case DefType::u8: return 255.f;
-                case DefType::s16: return 32767.f;
-                case DefType::u16: return 65535.f;
-                case DefType::s32: return 2147483520.f;  // largest float less than int.MaxValue
-                case DefType::u32: return 4294967040.f;  // largest float less than uint.MaxValue
-                case DefType::b32: return 1.f;
+                case DefType::s8:
+                    return 127.f;
+                case DefType::u8:
+                    return 255.f;
+                case DefType::s16:
+                    return 32767.f;
+                case DefType::u16:
+                    return 65535.f;
+                case DefType::s32:
+                    return 2147483520.f;  // largest float less than int.MaxValue
+                case DefType::u32:
+                    return 4294967040.f;  // largest float less than uint.MaxValue
+                case DefType::b32:
+                    return 1.f;
                 case DefType::f32:
                 case DefType::angle32:
-                case DefType::f64: return FLT_MAX;
+                case DefType::f64:
+                    return FLT_MAX;
                 case DefType::fixstr:
-                case DefType::fixstrW: return 1000000000.f;
-                default: return 0.f;
+                case DefType::fixstrW:
+                    return 1000000000.f;
+                default:
+                    return 0.f;
             }
         }
 
         EditorValue GetDefaultIncrement(const PARAMDEF* Def, DefType Type) {
             if (Variable(Def)) {
-                if (IsIntegerLike(Type)) return int32_t{1};
+                if (IsIntegerLike(Type)) return int32_t {1};
                 if (Type == DefType::f32 || Type == DefType::angle32) return 0.01f;
                 if (Type == DefType::f64) return 0.01;
-                return std::monostate{};
+                return std::monostate {};
             }
             switch (Type) {
                 case DefType::f32:
                 case DefType::angle32:
-                case DefType::f64: return 0.01f;
-                case DefType::dummy8: return 0.f;
-                default: return 1.f;
+                case DefType::f64:
+                    return 0.01f;
+                case DefType::dummy8:
+                    return 0.f;
+                default:
+                    return 1.f;
             }
         }
     }  // namespace ParamUtil
@@ -281,11 +348,14 @@ namespace Souls {
                     Reader.Assert<int32_t>(0);
                     return Value;
                 }
-                case DefType::f64: return Reader.ReadDouble();
+                case DefType::f64:
+                    return Reader.ReadDouble();
                 // With 8 bytes available these could be offsets; they're always zero so far.
                 case DefType::dummy8:
                 case DefType::fixstr:
-                case DefType::fixstrW: Reader.Assert<int64_t>(0); return std::monostate{};
+                case DefType::fixstrW:
+                    Reader.Assert<int64_t>(0);
+                    return std::monostate {};
             }
             throw BinaryException("Missing variable read for type");
         }
@@ -307,17 +377,22 @@ namespace Souls {
                     Writer.WriteFloat(AsFloat(Value));
                     Writer.WriteInt32(0);
                     break;
-                case DefType::f64: Writer.WriteDouble(AsDouble(Value)); break;
+                case DefType::f64:
+                    Writer.WriteDouble(AsDouble(Value));
+                    break;
                 case DefType::dummy8:
                 case DefType::fixstr:
-                case DefType::fixstrW: Writer.WriteInt64(0); break;
+                case DefType::fixstrW:
+                    Writer.WriteInt64(0);
+                    break;
             }
         }
 
         // The internal name as stored in the file, with ":bits" or "[length]" appended where they apply.
         std::string MakeInternalName(const PARAMDEF::Field& Field) {
             if (Field.BitSize != -1) return Field.InternalName + ":" + std::to_string(Field.BitSize);
-            if (ParamUtil::IsArrayType(Field.DisplayType)) return Field.InternalName + "[" + std::to_string(Field.ArrayLength) + "]";
+            if (ParamUtil::IsArrayType(Field.DisplayType))
+                return Field.InternalName + "[" + std::to_string(Field.ArrayLength) + "]";
             return Field.InternalName;
         }
 
@@ -358,14 +433,17 @@ namespace Souls {
 
             const int64_t DescriptionOffset = Reader.ReadVarint();
             if (DescriptionOffset != 0) {
-                Result.Description = Def.Unicode ? ReadUTF16At(Reader, DescriptionOffset) : ReadShiftJISAt(Reader, DescriptionOffset);
+                Result.Description =
+                  Def.Unicode ? ReadUTF16At(Reader, DescriptionOffset) : ReadShiftJISAt(Reader, DescriptionOffset);
             }
 
-            Result.InternalType = Offsets ? Trim(ReadASCIIAt(Reader, Reader.ReadVarint())) : Trim(Reader.ReadFixStr(0x20));
+            Result.InternalType =
+              Offsets ? Trim(ReadASCIIAt(Reader, Reader.ReadVarint())) : Trim(Reader.ReadFixStr(0x20));
 
             Result.BitSize = -1;
             if (Def.FormatVersion >= 102) {
-                Result.InternalName = Offsets ? Trim(ReadASCIIAt(Reader, Reader.ReadVarint())) : Trim(Reader.ReadFixStr(0x20));
+                Result.InternalName =
+                  Offsets ? Trim(ReadASCIIAt(Reader, Reader.ReadVarint())) : Trim(Reader.ReadFixStr(0x20));
 
                 static const std::regex BitSizeRx(R"(^\s*(.+?)\s*:\s*(\d+)\s*$)");
                 static const std::regex ArrayLengthRx(R"(^\s*(.+?)\s*\[\s*(\d+)\s*\]\s*$)");
@@ -378,12 +456,12 @@ namespace Souls {
                 }
 
                 if (IsArray) {
-                    int32_t Length = 1;
+                    int32_t Length   = 1;
                     const bool Found = std::regex_match(Result.InternalName, Match, ArrayLengthRx);
                     if (Found) Length = std::stoi(Match[2].str());
                     if (Length != Result.ArrayLength) {
-                        throw BinaryException("Mismatched array length in " + Result.InternalName + " with byte count " +
-                                              std::to_string(ByteCount));
+                        throw BinaryException("Mismatched array length in " + Result.InternalName +
+                                              " with byte count " + std::to_string(ByteCount));
                     }
                     if (Found) {
                         const std::string Name = Match[1].str();
@@ -392,9 +470,7 @@ namespace Souls {
                 }
             }
 
-            if (Def.FormatVersion >= 104) {
-                Result.SortID = Reader.ReadInt32();
-            }
+            if (Def.FormatVersion >= 104) { Result.SortID = Reader.ReadInt32(); }
 
             if (Def.FormatVersion >= 200) {
                 Reader.Assert<int32_t>(0);
@@ -462,9 +538,7 @@ namespace Souls {
                 Writer.WriteFixStr(MakeInternalName(Field), 0x20, Padding);
             }
 
-            if (Def.FormatVersion >= 104) {
-                Writer.WriteInt32(Field.SortID);
-            }
+            if (Def.FormatVersion >= 104) { Writer.WriteInt32(Field.SortID); }
 
             if (Def.FormatVersion >= 200) {
                 Writer.WriteInt32(0);
@@ -556,10 +630,12 @@ namespace Souls {
 
     std::string PARAMDEF::Field::ToString() const {
         if (ParamUtil::IsBitType(DisplayType) && BitSize != -1) {
-            return std::string(ParamUtil::DefTypeName(DisplayType)) + " " + InternalName + ":" + std::to_string(BitSize);
+            return std::string(ParamUtil::DefTypeName(DisplayType)) + " " + InternalName + ":" +
+                   std::to_string(BitSize);
         }
         if (ParamUtil::IsArrayType(DisplayType)) {
-            return std::string(ParamUtil::DefTypeName(DisplayType)) + " " + InternalName + "[" + std::to_string(ArrayLength) + "]";
+            return std::string(ParamUtil::DefTypeName(DisplayType)) + " " + InternalName + "[" +
+                   std::to_string(ArrayLength) + "]";
         }
         return std::string(ParamUtil::DefTypeName(DisplayType)) + " " + InternalName;
     }
@@ -569,9 +645,7 @@ namespace Souls {
     }
 
     int32_t PARAMDEF::GetFieldsSize(size_t FieldCount) const {
-        if (FieldCount > Fields.size()) {
-            throw BinaryException("Count must be from 0 to the total field count");
-        }
+        if (FieldCount > Fields.size()) { throw BinaryException("Count must be from 0 to the total field count"); }
 
         int32_t Size = 0;
         for (size_t I = 0; I < FieldCount; ++I) {
@@ -613,15 +687,24 @@ namespace Souls {
 
         int16_t ExpectedFieldSize(int16_t Version) {
             switch (Version) {
-                case 101: return 0x8C;
-                case 102: return 0xAC;
-                case 103: return 0x6C;
-                case 104: return 0xB0;
-                case 106: return 0x48;
-                case 201: return 0xD0;
-                case 202: return 0x68;
-                case 203: return 0x88;
-                default: return 0;
+                case 101:
+                    return 0x8C;
+                case 102:
+                    return 0xAC;
+                case 103:
+                    return 0x6C;
+                case 104:
+                    return 0xB0;
+                case 106:
+                    return 0x48;
+                case 201:
+                    return 0xD0;
+                case 202:
+                    return 0x68;
+                case 203:
+                    return 0x88;
+                default:
+                    return 0;
             }
         }
     }  // namespace
@@ -635,8 +718,8 @@ namespace Souls {
             const Field& Current = Fields[I];
             // (Zero-length arrays occur in real defs, so 0 is allowed for array types.)
             if (Current.ArrayLength < 0 || (!ParamUtil::IsArrayType(Current.DisplayType) && Current.ArrayLength != 1)) {
-                Error = std::make_exception_ptr(
-                  BinaryException("Fields[" + std::to_string(I) + "]: invalid array length " + std::to_string(Current.ArrayLength)));
+                Error = std::make_exception_ptr(BinaryException(
+                  "Fields[" + std::to_string(I) + "]: invalid array length " + std::to_string(Current.ArrayLength)));
                 return false;
             }
         }
@@ -645,28 +728,22 @@ namespace Souls {
     }
 
     bool PARAMDEF::IsImpl(BinaryReader& Reader) {
-        if (Reader.Length() < 0x30) {
-            return false;
-        }
+        if (Reader.Length() < 0x30) { return false; }
 
         const uint8_t Big = Reader.ReadAt<uint8_t>(0x2C);
-        if (Big != 0 && Big != 0xFF) {
-            return false;
-        }
+        if (Big != 0 && Big != 0xFF) { return false; }
         Reader.Order = Big == 0xFF ? Endian::Big : Endian::Little;
 
         const int16_t Version = Reader.ReadAt<int16_t>(0x2E);
-        if (!KnownFormatVersion(Version)) {
-            return false;
-        }
+        if (!KnownFormatVersion(Version)) { return false; }
         const int16_t HeaderSize = Reader.ReadAt<int16_t>(0x04);
         return Version < 200 ? HeaderSize == 0x30 : HeaderSize == 0xFF;
     }
 
     void PARAMDEF::ReadImpl(BinaryReader& Reader) {
-        BigEndian      = Reader.ReadAt<uint8_t>(0x2C) == 0xFF;
-        Reader.Order   = BigEndian ? Endian::Big : Endian::Little;
-        FormatVersion  = Reader.ReadAt<int16_t>(0x2E);
+        BigEndian         = Reader.ReadAt<uint8_t>(0x2C) == 0xFF;
+        Reader.Order      = BigEndian ? Endian::Big : Endian::Little;
+        FormatVersion     = Reader.ReadAt<int16_t>(0x2E);
         Reader.VarintLong = FormatVersion >= 200;
 
         Reader.ReadInt32();  // file size
@@ -694,9 +771,7 @@ namespace Souls {
         Reader.Assert<int8_t>(0, -1);  // big-endian
         Unicode = Reader.ReadBool();
         Reader.Assert<int16_t>(101, 102, 103, 104, 106, 201, 202, 203);  // format version
-        if (FormatVersion >= 200) {
-            Reader.Assert<int64_t>(0x38);
-        }
+        if (FormatVersion >= 200) { Reader.Assert<int64_t>(0x38); }
 
         if (!((FormatVersion < 200 && HeaderSize == 0x30) || (FormatVersion >= 200 && HeaderSize == 0xFF))) {
             throw BinaryException("Unexpected header size " + std::to_string(HeaderSize) + " for version " +
@@ -749,9 +824,7 @@ namespace Souls {
         Writer.WriteSByte(BigEndian ? -1 : 0);
         Writer.WriteBool(Unicode);
         Writer.WriteInt16(FormatVersion);
-        if (FormatVersion >= 200) {
-            Writer.WriteInt64(0x38);
-        }
+        if (FormatVersion >= 200) { Writer.WriteInt64(0x38); }
 
         for (size_t I = 0; I < Fields.size(); ++I) {
             WriteField(Writer, *this, Fields[I], I);
@@ -771,13 +844,9 @@ namespace Souls {
         // This entire heuristic seems extremely dubious, but it's what the files do.
         if (FormatVersion == 104 || FormatVersion == 201) {
             const int64_t FieldStringsLength = Writer.Position() - FieldStringsStart;
-            if (FieldStringsLength % 0x10 != 0) {
-                Writer.Pad(static_cast<size_t>(0x10 - FieldStringsLength % 0x10));
-            }
+            if (FieldStringsLength % 0x10 != 0) { Writer.Pad(static_cast<size_t>(0x10 - FieldStringsLength % 0x10)); }
         } else {
-            if (FormatVersion >= 202 && Writer.Position() % 0x10 == 0) {
-                Writer.Pad(0x10);
-            }
+            if (FormatVersion >= 202 && Writer.Position() % 0x10 == 0) { Writer.Pad(0x10); }
             Writer.Align(0x10);
         }
         Writer.Fill<int32_t>("FileSize", static_cast<int32_t>(Writer.Position()));

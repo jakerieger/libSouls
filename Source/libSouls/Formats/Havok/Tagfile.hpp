@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/11/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -55,11 +59,11 @@ namespace Souls::Havok {
         /// @brief The member's name.
         std::string Name;
         /// @brief Member flags (not interpreted).
-        uint32_t Flags  = 0;
+        uint32_t Flags = 0;
         /// @brief Where the member is, in bytes from the start of the record.
         uint32_t Offset = 0;
         /// @brief The member's type (an index into the type table).
-        uint32_t Type   = 0;
+        uint32_t Type = 0;
     };
 
     /// @brief One type as the file describes it.
@@ -71,19 +75,19 @@ namespace Souls::Havok {
         /// @brief Template arguments: names starting with 't' are types (Value is a type index), 'v' are values.
         std::vector<std::pair<std::string, int64_t>> Templates;
         /// @brief The base type (for records) or the type this one is a typedef of; 0 for none.
-        uint32_t Parent    = 0;
-        uint32_t Flags     = 0;  ///< which of the fields below are set
+        uint32_t Parent = 0;
+        uint32_t Flags  = 0;  ///< which of the fields below are set
         /// @brief The kind of value (low 5 bits, see Kind) plus details such as integer size and signedness.
-        uint32_t Subtype   = 0;
-        uint32_t Pointer   = 0;  ///< the pointed-to or element type
+        uint32_t Subtype = 0;
+        uint32_t Pointer = 0;  ///< the pointed-to or element type
         /// @brief The type's version.
-        uint32_t Version   = 0;
+        uint32_t Version = 0;
         /// @brief The size of a value of this type, in bytes.
-        uint32_t Size      = 0;
+        uint32_t Size = 0;
         /// @brief The alignment of a value of this type, in bytes.
         uint32_t Alignment = 0;
         /// @brief Unknown.
-        uint32_t Unk10     = 0;
+        uint32_t Unk10 = 0;
         /// @brief The members this type adds to its base (records only).
         std::vector<Member> Members;
         /// @brief Interfaces the type implements, as (type, value) pairs.
@@ -193,7 +197,8 @@ namespace Souls::Havok {
         NODISCARD const uint8_t* Bytes(size_t Count) const;
     };
 
-    /// @brief A Havok tagfile: its objects' data, the types that describe it, and the item table that locates each object.
+    /// @brief A Havok tagfile: its objects' data, the types that describe it, and the item table that locates each
+    /// object.
     class SOULS_API Tagfile {
     public:
         /// @brief An entry of the item table: one object, or an array of elements.
@@ -203,7 +208,7 @@ namespace Souls::Havok {
             uint8_t Flags   = 0;  ///< 0x10: an object; 0x20: an array of Count elements
             uint32_t Offset = 0;  ///< in Data
             /// @brief How many elements (1 for an object).
-            uint32_t Count  = 0;
+            uint32_t Count = 0;
         };
 
         /// @brief The Havok SDK version, such as "20180100".

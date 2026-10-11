@@ -1,6 +1,10 @@
-/// @file
-/// @author Jake Rieger
-/// @date 10/7/2026
+// Copyright (C) 2026 Jake Rieger
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General
+// Public License along with this program. If not, see https://www.gnu.org/licenses/.
 
 #pragma once
 
@@ -18,7 +22,7 @@ namespace Souls {
         /// @brief Flags indicating compression, and possibly other things.
         Binder::FileFlags Flags = Binder::FileFlags::Flag1;
         /// @brief ID of the file, or -1 for none.
-        int32_t ID              = -1;
+        int32_t ID = -1;
         /// @brief UTF-8.
         ///
         /// Absent for binders whose format has no names.
@@ -32,8 +36,7 @@ namespace Souls {
 
         BinderFile() = default;
         /// @brief A file with flags and contents, but no ID or name.
-        BinderFile(Binder::FileFlags Flags, std::vector<uint8_t> Bytes)
-            : Flags(Flags), Bytes(std::move(Bytes)) {}
+        BinderFile(Binder::FileFlags Flags, std::vector<uint8_t> Bytes) : Flags(Flags), Bytes(std::move(Bytes)) {}
         /// @brief A file with flags, an ID and contents.
         BinderFile(Binder::FileFlags Flags, int32_t ID, std::vector<uint8_t> Bytes)
             : Flags(Flags), ID(ID), Bytes(std::move(Bytes)) {}
