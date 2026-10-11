@@ -2,6 +2,8 @@
 PROJECT_NAME           = libSouls
 PROJECT_NUMBER         = 0.1.0
 PROJECT_BRIEF          = "A C/C++ library for FromSoftware's game file formats"
+PROJECT_ICON           = Docs/res/logo.png
+PROJECT_LOGO           = Docs/res/logo.png
 OUTPUT_DIRECTORY       = Docs
 CREATE_SUBDIRS         = NO
 STRIP_FROM_PATH        = Source

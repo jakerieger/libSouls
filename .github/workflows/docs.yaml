@@ -9,6 +9,7 @@ on:
       - 'Tools/**'
       - 'Docs/**'
       - '.github/workflows/docs.yml'
+      - 'Doxyfile'
   workflow_dispatch:
 
 permissions:
