@@ -37,6 +37,10 @@ is a side benefit rather than the goal, and any claims about it will be backed b
 
 #### The format knowledge in SoulsFormats took years of community work to build. libSouls aims to make that work available in more places.
 
+## Releases
+
+See [NOTES.md](NOTES.md) for release notes and downloads.
+
 ## Roadmap
 
 This is the planned development roadmap for libSouls:
