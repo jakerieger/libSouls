@@ -49,12 +49,15 @@ function Create-Release
             Remove-Item -Recurse $DistOutput -Force
         }
         $NULL = New-Item -Path $DistOutput\bin -ItemType Directory -Force
+        $NULL = New-Item -Path $DistOutput\lib -ItemType Directory -Force
         $NULL = New-Item -Path $DistOutput\include\libSouls -ItemType Directory -Force
 
         $DllPath = "$BuildDir\bin\Souls.dll"
+        $LibPath = "$BuildDir\lib\Souls.lib"
         $HeaderPath = "$PSScriptRoot\Source\libSouls\CApi\souls.h"
 
         $NULL = Copy-Item $DllPath $DistOutput\bin\Souls.dll -Force
+        $NULL = Copy-Item $LibPath $DistOutput\lib\Souls.lib -Force
         $NULL = Copy-Item $HeaderPath $DistOutput\include\libSouls\souls.h -Force
 
         $OutputFile = "$DistDir\libSouls-$Version-Windows-MSVC-x64-$ConfigStr.zip"
