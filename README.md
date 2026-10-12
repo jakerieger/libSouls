@@ -178,6 +178,8 @@ libSouls stands on a lot of community work. Thank you to everyone behind:
   library.
 - [**BinderKeys**](https://github.com/JKAnderson/BinderKeys) by TKGP and its contributors: the RSA keys of the games'
   archive headers and the dictionaries of their hashed file paths. Included as a submodule for the tests.
+- [**HavokLib**](https://github.com/PredatorCZ/HavokLib) by Lukas Cone (PredatorCZ), whose spline-compressed animation
+  decoder is the reference for libSouls' Havok animation decoding.
 - [**UXM**](https://github.com/Nordgaren/UXM-Selective-Unpack) and **Nuxe**, used to unpack the games' archives for real
   file testing. The community's work on the archive formats (BHD5 headers, path hashing) also informed libSouls'
   archive support.

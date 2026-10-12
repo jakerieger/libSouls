@@ -15,7 +15,11 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
 endforeach ()
 
-enable_testing()
+# The testsuite needs game files and the Vendor submodules; projects that use libSouls don't build it.
+option(SOULS_BUILD_TESTS "Build the libSouls testsuite" ${PROJECT_IS_TOP_LEVEL})
 
 add_subdirectory(Source/libSouls)
-add_subdirectory(Source/Testsuite)
+if (SOULS_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(Source/Testsuite)
+endif ()

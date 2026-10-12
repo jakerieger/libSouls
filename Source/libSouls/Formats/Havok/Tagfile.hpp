@@ -154,12 +154,16 @@ namespace Souls::Havok {
 
         /// @brief Whether this refers to a value (false for a default-constructed Value or a null pointer's target).
         NODISCARD bool IsValid() const { return File != nullptr && Type != 0; }
+        /// @brief Where the value is in the tagfile's data, in bytes.
+        NODISCARD size_t DataOffset() const { return Offset; }
         /// @brief The value's type, as an index into the tagfile's type table.
         NODISCARD uint32_t TypeIndex() const { return Type; }
         /// @brief The type's name, as SoulsFormats calls it.
         NODISCARD std::string TypeName() const;
         /// @brief The kind of value (Kind::Void for an invalid one).
         NODISCARD Kind GetKind() const;
+        /// @brief Whether the value's type is the named type or derives from it (false for an invalid value).
+        NODISCARD bool IsA(std::string_view TypeName) const;
 
         /// @brief A member of a record, by name; throws BinaryException if there is no such member.
         Value operator[](std::string_view Name) const;
@@ -195,6 +199,8 @@ namespace Souls::Havok {
 
         NODISCARD uint64_t ItemIndex() const;  ///< the item a pointer-like value refers to
         NODISCARD const uint8_t* Bytes(size_t Count) const;
+
+        friend class Tagfile;
     };
 
     /// @brief A Havok tagfile: its objects' data, the types that describe it, and the item table that locates each
@@ -221,6 +227,9 @@ namespace Souls::Havok {
         std::vector<Item> Items;
         /// @brief Set for tagfiles whose types are in a compendium.
         std::optional<uint64_t> CompendiumID;
+        /// @brief For tagfiles that carry their own types, the TYPE section as read (header included), which Write
+        ///        puts back unchanged.
+        std::vector<uint8_t> TypeSection;
 
         /// @brief Reads a tagfile.
         ///
@@ -236,6 +245,28 @@ namespace Souls::Havok {
         NODISCARD Value ItemValue(size_t Index) const;
         /// @brief Every object (not array element) whose type is, or derives from, the named type.
         NODISCARD std::vector<Value> ObjectsOfType(std::string_view TypeName) const;
+
+        /// @brief Writes the tagfile: its data, its types (or compendium reference) and an item table and pointer
+        ///        patch list regenerated from the data.
+        ///
+        /// A tagfile that was read and not changed writes back byte for byte.
+        NODISCARD std::vector<uint8_t> Write() const;
+
+        /// @brief Sets an integer, enum or bool value of this tagfile, at its type's size.
+        void SetInt(const Value& Field, int64_t NewValue);
+        /// @brief Sets a float value of this tagfile, at its type's size.
+        void SetFloat(const Value& Field, double NewValue);
+        /// @brief Replaces the elements of an hkArray of this tagfile.
+        ///
+        /// Elements holds Count elements as they lie in the data (any pointers in them are item indices). The data is
+        /// laid out again, so Values taken before the call point at stale offsets; take them again afterwards. An
+        /// empty array gets a new item, and Count 0 empties the array. Throws BinaryException if Field isn't an hkArray
+        /// of this tagfile or Elements isn't Count elements long.
+        void SetArray(const Value& Field, std::span<const uint8_t> Elements, size_t Count);
+
+    private:
+        void Relayout(size_t Replaced, std::span<const uint8_t> Bytes);
+        NODISCARD size_t ItemBytes(const Item& I) const;
     };
 
 #pragma warning(pop)

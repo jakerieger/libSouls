@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <map>
 
 namespace Souls::Havok {
     namespace {
@@ -333,6 +334,8 @@ namespace Souls::Havok {
 
         if (const Section* TypeSec = Find(Parts, "TYPE")) {
             Result.Types = ReadTypes(Data, *TypeSec);
+            Result.TypeSection.assign(Data.begin() + static_cast<std::ptrdiff_t>(TypeSec->Begin - 8),
+                                      Data.begin() + static_cast<std::ptrdiff_t>(TypeSec->End));
         } else if (const Section* Ref = Find(Parts, "TCRF")) {
             if (Ref->End - Ref->Begin < 8) throw BinaryException("Invalid Havok compendium reference");
             Result.CompendiumID = ReadU64(Data, Ref->Begin);
@@ -384,6 +387,216 @@ namespace Souls::Havok {
     }
 #pragma endregion
 
+#pragma region Writing
+    namespace {
+        void PutU32(std::vector<uint8_t>& Out, uint32_t Value) {
+            for (int I = 0; I < 4; ++I)
+                Out.push_back(static_cast<uint8_t>(Value >> (8 * I)));
+        }
+
+        // Starts a section; returns where its header is, for EndSection to fill in the size.
+        size_t BeginSection(std::vector<uint8_t>& Out, const char* Tag) {
+            const size_t At = Out.size();
+            Out.resize(At + 4);
+            Out.insert(Out.end(), Tag, Tag + 4);
+            return At;
+        }
+
+        void EndSection(std::vector<uint8_t>& Out, size_t At, uint32_t Flags) {
+            const uint32_t Word = (Flags << 30) | static_cast<uint32_t>(Out.size() - At);
+            Out[At]             = static_cast<uint8_t>(Word >> 24);
+            Out[At + 1]         = static_cast<uint8_t>(Word >> 16);
+            Out[At + 2]         = static_cast<uint8_t>(Word >> 8);
+            Out[At + 3]         = static_cast<uint8_t>(Word);
+        }
+
+        uint32_t AlignmentOf(const TypeTable& Types, uint32_t Index) {
+            for (int Depth = 0; Index != 0 && Depth < 64; ++Depth) {
+                const TypeInfo& T = Types.At(Index);
+                if (T.Flags & 0x08) return std::max<uint32_t>(T.Alignment, 1);
+                Index = T.Parent;
+            }
+            return 1;
+        }
+
+        // The pointer-like fields (pointers, strings, hkArrays) a value holds, by type, for the PTCH section: the
+        // loader rewrites each from an item index to an address.
+        void CollectPatches(const TypeTable& Types,
+                            std::span<const uint8_t> Data,
+                            uint32_t Type,
+                            size_t Offset,
+                            std::map<uint32_t, std::vector<uint32_t>>& Patches) {
+            const uint32_t Sub = Types.SubtypeOf(Type);
+            auto Patch         = [&] {
+                uint64_t Index = 0;
+                if (Offset + 8 <= Data.size()) std::memcpy(&Index, Data.data() + Offset, 8);
+                if (Index != 0) Patches[Type].push_back(static_cast<uint32_t>(Offset));
+            };
+            switch (static_cast<Kind>(Sub & 0x1F)) {
+                case Kind::Pointer:
+                case Kind::String: Patch(); break;
+                case Kind::Array:
+                    if (Sub & 0x20) {
+                        const uint32_t Element = Types.PointerOf(Type);
+                        const uint32_t Size    = Types.SizeOf(Element);
+                        for (uint32_t I = 0; I < (Sub >> 8); ++I)
+                            CollectPatches(Types, Data, Element, Offset + I * Size, Patches);
+                    } else {
+                        Patch();
+                    }
+                    break;
+                case Kind::Record:
+                    for (const Member* M : Types.AllMembers(Type))
+                        CollectPatches(Types, Data, M->Type, Offset + M->Offset, Patches);
+                    break;
+                default: break;
+            }
+        }
+    }  // namespace
+
+    std::vector<uint8_t> Tagfile::Write() const {
+        if (!Types) throw BinaryException("Havok tagfile has no types");
+        std::vector<uint8_t> Out;
+        const size_t Tag = BeginSection(Out, "TAG0");
+
+        const size_t Sdk = BeginSection(Out, "SDKV");
+        Out.insert(Out.end(), SdkVersion.begin(), SdkVersion.end());
+        EndSection(Out, Sdk, 1);
+
+        const size_t DataAt = BeginSection(Out, "DATA");
+        Out.insert(Out.end(), Data.begin(), Data.end());
+        EndSection(Out, DataAt, 1);
+
+        if (CompendiumID) {
+            const size_t Ref = BeginSection(Out, "TCRF");
+            for (int I = 0; I < 8; ++I)
+                Out.push_back(static_cast<uint8_t>(*CompendiumID >> (8 * I)));
+            Out.resize(Out.size() + 16);
+            EndSection(Out, Ref, 1);
+        } else {
+            if (TypeSection.empty()) throw BinaryException("Havok tagfile has neither a TYPE section nor a compendium");
+            Out.insert(Out.end(), TypeSection.begin(), TypeSection.end());
+        }
+
+        const size_t Index    = BeginSection(Out, "INDX");
+        const size_t ItemsAt  = BeginSection(Out, "ITEM");
+        for (const Item& I : Items) {
+            PutU32(Out, I.Type | (uint32_t(I.Flags) << 24));
+            PutU32(Out, I.Offset);
+            PutU32(Out, I.Count);
+        }
+        EndSection(Out, ItemsAt, 1);
+
+        std::map<uint32_t, std::vector<uint32_t>> Patches;
+        for (size_t N = 1; N < Items.size(); ++N) {
+            const Item& I       = Items[N];
+            const uint32_t Size = Types->SizeOf(I.Type);
+            for (uint32_t E = 0; E < I.Count; ++E)
+                CollectPatches(*Types, Data, I.Type, size_t(I.Offset) + size_t(E) * Size, Patches);
+        }
+        const size_t PatchAt = BeginSection(Out, "PTCH");
+        for (auto& [Type, Offsets] : Patches) {
+            std::sort(Offsets.begin(), Offsets.end());
+            PutU32(Out, Type);
+            PutU32(Out, static_cast<uint32_t>(Offsets.size()));
+            for (const uint32_t O : Offsets)
+                PutU32(Out, O);
+        }
+        EndSection(Out, PatchAt, 1);
+        EndSection(Out, Index, 0);
+
+        EndSection(Out, Tag, 0);
+        return Out;
+    }
+
+    size_t Tagfile::ItemBytes(const Item& I) const {
+        return size_t(I.Count) * Types->SizeOf(I.Type);
+    }
+
+    void Tagfile::SetInt(const Value& Field, int64_t NewValue) {
+        if (Field.File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
+        const uint32_t Size = Types->SizeOf(Field.Type);
+        if (Size == 0 || Size > 8 || Field.Offset + Size > Data.size())
+            throw BinaryException("Havok value isn't an integer");
+        std::memcpy(Data.data() + Field.Offset, &NewValue, Size);  // little-endian: the low bytes
+    }
+
+    void Tagfile::SetFloat(const Value& Field, double NewValue) {
+        if (Field.File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
+        const uint32_t Size = Types->SizeOf(Field.Type);
+        if (Field.Offset + Size > Data.size()) throw BinaryException("Havok value lies outside the data");
+        if (Size == 4) {
+            const float F = static_cast<float>(NewValue);
+            std::memcpy(Data.data() + Field.Offset, &F, 4);
+        } else if (Size == 8) {
+            std::memcpy(Data.data() + Field.Offset, &NewValue, 8);
+        } else {
+            throw BinaryException("Havok value isn't a float");
+        }
+    }
+
+    void Tagfile::SetArray(const Value& Field, std::span<const uint8_t> Elements, size_t Count) {
+        if (Field.File != this || Field.GetKind() != Kind::Array || (Types->SubtypeOf(Field.Type) & 0x20))
+            throw BinaryException("Havok value isn't an hkArray of this tagfile");
+        const uint32_t Element = Types->PointerOf(Field.Type);
+        if (Elements.size() != Count * Types->SizeOf(Element))
+            throw BinaryException("Havok array elements don't match the count given");
+
+        uint64_t Index = Field.ItemIndex();
+        if (Count == 0) {
+            const uint64_t Null = 0;
+            std::memcpy(Data.data() + Field.Offset, &Null, 8);
+            if (Index != 0) {  // the item stays (others may refer to it) but holds nothing
+                Items[Index].Count = 0;
+                Relayout(Index, {});
+            }
+            return;
+        }
+        if (Index == 0) {
+            // A new item at the end of the data.
+            const size_t Align = std::max<size_t>(16, AlignmentOf(*Types, Element));
+            const size_t At    = (Data.size() + Align - 1) / Align * Align;
+            Items.push_back({Element, 0x20, static_cast<uint32_t>(At), 0});
+            Index = Items.size() - 1;
+            std::memcpy(Data.data() + Field.Offset, &Index, 8);
+        }
+        Items[Index].Count = static_cast<uint32_t>(Count);
+        Relayout(Index, Elements);
+    }
+
+    // Lays the items out again in their current order, Replaced holding Bytes. Each item keeps the alignment its
+    // current offset has (up to 16), so a layout that doesn't change stays the same.
+    void Tagfile::Relayout(size_t Replaced, std::span<const uint8_t> Bytes) {
+        std::vector<size_t> Order;
+        for (size_t I = 1; I < Items.size(); ++I)
+            Order.push_back(I);
+        std::stable_sort(Order.begin(), Order.end(), [&](size_t A, size_t B) {
+            return Items[A].Offset < Items[B].Offset;
+        });
+
+        std::vector<uint8_t> NewData;
+        for (const size_t I : Order) {
+            Item& It = Items[I];
+            size_t Align = 16;
+            while (Align > 1 && It.Offset % Align != 0)
+                Align /= 2;
+            Align = std::max<size_t>(Align, AlignmentOf(*Types, It.Type));
+            NewData.resize((NewData.size() + Align - 1) / Align * Align);
+            const uint32_t At = static_cast<uint32_t>(NewData.size());
+            if (I == Replaced) {
+                NewData.insert(NewData.end(), Bytes.begin(), Bytes.end());
+            } else {
+                const size_t Size = ItemBytes(It);
+                if (It.Offset + Size > Data.size()) throw BinaryException("Havok item lies outside the data");
+                NewData.insert(NewData.end(), Data.begin() + It.Offset, Data.begin() + It.Offset + Size);
+            }
+            It.Offset = At;
+        }
+        NewData.resize((NewData.size() + 15) / 16 * 16);
+        Data = std::move(NewData);
+    }
+#pragma endregion
+
 #pragma region Value
     std::string Value::TypeName() const {
         return IsValid() ? File->Types->FullName(Type) : std::string();
@@ -391,6 +604,12 @@ namespace Souls::Havok {
 
     Kind Value::GetKind() const {
         return IsValid() ? File->Types->KindOf(Type) : Kind::Void;
+    }
+
+    bool Value::IsA(std::string_view TypeName) const {
+        if (!IsValid()) return false;
+        const uint32_t Base = File->Types->Find(TypeName);
+        return Base != 0 && File->Types->IsA(Type, Base);
     }
 
     const uint8_t* Value::Bytes(size_t Count) const {
