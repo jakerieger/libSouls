@@ -21,6 +21,20 @@ if ($env:VSCMD_ARG_TGT_ARCH -ne "x64" -or $env:VSCMD_ARG_HOST_ARCH -ne "x64")
     Write-Host "32-bit builds not supported. Exiting." -ForegroundColor Red
 }
 
+function Copy-Headers
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Destination
+    )
+
+    process {
+        $Source = "$PSScriptRoot\Source\libSouls"
+        $NULL = Robocopy $Source $Destination *.hpp *.h /S
+    }
+}
+
 enum Config
 {
     Debug
@@ -58,7 +72,7 @@ function Create-Release
 
         $NULL = Copy-Item $DllPath $DistOutput\bin\Souls.dll -Force
         $NULL = Copy-Item $LibPath $DistOutput\lib\Souls.lib -Force
-        $NULL = Copy-Item $HeaderPath $DistOutput\include\libSouls\souls.h -Force
+        Copy-Headers("$DistOutput\include\libSouls")
 
         $OutputFile = "$DistDir\libSouls-$Version-Windows-MSVC-x64-$ConfigStr.zip"
         $NULL = Compress-Archive -Path "$DistOutput\*" -DestinationPath $OutputFile -Force
