@@ -9,6 +9,7 @@
 #include "TestPaths.hpp"
 #include "TestResult.hpp"
 
+#include <libSouls/Binders/ArchiveSet.hpp>
 #include <libSouls/Crypto.hpp>
 #include <libSouls/Formats/BHD5.hpp>
 #include <libSouls/Util.hpp>
@@ -310,6 +311,28 @@ int RunBHD5Tests() {
             CHECK(Decoded > 0);
         } catch (const std::exception& E) {
             std::printf("FAIL real BHD5: %s\n", E.what());
+            ++Failures;
+        }
+
+        // ArchiveSet: the archives opened with BinderKeys' keys, files read by path.
+        try {
+            const fs::path Keys = TestPaths::BinderKeys() / "EldenRing_PC" / "Key";
+            if (fs::exists(Keys)) {
+                const ArchiveSet Archives = ArchiveSet::OpenWithKeys(Game, BHD5::Game::EldenRing, Keys);
+                CHECK(Archives.ArchiveNames().size() == 5 && Archives.FileCount() > 100000);
+                CHECK(Archives.Contains("/chr/c0000.anibnd.dcx") && Archives.Contains("CHR\\C0000.ANIBND.DCX"));
+                const auto Binder = Archives.Read("/chr/c0000.anibnd.dcx");
+                CHECK(Binder && Binder->size() > 4 && std::equal(Binder->begin(), Binder->begin() + 4, "DCX\0"));
+                CHECK(!Archives.Read("/no/such/file.bin") && !Archives.Contains("/no/such/file.bin"));
+                std::printf("ArchiveSet: %zu archives, %zu files\n", Archives.ArchiveNames().size(), Archives.FileCount());
+            }
+            // A folder without archives opens empty; a wrong key is an error.
+            CHECK(ArchiveSet::OpenWithKeys(TestPaths::Vendor(), BHD5::Game::EldenRing, Keys).FileCount() == 0);
+            const std::vector<uint8_t> Wrong = ReadAll(Keys / "Data1.pem");
+            const ArchiveSet::Source Mismatched[] {{"Data0", std::string(Wrong.begin(), Wrong.end())}};
+            CHECK(Throws([&] { (void)ArchiveSet::Open(Game, BHD5::Game::EldenRing, Mismatched); }));
+        } catch (const std::exception& E) {
+            std::printf("FAIL ArchiveSet: %s\n", E.what());
             ++Failures;
         }
     }

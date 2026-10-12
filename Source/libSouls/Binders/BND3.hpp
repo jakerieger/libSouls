@@ -15,6 +15,7 @@ namespace Souls {
 
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
+#pragma warning(disable : 4275)  // IBinder is header-only, so its not being exported is harmless
 
     /// @brief A BND3 binder: the container used by Demon's Souls through Dark Souls II.
     ///

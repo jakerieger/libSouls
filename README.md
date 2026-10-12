@@ -21,7 +21,7 @@ it is a .NET library, the tools built on it (Smithbox, DSMapStudio, DarkScript3,
 and anyone working in another language has to rewrite years of format knowledge from scratch. libSouls is a native
 implementation of the same formats, meant to **complement** the existing tools rather than replace them.
 
-A native library with a stable C interface (planned) offers things a managed library can't easily match:
+A native library with a stable C interface offers things a managed library can't easily match:
 
 - **Any language can use it.** Python, Rust, Lua, C#, and others can call it directly, without hosting a .NET runtime in
   the process.

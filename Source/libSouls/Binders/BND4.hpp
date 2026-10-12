@@ -15,6 +15,7 @@ namespace Souls {
 
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
+#pragma warning(disable : 4275)  // IBinder is header-only, so its not being exported is harmless
 
     /// @brief A BND4 binder: the container used by Bloodborne onwards (and a few earlier PC formats) to bundle many
     ///        files.

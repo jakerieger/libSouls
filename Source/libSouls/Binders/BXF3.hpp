@@ -17,6 +17,7 @@ namespace Souls {
 
 #pragma warning(push)
 #pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
+#pragma warning(disable : 4275)  // IBinder is header-only, so its not being exported is harmless
 
     /// @brief A BXF3 binder: a BND3-style container split across two files, a header file (BHF3, e.g. .tpfbhd) and a
     ///        data file (BDF3, e.g. .tpfbdt).
