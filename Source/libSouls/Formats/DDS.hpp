@@ -21,6 +21,9 @@
 
 namespace Souls {
 
+#pragma warning(push)
+#pragma warning(disable : 4251)  // STL members of an exported class; only touched by this DLL's own code
+
     /// @brief The header of a DirectDraw Surface (.dds) file, which is how PC textures are stored in a TPF.
     ///
     /// This only handles the header (and its optional DX10 extension); the pixel data after it is left alone.
@@ -292,5 +295,7 @@ namespace Souls {
         /// @brief A complete DDS file: this header followed by the pixel data.
         std::vector<uint8_t> Write(std::span<const uint8_t> PixelData) const;
     };
+
+#pragma warning(pop)
 
 }  // namespace Souls
