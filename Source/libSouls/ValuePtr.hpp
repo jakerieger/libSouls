@@ -22,48 +22,48 @@ namespace Souls {
         /// @brief An empty ValuePtr.
         ValuePtr() = default;
         /// @brief A ValuePtr holding a copy of Value.
-        ValuePtr(const T& Value) : Pointer(std::make_unique<T>(Value)) {}
+        ValuePtr(const T& Value) : _Pointer(std::make_unique<T>(Value)) {}
         /// @brief A ValuePtr holding Value, moved in.
-        ValuePtr(T&& Value) : Pointer(std::make_unique<T>(std::move(Value))) {}
+        ValuePtr(T&& Value) : _Pointer(std::make_unique<T>(std::move(Value))) {}
         /// @brief A deep copy: the new ValuePtr owns a copy of Other's object.
-        ValuePtr(const ValuePtr& Other) : Pointer(Other.Pointer ? std::make_unique<T>(*Other.Pointer) : nullptr) {}
+        ValuePtr(const ValuePtr& Other) : _Pointer(Other._Pointer ? std::make_unique<T>(*Other._Pointer) : nullptr) {}
         /// @brief Takes Other's object, leaving Other empty.
         ValuePtr(ValuePtr&&) noexcept = default;
 
         /// @brief A deep copy: replaces the object with a copy of Other's.
         ValuePtr& operator=(const ValuePtr& Other) {
-            if (this != &Other) { Pointer = Other.Pointer ? std::make_unique<T>(*Other.Pointer) : nullptr; }
+            if (this != &Other) { _Pointer = Other._Pointer ? std::make_unique<T>(*Other._Pointer) : nullptr; }
             return *this;
         }
         /// @brief Takes Other's object, leaving Other empty.
         ValuePtr& operator=(ValuePtr&&) noexcept = default;
 
         /// @brief Member access to the object; it must not be empty.
-        T* operator->() { return Pointer.get(); }
+        T* operator->() { return _Pointer.get(); }
         /// @brief Member access to the object; it must not be empty.
-        const T* operator->() const { return Pointer.get(); }
+        const T* operator->() const { return _Pointer.get(); }
         /// @brief The object; it must not be empty.
-        T& operator*() { return *Pointer; }
+        T& operator*() { return *_Pointer; }
         /// @brief The object; it must not be empty.
-        const T& operator*() const { return *Pointer; }
+        const T& operator*() const { return *_Pointer; }
         /// @brief The object, or nullptr if empty.
-        T* Get() { return Pointer.get(); }
+        T* Get() { return _Pointer.get(); }
         /// @brief The object, or nullptr if empty.
-        const T* Get() const { return Pointer.get(); }
+        const T* Get() const { return _Pointer.get(); }
         /// @brief Whether there is an object.
-        explicit operator bool() const { return static_cast<bool>(Pointer); }
+        explicit operator bool() const { return static_cast<bool>(_Pointer); }
 
         /// @brief Replaces the object with one constructed from Arguments and returns it.
         template<typename... Args>
         T& Emplace(Args&&... Arguments) {
-            Pointer = std::make_unique<T>(std::forward<Args>(Arguments)...);
-            return *Pointer;
+            _Pointer = std::make_unique<T>(std::forward<Args>(Arguments)...);
+            return *_Pointer;
         }
         /// @brief Destroys the object, leaving the ValuePtr empty.
-        void Reset() { Pointer.reset(); }
+        void Reset() { _Pointer.reset(); }
 
     private:
-        std::unique_ptr<T> Pointer;
+        std::unique_ptr<T> _Pointer;
     };
 
 }  // namespace Souls

@@ -118,13 +118,13 @@ namespace Souls {
         }
     }  // namespace
 
-    ParamLayout::ParamLayout(const PARAMDEF& Def, bool Big) : BigEndian(Big) {
+    ParamLayout::ParamLayout(const PARAMDEF& Def, bool Big) : _BigEndian(Big) {
         size_t Offset        = 0;
         int32_t BitOffset    = -1;
         int32_t BitLimit     = -1;
         size_t StorageOffset = 0;
 
-        Fields.reserve(Def.Fields.size());
+        _Fields.reserve(Def.Fields.size());
         for (const PARAMDEF::Field& Source : Def.Fields) {
             FieldInfo Info;
             Info.Name          = Source.InternalName;
@@ -189,13 +189,13 @@ namespace Souls {
                 BitOffset += Source.BitSize;
             }
 
-            ByName.emplace(Info.Name, Fields.size());  // the first field with a name wins
-            Fields.push_back(std::move(Info));
+            _ByName.emplace(Info.Name, _Fields.size());  // the first field with a name wins
+            _Fields.push_back(std::move(Info));
         }
-        Size = Offset;
+        _Size = Offset;
 
-        if (static_cast<int64_t>(Size) != Def.GetRowSize()) {
-            throw BinaryException("Internal error: layout size " + std::to_string(Size) +
+        if (static_cast<int64_t>(_Size) != Def.GetRowSize()) {
+            throw BinaryException("Internal error: layout size " + std::to_string(_Size) +
                                   " disagrees with the def's row size " + std::to_string(Def.GetRowSize()));
         }
     }
@@ -206,8 +206,8 @@ namespace Souls {
     }
 
     std::optional<size_t> ParamLayout::IndexOf(std::string_view InternalName) const {
-        const auto It = ByName.find(InternalName);
-        if (It == ByName.end()) return std::nullopt;
+        const auto It = _ByName.find(InternalName);
+        if (It == _ByName.end()) return std::nullopt;
         return It->second;
     }
 
@@ -224,10 +224,10 @@ namespace Souls {
     }
 
     const ParamLayout::FieldInfo& ParamLayout::Field(size_t FieldIndex) const {
-        if (FieldIndex >= Fields.size()) {
+        if (FieldIndex >= _Fields.size()) {
             throw BinaryException("Field index " + std::to_string(FieldIndex) + " is out of range");
         }
-        return Fields[FieldIndex];
+        return _Fields[FieldIndex];
     }
 
     size_t ParamLayout::Require(std::string_view InternalName) const {
@@ -244,10 +244,10 @@ namespace Souls {
         PARAM::Row Result;
         Result.ID   = ID;
         Result.Name = std::move(Name);
-        Result.Bytes.assign(Size, 0);
+        Result.Bytes.assign(_Size, 0);
 
-        for (size_t I = 0; I < Fields.size(); ++I) {
-            const FieldInfo& Info = Fields[I];
+        for (size_t I = 0; I < _Fields.size(); ++I) {
+            const FieldInfo& Info = _Fields[I];
             switch (Info.Type) {
                 case DefType::fixstr:
                 case DefType::fixstrW:
@@ -271,14 +271,14 @@ namespace Souls {
 
     CellValue ParamLayout::Get(const PARAM::Row& Row, size_t FieldIndex) const {
         const FieldInfo& Info = Field(FieldIndex);
-        if (Row.Bytes.size() != Size) {
+        if (Row.Bytes.size() != _Size) {
             throw BinaryException("Row " + std::to_string(Row.ID) + " has " + std::to_string(Row.Bytes.size()) +
-                                  " bytes, but the layout needs " + std::to_string(Size));
+                                  " bytes, but the layout needs " + std::to_string(_Size));
         }
         const uint8_t* Source = Row.Bytes.data() + Info.Offset;
 
         if (Info.BitSize != -1) {
-            const uint64_t Storage = LoadUnsigned(Source, Info.Length, BigEndian);
+            const uint64_t Storage = LoadUnsigned(Source, Info.Length, _BigEndian);
             const int32_t Left     = 64 - Info.BitSize - Info.BitOffset;
             const int32_t Right    = 64 - Info.BitSize;
             int64_t Value;
@@ -296,19 +296,19 @@ namespace Souls {
             case DefType::u8:
                 return Source[0];
             case DefType::s16:
-                return Load<int16_t>(Source, BigEndian);
+                return Load<int16_t>(Source, _BigEndian);
             case DefType::u16:
-                return Load<uint16_t>(Source, BigEndian);
+                return Load<uint16_t>(Source, _BigEndian);
             case DefType::s32:
             case DefType::b32:
-                return Load<int32_t>(Source, BigEndian);
+                return Load<int32_t>(Source, _BigEndian);
             case DefType::u32:
-                return Load<uint32_t>(Source, BigEndian);
+                return Load<uint32_t>(Source, _BigEndian);
             case DefType::f32:
             case DefType::angle32:
-                return Load<float>(Source, BigEndian);
+                return Load<float>(Source, _BigEndian);
             case DefType::f64:
-                return Load<double>(Source, BigEndian);
+                return Load<double>(Source, _BigEndian);
             case DefType::dummy8:
                 return std::vector<uint8_t>(Source, Source + Info.Length);
             case DefType::fixstr: {
@@ -320,7 +320,7 @@ namespace Souls {
             case DefType::fixstrW: {
                 std::u16string Units;
                 for (size_t I = 0; I < Info.Length / 2; ++I) {
-                    const char16_t Unit = Load<char16_t>(Source + I * 2, BigEndian);
+                    const char16_t Unit = Load<char16_t>(Source + I * 2, _BigEndian);
                     if (Unit == 0) break;
                     Units.push_back(Unit);
                 }
@@ -336,9 +336,9 @@ namespace Souls {
 
     void ParamLayout::Set(PARAM::Row& Row, size_t FieldIndex, const CellValue& Value) const {
         const FieldInfo& Info = Field(FieldIndex);
-        if (Row.Bytes.size() != Size) {
+        if (Row.Bytes.size() != _Size) {
             throw BinaryException("Row " + std::to_string(Row.ID) + " has " + std::to_string(Row.Bytes.size()) +
-                                  " bytes, but the layout needs " + std::to_string(Size));
+                                  " bytes, but the layout needs " + std::to_string(_Size));
         }
         uint8_t* Destination = Row.Bytes.data() + Info.Offset;
         auto Mismatch        = [&]() -> void {
@@ -352,8 +352,8 @@ namespace Souls {
             const uint64_t Mask = ((uint64_t {1} << Info.BitSize) - 1) << Info.BitOffset;
             const uint64_t Shifted =
               (static_cast<uint64_t>(*Integer) << Info.BitOffset) & Mask;  // out-of-range bits drop
-            const uint64_t Storage = LoadUnsigned(Destination, Info.Length, BigEndian);
-            StoreUnsigned(Destination, Info.Length, (Storage & ~Mask) | Shifted, BigEndian);
+            const uint64_t Storage = LoadUnsigned(Destination, Info.Length, _BigEndian);
+            StoreUnsigned(Destination, Info.Length, (Storage & ~Mask) | Shifted, _BigEndian);
             return;
         }
 
@@ -375,7 +375,7 @@ namespace Souls {
                           if constexpr (sizeof(T) == 1) {
                               Destination[0] = static_cast<uint8_t>(V);
                           } else {
-                              Store<T>(Destination, V, BigEndian);
+                              Store<T>(Destination, V, _BigEndian);
                           }
                       }
                   },
@@ -386,13 +386,13 @@ namespace Souls {
             case DefType::angle32: {
                 const auto Number = NumberOf(Value);
                 if (!Number) Mismatch();
-                Store<float>(Destination, static_cast<float>(*Number), BigEndian);
+                Store<float>(Destination, static_cast<float>(*Number), _BigEndian);
                 return;
             }
             case DefType::f64: {
                 const auto Number = NumberOf(Value);
                 if (!Number) Mismatch();
-                Store<double>(Destination, *Number, BigEndian);
+                Store<double>(Destination, *Number, _BigEndian);
                 return;
             }
             case DefType::dummy8: {
@@ -418,7 +418,7 @@ namespace Souls {
                 std::memset(Destination, 0, Info.Length);
                 const size_t Capacity = Info.Length / 2;
                 for (size_t I = 0; I < Units.size() && I < Capacity; ++I) {
-                    Store<char16_t>(Destination + I * 2, Units[I], BigEndian);
+                    Store<char16_t>(Destination + I * 2, Units[I], _BigEndian);
                 }
                 return;
             }
@@ -439,7 +439,7 @@ namespace Souls {
 
     void ParamLayout::SetNumber(PARAM::Row& Row, std::string_view InternalName, double Value) const {
         const size_t Index = Require(InternalName);
-        switch (Fields[Index].Type) {
+        switch (_Fields[Index].Type) {
             case DefType::f32:
             case DefType::angle32:
                 Set(Row, Index, static_cast<float>(Value));
@@ -448,7 +448,7 @@ namespace Souls {
                 Set(Row, Index, Value);
                 return;
             default:
-                Set(Row, Index, FromInteger(Fields[Index].Type, static_cast<int64_t>(Value)));
+                Set(Row, Index, FromInteger(_Fields[Index].Type, static_cast<int64_t>(Value)));
                 return;
         }
     }

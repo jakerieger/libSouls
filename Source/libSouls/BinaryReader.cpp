@@ -51,42 +51,42 @@ namespace Souls {
     BinaryReader::BinaryReader(const std::filesystem::path& Path, Endian Order) : Order(Order) {
         auto File = std::make_unique<std::ifstream>(Path, std::ios::binary);
         if (!File->is_open()) { throw BinaryException("Failed to open file for reading: " + Path.string()); }
-        Stream = File.get();
-        Owned  = std::move(File);
+        _Stream = File.get();
+        _Owned  = std::move(File);
     }
 
-    BinaryReader::BinaryReader(std::vector<uint8_t>&& Data, Endian Order) : Order(Order), Storage(std::move(Data)) {
-        InitMemory(Storage.data(), Storage.size());
+    BinaryReader::BinaryReader(std::vector<uint8_t>&& Data, Endian Order) : Order(Order), _Storage(std::move(Data)) {
+        InitMemory(_Storage.data(), _Storage.size());
     }
 
     BinaryReader::BinaryReader(std::span<const uint8_t> Data, Endian Order) : Order(Order) {
         InitMemory(Data.data(), Data.size());
     }
 
-    BinaryReader::BinaryReader(std::istream& Stream, Endian Order) : Order(Order), Stream(&Stream) {}
+    BinaryReader::BinaryReader(std::istream& Stream, Endian Order) : Order(Order), _Stream(&Stream) {}
 
     BinaryReader::~BinaryReader() = default;
 
     void BinaryReader::InitMemory(const uint8_t* Data, size_t Size) {
-        Buffer = std::make_unique<MemoryBuffer>(Data, Size);
-        Owned  = std::make_unique<std::istream>(Buffer.get());
-        Stream = Owned.get();
+        _Buffer = std::make_unique<MemoryBuffer>(Data, Size);
+        _Owned  = std::make_unique<std::istream>(_Buffer.get());
+        _Stream = _Owned.get();
     }
 
 #pragma region Position
     int64_t BinaryReader::Position() {
-        Stream->clear();
-        const auto Pos = Stream->tellg();
+        _Stream->clear();
+        const auto Pos = _Stream->tellg();
         if (Pos == std::istream::pos_type(-1)) { throw BinaryException("Failed to query stream position"); }
         return static_cast<int64_t>(Pos);
     }
 
     int64_t BinaryReader::Length() {
         const int64_t Current = Position();
-        Stream->seekg(0, std::ios_base::end);
-        const auto End = Stream->tellg();
-        Stream->seekg(Current, std::ios_base::beg);
-        if (End == std::istream::pos_type(-1) || Stream->fail()) {
+        _Stream->seekg(0, std::ios_base::end);
+        const auto End = _Stream->tellg();
+        _Stream->seekg(Current, std::ios_base::beg);
+        if (End == std::istream::pos_type(-1) || _Stream->fail()) {
             throw BinaryException("Failed to query stream length");
         }
         return static_cast<int64_t>(End);
@@ -101,10 +101,10 @@ namespace Souls {
     }
 
     void BinaryReader::Seek(int64_t Offset, std::ios_base::seekdir Origin) {
-        Stream->clear();
-        Stream->seekg(Offset, Origin);
-        if (Stream->fail()) {
-            Stream->clear();
+        _Stream->clear();
+        _Stream->seekg(Offset, Origin);
+        if (_Stream->fail()) {
+            _Stream->clear();
             throw BinaryException("Seek out of range (offset " + std::to_string(Offset) + ")");
         }
     }
@@ -126,19 +126,19 @@ namespace Souls {
     }
 
     void BinaryReader::StepIn(int64_t Position) {
-        StepStack.push_back(this->Position());
+        _StepStack.push_back(this->Position());
         try {
             Seek(Position);
         } catch (...) {
-            StepStack.pop_back();
+            _StepStack.pop_back();
             throw;
         }
     }
 
     void BinaryReader::StepOut() {
-        if (StepStack.empty()) { throw BinaryException("StepOut without matching StepIn"); }
-        const int64_t Target = StepStack.back();
-        StepStack.pop_back();
+        if (_StepStack.empty()) { throw BinaryException("StepOut without matching StepIn"); }
+        const int64_t Target = _StepStack.back();
+        _StepStack.pop_back();
         Seek(Target);
     }
 #pragma endregion
@@ -262,9 +262,9 @@ namespace Souls {
     void BinaryReader::ReadRaw(void* Destination, size_t Size) {
         if (Size == 0) { return; }
         const int64_t At = Position();
-        Stream->read(static_cast<char*>(Destination), static_cast<std::streamsize>(Size));
-        if (static_cast<size_t>(Stream->gcount()) != Size) {
-            Stream->clear();
+        _Stream->read(static_cast<char*>(Destination), static_cast<std::streamsize>(Size));
+        if (static_cast<size_t>(_Stream->gcount()) != Size) {
+            _Stream->clear();
             throw BinaryException("Unexpected end of data reading " + std::to_string(Size) + " bytes at offset " +
                                   std::to_string(At));
         }

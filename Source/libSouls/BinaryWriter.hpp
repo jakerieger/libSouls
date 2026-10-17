@@ -199,10 +199,10 @@ namespace Souls {
         void ReserveRaw(const std::string& Name, size_t Size);
         void FillRaw(const std::string& Name, const void* Source, size_t Size);
 
-        std::unique_ptr<std::ostream> Owned;  ///< stream we created, if any
-        std::ostream* Stream = nullptr;       ///< what all writes go through
-        bool IsMemory        = false;
-        std::unordered_map<std::string, Reservation> Reservations;
+        std::unique_ptr<std::ostream> _Owned;  ///< stream we created, if any
+        std::ostream* _Stream = nullptr;       ///< what all writes go through
+        bool _IsMemory        = false;
+        std::unordered_map<std::string, Reservation> _Reservations;
     };
 
 #pragma warning(pop)

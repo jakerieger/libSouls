@@ -35,8 +35,8 @@ namespace Souls {
     /// (the archives only store path hashes).
     ///
     /// @code
-    /// ArchiveSet Archives = ArchiveSet::OpenWithKeys(GameFolder, BHD5::Game::EldenRing, "BinderKeys/EldenRing_PC/Key");
-    /// if (auto Bytes = Archives.Read("/chr/c0000.anibnd.dcx")) {
+    /// ArchiveSet Archives = ArchiveSet::OpenWithKeys(GameFolder, BHD5::Game::EldenRing,
+    /// "BinderKeys/EldenRing_PC/Key"); if (auto Bytes = Archives.Read("/chr/c0000.anibnd.dcx")) {
     ///     BND4 Binder = BND4::Read(*Bytes);  // decompresses the DCX
     /// }
     /// @endcode
@@ -51,20 +51,20 @@ namespace Souls {
             std::string KeyPem;  ///< The header's key, or empty.
         };
 
-        ArchiveSet()                                         = default;
-        ArchiveSet(ArchiveSet&&) noexcept                    = default;
-        ArchiveSet& operator=(ArchiveSet&&) noexcept         = default;
-        ArchiveSet(const ArchiveSet&)                        = delete;
-        ArchiveSet& operator=(const ArchiveSet&)             = delete;
+        ArchiveSet()                                 = default;
+        ArchiveSet(ArchiveSet&&) noexcept            = default;
+        ArchiveSet& operator=(ArchiveSet&&) noexcept = default;
+        ArchiveSet(const ArchiveSet&)                = delete;
+        ArchiveSet& operator=(const ArchiveSet&)     = delete;
 
         /// @brief Opens archives of a game folder. An archive whose .bhd isn't there is skipped; throws BinaryException
         ///        if one that is there can't be read (such as with the wrong key).
-        static ArchiveSet Open(const std::filesystem::path& GameFolder, BHD5::Game Game, std::span<const Source> Archives);
+        static ArchiveSet
+        Open(const std::filesystem::path& GameFolder, BHD5::Game Game, std::span<const Source> Archives);
         /// @brief Opens every archive of a game folder that has a key in KeyFolder (a `Name.pem` per archive, as
         ///        BinderKeys lays them out). Throws as Open does.
-        static ArchiveSet OpenWithKeys(const std::filesystem::path& GameFolder,
-                                       BHD5::Game Game,
-                                       const std::filesystem::path& KeyFolder);
+        static ArchiveSet
+        OpenWithKeys(const std::filesystem::path& GameFolder, BHD5::Game Game, const std::filesystem::path& KeyFolder);
 
         /// @brief Whether a file is in the archives, by its path in the game ("/chr/c0000.anibnd.dcx"; case and
         ///        slashes don't matter).
@@ -75,7 +75,7 @@ namespace Souls {
         /// @brief The names of the archives that were opened.
         NODISCARD std::vector<std::string> ArchiveNames() const;
         /// @brief How many files the archives hold.
-        NODISCARD size_t FileCount() const { return ByHash.size(); }
+        NODISCARD size_t FileCount() const { return _ByHash.size(); }
 
     private:
         struct Archive {
@@ -88,9 +88,9 @@ namespace Souls {
             BHD5::FileHeader File;
         };
 
-        BHD5::Game Format = BHD5::Game::EldenRing;
-        std::vector<Archive> Archives;
-        std::unordered_map<uint64_t, Located> ByHash;
+        BHD5::Game _Format = BHD5::Game::EldenRing;
+        std::vector<Archive> _Archives;
+        std::unordered_map<uint64_t, Located> _ByHash;
 
         NODISCARD uint64_t Hash(std::string_view Path) const;
     };

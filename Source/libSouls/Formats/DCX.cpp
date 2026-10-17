@@ -555,11 +555,11 @@ namespace Souls::DCX {
 
     DecompressedReader::DecompressedReader(BinaryReader& Source) {
         if (Is(Source)) {
-            std::vector<uint8_t> Bytes = Decompress(Source, Detected);
-            Owned                      = std::make_unique<BinaryReader>(std::move(Bytes), Endian::Little);
-            Active                     = Owned.get();
+            std::vector<uint8_t> Bytes = Decompress(Source, _Detected);
+            _Owned                     = std::make_unique<BinaryReader>(std::move(Bytes), Endian::Little);
+            _Active                    = _Owned.get();
         } else {
-            Active = &Source;
+            _Active = &Source;
         }
     }
 

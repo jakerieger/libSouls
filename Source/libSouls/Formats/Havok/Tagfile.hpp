@@ -150,14 +150,14 @@ namespace Souls::Havok {
     public:
         Value() = default;
         /// @brief A value of a type at an offset in a tagfile's data.
-        Value(const Tagfile* File, uint32_t Type, size_t Offset) : File(File), Type(Type), Offset(Offset) {}
+        Value(const Tagfile* File, uint32_t Type, size_t Offset) : _File(File), _Type(Type), _Offset(Offset) {}
 
         /// @brief Whether this refers to a value (false for a default-constructed Value or a null pointer's target).
-        NODISCARD bool IsValid() const { return File != nullptr && Type != 0; }
+        NODISCARD bool IsValid() const { return _File != nullptr && _Type != 0; }
         /// @brief Where the value is in the tagfile's data, in bytes.
-        NODISCARD size_t DataOffset() const { return Offset; }
+        NODISCARD size_t DataOffset() const { return _Offset; }
         /// @brief The value's type, as an index into the tagfile's type table.
-        NODISCARD uint32_t TypeIndex() const { return Type; }
+        NODISCARD uint32_t TypeIndex() const { return _Type; }
         /// @brief The type's name, as SoulsFormats calls it.
         NODISCARD std::string TypeName() const;
         /// @brief The kind of value (Kind::Void for an invalid one).
@@ -193,9 +193,9 @@ namespace Souls::Havok {
         NODISCARD std::span<const uint8_t> AsBytes() const;
 
     private:
-        const Tagfile* File = nullptr;
-        uint32_t Type       = 0;
-        size_t Offset       = 0;
+        const Tagfile* _File = nullptr;
+        uint32_t _Type       = 0;
+        size_t _Offset       = 0;
 
         NODISCARD uint64_t ItemIndex() const;  ///< the item a pointer-like value refers to
         NODISCARD const uint8_t* Bytes(size_t Count) const;

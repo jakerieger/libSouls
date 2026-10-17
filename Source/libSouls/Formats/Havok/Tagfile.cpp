@@ -31,7 +31,7 @@ namespace Souls::Havok {
             while (Pos + 8 <= End) {
                 const uint32_t Word = (uint32_t(Data[Pos]) << 24) | (uint32_t(Data[Pos + 1]) << 16) |
                                       (uint32_t(Data[Pos + 2]) << 8) | uint32_t(Data[Pos + 3]);
-                const size_t Size = Word & 0x3FFFFFFF;
+                const size_t Size   = Word & 0x3FFFFFFF;
                 if (Size < 8 || Pos + Size > End) {
                     throw BinaryException("Invalid Havok tagfile section size at " + std::to_string(Pos));
                 }
@@ -61,9 +61,9 @@ namespace Souls::Havok {
         // says how many more bytes follow (big-endian).
         class VarReader {
         public:
-            VarReader(std::span<const uint8_t> Data, size_t Begin, size_t End) : Data(Data), Pos(Begin), End(End) {}
+            VarReader(std::span<const uint8_t> Data, size_t Begin, size_t End) : _Data(Data), _Pos(Begin), _End(End) {}
 
-            bool AtEnd() const { return Pos >= End; }
+            bool AtEnd() const { return _Pos >= _End; }
 
             uint32_t Next() {
                 const uint8_t B = Byte();
@@ -91,13 +91,13 @@ namespace Souls::Havok {
             }
 
         private:
-            std::span<const uint8_t> Data;
-            size_t Pos;
-            size_t End;
+            std::span<const uint8_t> _Data;
+            size_t _Pos;
+            size_t _End;
 
             uint8_t Byte() {
-                if (Pos >= End) throw BinaryException("Havok type data ends unexpectedly");
-                return Data[Pos++];
+                if (_Pos >= _End) throw BinaryException("Havok type data ends unexpectedly");
+                return _Data[_Pos++];
             }
         };
 
@@ -434,7 +434,9 @@ namespace Souls::Havok {
             };
             switch (static_cast<Kind>(Sub & 0x1F)) {
                 case Kind::Pointer:
-                case Kind::String: Patch(); break;
+                case Kind::String:
+                    Patch();
+                    break;
                 case Kind::Array:
                     if (Sub & 0x20) {
                         const uint32_t Element = Types.PointerOf(Type);
@@ -449,7 +451,8 @@ namespace Souls::Havok {
                     for (const Member* M : Types.AllMembers(Type))
                         CollectPatches(Types, Data, M->Type, Offset + M->Offset, Patches);
                     break;
-                default: break;
+                default:
+                    break;
             }
         }
     }  // namespace
@@ -478,8 +481,8 @@ namespace Souls::Havok {
             Out.insert(Out.end(), TypeSection.begin(), TypeSection.end());
         }
 
-        const size_t Index    = BeginSection(Out, "INDX");
-        const size_t ItemsAt  = BeginSection(Out, "ITEM");
+        const size_t Index   = BeginSection(Out, "INDX");
+        const size_t ItemsAt = BeginSection(Out, "ITEM");
         for (const Item& I : Items) {
             PutU32(Out, I.Type | (uint32_t(I.Flags) << 24));
             PutU32(Out, I.Offset);
@@ -514,38 +517,38 @@ namespace Souls::Havok {
     }
 
     void Tagfile::SetInt(const Value& Field, int64_t NewValue) {
-        if (Field.File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
-        const uint32_t Size = Types->SizeOf(Field.Type);
-        if (Size == 0 || Size > 8 || Field.Offset + Size > Data.size())
+        if (Field._File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
+        const uint32_t Size = Types->SizeOf(Field._Type);
+        if (Size == 0 || Size > 8 || Field._Offset + Size > Data.size())
             throw BinaryException("Havok value isn't an integer");
-        std::memcpy(Data.data() + Field.Offset, &NewValue, Size);  // little-endian: the low bytes
+        std::memcpy(Data.data() + Field._Offset, &NewValue, Size);  // little-endian: the low bytes
     }
 
     void Tagfile::SetFloat(const Value& Field, double NewValue) {
-        if (Field.File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
-        const uint32_t Size = Types->SizeOf(Field.Type);
-        if (Field.Offset + Size > Data.size()) throw BinaryException("Havok value lies outside the data");
+        if (Field._File != this || !Field.IsValid()) throw BinaryException("Havok value isn't of this tagfile");
+        const uint32_t Size = Types->SizeOf(Field._Type);
+        if (Field._Offset + Size > Data.size()) throw BinaryException("Havok value lies outside the data");
         if (Size == 4) {
             const float F = static_cast<float>(NewValue);
-            std::memcpy(Data.data() + Field.Offset, &F, 4);
+            std::memcpy(Data.data() + Field._Offset, &F, 4);
         } else if (Size == 8) {
-            std::memcpy(Data.data() + Field.Offset, &NewValue, 8);
+            std::memcpy(Data.data() + Field._Offset, &NewValue, 8);
         } else {
             throw BinaryException("Havok value isn't a float");
         }
     }
 
     void Tagfile::SetArray(const Value& Field, std::span<const uint8_t> Elements, size_t Count) {
-        if (Field.File != this || Field.GetKind() != Kind::Array || (Types->SubtypeOf(Field.Type) & 0x20))
+        if (Field._File != this || Field.GetKind() != Kind::Array || (Types->SubtypeOf(Field._Type) & 0x20))
             throw BinaryException("Havok value isn't an hkArray of this tagfile");
-        const uint32_t Element = Types->PointerOf(Field.Type);
+        const uint32_t Element = Types->PointerOf(Field._Type);
         if (Elements.size() != Count * Types->SizeOf(Element))
             throw BinaryException("Havok array elements don't match the count given");
 
         uint64_t Index = Field.ItemIndex();
         if (Count == 0) {
             const uint64_t Null = 0;
-            std::memcpy(Data.data() + Field.Offset, &Null, 8);
+            std::memcpy(Data.data() + Field._Offset, &Null, 8);
             if (Index != 0) {  // the item stays (others may refer to it) but holds nothing
                 Items[Index].Count = 0;
                 Relayout(Index, {});
@@ -558,7 +561,7 @@ namespace Souls::Havok {
             const size_t At    = (Data.size() + Align - 1) / Align * Align;
             Items.push_back({Element, 0x20, static_cast<uint32_t>(At), 0});
             Index = Items.size() - 1;
-            std::memcpy(Data.data() + Field.Offset, &Index, 8);
+            std::memcpy(Data.data() + Field._Offset, &Index, 8);
         }
         Items[Index].Count = static_cast<uint32_t>(Count);
         Relayout(Index, Elements);
@@ -576,7 +579,7 @@ namespace Souls::Havok {
 
         std::vector<uint8_t> NewData;
         for (const size_t I : Order) {
-            Item& It = Items[I];
+            Item& It     = Items[I];
             size_t Align = 16;
             while (Align > 1 && It.Offset % Align != 0)
                 Align /= 2;
@@ -599,39 +602,39 @@ namespace Souls::Havok {
 
 #pragma region Value
     std::string Value::TypeName() const {
-        return IsValid() ? File->Types->FullName(Type) : std::string();
+        return IsValid() ? _File->Types->FullName(_Type) : std::string();
     }
 
     Kind Value::GetKind() const {
-        return IsValid() ? File->Types->KindOf(Type) : Kind::Void;
+        return IsValid() ? _File->Types->KindOf(_Type) : Kind::Void;
     }
 
     bool Value::IsA(std::string_view TypeName) const {
         if (!IsValid()) return false;
-        const uint32_t Base = File->Types->Find(TypeName);
-        return Base != 0 && File->Types->IsA(Type, Base);
+        const uint32_t Base = _File->Types->Find(TypeName);
+        return Base != 0 && _File->Types->IsA(_Type, Base);
     }
 
     const uint8_t* Value::Bytes(size_t Count) const {
         if (!IsValid()) throw BinaryException("Use of a null Havok value");
-        if (Offset + Count > File->Data.size()) throw BinaryException("Havok value lies outside the data");
-        return File->Data.data() + Offset;
+        if (_Offset + Count > _File->Data.size()) throw BinaryException("Havok value lies outside the data");
+        return _File->Data.data() + _Offset;
     }
 
     bool Value::Has(std::string_view Name) const {
-        return IsValid() && File->Types->FindMember(Type, Name) != nullptr;
+        return IsValid() && _File->Types->FindMember(_Type, Name) != nullptr;
     }
 
     Value Value::operator[](std::string_view Name) const {
         if (!IsValid()) throw BinaryException("Use of a null Havok value");
-        const Member* M = File->Types->FindMember(Type, Name);
+        const Member* M = _File->Types->FindMember(_Type, Name);
         if (!M) throw BinaryException("Havok type " + TypeName() + " has no member \"" + std::string(Name) + "\"");
-        return Value(File, M->Type, Offset + M->Offset);
+        return Value(_File, M->Type, _Offset + M->Offset);
     }
 
     int64_t Value::AsInt() const {
-        const uint32_t Size = File ? File->Types->SizeOf(Type) : 0;
-        const bool Signed   = (File->Types->SubtypeOf(Type) & 0x200) != 0;
+        const uint32_t Size = _File ? _File->Types->SizeOf(_Type) : 0;
+        const bool Signed   = (_File->Types->SubtypeOf(_Type) & 0x200) != 0;
         const uint8_t* P    = Bytes(Size);
         switch (Size) {
             case 1:
@@ -662,7 +665,7 @@ namespace Souls::Havok {
 
     double Value::AsFloat() const {
         if (GetKind() == Kind::Int || GetKind() == Kind::Bool) return static_cast<double>(AsInt());
-        const uint32_t Size = File->Types->SizeOf(Type);
+        const uint32_t Size = _File->Types->SizeOf(_Type);
         const uint8_t* P    = Bytes(Size);
         if (Size == 4) {
             float V;
@@ -680,7 +683,7 @@ namespace Souls::Havok {
     uint64_t Value::ItemIndex() const {
         uint64_t Index = 0;
         std::memcpy(&Index, Bytes(8), 8);
-        if (Index >= File->Items.size()) throw BinaryException("Havok item index out of range");
+        if (Index >= _File->Items.size()) throw BinaryException("Havok item index out of range");
         return Index;
     }
 
@@ -688,34 +691,34 @@ namespace Souls::Havok {
         if (GetKind() != Kind::String) throw BinaryException("Havok value of type " + TypeName() + " isn't a string");
         const uint64_t Index = ItemIndex();
         if (Index == 0) return {};
-        const Tagfile::Item& I = File->Items[Index];
-        if (I.Offset + I.Count > File->Data.size()) throw BinaryException("Havok string lies outside the data");
-        const char* Text = reinterpret_cast<const char*>(File->Data.data()) + I.Offset;
+        const Tagfile::Item& I = _File->Items[Index];
+        if (I.Offset + I.Count > _File->Data.size()) throw BinaryException("Havok string lies outside the data");
+        const char* Text = reinterpret_cast<const char*>(_File->Data.data()) + I.Offset;
         return std::string(Text, strnlen(Text, I.Count));
     }
 
     Value Value::Deref() const {
         if (GetKind() != Kind::Pointer) throw BinaryException("Havok value of type " + TypeName() + " isn't a pointer");
-        return File->ItemValue(ItemIndex());
+        return _File->ItemValue(ItemIndex());
     }
 
     size_t Value::Size() const {
         if (GetKind() != Kind::Array) throw BinaryException("Havok value of type " + TypeName() + " isn't an array");
-        const uint32_t Sub = File->Types->SubtypeOf(Type);
+        const uint32_t Sub = _File->Types->SubtypeOf(_Type);
         if (Sub & 0x20) return Sub >> 8;  // fixed size
         const uint64_t Index = ItemIndex();
-        return Index == 0 ? 0 : File->Items[Index].Count;
+        return Index == 0 ? 0 : _File->Items[Index].Count;
     }
 
     Value Value::At(size_t Index) const {
         if (Index >= Size()) throw BinaryException("Havok array index out of range");
-        const uint32_t Sub = File->Types->SubtypeOf(Type);
+        const uint32_t Sub = _File->Types->SubtypeOf(_Type);
         if (Sub & 0x20) {
-            const uint32_t Element = File->Types->PointerOf(Type);
-            return Value(File, Element, Offset + Index * File->Types->SizeOf(Element));
+            const uint32_t Element = _File->Types->PointerOf(_Type);
+            return Value(_File, Element, _Offset + Index * _File->Types->SizeOf(Element));
         }
-        const Tagfile::Item& I = File->Items[ItemIndex()];
-        return Value(File, I.Type, I.Offset + Index * File->Types->SizeOf(I.Type));
+        const Tagfile::Item& I = _File->Items[ItemIndex()];
+        return Value(_File, I.Type, I.Offset + Index * _File->Types->SizeOf(I.Type));
     }
 
     std::vector<float> Value::AsFloats() const {
@@ -735,11 +738,11 @@ namespace Souls::Havok {
     std::span<const uint8_t> Value::AsBytes() const {
         const size_t Count = Size();
         if (Count == 0) return {};
-        if (File->Types->SubtypeOf(Type) & 0x20) throw BinaryException("AsBytes is for hkArrays");
-        const Tagfile::Item& I = File->Items[ItemIndex()];
-        if (File->Types->SizeOf(I.Type) != 1) throw BinaryException("Havok array isn't of bytes");
-        if (I.Offset + Count > File->Data.size()) throw BinaryException("Havok array lies outside the data");
-        return {File->Data.data() + I.Offset, Count};
+        if (_File->Types->SubtypeOf(_Type) & 0x20) throw BinaryException("AsBytes is for hkArrays");
+        const Tagfile::Item& I = _File->Items[ItemIndex()];
+        if (_File->Types->SizeOf(I.Type) != 1) throw BinaryException("Havok array isn't of bytes");
+        if (I.Offset + Count > _File->Data.size()) throw BinaryException("Havok array lies outside the data");
+        return {_File->Data.data() + I.Offset, Count};
     }
 #pragma endregion
 }  // namespace Souls::Havok

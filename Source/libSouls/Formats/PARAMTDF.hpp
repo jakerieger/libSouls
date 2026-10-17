@@ -51,7 +51,7 @@ namespace Souls {
         explicit PARAMTDF(const std::string& Text);
 
         /// @brief The type of values in this TDF; must be an integral type (s8, u8, s16, u16, s32 or u32).
-        PARAMDEF::DefType GetType() const { return Type; }
+        PARAMDEF::DefType GetType() const { return _Type; }
         /// @brief Changes the enum's value type; throws std::invalid_argument unless it's s8, u8, s16, u16, s32 or u32.
         void SetType(PARAMDEF::DefType NewType);
 
@@ -64,7 +64,7 @@ namespace Souls {
         std::string Write() const;
 
     private:
-        PARAMDEF::DefType Type = PARAMDEF::DefType::s32;
+        PARAMDEF::DefType _Type = PARAMDEF::DefType::s32;
     };
 
 #pragma warning(pop)

@@ -41,7 +41,7 @@ namespace Souls {
             case DefType::u16:
             case DefType::s32:
             case DefType::u32:
-                Type = NewType;
+                _Type = NewType;
                 return;
             default:
                 throw std::invalid_argument("TDF type may only be s8, u8, s16, u16, s32, or u32.");
@@ -74,7 +74,7 @@ namespace Souls {
             const std::string ValueText = Trim(Lines[I].substr(Comma + 1), '"');
 
             Entry E;
-            switch (Type) {
+            switch (_Type) {
                 case DefType::s8:
                     E.Val = ParseNumber<int8_t>(ValueText);
                     break;
@@ -116,7 +116,7 @@ namespace Souls {
     std::string PARAMTDF::Write() const {
         std::ostringstream Out;
         Out << '"' << Name << "\"\r\n";
-        Out << '"' << ParamUtil::DefTypeName(Type) << "\"\r\n";
+        Out << '"' << ParamUtil::DefTypeName(_Type) << "\"\r\n";
         for (const Entry& E : Entries) {
             if (E.Name) { Out << '"' << *E.Name << '"'; }
             Out << ",\"";

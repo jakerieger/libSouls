@@ -63,7 +63,7 @@ namespace Souls {
 
 #pragma region ParamNameRepository
     void ParamNameRepository::Add(std::string_view ParamName, int32_t ID, std::string Name) {
-        Table& T = Tables[Lower(ParamName)];
+        Table& T = _Tables[Lower(ParamName)];
         if (T.Name.empty()) { T.Name = std::string(ParamName); }
         T.Names[ID] = std::move(Name);
     }
@@ -110,8 +110,8 @@ namespace Souls {
     }
 
     const std::map<int32_t, std::string>* ParamNameRepository::Find(std::string_view ParamName) const {
-        const auto Found = Tables.find(Lower(ParamName));
-        return Found == Tables.end() ? nullptr : &Found->second.Names;
+        const auto Found = _Tables.find(Lower(ParamName));
+        return Found == _Tables.end() ? nullptr : &Found->second.Names;
     }
 
     std::optional<std::string> ParamNameRepository::Find(std::string_view ParamName, int32_t ID) const {
@@ -139,7 +139,7 @@ namespace Souls {
 
     std::vector<std::string> ParamNameRepository::ParamNames() const {
         std::vector<std::string> Result;
-        for (const auto& [Key, T] : Tables)
+        for (const auto& [Key, T] : _Tables)
             Result.push_back(T.Name);
         return Result;
     }
@@ -148,7 +148,7 @@ namespace Souls {
 #pragma region ParamEnumRepository
     void ParamEnumRepository::Add(PARAMTDF Enum) {
         const std::string Key = Lower(Enum.Name);
-        Enums.insert_or_assign(Key, std::move(Enum));
+        _Enums.insert_or_assign(Key, std::move(Enum));
     }
 
     MetadataLoadResult ParamEnumRepository::AddFile(const std::filesystem::path& File) {
@@ -174,13 +174,13 @@ namespace Souls {
     }
 
     const PARAMTDF* ParamEnumRepository::Find(std::string_view Name) const {
-        const auto Found = Enums.find(Lower(Name));
-        return Found == Enums.end() ? nullptr : &Found->second;
+        const auto Found = _Enums.find(Lower(Name));
+        return Found == _Enums.end() ? nullptr : &Found->second;
     }
 
     std::vector<const PARAMTDF*> ParamEnumRepository::All() const {
         std::vector<const PARAMTDF*> Result;
-        for (const auto& [Key, E] : Enums)
+        for (const auto& [Key, E] : _Enums)
             Result.push_back(&E);
         return Result;
     }

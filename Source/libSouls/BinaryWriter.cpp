@@ -18,43 +18,43 @@ namespace Souls {
     BinaryWriter::BinaryWriter(const std::filesystem::path& Path, Endian Order) : Order(Order) {
         auto File = std::make_unique<std::ofstream>(Path, std::ios::binary | std::ios::trunc);
         if (!File->is_open()) { throw BinaryException("Failed to open file for writing: " + Path.string()); }
-        Stream = File.get();
-        Owned  = std::move(File);
+        _Stream = File.get();
+        _Owned  = std::move(File);
     }
 
-    BinaryWriter::BinaryWriter(Endian Order) : Order(Order), IsMemory(true) {
-        Owned  = std::make_unique<std::ostringstream>(std::ios::binary);
-        Stream = Owned.get();
+    BinaryWriter::BinaryWriter(Endian Order) : Order(Order), _IsMemory(true) {
+        _Owned  = std::make_unique<std::ostringstream>(std::ios::binary);
+        _Stream = _Owned.get();
     }
 
-    BinaryWriter::BinaryWriter(std::ostream& Stream, Endian Order) : Order(Order), Stream(&Stream) {}
+    BinaryWriter::BinaryWriter(std::ostream& Stream, Endian Order) : Order(Order), _Stream(&Stream) {}
 
     BinaryWriter::~BinaryWriter() = default;
 
 #pragma region Position
     int64_t BinaryWriter::Position() {
-        Stream->clear();
-        const auto Pos = Stream->tellp();
+        _Stream->clear();
+        const auto Pos = _Stream->tellp();
         if (Pos == std::ostream::pos_type(-1)) { throw BinaryException("Failed to query stream position"); }
         return static_cast<int64_t>(Pos);
     }
 
     int64_t BinaryWriter::Length() {
         const int64_t Current = Position();
-        Stream->seekp(0, std::ios_base::end);
-        const auto End = Stream->tellp();
-        Stream->seekp(Current, std::ios_base::beg);
-        if (End == std::ostream::pos_type(-1) || Stream->fail()) {
+        _Stream->seekp(0, std::ios_base::end);
+        const auto End = _Stream->tellp();
+        _Stream->seekp(Current, std::ios_base::beg);
+        if (End == std::ostream::pos_type(-1) || _Stream->fail()) {
             throw BinaryException("Failed to query stream length");
         }
         return static_cast<int64_t>(End);
     }
 
     void BinaryWriter::Seek(int64_t Offset, std::ios_base::seekdir Origin) {
-        Stream->clear();
-        Stream->seekp(Offset, Origin);
-        if (Stream->fail()) {
-            Stream->clear();
+        _Stream->clear();
+        _Stream->seekp(Offset, Origin);
+        if (_Stream->fail()) {
+            _Stream->clear();
             throw BinaryException("Seek out of range (offset " + std::to_string(Offset) + ")");
         }
     }
@@ -163,8 +163,8 @@ namespace Souls {
     }
 
     void BinaryWriter::FillVarint(const std::string& Name, int64_t Value) {
-        const auto It = Reservations.find(Name);
-        if (It == Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
+        const auto It = _Reservations.find(Name);
+        if (It == _Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
         // The placeholder's size, not the current VarintLong, decides the width.
         if (It->second.Size == sizeof(int64_t)) {
             Fill<int64_t>(Name, Value);
@@ -177,14 +177,14 @@ namespace Souls {
     }
 
     void BinaryWriter::ReserveRaw(const std::string& Name, size_t Size) {
-        if (Reservations.contains(Name)) { throw BinaryException("Reservation \"" + Name + "\" already exists"); }
-        Reservations[Name] = {Position(), Size};
+        if (_Reservations.contains(Name)) { throw BinaryException("Reservation \"" + Name + "\" already exists"); }
+        _Reservations[Name] = {Position(), Size};
         Pad(Size);
     }
 
     void BinaryWriter::FillRaw(const std::string& Name, const void* Source, size_t Size) {
-        const auto It = Reservations.find(Name);
-        if (It == Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
+        const auto It = _Reservations.find(Name);
+        if (It == _Reservations.end()) { throw BinaryException("No pending reservation named \"" + Name + "\""); }
         if (It->second.Size != Size) {
             throw BinaryException("Reservation \"" + Name + "\" is " + std::to_string(It->second.Size) +
                                   " bytes, but a " + std::to_string(Size) + "-byte value was supplied");
@@ -193,23 +193,23 @@ namespace Souls {
         Seek(It->second.Position);
         WriteRaw(Source, Size);
         Seek(Return);
-        Reservations.erase(It);
+        _Reservations.erase(It);
     }
 #pragma endregion
 
     void BinaryWriter::Finish() {
-        if (!Reservations.empty()) {
-            throw BinaryException("Unfilled reservation: \"" + Reservations.begin()->first + "\" (" +
-                                  std::to_string(Reservations.size()) + " pending)");
+        if (!_Reservations.empty()) {
+            throw BinaryException("Unfilled reservation: \"" + _Reservations.begin()->first + "\" (" +
+                                  std::to_string(_Reservations.size()) + " pending)");
         }
-        Stream->flush();
-        if (Stream->fail()) { throw BinaryException("Failed to flush stream"); }
+        _Stream->flush();
+        if (_Stream->fail()) { throw BinaryException("Failed to flush stream"); }
     }
 
     std::vector<uint8_t> BinaryWriter::ReadBack(int64_t Position, size_t Count) {
-        if (!IsMemory) { throw BinaryException("ReadBack is only available on in-memory writers"); }
-        Stream->flush();
-        const std::string Data = static_cast<std::ostringstream*>(Owned.get())->str();
+        if (!_IsMemory) { throw BinaryException("ReadBack is only available on in-memory writers"); }
+        _Stream->flush();
+        const std::string Data = static_cast<std::ostringstream*>(_Owned.get())->str();
         if (Position < 0 || static_cast<size_t>(Position) + Count > Data.size()) {
             throw BinaryException("ReadBack range is outside the written data");
         }
@@ -217,17 +217,17 @@ namespace Souls {
     }
 
     std::vector<uint8_t> BinaryWriter::ToBytes() {
-        if (!IsMemory) { throw BinaryException("ToBytes is only available on in-memory writers"); }
+        if (!_IsMemory) { throw BinaryException("ToBytes is only available on in-memory writers"); }
         Finish();
-        const std::string Data = static_cast<std::ostringstream*>(Owned.get())->str();
+        const std::string Data = static_cast<std::ostringstream*>(_Owned.get())->str();
         return {Data.begin(), Data.end()};
     }
 
     void BinaryWriter::WriteRaw(const void* Source, size_t Size) {
         if (Size == 0) { return; }
-        Stream->write(static_cast<const char*>(Source), static_cast<std::streamsize>(Size));
-        if (Stream->fail()) {
-            Stream->clear();
+        _Stream->write(static_cast<const char*>(Source), static_cast<std::streamsize>(Size));
+        if (_Stream->fail()) {
+            _Stream->clear();
             throw BinaryException("Failed to write " + std::to_string(Size) + " bytes");
         }
     }

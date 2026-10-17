@@ -108,11 +108,11 @@ namespace Souls {
 
 #pragma region Files
         /// @brief How many files the pair holds.
-        size_t FileCount() const { return Files.size(); }
+        size_t FileCount() const { return _Files.size(); }
         /// @brief What the header says about one file; throws std::out_of_range for a bad index.
         const FileInfo& File(size_t Index) const;
         /// @brief What the header says about every file.
-        const std::vector<FileInfo>& AllFiles() const { return Files; }
+        const std::vector<FileInfo>& AllFiles() const { return _Files; }
 
         /// @brief The index of the file with exactly this stored name (a path like "71_MapTile\\x.tpf.dcx"), or
         ///        nullopt.
@@ -136,8 +136,8 @@ namespace Souls {
         struct Impl;
         void Initialize(std::span<const uint8_t> Header);
 
-        std::vector<FileInfo> Files;
-        std::unique_ptr<Impl> State;
+        std::vector<FileInfo> _Files;
+        std::unique_ptr<Impl> _State;
     };
 
 #pragma warning(pop)

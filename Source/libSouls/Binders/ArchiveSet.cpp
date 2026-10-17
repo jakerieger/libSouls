@@ -26,7 +26,7 @@ namespace Souls {
 
     ArchiveSet ArchiveSet::Open(const fs::path& GameFolder, BHD5::Game Game, std::span<const Source> Sources) {
         ArchiveSet Result;
-        Result.Format = Game;
+        Result._Format = Game;
         for (const Source& S : Sources) {
             const fs::path Bhd = GameFolder / (S.Name + ".bhd");
             const fs::path Bdt = GameFolder / (S.Name + ".bdt");
@@ -37,12 +37,12 @@ namespace Souls {
                 const BHD5 Bhd5                   = BHD5::Read(Header, Game);
                 for (const auto& Bucket : Bhd5.Buckets) {
                     for (const auto& File : Bucket)
-                        Result.ByHash.emplace(File.FileNameHash, Located {Result.Archives.size(), File});
+                        Result._ByHash.emplace(File.FileNameHash, Located {Result._Archives.size(), File});
                 }
             } catch (const std::exception& E) {
                 throw BinaryException("Couldn't read the " + S.Name + " archive header: " + E.what());
             }
-            Result.Archives.push_back({S.Name, std::make_unique<BinaryReader>(Bdt), std::make_unique<std::mutex>()});
+            Result._Archives.push_back({S.Name, std::make_unique<BinaryReader>(Bdt), std::make_unique<std::mutex>()});
         }
         return Result;
     }
@@ -61,24 +61,24 @@ namespace Souls {
 
     uint64_t ArchiveSet::Hash(std::string_view Path) const {
         // Elden Ring names files by a 64-bit hash; the earlier games by the 32-bit one.
-        return Format == BHD5::Game::EldenRing ? Util::FromPathHash64(Path) : Util::FromPathHash(Path);
+        return _Format == BHD5::Game::EldenRing ? Util::FromPathHash64(Path) : Util::FromPathHash(Path);
     }
 
     bool ArchiveSet::Contains(std::string_view Path) const {
-        return ByHash.count(Hash(Path)) != 0;
+        return _ByHash.count(Hash(Path)) != 0;
     }
 
     std::optional<std::vector<uint8_t>> ArchiveSet::Read(std::string_view Path) const {
-        const auto Found = ByHash.find(Hash(Path));
-        if (Found == ByHash.end()) return std::nullopt;
-        const Archive& In = Archives[Found->second.Archive];
+        const auto Found = _ByHash.find(Hash(Path));
+        if (Found == _ByHash.end()) return std::nullopt;
+        const Archive& In = _Archives[Found->second.Archive];
         std::lock_guard Guard(*In.Lock);
         return Found->second.File.ReadFile(*In.Data);
     }
 
     std::vector<std::string> ArchiveSet::ArchiveNames() const {
         std::vector<std::string> Names;
-        for (const Archive& A : Archives)
+        for (const Archive& A : _Archives)
             Names.push_back(A.Name);
         return Names;
     }

@@ -135,7 +135,8 @@ namespace Souls::Havok {
     /// @code
     /// Havok::Tagfile File             = Havok::Tagfile::Read(Bytes, &Compendium);
     /// Havok::Animation Animation      = Havok::Animation::FromValue(File.ObjectsOfType("hkaAnimation")[0]);
-    /// Havok::AnimationBinding Binding = Havok::AnimationBinding::FromValue(File.ObjectsOfType("hkaAnimationBinding")[0]);
+    /// Havok::AnimationBinding Binding =
+    /// Havok::AnimationBinding::FromValue(File.ObjectsOfType("hkaAnimationBinding")[0]);
     /// std::vector<Havok::QsTransform> Pose = Skeleton.ReferencePose;
     /// Binding.Apply(Animation, 0.5f, Pose);  // half a second in
     /// std::vector<Havok::QsTransform> World = Skeleton.ModelSpace(Pose);
@@ -156,7 +157,8 @@ namespace Souls::Havok {
         uint32_t FrameCount = 0;
         /// @brief The time between frames, in seconds.
         float FrameDuration = 0.f;
-        /// @brief Spline animations: how many frames each block covers (neighbouring blocks share their boundary frame).
+        /// @brief Spline animations: how many frames each block covers (neighbouring blocks share their boundary
+        /// frame).
         uint32_t FramesPerBlock = 0;
         /// @brief How many transform tracks the animation has (see AnimationBinding::TrackToBone).
         uint32_t TrackCount = 0;
@@ -223,8 +225,8 @@ namespace Souls::Havok {
             std::vector<Track> Tracks;
         };
 
-        std::vector<Block> Blocks;        ///< spline
-        std::vector<QsTransform> Frames;  ///< interleaved: FrameCount * TrackCount
+        std::vector<Block> _Blocks;        ///< spline
+        std::vector<QsTransform> _Frames;  ///< interleaved: FrameCount * TrackCount
 
         static void ReadSpline(const Value& Object, Animation& Result);
         void SampleSpline(float Frame, std::span<QsTransform> Out) const;

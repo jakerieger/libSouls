@@ -41,20 +41,21 @@ namespace Souls {
         }
     }  // namespace
 
-    BXFReader::BXFReader(const fs::path& HeaderPath, const fs::path& DataPath) : State(std::make_unique<Impl>()) {
+    BXFReader::BXFReader(const fs::path& HeaderPath, const fs::path& DataPath) : _State(std::make_unique<Impl>()) {
         // Header files are small compared to the data they describe, so this one is read whole.
         const std::vector<uint8_t> Header = ReadWholeFile(HeaderPath);
-        State->Data                       = std::make_unique<BinaryReader>(DataPath);
+        _State->Data                      = std::make_unique<BinaryReader>(DataPath);
         Initialize(Header);
     }
 
-    BXFReader::BXFReader(std::span<const uint8_t> Header, const fs::path& DataPath) : State(std::make_unique<Impl>()) {
-        State->Data = std::make_unique<BinaryReader>(DataPath);
+    BXFReader::BXFReader(std::span<const uint8_t> Header, const fs::path& DataPath) : _State(std::make_unique<Impl>()) {
+        _State->Data = std::make_unique<BinaryReader>(DataPath);
         Initialize(Header);
     }
 
-    BXFReader::BXFReader(std::span<const uint8_t> Header, std::vector<uint8_t> Data) : State(std::make_unique<Impl>()) {
-        State->Data = std::make_unique<BinaryReader>(std::move(Data));
+    BXFReader::BXFReader(std::span<const uint8_t> Header, std::vector<uint8_t> Data)
+        : _State(std::make_unique<Impl>()) {
+        _State->Data = std::make_unique<BinaryReader>(std::move(Data));
         Initialize(Header);
     }
 
@@ -72,30 +73,30 @@ namespace Souls {
 
         if (IsBXF3) {
             BXF3 Settings;
-            BXFHeaders::ReadBDF3(*State->Data);
-            State->Headers = BXFHeaders::ReadBHF3(Settings, HeaderReader);
-            Kind           = Generation::BXF3;
-            Version        = Settings.Version;
-            Format         = Settings.Format;
-            BigEndian      = Settings.BigEndian;
-            BitBigEndian   = Settings.BitBigEndian;
+            BXFHeaders::ReadBDF3(*_State->Data);
+            _State->Headers = BXFHeaders::ReadBHF3(Settings, HeaderReader);
+            Kind            = Generation::BXF3;
+            Version         = Settings.Version;
+            Format          = Settings.Format;
+            BigEndian       = Settings.BigEndian;
+            BitBigEndian    = Settings.BitBigEndian;
         } else {
             BXF4 Settings;
-            BXFHeaders::ReadBDF4(*State->Data);
-            State->Headers = BXFHeaders::ReadBHF4(Settings, HeaderReader);
-            Kind           = Generation::BXF4;
-            Version        = Settings.Version;
-            Format         = Settings.Format;
-            BigEndian      = Settings.BigEndian;
-            BitBigEndian   = Settings.BitBigEndian;
-            Unk04          = Settings.Unk04;
-            Unk05          = Settings.Unk05;
-            Unicode        = Settings.Unicode;
-            Extended       = Settings.Extended;
+            BXFHeaders::ReadBDF4(*_State->Data);
+            _State->Headers = BXFHeaders::ReadBHF4(Settings, HeaderReader);
+            Kind            = Generation::BXF4;
+            Version         = Settings.Version;
+            Format          = Settings.Format;
+            BigEndian       = Settings.BigEndian;
+            BitBigEndian    = Settings.BitBigEndian;
+            Unk04           = Settings.Unk04;
+            Unk05           = Settings.Unk05;
+            Unicode         = Settings.Unicode;
+            Extended        = Settings.Extended;
         }
 
-        Files.reserve(State->Headers.size());
-        for (const BinderFileHeader& Header : State->Headers) {
+        _Files.reserve(_State->Headers.size());
+        for (const BinderFileHeader& Header : _State->Headers) {
             FileInfo Info;
             Info.Flags            = Header.Flags;
             Info.ID               = Header.ID;
@@ -103,38 +104,38 @@ namespace Souls {
             Info.CompressedSize   = Header.CompressedSize;
             Info.UncompressedSize = Header.UncompressedSize;
             Info.DataOffset       = Header.DataOffset;
-            Files.push_back(std::move(Info));
+            _Files.push_back(std::move(Info));
         }
     }
 
     const BXFReader::FileInfo& BXFReader::File(size_t Index) const {
-        if (Index >= Files.size()) {
+        if (Index >= _Files.size()) {
             throw BinaryException("File index " + std::to_string(Index) + " is out of range (" +
-                                  std::to_string(Files.size()) + " files)");
+                                  std::to_string(_Files.size()) + " files)");
         }
-        return Files[Index];
+        return _Files[Index];
     }
 
     std::optional<size_t> BXFReader::IndexOf(std::string_view Name, bool IgnoreCase) const {
         const std::string Wanted = IgnoreCase ? Lower(Name) : std::string(Name);
-        for (size_t I = 0; I < Files.size(); ++I) {
-            if (!Files[I].Name) continue;
-            if ((IgnoreCase ? Lower(*Files[I].Name) : *Files[I].Name) == Wanted) return I;
+        for (size_t I = 0; I < _Files.size(); ++I) {
+            if (!_Files[I].Name) continue;
+            if ((IgnoreCase ? Lower(*_Files[I].Name) : *_Files[I].Name) == Wanted) return I;
         }
         return std::nullopt;
     }
 
     std::optional<size_t> BXFReader::IndexOfFileName(std::string_view FileName) const {
         const std::string Wanted = Lower(LastComponent(FileName));
-        for (size_t I = 0; I < Files.size(); ++I) {
-            if (Files[I].Name && Lower(LastComponent(*Files[I].Name)) == Wanted) return I;
+        for (size_t I = 0; I < _Files.size(); ++I) {
+            if (_Files[I].Name && Lower(LastComponent(*_Files[I].Name)) == Wanted) return I;
         }
         return std::nullopt;
     }
 
     BinderFile BXFReader::ReadFile(size_t Index) {
         File(Index);  // range check
-        return State->Headers[Index].ReadFileData(*State->Data);
+        return _State->Headers[Index].ReadFileData(*_State->Data);
     }
 
     std::vector<uint8_t> BXFReader::ReadBytes(size_t Index) {

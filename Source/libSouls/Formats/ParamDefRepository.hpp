@@ -115,9 +115,9 @@ namespace Souls {
         std::vector<const PARAMDEF*> FindCandidates(std::string_view ParamType) const;
 
         /// @brief How many defs are loaded.
-        size_t Size() const { return Entries.size(); }
+        size_t Size() const { return _Entries.size(); }
         /// @brief Whether no defs are loaded.
-        bool Empty() const { return Entries.empty(); }
+        bool Empty() const { return _Entries.empty(); }
         /// @brief Every def, in the order loaded.
         std::vector<const PARAMDEF*> All() const;
 #pragma endregion
@@ -141,8 +141,8 @@ namespace Souls {
         void LoadFile(const std::filesystem::path& File, const std::filesystem::path& Folder, LoadResult& Result);
 
         /// @brief Entries are individually allocated so pointers to their defs stay put as the list changes.
-        std::vector<std::unique_ptr<Entry>> Entries;
-        std::vector<WatchedFolder> Folders;
+        std::vector<std::unique_ptr<Entry>> _Entries;
+        std::vector<WatchedFolder> _Folders;
     };
 
 #pragma warning(pop)

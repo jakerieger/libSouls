@@ -57,9 +57,9 @@ namespace Souls {
         static std::optional<ParamLayout> TryCreate(const PARAM& Param, const PARAMDEF& Def);
 
         /// @brief The size in bytes of every row.
-        size_t RowSize() const { return Size; }
+        size_t RowSize() const { return _Size; }
         /// @brief How many fields a row has.
-        size_t FieldCount() const { return Fields.size(); }
+        size_t FieldCount() const { return _Fields.size(); }
 
         /// @brief The index of the first field with this internal name, or nullopt.
         std::optional<size_t> IndexOf(std::string_view InternalName) const;
@@ -128,10 +128,10 @@ namespace Souls {
         size_t Require(std::string_view InternalName) const;
         [[noreturn]] static void ThrowTypeMismatch(std::string_view InternalName);
 
-        std::vector<FieldInfo> Fields;
-        std::map<std::string, size_t, std::less<>> ByName;
-        size_t Size    = 0;
-        bool BigEndian = false;
+        std::vector<FieldInfo> _Fields;
+        std::map<std::string, size_t, std::less<>> _ByName;
+        size_t _Size    = 0;
+        bool _BigEndian = false;
     };
 
 #pragma warning(pop)

@@ -102,14 +102,14 @@ namespace Souls::DCX {
         /// @brief The reader to parse from.
         ///
         /// Valid for the lifetime of this object (and of Source, if not DCX).
-        BinaryReader& Reader() { return *Active; }
+        BinaryReader& Reader() { return *_Active; }
         /// @brief The compression found, or Type::None if the source wasn't a DCX.
-        Type Compression() const { return Detected; }
+        Type Compression() const { return _Detected; }
 
     private:
-        std::unique_ptr<BinaryReader> Owned;
-        BinaryReader* Active = nullptr;
-        Type Detected        = Type::None;
+        std::unique_ptr<BinaryReader> _Owned;
+        BinaryReader* _Active = nullptr;
+        Type _Detected        = Type::None;
     };
 
 #pragma warning(pop)

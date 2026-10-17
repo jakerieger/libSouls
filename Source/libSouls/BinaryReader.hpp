@@ -250,11 +250,11 @@ namespace Souls {
             }
         }
 
-        std::vector<uint8_t> Storage;            ///< backing for the owned-buffer ctor
-        std::unique_ptr<std::streambuf> Buffer;  ///< memory-backed stream buffer, if any
-        std::unique_ptr<std::istream> Owned;     ///< stream we created, if any
-        std::istream* Stream = nullptr;          ///< what all reads go through
-        std::vector<int64_t> StepStack;
+        std::vector<uint8_t> _Storage;            ///< backing for the owned-buffer ctor
+        std::unique_ptr<std::streambuf> _Buffer;  ///< memory-backed stream buffer, if any
+        std::unique_ptr<std::istream> _Owned;     ///< stream we created, if any
+        std::istream* _Stream = nullptr;          ///< what all reads go through
+        std::vector<int64_t> _StepStack;
     };
 
 #pragma warning(pop)

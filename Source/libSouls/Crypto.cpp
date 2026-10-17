@@ -43,18 +43,18 @@ namespace Souls::Crypto {
                 if (Key.size() != 16 && Key.size() != 24 && Key.size() != KeySize) {
                     throw BinaryException("AES key must be 16, 24 or 32 bytes");
                 }
-                Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_AES_ALGORITHM, nullptr, 0),
+                Check(BCryptOpenAlgorithmProvider(&_Algorithm, BCRYPT_AES_ALGORITHM, nullptr, 0),
                       "BCryptOpenAlgorithmProvider");
                 try {
                     const wchar_t* Chaining = ChainingMode == Mode::CBC ? BCRYPT_CHAIN_MODE_CBC : BCRYPT_CHAIN_MODE_ECB;
-                    Check(BCryptSetProperty(Algorithm,
+                    Check(BCryptSetProperty(_Algorithm,
                                             BCRYPT_CHAINING_MODE,
                                             reinterpret_cast<PUCHAR>(const_cast<wchar_t*>(Chaining)),
                                             static_cast<ULONG>((wcslen(Chaining) + 1) * sizeof(wchar_t)),
                                             0),
                           "BCryptSetProperty");
-                    Check(BCryptGenerateSymmetricKey(Algorithm,
-                                                     &Handle,
+                    Check(BCryptGenerateSymmetricKey(_Algorithm,
+                                                     &_Handle,
                                                      nullptr,
                                                      0,
                                                      const_cast<PUCHAR>(Key.data()),
@@ -62,24 +62,24 @@ namespace Souls::Crypto {
                                                      0),
                           "BCryptGenerateSymmetricKey");
                 } catch (...) {
-                    BCryptCloseAlgorithmProvider(Algorithm, 0);
+                    BCryptCloseAlgorithmProvider(_Algorithm, 0);
                     throw;
                 }
             }
 
             ~AesKey() {
-                BCryptDestroyKey(Handle);
-                BCryptCloseAlgorithmProvider(Algorithm, 0);
+                BCryptDestroyKey(_Handle);
+                BCryptCloseAlgorithmProvider(_Algorithm, 0);
             }
 
             AesKey(const AesKey&)            = delete;
             AesKey& operator=(const AesKey&) = delete;
 
-            BCRYPT_KEY_HANDLE Get() const { return Handle; }
+            BCRYPT_KEY_HANDLE Get() const { return _Handle; }
 
         private:
-            BCRYPT_ALG_HANDLE Algorithm = nullptr;
-            BCRYPT_KEY_HANDLE Handle    = nullptr;
+            BCRYPT_ALG_HANDLE _Algorithm = nullptr;
+            BCRYPT_KEY_HANDLE _Handle    = nullptr;
         };
     }  // namespace
 
@@ -301,35 +301,35 @@ namespace Souls::Crypto {
                 std::copy(Exponent.begin(), Exponent.end(), Blob.begin() + sizeof(BCRYPT_RSAKEY_BLOB));
                 std::copy(Modulus.begin(), Modulus.end(), Blob.begin() + sizeof(BCRYPT_RSAKEY_BLOB) + Exponent.size());
 
-                Check(BCryptOpenAlgorithmProvider(&Algorithm, BCRYPT_RSA_ALGORITHM, nullptr, 0),
+                Check(BCryptOpenAlgorithmProvider(&_Algorithm, BCRYPT_RSA_ALGORITHM, nullptr, 0),
                       "BCryptOpenAlgorithmProvider");
-                const NTSTATUS Status = BCryptImportKeyPair(Algorithm,
+                const NTSTATUS Status = BCryptImportKeyPair(_Algorithm,
                                                             nullptr,
                                                             BCRYPT_RSAPUBLIC_BLOB,
-                                                            &Handle,
+                                                            &_Handle,
                                                             Blob.data(),
                                                             static_cast<ULONG>(Blob.size()),
                                                             0);
                 if (!Succeeded(Status)) {
-                    BCryptCloseAlgorithmProvider(Algorithm, 0);
+                    BCryptCloseAlgorithmProvider(_Algorithm, 0);
                     Check(Status, "BCryptImportKeyPair");
                 }
             }
 
             ~RsaPublicKey() {
-                BCryptDestroyKey(Handle);
-                BCryptCloseAlgorithmProvider(Algorithm, 0);
+                BCryptDestroyKey(_Handle);
+                BCryptCloseAlgorithmProvider(_Algorithm, 0);
             }
 
             RsaPublicKey(const RsaPublicKey&)            = delete;
             RsaPublicKey& operator=(const RsaPublicKey&) = delete;
 
-            BCRYPT_KEY_HANDLE Get() const { return Handle; }
+            BCRYPT_KEY_HANDLE Get() const { return _Handle; }
             size_t BlockLength = 0;  // modulus size in bytes
 
         private:
-            BCRYPT_ALG_HANDLE Algorithm = nullptr;
-            BCRYPT_KEY_HANDLE Handle    = nullptr;
+            BCRYPT_ALG_HANDLE _Algorithm = nullptr;
+            BCRYPT_KEY_HANDLE _Handle    = nullptr;
         };
     }  // namespace
 

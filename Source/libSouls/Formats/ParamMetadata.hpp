@@ -83,18 +83,18 @@ namespace Souls {
         /// @brief The params that have names, as written when they were added.
         std::vector<std::string> ParamNames() const;
         /// @brief How many params have names.
-        size_t Size() const { return Tables.size(); }
+        size_t Size() const { return _Tables.size(); }
         /// @brief Whether no names are loaded.
-        bool Empty() const { return Tables.empty(); }
+        bool Empty() const { return _Tables.empty(); }
         /// @brief Forgets every name.
-        void Clear() { Tables.clear(); }
+        void Clear() { _Tables.clear(); }
 
     private:
         struct Table {
             std::string Name;
             std::map<int32_t, std::string> Names;
         };
-        std::map<std::string, Table> Tables;  ///< by lowercase param name
+        std::map<std::string, Table> _Tables;  ///< by lowercase param name
     };
 
     /// @brief Names for the values of enumerated field types (the `Tdfs` folders of Paramdex).
@@ -115,14 +115,14 @@ namespace Souls {
         /// @brief Every enum, ordered by name (ignoring case).
         std::vector<const PARAMTDF*> All() const;
         /// @brief How many enums are loaded.
-        size_t Size() const { return Enums.size(); }
+        size_t Size() const { return _Enums.size(); }
         /// @brief Whether no enums are loaded.
-        bool Empty() const { return Enums.empty(); }
+        bool Empty() const { return _Enums.empty(); }
         /// @brief Forgets every enum.
-        void Clear() { Enums.clear(); }
+        void Clear() { _Enums.clear(); }
 
     private:
-        std::map<std::string, PARAMTDF> Enums;  ///< by lowercase name
+        std::map<std::string, PARAMTDF> _Enums;  ///< by lowercase name
     };
 
 #pragma warning(pop)

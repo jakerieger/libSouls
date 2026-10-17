@@ -31,22 +31,23 @@ public:
         if (!fs::exists(Game / "oo2core_6_win64.dll")) return;
         Souls::Oodle26::SetDLLPath(Game / "oo2core_6_win64.dll");
         try {
-            Archives = Souls::ArchiveSet::OpenWithKeys(
-              Game, Souls::BHD5::Game::EldenRing, TestPaths::BinderKeys() / "EldenRing_PC" / "Key");
+            _Archives = Souls::ArchiveSet::OpenWithKeys(Game,
+                                                        Souls::BHD5::Game::EldenRing,
+                                                        TestPaths::BinderKeys() / "EldenRing_PC" / "Key");
         } catch (const std::exception&) {}
     }
 
-    bool IsOpen() const { return Archives.FileCount() != 0; }
+    bool IsOpen() const { return _Archives.FileCount() != 0; }
 
     // A file by its path in the game ("/chr/c0000.anibnd.dcx"), decompressed; nullopt if it isn't there.
     std::optional<std::vector<uint8_t>> Read(const std::string& Path) const {
-        std::optional<std::vector<uint8_t>> Bytes = Archives.Read(Path);
+        std::optional<std::vector<uint8_t>> Bytes = _Archives.Read(Path);
         if (Bytes && Souls::DCX::Is(*Bytes)) return Souls::DCX::Decompress(*Bytes);
         return Bytes;
     }
 
-    bool Contains(const std::string& Path) const { return Archives.Contains(Path); }
+    bool Contains(const std::string& Path) const { return _Archives.Contains(Path); }
 
 private:
-    Souls::ArchiveSet Archives;
+    Souls::ArchiveSet _Archives;
 };

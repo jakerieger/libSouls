@@ -47,13 +47,13 @@ namespace Souls {
     ParamDefRepository& ParamDefRepository::operator=(ParamDefRepository&&) noexcept = default;
 
     bool ParamDefRepository::Insert(PARAMDEF Def, const fs::path& Folder) {
-        for (std::unique_ptr<Entry>& Existing : Entries) {
+        for (std::unique_ptr<Entry>& Existing : _Entries) {
             if (Existing->Def.ParamType == Def.ParamType && Existing->Def.DataVersion == Def.DataVersion) {
                 Existing = std::make_unique<Entry>(Entry {std::move(Def), Folder});
                 return true;
             }
         }
-        Entries.push_back(std::make_unique<Entry>(Entry {std::move(Def), Folder}));
+        _Entries.push_back(std::make_unique<Entry>(Entry {std::move(Def), Folder}));
         return false;
     }
 
@@ -82,9 +82,9 @@ namespace Souls {
 
         // Remember it for Reload (once, however many times it's added).
         const auto Known =
-          std::find_if(Folders.begin(), Folders.end(), [&](const WatchedFolder& F) { return F.Path == Folder; });
-        if (Known == Folders.end()) {
-            Folders.push_back({Folder, Recursive});
+          std::find_if(_Folders.begin(), _Folders.end(), [&](const WatchedFolder& F) { return F.Path == Folder; });
+        if (Known == _Folders.end()) {
+            _Folders.push_back({Folder, Recursive});
         } else {
             Known->Recursive = Recursive;
         }
@@ -120,18 +120,18 @@ namespace Souls {
     }
 
     void ParamDefRepository::Clear() {
-        Entries.clear();
-        Folders.clear();
+        _Entries.clear();
+        _Folders.clear();
     }
 
     ParamDefRepository::LoadResult ParamDefRepository::Reload() {
-        Entries.erase(std::remove_if(Entries.begin(),
-                                     Entries.end(),
-                                     [](const std::unique_ptr<Entry>& E) { return !E->Folder.empty(); }),
-                      Entries.end());
+        _Entries.erase(std::remove_if(_Entries.begin(),
+                                      _Entries.end(),
+                                      [](const std::unique_ptr<Entry>& E) { return !E->Folder.empty(); }),
+                       _Entries.end());
 
         LoadResult Total;
-        const std::vector<WatchedFolder> ToLoad = Folders;
+        const std::vector<WatchedFolder> ToLoad = _Folders;
         for (const WatchedFolder& Folder : ToLoad) {
             if (!fs::is_directory(Folder.Path)) {
                 Total.Errors.push_back({Folder.Path, "folder no longer exists"});
@@ -147,7 +147,7 @@ namespace Souls {
     }
 
     const PARAMDEF* ParamDefRepository::Find(const PARAM& Param) const {
-        for (const std::unique_ptr<Entry>& E : Entries) {
+        for (const std::unique_ptr<Entry>& E : _Entries) {
             if (Param.Matches(E->Def)) return &E->Def;
         }
         return nullptr;
@@ -155,7 +155,7 @@ namespace Souls {
 
     std::vector<const PARAMDEF*> ParamDefRepository::FindCandidates(std::string_view ParamType) const {
         std::vector<const PARAMDEF*> Found;
-        for (const std::unique_ptr<Entry>& E : Entries) {
+        for (const std::unique_ptr<Entry>& E : _Entries) {
             if (E->Def.ParamType == ParamType) Found.push_back(&E->Def);
         }
         std::stable_sort(Found.begin(), Found.end(), [](const PARAMDEF* A, const PARAMDEF* B) {
@@ -171,8 +171,8 @@ namespace Souls {
 
     std::vector<const PARAMDEF*> ParamDefRepository::All() const {
         std::vector<const PARAMDEF*> Result;
-        Result.reserve(Entries.size());
-        for (const std::unique_ptr<Entry>& E : Entries)
+        Result.reserve(_Entries.size());
+        for (const std::unique_ptr<Entry>& E : _Entries)
             Result.push_back(&E->Def);
         return Result;
     }

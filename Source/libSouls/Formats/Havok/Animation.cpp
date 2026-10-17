@@ -39,40 +39,39 @@ namespace Souls::Havok {
         }
 
         void Expect(const Value& Object, std::string_view Type) {
-            if (!Object.IsA(Type))
-                throw BinaryException("Havok object isn't an " + std::string(Type));
+            if (!Object.IsA(Type)) throw BinaryException("Havok object isn't an " + std::string(Type));
         }
 
         // A bounds-checked cursor over an animation's data. Alignment is relative to the start of the data, which
         // Havok allocates 16-byte aligned.
         class Cursor {
         public:
-            Cursor(std::span<const uint8_t> Data, size_t Pos) : Data(Data), Pos(Pos) {}
+            Cursor(std::span<const uint8_t> Data, size_t Pos) : _Data(Data), _Pos(Pos) {}
 
             template<typename T>
             T Read() {
                 Need(sizeof(T));
                 T Result;
-                std::memcpy(&Result, Data.data() + Pos, sizeof(T));
-                Pos += sizeof(T);
+                std::memcpy(&Result, _Data.data() + _Pos, sizeof(T));
+                _Pos += sizeof(T);
                 return Result;
             }
 
             std::span<const uint8_t> Bytes(size_t Count) {
                 Need(Count);
-                const auto Result = Data.subspan(Pos, Count);
-                Pos += Count;
+                const auto Result = _Data.subspan(_Pos, Count);
+                _Pos += Count;
                 return Result;
             }
 
-            void Align(size_t Alignment) { Pos = (Pos + Alignment - 1) & ~(Alignment - 1); }
+            void Align(size_t Alignment) { _Pos = (_Pos + Alignment - 1) & ~(Alignment - 1); }
 
         private:
-            std::span<const uint8_t> Data;
-            size_t Pos;
+            std::span<const uint8_t> _Data;
+            size_t _Pos;
 
             void Need(size_t Count) const {
-                if (Pos + Count > Data.size()) throw BinaryException("Havok spline data ends early");
+                if (_Pos + Count > _Data.size()) throw BinaryException("Havok spline data ends early");
             }
         };
 
@@ -111,10 +110,14 @@ namespace Souls::Havok {
             float Missing = std::sqrt(std::max(0.f, 1.f - A * A - B * B - C * C));
             if (Negative) Missing = -Missing;
             switch (Shift) {
-                case 0: return {Missing, A, B, C};
-                case 1: return {A, Missing, B, C};
-                case 2: return {A, B, Missing, C};
-                default: return {A, B, C, Missing};
+                case 0:
+                    return {Missing, A, B, C};
+                case 1:
+                    return {A, Missing, B, C};
+                case 2:
+                    return {A, B, Missing, C};
+                default:
+                    return {A, B, C, Missing};
             }
         }
 
@@ -146,15 +149,19 @@ namespace Souls::Havok {
                 }
                 case Quat40: {
                     // Three 12-bit components, a 2-bit shift and a sign bit.
-                    const auto B   = In.Bytes(5);
-                    uint64_t V     = 0;
+                    const auto B = In.Bytes(5);
+                    uint64_t V   = 0;
                     for (int I = 0; I < 5; ++I)
                         V |= uint64_t(B[I]) << (8 * I);
                     constexpr float Scale = 0.000345436f;  // 1 / (2047 * sqrt(2))
                     auto Component        = [&](int Index) {
                         return static_cast<float>(static_cast<int>((V >> (12 * Index)) & 0xFFF) - 2047) * Scale;
                     };
-                    return Rebuild(Component(0), Component(1), Component(2), static_cast<int>((V >> 36) & 3), ((V >> 38) & 1) != 0);
+                    return Rebuild(Component(0),
+                                   Component(1),
+                                   Component(2),
+                                   static_cast<int>((V >> 36) & 3),
+                                   ((V >> 38) & 1) != 0);
                 }
                 case Quat48: {
                     // Three 15-bit components; the top bits of the first two are the shift, of the third the sign.
@@ -162,8 +169,8 @@ namespace Souls::Havok {
                     const uint16_t Y      = In.Read<uint16_t>();
                     const uint16_t Z      = In.Read<uint16_t>();
                     constexpr float Scale = 0.000043161f;  // 1 / (16383 * sqrt(2))
-                    auto Component        = [&](uint16_t C) { return static_cast<float>(int(C & 0x7FFF) - 16383) * Scale; };
-                    const int Shift       = ((Y >> 14) & 2) | (X >> 15);
+                    auto Component  = [&](uint16_t C) { return static_cast<float>(int(C & 0x7FFF) - 16383) * Scale; };
+                    const int Shift = ((Y >> 14) & 2) | (X >> 15);
                     return Rebuild(Component(X), Component(Y), Component(Z), Shift, (Z >> 15) != 0);
                 }
                 case QuatFloat: {
@@ -190,17 +197,18 @@ namespace Souls::Havok {
     Skeleton Skeleton::FromValue(const Value& Object) {
         Expect(Object, "hkaSkeleton");
         Skeleton Result;
-        Result.Name          = Object["name"].AsString();
-        const Value Bones    = Object["bones"];
-        const Value Pose     = Object["referencePose"];
-        Result.Parents       = ToInt16s(Object["parentIndices"]);
-        const size_t Count   = Bones.Size();
+        Result.Name        = Object["name"].AsString();
+        const Value Bones  = Object["bones"];
+        const Value Pose   = Object["referencePose"];
+        Result.Parents     = ToInt16s(Object["parentIndices"]);
+        const size_t Count = Bones.Size();
         if (Result.Parents.size() != Count || Pose.Size() != Count)
             throw BinaryException("Havok skeleton's bones, parents and pose don't match");
         for (size_t I = 0; I < Count; ++I) {
             Result.BoneNames.push_back(Bones.At(I)["name"].AsString());
             const Value T = Pose.At(I);
-            Result.ReferencePose.push_back({ToVector3(T["translation"]), ToVector4(T["rotation"]), ToVector3(T["scale"])});
+            Result.ReferencePose.push_back(
+              {ToVector3(T["translation"]), ToVector4(T["rotation"]), ToVector3(T["scale"])});
         }
         return Result;
     }
@@ -218,10 +226,10 @@ namespace Souls::Havok {
     ReferenceFrame ReferenceFrame::FromValue(const Value& Object) {
         Expect(Object, "hkaDefaultAnimatedReferenceFrame");
         ReferenceFrame Result;
-        Result.Up             = ToVector4(Object["up"]);
-        Result.Forward        = ToVector4(Object["forward"]);
-        Result.Duration       = static_cast<float>(Object["duration"].AsFloat());
-        const Value Samples   = Object["referenceFrameSamples"];
+        Result.Up           = ToVector4(Object["up"]);
+        Result.Forward      = ToVector4(Object["forward"]);
+        Result.Duration     = static_cast<float>(Object["duration"].AsFloat());
+        const Value Samples = Object["referenceFrameSamples"];
         for (size_t I = 0; I < Samples.Size(); ++I)
             Result.Samples.push_back(ToVector4(Samples.At(I)));
         return Result;
@@ -346,15 +354,19 @@ namespace Souls::Havok {
                         Max[C] = In.Read<float>();
                         Track.Points[C].resize(Count);
                         break;
-                    case Storage::Static: Track.Points[C] = {In.Read<float>()}; break;
-                    case Storage::Identity: Track.Points[C] = {Default}; break;
+                    case Storage::Static:
+                        Track.Points[C] = {In.Read<float>()};
+                        break;
+                    case Storage::Identity:
+                        Track.Points[C] = {Default};
+                        break;
                 }
             }
             for (size_t P = 0; P < Count; ++P) {
                 for (int C = 0; C < 3; ++C) {
                     if (Mask::Component(Bits, C) != Storage::Spline) continue;
-                    const float T = Quantization == 0 ? static_cast<float>(In.Read<uint8_t>()) / 255.f
-                                                      : static_cast<float>(In.Read<uint16_t>()) / 65535.f;
+                    const float T      = Quantization == 0 ? static_cast<float>(In.Read<uint8_t>()) / 255.f
+                                                           : static_cast<float>(In.Read<uint16_t>()) / 65535.f;
                     Track.Points[C][P] = Min[C] + (Max[C] - Min[C]) * T;
                 }
             }
@@ -382,7 +394,7 @@ namespace Souls::Havok {
             In.Bytes(Result.FloatTrackCount);  // the float tracks' masks
             In.Align(4);
 
-            Block& B = Result.Blocks.emplace_back();
+            Block& B = Result._Blocks.emplace_back();
             B.Tracks.resize(Result.TrackCount);
             for (size_t T = 0; T < Masks.size(); ++T) {
                 const Mask& M = Masks[T];
@@ -399,8 +411,12 @@ namespace Souls::Havok {
                             Out.Rotation.Points.push_back(ReadQuat(In, Quantization));
                         break;
                     }
-                    case Storage::Static: Out.Rotation.Points = {ReadQuat(In, Quantization)}; break;
-                    case Storage::Identity: Out.Rotation.Points = {Vector4 {0.f, 0.f, 0.f, 1.f}}; break;
+                    case Storage::Static:
+                        Out.Rotation.Points = {ReadQuat(In, Quantization)};
+                        break;
+                    case Storage::Identity:
+                        Out.Rotation.Points = {Vector4 {0.f, 0.f, 0.f, 1.f}};
+                        break;
                 }
                 In.Align(4);
 
@@ -439,13 +455,14 @@ namespace Souls::Havok {
             const Value Transforms = Object["transforms"];
             if (Result.TrackCount == 0 || Transforms.Size() % Result.TrackCount != 0)
                 throw BinaryException("Havok interleaved animation's transforms don't fill its frames");
-            Result.FrameCount    = static_cast<uint32_t>(Transforms.Size() / Result.TrackCount);
-            Result.FrameDuration = Result.FrameCount > 1 ? Result.Duration / static_cast<float>(Result.FrameCount - 1)
-                                                         : Result.Duration;
-            Result.Frames.reserve(Transforms.Size());
+            Result.FrameCount = static_cast<uint32_t>(Transforms.Size() / Result.TrackCount);
+            Result.FrameDuration =
+              Result.FrameCount > 1 ? Result.Duration / static_cast<float>(Result.FrameCount - 1) : Result.Duration;
+            Result._Frames.reserve(Transforms.Size());
             for (size_t I = 0; I < Transforms.Size(); ++I) {
                 const Value T = Transforms.At(I);
-                Result.Frames.push_back({ToVector3(T["translation"]), ToVector4(T["rotation"]), ToVector3(T["scale"])});
+                Result._Frames.push_back(
+                  {ToVector3(T["translation"]), ToVector4(T["rotation"]), ToVector3(T["scale"])});
             }
         } else {
             throw BinaryException("Unsupported Havok animation type " + Object.TypeName());
@@ -456,11 +473,12 @@ namespace Souls::Havok {
 
 #pragma region Sampling
     void Animation::SampleSpline(float Frame, std::span<QsTransform> Out) const {
-        // Neighbouring blocks share their boundary frame, so each block starts FramesPerBlock - 1 frames after the last.
+        // Neighbouring blocks share their boundary frame, so each block starts FramesPerBlock - 1 frames after the
+        // last.
         const float Stride = static_cast<float>(FramesPerBlock > 1 ? FramesPerBlock - 1 : 1);
-        const size_t Index = std::min(static_cast<size_t>(Frame / Stride), Blocks.size() - 1);
+        const size_t Index = std::min(static_cast<size_t>(Frame / Stride), _Blocks.size() - 1);
         const float Local  = Frame - static_cast<float>(Index) * Stride;
-        const Block& B     = Blocks[Index];
+        const Block& B     = _Blocks[Index];
         for (size_t T = 0; T < TrackCount; ++T) {
             Out[T].Translation = B.Tracks[T].Translation.Evaluate(Local);
             Out[T].Rotation    = B.Tracks[T].Rotation.Evaluate(Local);
@@ -473,14 +491,14 @@ namespace Souls::Havok {
         if (FrameCount == 0) return;
         Frame = std::clamp(Frame, 0.f, static_cast<float>(FrameCount - 1));
         if (Storage == Compression::Spline) {
-            if (!Blocks.empty()) SampleSpline(Frame, Out);
+            if (!_Blocks.empty()) SampleSpline(Frame, Out);
             return;
         }
         const size_t Index = std::min(static_cast<size_t>(Frame), static_cast<size_t>(FrameCount - 1));
         const size_t Next  = std::min<size_t>(Index + 1, FrameCount - 1);
         const float T      = Frame - static_cast<float>(Index);
         for (size_t Track = 0; Track < TrackCount; ++Track)
-            Out[Track] = QsTransform::Blend(Frames[Index * TrackCount + Track], Frames[Next * TrackCount + Track], T);
+            Out[Track] = QsTransform::Blend(_Frames[Index * TrackCount + Track], _Frames[Next * TrackCount + Track], T);
     }
 
     std::vector<QsTransform> Animation::Sample(float Time) const {
@@ -490,7 +508,7 @@ namespace Souls::Havok {
     }
 
     std::vector<QsTransform> Animation::Bake() const {
-        if (Storage == Compression::Interleaved) return Frames;
+        if (Storage == Compression::Interleaved) return _Frames;
         std::vector<QsTransform> Result(size_t(FrameCount) * TrackCount);
         for (uint32_t Frame = 0; Frame < FrameCount; ++Frame)
             SampleFrame(static_cast<float>(Frame), std::span(Result).subspan(size_t(Frame) * TrackCount, TrackCount));
@@ -527,7 +545,7 @@ namespace Souls::Havok {
     }
 
     QsTransform QsTransform::Blend(const QsTransform& A, const QsTransform& B, float T) {
-        auto Lerp = [T](float X, float Y) { return X + (Y - X) * T; };
+        auto Lerp        = [T](float X, float Y) { return X + (Y - X) * T; };
         const Vector4& P = A.Rotation;
         Vector4 Q        = B.Rotation;
         if (P.X * Q.X + P.Y * Q.Y + P.Z * Q.Z + P.W * Q.W < 0.f) Q = {-Q.X, -Q.Y, -Q.Z, -Q.W};
@@ -586,15 +604,21 @@ namespace Souls::Havok {
             QsTransform& Base        = Pose[Bone];
             const QsTransform& Track = Tracks[T];
             switch (BlendHint) {
-                case Blend::Normal: Base = Track; break;
+                case Blend::Normal:
+                    Base = Track;
+                    break;
                 case Blend::AdditiveDeprecated:
                     Base.Translation = {Base.Translation.X + Track.Translation.X,
                                         Base.Translation.Y + Track.Translation.Y,
                                         Base.Translation.Z + Track.Translation.Z};
                     Base.Rotation    = Normalized(QuatMultiply(Base.Rotation, Track.Rotation));
-                    Base.Scale       = {Base.Scale.X * Track.Scale.X, Base.Scale.Y * Track.Scale.Y, Base.Scale.Z * Track.Scale.Z};
+                    Base.Scale       = {Base.Scale.X * Track.Scale.X,
+                                        Base.Scale.Y * Track.Scale.Y,
+                                        Base.Scale.Z * Track.Scale.Z};
                     break;
-                case Blend::Additive: Base = QsTransform::Multiply(Base, Track); break;
+                case Blend::Additive:
+                    Base = QsTransform::Multiply(Base, Track);
+                    break;
             }
         }
     }
@@ -616,13 +640,15 @@ namespace Souls::Havok {
             void Align(size_t Alignment) { Bytes.resize((Bytes.size() + Alignment - 1) / Alignment * Alignment); }
         };
 
-        float Component(const Vector3& V, int C) { return C == 0 ? V.X : C == 1 ? V.Y : V.Z; }
+        float Component(const Vector3& V, int C) {
+            return C == 0 ? V.X : C == 1 ? V.Y : V.Z;
+        }
 
         // The inverse of ReadQuat's Quat48: the largest component is dropped (made positive by negating the whole
         // quaternion, which is the same rotation) and the other three stored in 15 bits each.
         void PutQuat48(ByteWriter& Out, Vector4 Q) {
-            float C[4]   = {Q.X, Q.Y, Q.Z, Q.W};
-            int Largest  = 0;
+            float C[4]  = {Q.X, Q.Y, Q.Z, Q.W};
+            int Largest = 0;
             for (int I = 1; I < 4; ++I) {
                 if (std::abs(C[I]) > std::abs(C[Largest])) Largest = I;
             }
@@ -643,7 +669,8 @@ namespace Souls::Havok {
                 Out.Put(S);
         }
 
-        // Knots of a degree-1 spline through Count points, one per frame: 0, 0, 1, ..., Count - 2, Count - 1, Count - 1.
+        // Knots of a degree-1 spline through Count points, one per frame: 0, 0, 1, ..., Count - 2, Count - 1, Count
+        // - 1.
         void PutLinearCurve(ByteWriter& Out, size_t Count) {
             Out.Put(static_cast<uint16_t>(Count - 1));
             Out.Put(uint8_t {1});
@@ -752,7 +779,7 @@ namespace Souls::Havok {
         Result.FrameCount    = static_cast<uint32_t>(Frames.size() / TrackCount);
         Result.FrameDuration = FrameDuration;
         Result.Duration      = FrameDuration * static_cast<float>(Result.FrameCount - 1);
-        Result.Frames        = std::move(Frames);
+        Result._Frames       = std::move(Frames);
         return Result;
     }
 
@@ -763,7 +790,7 @@ namespace Souls::Havok {
             throw BinaryException("The animation's track count doesn't match the Havok object's");
         if (FrameCount == 0) throw BinaryException("The animation has no frames");
         const std::vector<QsTransform> Baked = Bake();
-        auto At = [&](uint32_t Frame, uint32_t Track) -> const QsTransform& {
+        auto At                              = [&](uint32_t Frame, uint32_t Track) -> const QsTransform& {
             return Baked[size_t(Frame) * TrackCount + Track];
         };
 
